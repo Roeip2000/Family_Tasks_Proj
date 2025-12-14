@@ -12,13 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Family_Tasks_Proj">
         <activity
+            android:name=".ParentsRegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChildQRLoginActivity"
             android:exported="false" />
         <activity
             android:name=".ParentsLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParentsRegisterActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694156163130",
+    "project_id": "family-tasks-proj",
+    "storage_bucket": "family-tasks-proj.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694156163130:android:3d101b52fed9bf9a8fdd03",
+        "android_client_info": {
+          "package_name": "com.example.family_tasks_proj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsiFzm6Tk26CbGuebB86p8cd2uP-0NbOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
