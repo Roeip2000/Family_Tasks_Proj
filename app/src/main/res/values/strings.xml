@@ -4,4 +4,8 @@
     <string name="prompt_password">Password</string>
     <string name="action_login">Login</string>
     <string name="action_go_to_register">Don\'t have an account? Register</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="add_child">Add Child</string>
+    <string name="scan_qr">Scan QR</string>
 </resources>
