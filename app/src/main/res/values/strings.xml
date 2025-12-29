@@ -8,4 +8,9 @@
     <string name="last_name">Last Name</string>
     <string name="add_child">Add Child</string>
     <string name="scan_qr">Scan QR</string>
+    <string name="register_parents">Register Parents</string>
+    <string name="parents_login">Parents Login</string>
+    <string name="child_login_qr">Child Login (QR)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

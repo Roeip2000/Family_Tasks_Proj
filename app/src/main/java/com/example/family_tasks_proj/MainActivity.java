@@ -1,11 +1,12 @@
 package com.example.family_tasks_proj;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class  MainActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+public class MainActivity extends AppCompatActivity {
 
     Button btnRegister, btnLogin, btnChildQR;
 
@@ -18,19 +19,32 @@ public class  MainActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnChildQR = findViewById(R.id.btnChildQR);
 
-        btnRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ParentsRegisterActivity.class);
-            startActivity(intent);
-        });
+        // הרשמה → Fragment
+        btnRegister.setOnClickListener(v ->
+                openFragment(new ParentRegisterFragment())
+        );
 
-        btnLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ParentsLoginActivity.class);
-            startActivity(intent);
-        });
+        // התחברות → Fragment
+        btnLogin.setOnClickListener(v ->
+                openFragment(new ParentsLoginFragment())
+        );
 
-        btnChildQR.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ChildQRLoginActivity.class);
-            startActivity(intent);
-        });
+        // QR ילד (Activity רגיל)
+        btnChildQR.setOnClickListener(v ->
+                startActivity(
+                        new android.content.Intent(
+                                this,
+                                ChildQRLoginActivity.class
+                        )
+                )
+        );
+    }
+
+    private void openFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
