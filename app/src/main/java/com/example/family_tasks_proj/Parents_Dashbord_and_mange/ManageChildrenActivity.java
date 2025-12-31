@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.Child_Login.Child;
-import com.example.family_tasks_proj.Child_Login.GenerateQRActivity;
 import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

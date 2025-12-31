@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.parent.ParentDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ParentLoginFragment extends Fragment {
