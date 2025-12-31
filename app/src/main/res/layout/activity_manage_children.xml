@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ManageChildrenActivity">
+    tools:context=".Parents_Dashbord_and_mange.ManageChildrenActivity">
 
     <EditText
         android:id="@+id/etFirstName"

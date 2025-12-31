@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.Login_Register_Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.family_tasks_proj.FireBase.FBsingleton;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
+import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

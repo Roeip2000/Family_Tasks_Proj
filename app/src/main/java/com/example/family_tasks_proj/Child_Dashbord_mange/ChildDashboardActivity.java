@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.Child_Dashbord_mange;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -7,6 +7,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.family_tasks_proj.Child_Login.Child;
+import com.example.family_tasks_proj.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

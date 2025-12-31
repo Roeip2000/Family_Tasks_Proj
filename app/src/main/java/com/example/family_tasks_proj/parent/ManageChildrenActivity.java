@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.parent;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.child.Child;
+import com.example.family_tasks_proj.child.GenerateQRActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;

@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.FireBase;
 
 public class ParentInFb {
 

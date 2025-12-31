@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.Child_Login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.family_tasks_proj.Child_Dashbord_mange.ChildDashboardActivity;
+import com.example.family_tasks_proj.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +36,6 @@ public class ChildQRLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_child_qrlogin);
 
         btnScanQR = findViewById(R.id.btnScanQR);
 

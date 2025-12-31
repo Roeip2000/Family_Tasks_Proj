@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj;
+package com.example.family_tasks_proj.auth;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -6,9 +6,14 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
+import com.example.family_tasks_proj.Login_Register_Parents.ParentRegisterFragment;
+import com.example.family_tasks_proj.Login_Register_Parents.ParentsLoginFragment;
+import com.example.family_tasks_proj.R;
+
 public class MainActivity extends AppCompatActivity {
 
-    Button btnRegister, btnLogin, btnChildQR;
+    private Button btnRegister, btnLogin, btnChildQR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +23,11 @@ public class MainActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         btnLogin = findViewById(R.id.btnLogin);
         btnChildQR = findViewById(R.id.btnChildQR);
+
+        // Fragment ברירת מחדל (כדי לוודא שהקונטיינר עובד)
+        if (savedInstanceState == null) {
+            openFragment(new ParentsLoginFragment());
+        }
 
         // הרשמה → Fragment
         btnRegister.setOnClickListener(v ->
@@ -29,14 +39,9 @@ public class MainActivity extends AppCompatActivity {
                 openFragment(new ParentsLoginFragment())
         );
 
-        // QR ילד (Activity רגיל)
+        // QR ילד → Fragment
         btnChildQR.setOnClickListener(v ->
-                startActivity(
-                        new android.content.Intent(
-                                this,
-                                ChildQRLoginActivity.class
-                        )
-                )
+                openFragment(new ChildQRLoginFragment())
         );
     }
 

@@ -1,6 +1,4 @@
-package com.example.family_tasks_proj;
-
-import androidx.annotation.NonNull;
+package com.example.family_tasks_proj.FireBase;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

@@ -12,28 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Family_Tasks_Proj">
         <activity
-            android:name=".AuthActivity"
+            android:name=".child.ChildDashboardActivity"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".parent.ManageChildrenActivity"
             android:exported="false" />
         <activity
-            android:name=".GenerateQRActivity"
+            android:name=".parent.ParentDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".ManageChildrenActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParentDashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParentsRegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ChildQRLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParentsLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".auth.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
