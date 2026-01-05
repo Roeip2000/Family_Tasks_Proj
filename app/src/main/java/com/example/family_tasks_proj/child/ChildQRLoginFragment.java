@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Child_Login;
+package com.example.family_tasks_proj.child;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
