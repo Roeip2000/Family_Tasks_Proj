@@ -46,7 +46,11 @@ public class FBsingleton {
             parentData.put("lastName", lastName);
             parentData.put("email", email);
 
-            mDatabase.child("users").child(uid).setValue(parentData);
+            //  אחידות מסד נתונים — כל ההורים תחת "parents"
+            parentData.put("uid", uid);
+            parentData.put("role", "parent");
+            mDatabase.child("parents").child(uid).setValue(parentData);
+
         }
     }
 }

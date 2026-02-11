@@ -23,9 +23,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+
+import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.UUID;
 
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
@@ -49,11 +52,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveTemplate());
     }
 
-
-
-
-
-
     // פתיחת גלריה לבחירת תמונה
     private void pickImage()
     {
@@ -72,6 +70,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // שמירת תבנית משימה ל-Firebase (כ-Base64)
     // נשמר תחת ההורה המחובר: /parents/{parentUid}/profile/taskTemplates/{templateId}
+
+
+    private static final String TAG = "ParentTaskTemplate";
+
     private void saveTemplate() {
         // ===== בדיקת התחברות הורה =====
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -101,13 +103,20 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         task.put("title", title);
         task.put("imageBase64", imageBase64);
 
-        // ✅ שמירה תחת ההורה
+
+        //  לוג נתיב שמירה כדי לוודא שזה לא נכתב לשורש "task_templates"
+        Log.d(TAG, "Saving template to /parents/" + parentId + "/task_templates/" + taskId);
+
+
+            //  שמירה תחת ההורה
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
                 .child("task_templates")
                 .child(taskId)
                 .setValue(task)
+
+
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Template saved!", Toast.LENGTH_SHORT).show();
                     finish();

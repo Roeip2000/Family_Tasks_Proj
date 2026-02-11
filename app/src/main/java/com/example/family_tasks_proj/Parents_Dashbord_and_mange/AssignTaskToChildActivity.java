@@ -113,11 +113,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     {
         templatesList.clear();
 
+
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid)
-                .child("profile")
-                .child("taskTemplates")
+                .child("task_templates")
                 .addListenerForSingleValueEvent(new ValueEventListener()
                 {
                     @Override
