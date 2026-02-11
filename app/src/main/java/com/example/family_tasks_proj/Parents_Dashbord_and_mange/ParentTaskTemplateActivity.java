@@ -12,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
@@ -90,8 +92,17 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         task.put("title", title);
         task.put("imageBase64", imageBase64);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)
+        {
+            Toast.makeText(this, "Parent not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         FirebaseDatabase.getInstance()
-                .getReference("task_templates")
+                .getReference("parents")
+                .child(user.getUid())
+                .child("task_templates")
                 .child(taskId)
                 .setValue(task)
 
