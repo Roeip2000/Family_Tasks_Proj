@@ -27,21 +27,21 @@ public class ParentRegisterFragment extends Fragment {
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
 
-    public ParentRegisterFragment() {
+    public ParentRegisterFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
 
         return inflater.inflate(R.layout.fragment_parent_register, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view,
-                              @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
 
         super.onViewCreated(view, savedInstanceState);
 
@@ -58,54 +58,45 @@ public class ParentRegisterFragment extends Fragment {
         btnRegister.setOnClickListener(v -> registerParent());
     }
 
-    private void registerParent() {
+    private void registerParent()
+    {
 
         String firstName = etFirstName.getText().toString().trim();
         String lastName  = etLastName.getText().toString().trim();
         String email     = etEmail.getText().toString().trim();
         String password  = etPassword.getText().toString().trim();
 
-        if (firstName.isEmpty() || lastName.isEmpty()
-                || email.isEmpty() || password.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
 
-            Toast.makeText(getContext(),
-                    "Please fill all fields",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
+        {
 
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful())
+                    {
 
                         FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
+
+                        if (user != null)
+                        {
                             // Save to Singleton
-                            FBsingleton.getInstance().setUserData(
-                                    firstName,
-                                    lastName,
-                                    email
-                            );
+                            FBsingleton.getInstance().setUserData(firstName, lastName, email);
                             FBsingleton.getInstance().saveParentToFirebase();
 
-                            Toast.makeText(getContext(),
-                                    "Registration successful",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Registration successful", Toast.LENGTH_SHORT).show();
 
                             // Navigate to Dashboard
-                            startActivity(new Intent(
-                                    getActivity(),
-                                    ParentDashboardActivity.class
-                            ));
-
+                            startActivity(new Intent(getActivity(), ParentDashboardActivity.class));
                             requireActivity().finish();
                         }
 
-                    } else {
-                        Toast.makeText(getContext(),
-                                "Error: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,41 +13,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Family_Tasks_Proj">
 
-        <!-- MAIN / Launcher -->
+        <activity
+            android:name=".Parents_Dashbord_and_mange.AssignTaskToChildActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Parents_Dashbord_and_mange.ParentTaskTemplateActivity"
+            android:exported="false" /> <!-- MAIN / Launcher -->
         <activity
             android:name=".auth.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Auth (Login / Register) -->
+        </activity> <!-- Auth (Login / Register) -->
         <activity
             android:name=".auth.AuthActivity"
-            android:exported="false" />
-
-        <!-- Parent side -->
+            android:exported="false" /> <!-- Parent side -->
         <activity
             android:name=".Parents_Dashbord_and_mange.ParentDashboardActivity"
             android:exported="false" />
-
         <activity
             android:name=".Parents_Dashbord_and_mange.ManageChildrenActivity"
-            android:exported="false" />
-
-        <!-- Child side -->
+            android:exported="false" /> <!-- Child side -->
         <activity
             android:name=".child.ChildDashboardActivity"
-            android:exported="false" />
-
-        <!-- Barcode Scanner -->
+            android:exported="false" /> <!-- Barcode Scanner -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
-
+        <activity android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"></activity>
     </application>
 
 </manifest>

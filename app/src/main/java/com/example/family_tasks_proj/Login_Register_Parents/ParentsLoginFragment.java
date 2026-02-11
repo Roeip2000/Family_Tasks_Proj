@@ -21,20 +21,21 @@ public class ParentsLoginFragment extends Fragment {
     private EditText etEmail, etPassword;
     private Button btnLogin;
 
-    public ParentsLoginFragment() {
+    public ParentsLoginFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
 
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState)
+    {
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -45,30 +46,31 @@ public class ParentsLoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
-    private void loginUser() {
+    private void loginUser()
+    {
 
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty())
+        {
             Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task ->
+
+                {
                     if (task.isSuccessful()) {
 
-                        startActivity(new Intent(
-                                requireActivity(),
-                                ParentDashboardActivity.class
-                        ));
+                        startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                         requireActivity().finish();
 
-                    } else {
-                        Toast.makeText(getContext(),
-                                "Authentication failed",
-                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    else
+                    {
+                        Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

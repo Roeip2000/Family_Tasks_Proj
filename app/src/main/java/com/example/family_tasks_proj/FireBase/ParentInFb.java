@@ -7,72 +7,94 @@ public class ParentInFb {
     private String lastName;
     private String email;
     private String role; // parent / child
+    private java.util.Map<String, Object> children; // שדה חדש לסנכרון הילדים
+
+    public ParentInFb()
+    {
 
 
-    public ParentInFb() {
     }
 
 
-    public ParentInFb(String uid, String firstName,
-                      String lastName, String email) {
+    public ParentInFb(String uid, String firstName, String lastName, String email)
+    {
 
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = "parent";
+        this.children = new java.util.HashMap<>(); // אתחול הרשימה
     }
 
     // ===== Getters & Setters (חובה לפיירבייס) =====
 
-    public String getUid() {
+
+
+    public String getUid()
+    {
         return uid;
     }
 
-    public void setUid(String uid) {
+    public void setUid(String uid)
+    {
         this.uid = uid;
     }
 
-    public String getFirstName() {
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName)
+    {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName)
+    {
+
         this.lastName = lastName;
     }
 
-    public String getEmail() {
+    public String getEmail()
+    {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email)
+    {
         this.email = email;
     }
 
-    public String getRole() {
+    public String getRole()
+    {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role)
+    {
         this.role = role;
     }
 
     @Override
-    public String toString() {
-        return "ParentInFb{" +
-                "uid='" + uid + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public String toString()
+    {
+        return "ParentInFb{" + "uid='" + uid + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", role='" + role + '\'' + '}';
+    }
+    public java.util.Map<String, Object> getChildren()
+    {
+        return children;
+    }
+
+
+    public void setChildren(java.util.Map<String, Object> children)
+    {
+        this.children = children;
     }
 }

@@ -9,7 +9,8 @@ public class Task {
 
     public Task() {}
 
-    public Task(String title, String assignedTo, String dueDate, boolean completed) {
+    public Task(String title, String assignedTo, String dueDate, boolean completed)
+    {
         this.title = title;
         this.assignedTo = assignedTo;
         this.dueDate = dueDate;

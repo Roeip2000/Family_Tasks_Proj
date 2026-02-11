@@ -29,12 +29,14 @@ public class ParentLoginFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
         return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
@@ -46,21 +48,26 @@ public class ParentLoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
-    private void loginUser() {
+    private void loginUser()
+    {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty())
+        {
             Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if (task.isSuccessful()) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
+                {
+                    if (task.isSuccessful())
+                    {
                         startActivity(new Intent(getActivity(), ParentDashboardActivity.class));
                         requireActivity().finish();
-                    } else {
+                    }
+                    else
+                    {
                         Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -5,17 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-    <!-- כפתור להגדרות -->
-
     <Button
         android:id="@+id/btnManageChildren"
         android:text="Manage Children"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- כותרת -->
     <TextView
         android:text="Parent Dashboard"
         android:textSize="22sp"
@@ -23,7 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <!-- Overview -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
@@ -31,27 +25,29 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/tvParentTotalTasks"
             android:text="Tasks: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/tvParentCompleted"
             android:text="Completed: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/tvParentDueSoon"
             android:text="Due Soon: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- אזור משימות (בהמשך RecyclerView) -->
     <TextView
-        android:text="Tasks"
+        android:text="Current Home Tasks"
         android:textStyle="bold"
         android:layout_marginTop="24dp"
         android:layout_width="wrap_content"
@@ -70,11 +66,19 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- כפתור הוספה -->
     <Button
-        android:id="@+id/btnAddTask"
-        android:text="+ Add Task"
+        android:id="@+id/btnManageTemplates"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="1. ניהול מאגר תבניות (בנק משימות)"
+        android:backgroundTint="#607D8B" />
+
+    <Button
+        android:id="@+id/btnAssignTaskToChild"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="2. שלח משימה לילד מהמאגר"
+        android:backgroundTint="#4CAF50" />
 
 </LinearLayout>

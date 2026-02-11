@@ -22,8 +22,10 @@ public class FBsingleton {
         auth = FirebaseAuth.getInstance();
     }
 
-    public static FBsingleton getInstance() {
-        if (instance == null) {
+    public static FBsingleton getInstance()
+    {
+        if (instance == null)
+        {
             instance = new FBsingleton();
         }
         return instance;
@@ -31,7 +33,8 @@ public class FBsingleton {
 
     // ===== Setters (לאפליקציה) =====
 
-    public void setUserData(String firstName, String lastName, String email) {
+    public void setUserData(String firstName, String lastName, String email)
+    {
         this.uid = auth.getUid();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,36 +43,38 @@ public class FBsingleton {
 
     // ===== Getters (לאפליקציה) =====
 
-    public String getUid() {
+    public String getUid()
+    {
+
         return uid;
     }
 
-    public String getFirstName() {
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public String getEmail() {
+    public String getEmail()
+    {
         return email;
     }
 
     // ===== כתיבה לפיירבייס =====
 
     public void saveParentToFirebase() {
-        if (uid == null) return;
+        if (uid == null)
+        {
+            return;
+        }
 
-        DatabaseReference ref =
-                database.getReference("parents").child(uid);
+        DatabaseReference ref = database.getReference("parents").child(uid);
 
-        ParentInFb parent = new ParentInFb(
-                uid,
-                firstName,
-                lastName,
-                email
-        );
+        ParentInFb parent = new ParentInFb(uid, firstName, lastName, email);
 
         ref.setValue(parent);
     }

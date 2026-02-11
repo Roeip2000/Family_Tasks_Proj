@@ -15,16 +15,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ManageChildrenActivity extends AppCompatActivity {
 
-    EditText etFirstName, etLastName;
-    Button btnAddChild;
+    private EditText etFirstName, etLastName;
+    private Button btnAddChild;
 
-    DatabaseReference db;
-    String parentUID;
+    private DatabaseReference db;
+    private String parentUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,48 +29,61 @@ public class ManageChildrenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_children);
 
         etFirstName = findViewById(R.id.etFirstName);
-        etLastName = findViewById(R.id.etLastName);
+        etLastName  = findViewById(R.id.etLastName);
         btnAddChild = findViewById(R.id.btnAddChild);
 
+        db = FirebaseDatabase.getInstance().getReference();
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            parentUID = currentUser.getUid();
-        } else {
-            Toast.makeText(this, "You must be logged in to add a child.", Toast.LENGTH_SHORT).show();
+        if (currentUser == null) {
+            Toast.makeText(this, "Not signed in", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        db = FirebaseDatabase.getInstance().getReference(); // Get root reference
+        parentUID = currentUser.getUid();
 
         btnAddChild.setOnClickListener(v -> addChild());
     }
 
     private void addChild() {
         String first = etFirstName.getText().toString().trim();
-        String last = etLastName.getText().toString().trim();
+        String last  = etLastName.getText().toString().trim();
 
         if (first.isEmpty() || last.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String childId = db.child("users").child(parentUID).child("children").push().getKey();
-
-        if (childId != null) {
-            Child newChild = new Child(first, last);
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put("/users/" + parentUID + "/children/" + childId, newChild);
-            childUpdates.put("/child_to_parent/" + childId, parentUID);
-
-            db.updateChildren(childUpdates).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Intent i = new Intent(this, GenerateQRActivity.class);
-                    i.putExtra("childId", childId);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(ManageChildrenActivity.this, "Failed to add child.", Toast.LENGTH_SHORT).show();
-                }
-            });
+        // ✅ childId תחת parents/<parentUID>/children
+        String childId = db.child("parents").child(parentUID).child("children").push().getKey();
+        if (childId == null) {
+            Toast.makeText(this, "Failed to create childId", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        Child newChild = new Child(first, last);
+
+        btnAddChild.setEnabled(false);
+
+        // ✅ שומרים רק תחת ההורה (אין child_to_parent)
+        db.child("parents")
+                .child(parentUID)
+                .child("children")
+                .child(childId)
+                .setValue(newChild)
+                .addOnCompleteListener(task -> {
+                    btnAddChild.setEnabled(true);
+
+                    if (task.isSuccessful()) {
+                        Intent i = new Intent(ManageChildrenActivity.this, GenerateQRActivity.class);
+                        i.putExtra("parentId", parentUID);
+                        i.putExtra("childId", childId);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(this,
+                                "Failed: " + (task.getException() != null ? task.getException().getMessage() : "unknown"),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
