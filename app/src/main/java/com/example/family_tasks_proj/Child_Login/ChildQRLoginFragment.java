@@ -1,12 +1,8 @@
-// =======================
-// ChildQRLoginFragment.java  (FULL + DEBUG + WORKING PARSE)
-// package: com.example.family_tasks_proj.Child_Login
-// QR payload expected: parent:<PARENT_UID>|child:<CHILD_ID>
-// DB path checked: parents/<parentId>/children/<childId>
-// =======================
 package com.example.family_tasks_proj.Child_Login;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +29,11 @@ public class ChildQRLoginFragment extends Fragment {
 
     private static final String TAG = "ChildQRLogin";
 
+    // SharedPreferences keys
+    private static final String PREFS = "child_session";
+    private static final String KEY_PARENT = "parentId";
+    private static final String KEY_CHILD = "childId";
+
     private Button btnScanQR;
 
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
@@ -47,7 +48,6 @@ public class ChildQRLoginFragment extends Fragment {
 
                 raw = raw.trim();
                 Log.d(TAG, "RAW=" + raw);
-                Toast.makeText(requireContext(), "RAW=" + raw, Toast.LENGTH_LONG).show();
 
                 ParsedQr parsed = parseQr(raw);
 
@@ -76,22 +76,21 @@ public class ChildQRLoginFragment extends Fragment {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
         options.setPrompt("Scan the QR code given by your parent");
-        // options.setDesiredBarcodeFormats(ScanOptions.QR_CODE); // optional
         barcodeLauncher.launch(options);
     }
 
     // ======== QR PARSER ========
     // Supports:
-    // 1) parent:XXX|child:YYY  (recommended)
-    // 2) childId:YYY           (legacy) -> NOT enough to find parent in new model, returns childId only
-    // 3) YYY                   (raw childId) -> returns childId only
+    // 1) parent:XXX|child:YYY  (required)
+    // 2) childId:YYY (legacy)  -> returns only childId (won't pass validation)
+    // 3) YYY (raw)             -> returns only childId (won't pass validation)
     private ParsedQr parseQr(String raw) {
         ParsedQr out = new ParsedQr();
 
         if (raw == null) return out;
         raw = raw.trim();
 
-        // Recommended format: parent:XXX|child:YYY
+        // required: parent:XXX|child:YYY
         if (raw.contains("|")) {
             String[] parts = raw.split("\\|");
             for (String p : parts) {
@@ -103,13 +102,12 @@ public class ChildQRLoginFragment extends Fragment {
             return out;
         }
 
-        // Legacy: childId:YYY
+        // legacy:
         if (raw.startsWith("childId:")) {
             out.childId = raw.substring("childId:".length()).trim();
             return out;
         }
 
-        // Raw id
         out.childId = raw;
         return out;
     }
@@ -117,7 +115,6 @@ public class ChildQRLoginFragment extends Fragment {
     private void checkChildExists(String parentId, String childId) {
         String path = "parents/" + parentId + "/children/" + childId;
         Log.d(TAG, "Checking path=" + path);
-        Toast.makeText(requireContext(), "CHECK: " + path, Toast.LENGTH_LONG).show();
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -133,6 +130,8 @@ public class ChildQRLoginFragment extends Fragment {
                 Log.d(TAG, "snapshot.exists=" + snapshot.exists());
 
                 if (snapshot.exists()) {
+                    saveSession(parentId, childId);
+
                     Intent i = new Intent(requireActivity(), ChildDashboardActivity.class);
                     i.putExtra("parentId", parentId);
                     i.putExtra("childId", childId);
@@ -142,10 +141,6 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "NOT FOUND at " + path);
                 }
-
-
-
-          
             }
 
             @Override
@@ -157,9 +152,16 @@ public class ChildQRLoginFragment extends Fragment {
         });
     }
 
-    // small helper class
-    private static class ParsedQr
-    {
+    private void saveSession(String parentId, String childId) {
+        SharedPreferences sp = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        sp.edit()
+                .putString(KEY_PARENT, parentId)
+                .putString(KEY_CHILD, childId)
+                .apply();
+        Log.d(TAG, "Session saved: parentId=" + parentId + " childId=" + childId);
+    }
+
+    private static class ParsedQr {
         String parentId;
         String childId;
     }
