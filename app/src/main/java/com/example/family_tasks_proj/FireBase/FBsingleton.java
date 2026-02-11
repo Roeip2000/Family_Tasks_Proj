@@ -4,6 +4,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FBsingleton {
 
     private static FBsingleton instance;
@@ -74,8 +77,13 @@ public class FBsingleton {
 
         DatabaseReference ref = database.getReference("parents").child(uid);
 
-        ParentInFb parent = new ParentInFb(uid, firstName, lastName, email);
+        Map<String, Object> profileData = new HashMap<>();
+        profileData.put("uid", uid);
+        profileData.put("firstName", firstName);
+        profileData.put("lastName", lastName);
+        profileData.put("email", email);
+        profileData.put("role", "parent");
 
-        ref.setValue(parent);
+        ref.updateChildren(profileData);
     }
 }
