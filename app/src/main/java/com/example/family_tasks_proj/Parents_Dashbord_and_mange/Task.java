@@ -1,6 +1,9 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
-
+/**
+ * מודל משימה מצד ההורה (לא בשימוש כרגע — המשימות נשמרות כ-HashMap).
+ * נשמר לשימוש עתידי או כ-reference.
+ */
 public class Task {
     public String title;
     public String assignedTo;

@@ -25,11 +25,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+/**
+ * מסך התחברות ילד באמצעות סריקת QR.
+ *
+ * אחריות:
+ * - פותח סורק QR (ZXing).
+ * - מפענח את המחרוזת בפורמט "parent:{id}|child:{id}".
+ * - מוודא מול Firebase שהילד קיים תחת ההורה.
+ * - שומר סשן ב-SharedPreferences ופותח את ChildDashboardActivity.
+ */
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String TAG = "ChildQRLogin";
 
-    // SharedPreferences keys
     private static final String PREFS = "child_session";
     private static final String KEY_PARENT = "parentId";
     private static final String KEY_CHILD = "childId";
@@ -72,6 +80,7 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
+    /** פותח את מצלמת הסורק עם ZXing. */
     private void startQRScan() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
@@ -79,11 +88,16 @@ public class ChildQRLoginFragment extends Fragment {
         barcodeLauncher.launch(options);
     }
 
-    // ======== QR PARSER ========
-    // Supports:
-    // 1) parent:XXX|child:YYY  (required)
-    // 2) childId:YYY (legacy)  -> returns only childId (won't pass validation)
-    // 3) YYY (raw)             -> returns only childId (won't pass validation)
+    /**
+     * מפענח מחרוזת QR לאובייקט ParsedQr.
+     *
+     * פורמטים נתמכים:
+     * 1. "parent:XXX|child:YYY" — הפורמט הנדרש (תואם ל-GenerateQRActivity)
+     * 2. "childId:YYY" — legacy, ייכשל בוולידציה כי חסר parentId
+     * 3. טקסט חופשי — legacy, ייכשל בוולידציה
+     *
+     * @return ParsedQr עם parentId ו-childId (אחד או שניהם יכולים להיות null)
+     */
     private ParsedQr parseQr(String raw) {
         ParsedQr out = new ParsedQr();
 
@@ -112,6 +126,10 @@ public class ChildQRLoginFragment extends Fragment {
         return out;
     }
 
+    /**
+     * בודק ב-Firebase שהילד קיים תחת /parents/{parentId}/children/{childId}.
+     * אם כן — שומר סשן ופותח דשבורד. אם לא — מציג שגיאה.
+     */
     private void checkChildExists(String parentId, String childId) {
         String path = "parents/" + parentId + "/children/" + childId;
         Log.d(TAG, "Checking path=" + path);
@@ -152,6 +170,7 @@ public class ChildQRLoginFragment extends Fragment {
         });
     }
 
+    /** שומר parentId + childId ב-SharedPreferences לסשן עתידי. */
     private void saveSession(String parentId, String childId) {
         SharedPreferences sp = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         sp.edit()
@@ -161,6 +180,7 @@ public class ChildQRLoginFragment extends Fragment {
         Log.d(TAG, "Session saved: parentId=" + parentId + " childId=" + childId);
     }
 
+    /** תוצאת פענוח QR — parentId ו-childId. */
     private static class ParsedQr {
         String parentId;
         String childId;

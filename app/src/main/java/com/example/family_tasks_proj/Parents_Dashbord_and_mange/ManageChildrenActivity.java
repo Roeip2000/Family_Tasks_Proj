@@ -15,6 +15,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * מסך הוספת ילד חדש.
+ *
+ * אחריות:
+ * - מקבל שם פרטי + שם משפחה מהמשתמש.
+ * - יוצר רשומת ילד ב-Firebase תחת /parents/{uid}/children/{childId}.
+ * - בהצלחה — פותח את GenerateQRActivity ליצירת קוד QR לילד.
+ */
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName, etLastName;
@@ -45,6 +53,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
         btnAddChild.setOnClickListener(v -> addChild());
     }
 
+    /**
+     * שומר ילד חדש ב-Firebase ופותח מסך QR.
+     *
+     * נתיב כתיבה: /parents/{parentUID}/children/{childId}
+     * Side-effect: משבית את הכפתור בזמן הכתיבה למניעת כפילויות.
+     */
     private void addChild() {
         String first = etFirstName.getText().toString().trim();
         String last  = etLastName.getText().toString().trim();
@@ -54,7 +68,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        // ✅ childId תחת parents/<parentUID>/children
         String childId = db.child("parents").child(parentUID).child("children").push().getKey();
         if (childId == null) {
             Toast.makeText(this, "Failed to create childId", Toast.LENGTH_SHORT).show();
@@ -65,7 +78,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         btnAddChild.setEnabled(false);
 
-        // ✅ שומרים רק תחת ההורה (אין child_to_parent)
         db.child("parents")
                 .child(parentUID)
                 .child("children")

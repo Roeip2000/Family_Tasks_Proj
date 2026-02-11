@@ -36,6 +36,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * מסך הקצאת משימה לילד.
+ *
+ * אחריות:
+ * - טוען תבניות משימה מ-/parents/{uid}/task_templates.
+ * - טוען רשימת ילדים מ-/parents/{uid}/children.
+ * - ההורה בוחר תבנית, ילד, ותאריך יעד — ולוחץ "הקצה".
+ * - שומר משימה חדשה ב-/parents/{uid}/children/{childId}/tasks/{taskId}.
+ */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTitle, etDueDate;
@@ -43,7 +52,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private ImageView imgTaskPreview;
     private Button btnAssign;
 
+    /** מזהי ילדים — האינדקס תואם ל-Spinner של spAssignee */
     private final List<String> childrenIds = new ArrayList<>();
+    /** תבניות — כל Map מכיל "title" ו-"imageBase64" */
     private final List<Map<String, String>> templatesList = new ArrayList<>();
 
     private String parentUid;
@@ -56,7 +67,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_assign_task_to_child);
 
-        // הגדרת Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
         {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -64,7 +74,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return insets;
         });
 
-        // רכיבי UI
         etTitle = findViewById(R.id.etTitle);
         etDueDate = findViewById(R.id.etDueDate);
         spTemplates = findViewById(R.id.spTemplates);
@@ -81,11 +90,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }
         parentUid = user.getUid();
 
-        // טעינת נתונים מ-Firebase (תחת ההורה המחובר)
         loadTemplates();
         loadChildren();
 
-        // מאזין לבחירת תבנית - מעדכן כותרת ותמונה אוטומטית
+        // בחירת תבנית → מעדכן כותרת + תצוגה מקדימה של תמונה
         spTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
@@ -101,14 +109,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // בחירת תאריך
         etDueDate.setOnClickListener(v -> showDatePicker());
-
-        // כפתור ביצוע הקצאה
         btnAssign.setOnClickListener(v -> assignTask());
     }
 
-    // תבניות נשמרות תחת: /parents/{parentUid}/profile/taskTemplates/{templateId}
+    /**
+     * טוען תבניות מ-/parents/{parentUid}/task_templates.
+     * ממלא את templatesList ואת ה-Spinner.
+     */
     private void loadTemplates()
     {
         templatesList.clear();
@@ -146,7 +154,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                         if (!templatesList.isEmpty())
                         {
-                            // יציג תצוגה מקדימה גם למקרה שהספינר לא "מפעיל" אירוע מיד
+                            // Spinner לא תמיד מפעיל onItemSelected בפעם הראשונה
                             displayBase64Image(templatesList.get(0).get("imageBase64"));
                         }
                     }
@@ -156,7 +164,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 });
     }
 
-    // ילדים נשמרים תחת: /parents/{parentUid}/children/{childId}
+    /**
+     * טוען רשימת ילדים מ-/parents/{parentUid}/children.
+     * ממלא את childrenIds ואת ה-Spinner.
+     */
     private void loadChildren()
     {
         childrenIds.clear();
@@ -199,6 +210,12 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * מאמת קלט, בונה אובייקט משימה, ושומר ב-Firebase.
+     *
+     * נתיב כתיבה: /parents/{parentUid}/children/{childId}/tasks/{taskId}
+     * Side-effect: סוגר את ה-Activity בהצלחה.
+     */
     private void assignTask()
     {
         int childPos = spAssignee.getSelectedItemPosition();
@@ -226,7 +243,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             imageBase64 = templatesList.get(templatePos).get("imageBase64");
         }
 
-        // שמירה תחת: /parents/{parentUid}/children/{childId}/tasks/{taskId}
         String taskId = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid)
@@ -244,9 +260,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         Map<String, Object> task = new HashMap<>();
         task.put("title", title);
-        task.put("dueAt", date);       // לפי העץ המוגדר בפרויקט
-        task.put("isDone", false);     // משימה חדשה תמיד לא בוצעה
-        task.put("starsWorth", 10);    // ניקוד בסיסי
+        task.put("dueAt", date);
+        task.put("isDone", false);
+        task.put("starsWorth", 10);
         task.put("imageBase64", imageBase64);
         task.put("createdAt", System.currentTimeMillis());
 
@@ -269,6 +285,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 });
     }
 
+    /** מפענח מחרוזת Base64 ומציג כ-Bitmap ב-imgTaskPreview. */
     private void displayBase64Image(String base64)
     {
         if (base64 == null || base64.isEmpty()) return;
@@ -277,6 +294,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         imgTaskPreview.setImageBitmap(bitmap);
     }
 
+    /** פותח DatePickerDialog וכותב את התאריך הנבחר ל-etDueDate בפורמט d/M/yyyy. */
     private void showDatePicker()
     {
         Calendar cal = Calendar.getInstance();

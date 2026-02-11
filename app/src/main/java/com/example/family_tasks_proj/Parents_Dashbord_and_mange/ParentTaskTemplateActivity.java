@@ -22,6 +22,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * מסך יצירת תבנית משימה (Task Template).
+ *
+ * אחריות:
+ * - ההורה בוחר תמונה מהגלריה וכותב כותרת.
+ * - התמונה מוקטנת ל-400×400 ומומרת ל-Base64 (JPEG 75%).
+ * - התבנית נשמרת ב-Firebase בנתיב /parents/{uid}/task_templates/{id}.
+ * - משמשת מאוחר יותר ב-AssignTaskToChildActivity להקצאת משימות.
+ */
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTitle;
@@ -46,7 +55,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveTemplate());
     }
 
-    // פתיחת גלריה לבחירת תמונה
+    /** פותח את הגלריה לבחירת תמונה. */
     private void pickImage()
     {
 
@@ -66,7 +75,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 }
             });
 
-    // שמירת תבנית משימה ל-Firebase (כ-Base64)
+    /**
+     * שומר תבנית חדשה ב-Firebase תחת /parents/{uid}/task_templates/{id}.
+     * Side-effect: סוגר את ה-Activity בהצלחה.
+     */
     private void saveTemplate()
     {
         String title = etTitle.getText().toString().trim();
@@ -118,7 +130,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 });
     }
 
-    // המרת תמונה ל-String (Base64) — גרסה בטוחה ומוקטנת
+    /**
+     * ממיר Uri של תמונה למחרוזת Base64.
+     * מקטין ל-400×400, דוחס ל-JPEG 75%.
+     *
+     * @param uri  ה-Uri שנבחר מהגלריה
+     * @return מחרוזת Base64, או null אם ההמרה נכשלה
+     */
     private String imageUriToBase64(Uri uri)
     {
 
@@ -129,7 +147,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             if (bitmap == null) return null;
 
-            // הקטנה כדי לא לחרוג ממגבלות Firebase
             bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

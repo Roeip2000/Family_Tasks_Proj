@@ -15,6 +15,16 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * מציג קוד QR שהילד סורק כדי להתחבר.
+ *
+ * מקבל ב-Intent:
+ * - parentId (חובה, fallback: FirebaseAuth currentUser)
+ * - childId  (חובה)
+ *
+ * פורמט ה-QR: "parent:{parentId}|child:{childId}"
+ * פורמט זהה לזה שה-ChildQRLoginFragment מפענח.
+ */
 public class GenerateQRActivity extends AppCompatActivity {
 
     private static final String TAG = "QR";
@@ -28,7 +38,6 @@ public class GenerateQRActivity extends AppCompatActivity {
 
         ImageView imageViewQrCode = findViewById(R.id.imageViewQrCode);
         if (imageViewQrCode == null) {
-            Toast.makeText(this, "ImageView not found (check id)", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "imageViewQrCode is null");
             finish();
             return;
@@ -37,7 +46,7 @@ public class GenerateQRActivity extends AppCompatActivity {
         String childId = getIntent().getStringExtra("childId");
         String parentId = getIntent().getStringExtra("parentId");
 
-        // fallback: אם לא הועבר parentId ב-Intent, ניקח מההורה המחובר
+        // fallback — אם לא הועבר parentId, לוקחים מההורה המחובר
         if (parentId == null || parentId.trim().isEmpty()) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) parentId = user.getUid();
@@ -51,7 +60,7 @@ public class GenerateQRActivity extends AppCompatActivity {
             return;
         }
 
-        // ✅ פורמט אחיד בין גנרטור לסורק
+        // פורמט אחיד — חייב להתאים לפענוח ב-ChildQRLoginFragment.parseQr()
         String payload = "parent:" + parentId.trim() + "|child:" + childId.trim();
         Log.d(TAG, "payload=" + payload);
 
@@ -59,7 +68,6 @@ public class GenerateQRActivity extends AppCompatActivity {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(payload, BarcodeFormat.QR_CODE, 800, 800);
             imageViewQrCode.setImageBitmap(bitmap);
-            Log.d(TAG, "QR bitmap set");
         } catch (WriterException e) {
             Toast.makeText(this, "Failed generating QR", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "WriterException", e);

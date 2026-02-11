@@ -1,5 +1,11 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
+/**
+ * מודל תבנית משימה (לא בשימוש כרגע — התבניות נשמרות כ-HashMap).
+ *
+ * נתיב ב-DB: /parents/{uid}/task_templates/{id}
+ * constructor ריק חובה ל-Firebase deserialization.
+ */
 public class TaskTemplate {
     public String id;
     public String title;
@@ -7,8 +13,7 @@ public class TaskTemplate {
 
     public TaskTemplate()
     {
-
-    } // חובה לפיירביס
+    }
 
     public TaskTemplate(String id, String title, String imageBase64)
     {

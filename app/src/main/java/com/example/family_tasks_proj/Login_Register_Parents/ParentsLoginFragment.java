@@ -15,6 +15,12 @@ import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardA
 import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * מסך התחברות להורה.
+ *
+ * מבצע אימות עם FirebaseAuth (email + password).
+ * בהצלחה — עובר ל-ParentDashboardActivity וסוגר את מסך הכניסה.
+ */
 public class ParentsLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -23,7 +29,6 @@ public class ParentsLoginFragment extends Fragment {
 
     public ParentsLoginFragment()
     {
-        // Required empty public constructor
     }
 
     @Override
@@ -46,9 +51,13 @@ public class ParentsLoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
+    /**
+     * מאמת email + password מול FirebaseAuth.
+     * בהצלחה — פותח את ParentDashboardActivity.
+     * בכישלון — מציג Toast עם שגיאה.
+     */
     private void loginUser()
     {
-
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
 

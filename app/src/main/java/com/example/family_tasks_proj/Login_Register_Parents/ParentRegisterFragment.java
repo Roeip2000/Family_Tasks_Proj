@@ -20,6 +20,14 @@ import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * מסך הרשמה להורה חדש.
+ *
+ * אחריות:
+ * - יוצר חשבון ב-FirebaseAuth (email + password).
+ * - שומר את פרופיל ההורה ב-Realtime Database דרך FBsingleton.
+ * - מעביר ל-ParentDashboardActivity בהצלחה.
+ */
 public class ParentRegisterFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -29,7 +37,6 @@ public class ParentRegisterFragment extends Fragment {
 
     public ParentRegisterFragment()
     {
-        // חובה קונסטרקטור ריק
     }
 
     @Override
@@ -45,10 +52,8 @@ public class ParentRegisterFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        // Firebase
         mAuth = FirebaseAuth.getInstance();
 
-        // חיבור ל־XML
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName  = view.findViewById(R.id.etLastName);
         etEmail     = view.findViewById(R.id.etEmail);
@@ -58,9 +63,15 @@ public class ParentRegisterFragment extends Fragment {
         btnRegister.setOnClickListener(v -> registerParent());
     }
 
+    /**
+     * יוצר חשבון חדש ב-FirebaseAuth, שומר פרופיל ב-DB, ועובר לדשבורד.
+     *
+     * Side-effects:
+     * - כותב ל-/parents/{uid} ב-Realtime Database.
+     * - סוגר את ה-Activity הנוכחי (מסך הכניסה).
+     */
     private void registerParent()
     {
-
         String firstName = etFirstName.getText().toString().trim();
         String lastName  = etLastName.getText().toString().trim();
         String email     = etEmail.getText().toString().trim();
@@ -81,6 +92,11 @@ public class ParentRegisterFragment extends Fragment {
                     {
 
                         FirebaseUser user = mAuth.getCurrentUser();
+                        if (user == null)
+                        {
+                            Toast.makeText(getContext(), "שגיאה: לא ניתן לאמת משתמש", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         String uid = user.getUid();
 
                         // שמירה ב־Singleton
@@ -98,7 +114,8 @@ public class ParentRegisterFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "שגיאה: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                        Toast.makeText(getContext(), "שגיאה: " + errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }

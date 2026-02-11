@@ -14,6 +14,17 @@ import com.example.family_tasks_proj.Login_Register_Parents.ParentsLoginFragment
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
 
+/**
+ * מסך כניסה ראשי — Launcher Activity.
+ *
+ * מציג כפתורים לניווט בין:
+ * - התחברות הורה (ParentsLoginFragment)
+ * - הרשמת הורה (ParentRegisterFragment)
+ * - סריקת QR לילד (ChildQRLoginFragment)
+ * - כניסה ישירה לדשבורד ילד (ChildDashboardActivity)
+ *
+ * כל Fragment נטען לתוך fragmentContainer שב-layout.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Button btnRegister, btnLogin, btnChildQR, btnChild;
@@ -24,24 +35,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // קישור כפתורים מה-XML
         btnRegister = findViewById(R.id.btnRegister);
         btnLogin = findViewById(R.id.btnLogin);
         btnChildQR = findViewById(R.id.btnChildQR);
-        btnChild = findViewById(R.id.btnChild); // תיקון: השם תואם ל-ID ב-XML
+        btnChild = findViewById(R.id.btnChild);
 
-        // Fragment ברירת מחדל
         if (savedInstanceState == null)
         {
             openFragment(new ParentsLoginFragment());
         }
 
-        // לוגיקת כפתורים למעבר בין פרגמנטים
         btnRegister.setOnClickListener(v -> openFragment(new ParentRegisterFragment()));
         btnLogin.setOnClickListener(v -> openFragment(new ParentsLoginFragment()));
         btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
 
-        // מעבר ישיר ל-Activity של הילד באמצעות Intent
+        // כניסה ישירה ללא QR — משתמש בסשן שמור ב-SharedPreferences (אם קיים)
         btnChild.setOnClickListener(v ->
         {
             Intent intent = new Intent(MainActivity.this, ChildDashboardActivity.class);
@@ -49,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /** מחליף את ה-Fragment המוצג ב-fragmentContainer ושומר ב-back stack. */
     private void openFragment(Fragment fragment)
     {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).addToBackStack(null).commit();

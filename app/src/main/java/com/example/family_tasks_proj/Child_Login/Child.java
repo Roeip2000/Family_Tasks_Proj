@@ -1,11 +1,16 @@
 package com.example.family_tasks_proj.Child_Login;
 
+/**
+ * מודל נתונים של ילד.
+ * נתיב ב-Firebase: /parents/{uid}/children/{childId}
+ *
+ * constructor ריק חובה ל-DataSnapshot.getValue(Child.class).
+ */
 public class Child {
     public String firstName;
     public String lastName;
 
     public Child() {
-        // Default constructor required for calls to DataSnapshot.getValue(Child.class)
     }
 
     public Child(String firstName, String lastName) {

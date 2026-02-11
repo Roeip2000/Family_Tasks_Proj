@@ -22,6 +22,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
+/**
+ * דשבורד הילד — מציג שם, כוכבים, וסיכום משימות.
+ *
+ * אחריות:
+ * - מזהה את הילד מ-Intent extras (אחרי QR) או מ-SharedPreferences (סשן קודם).
+ * - טוען כותרת (שם ילד) מ-/parents/{parentId}/children/{childId}.
+ * - טוען משימות מ-.../tasks וסופר סה"כ, שבוצעו, ודחופות (עד יומיים).
+ *
+ * הערה: ה-RecyclerView (rvTasks) עדיין חסר Adapter — כרגע מציג רק סיכומים.
+ */
 public class ChildDashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "ChildDashboard";
@@ -53,7 +63,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         rvTasks = findViewById(R.id.rvTasks);
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
 
-        // עברית: סשן ילד מגיע מה-QR (Intent) או מגיבוי (SharedPreferences)
         resolveSession();
         if (isBlank(parentId) || isBlank(childId)) {
             Toast.makeText(this, "Missing QR session. Please scan again.", Toast.LENGTH_LONG).show();
@@ -66,6 +75,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadTasksSummary();
     }
 
+    /**
+     * קובע parentId + childId: קודם מ-Intent, אם חסר — מ-SharedPreferences.
+     * מאפשר לילד לחזור לדשבורד בלי לסרוק QR מחדש.
+     */
     private void resolveSession() {
         Intent i = getIntent();
         if (i != null) {
@@ -79,8 +92,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
+    /** מחזיר reference ל-/parents/{parentId}/children/{childId}. */
     private DatabaseReference childRef() {
-        // עברית: אחידות Firebase — נתיב ילד תחת ההורה
         return FirebaseDatabase.getInstance()
                 .getReference(ROOT_PARENTS)
                 .child(parentId)
@@ -88,6 +101,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .child(childId);
     }
 
+    /** טוען שם הילד מ-Firebase ומציג ב-tvChildName. */
     private void loadChildHeader() {
         String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId;
         Log.d(TAG, "Reading child from: " + path);
@@ -101,7 +115,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 if (lastName != null && !lastName.trim().isEmpty()) full = full + " " + lastName;
                 tvChildName.setText(full.trim().isEmpty() ? "Child" : full.trim());
 
-                // בפרויקט כרגע אין שדה stars יציב לכל ילד → ברירת מחדל
+                // TODO: כרגע אין שדה stars ב-DB — ברירת מחדל 0
                 tvStars.setText("0");
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {
@@ -110,6 +124,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
+    /** טוען משימות מ-Firebase וסופר total / done / dueSoon. */
     private void loadTasksSummary() {
         DatabaseReference tasksRef = childRef().child(NODE_TASKS);
         String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId + "/" + NODE_TASKS;
@@ -127,7 +142,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     if (!t.isDone && isDueSoon(t.dueAt)) dueSoon++;
                 }
 
-                // עברית: עדכון סיכומים אחרי onDataChange
                 tvTotalTasks.setText(String.valueOf(total));
                 tvCompleted.setText(String.valueOf(done));
                 tvDueSoon.setText(String.valueOf(dueSoon));
@@ -140,6 +154,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * בודק אם תאריך יעד הוא בתוך 0–2 ימים מהיום.
+     *
+     * @param dueAt תאריך בפורמט "d/M/yyyy"
+     * @return true אם המשימה דחופה
+     */
     private boolean isDueSoon(String dueAt) {
         if (isBlank(dueAt)) return false;
         String[] p = dueAt.trim().split("/");
