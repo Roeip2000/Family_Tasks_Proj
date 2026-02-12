@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Login_Register_Parents;
+package com.example.family_tasks_proj.Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,38 +9,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
 import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-/**
- * מסך התחברות להורה.
- *
- * מבצע אימות עם FirebaseAuth (email + password).
- * בהצלחה — עובר ל-ParentDashboardActivity וסוגר את מסך הכניסה.
- */
-public class ParentsLoginFragment extends Fragment {
+public class ParentLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private EditText etEmail, etPassword;
     private Button btnLogin;
 
-    public ParentsLoginFragment()
+    public ParentLoginFragment()
     {
+        // Required empty public constructor
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
-
-        return inflater.inflate(R.layout.fragment_login, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
-    {
+        super.onViewCreated(view, savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -51,15 +49,10 @@ public class ParentsLoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
-    /**
-     * מאמת email + password מול FirebaseAuth.
-     * בהצלחה — פותח את ParentDashboardActivity.
-     * בכישלון — מציג Toast עם שגיאה.
-     */
     private void loginUser()
     {
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty())
         {
@@ -67,19 +60,16 @@ public class ParentsLoginFragment extends Fragment {
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task ->
-
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
                 {
-                    if (task.isSuccessful()) {
-
-                        startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
+                    if (task.isSuccessful())
+                    {
+                        startActivity(new Intent(getActivity(), ParentDashboardActivity.class));
                         requireActivity().finish();
-
                     }
-
                     else
                     {
-                        Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -7,10 +7,9 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-
 import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
-import com.example.family_tasks_proj.Login_Register_Parents.ParentRegisterFragment;
-import com.example.family_tasks_proj.Login_Register_Parents.ParentsLoginFragment;
+import com.example.family_tasks_proj.Parents.ParentLoginFragment;
+import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
 
@@ -18,7 +17,7 @@ import com.example.family_tasks_proj.child.ChildDashboardActivity;
  * מסך כניסה ראשי — Launcher Activity.
  *
  * מציג כפתורים לניווט בין:
- * - התחברות הורה (ParentsLoginFragment)
+ * - התחברות הורה (ParentLoginFragment)
  * - הרשמת הורה (ParentRegisterFragment)
  * - סריקת QR לילד (ChildQRLoginFragment)
  * - כניסה ישירה לדשבורד ילד (ChildDashboardActivity)
@@ -42,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null)
         {
-            openFragment(new ParentsLoginFragment());
+            openFragment(new ParentLoginFragment());
         }
 
         btnRegister.setOnClickListener(v -> openFragment(new ParentRegisterFragment()));
-        btnLogin.setOnClickListener(v -> openFragment(new ParentsLoginFragment()));
+        btnLogin.setOnClickListener(v -> openFragment(new ParentLoginFragment()));
         btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
 
         // כניסה ישירה ללא QR — משתמש בסשן שמור ב-SharedPreferences (אם קיים)

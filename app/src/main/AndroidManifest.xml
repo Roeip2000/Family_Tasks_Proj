@@ -27,10 +27,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Auth (Login / Register) -->
-        <activity
-            android:name=".auth.AuthActivity"
-            android:exported="false" /> <!-- Parent side -->
+        </activity>
+        <!-- Parent side -->
         <activity
             android:name=".Parents_Dashbord_and_mange.ParentDashboardActivity"
             android:exported="false" />

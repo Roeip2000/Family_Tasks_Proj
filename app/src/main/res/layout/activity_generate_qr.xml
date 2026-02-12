@@ -7,58 +7,103 @@
     android:padding="24dp"
     tools:context=".Parents_Dashbord_and_mange.GenerateQRActivity">
 
-    <!-- שם הילד מעל ה-QR -->
+    <!-- כותרת -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QR לילדים"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- בחירת ילד -->
+    <TextView
+        android:id="@+id/tvSelectChild"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="בחר ילד:"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <Spinner
+        android:id="@+id/spChildren"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSelectChild" />
+
+    <!-- שם הילד שנבחר -->
     <TextView
         android:id="@+id/tvChildLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="QR Code"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/progressBar"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@id/spChildren" />
 
-    <!-- ספינר בזמן יצירת ה-QR -->
-
+    <!-- ספינר בזמן טעינה -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/imageViewQrCode"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvChildLabel" />
 
+    <!-- QR Code Image -->
     <ImageView
         android:id="@+id/imageViewQrCode"
         android:layout_width="280dp"
         android:layout_height="280dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="QR code for child login"
         android:scaleType="fitCenter"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/btnBackToDashboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressBar" />
+        app:layout_constraintTop_toBottomOf="@id/tvChildLabel" />
 
-    <!-- כפתור חזרה — ההורה מחליט מתי לצאת -->
+    <!-- הודעה אם אין ילדים -->
+    <TextView
+        android:id="@+id/tvNoChildren"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="אין ילדים רשומים.\nהוסף ילדים דרך ניהול ילדים."
+        android:textSize="16sp"
+        android:textColor="#888888"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvChildLabel"
+        android:layout_marginTop="32dp" />
+
+    <!-- כפתור חזרה -->
     <Button
         android:id="@+id/btnBackToDashboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="חזרה לדשבורד"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageViewQrCode" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

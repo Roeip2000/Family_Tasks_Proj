@@ -34,7 +34,7 @@ public class FBsingleton {
     }
 
     /** מחזיר את ה-instance היחיד; יוצר אותו בפעם הראשונה. */
-    public static FBsingleton getInstance()
+    public static synchronized FBsingleton getInstance()
     {
         if (instance == null)
         {
