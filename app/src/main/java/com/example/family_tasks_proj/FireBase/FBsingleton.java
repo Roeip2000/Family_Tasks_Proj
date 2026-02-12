@@ -15,6 +15,16 @@ import java.util.Map;
  * - כותב/מעדכן את פרופיל ההורה ב-Firebase בלי למחוק נתוני ילדים קיימים.
  *
  * שימוש: FBsingleton.getInstance()
+ *
+ * ===== הערות חשובות =====
+ * - ה-getInstance() הוא synchronized כדי למנוע יצירת שני instances ב-threads שונים.
+ * - saveParentToFirebase() משתמש ב-updateChildren() ולא ב-setValue() —
+ *   זה קריטי כדי לא לדרוס את /children ו-/task_templates שכבר קיימים תחת ההורה.
+ *
+ * ===== הערות לשיפור =====
+ * TODO: הוספת callback/listener ל-saveParentToFirebase כדי לדעת אם השמירה הצליחה.
+ * TODO: שימוש ב-FirebaseUser.getUid() ישירות במקום שמירה ב-field — מונע מצב
+ *       שבו uid לא מסונכרן עם ה-user המחובר.
  */
 public class FBsingleton {
 
@@ -23,17 +33,22 @@ public class FBsingleton {
     private final FirebaseDatabase database;
     private final FirebaseAuth auth;
 
+    // פרטי ההורה המחובר — נשמרים בזיכרון
     private String uid;
     private String firstName;
     private String lastName;
     private String email;
 
+    /** constructor פרטי — מונע יצירה ישירה מבחוץ. */
     private FBsingleton() {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
     }
 
-    /** מחזיר את ה-instance היחיד; יוצר אותו בפעם הראשונה. */
+    /**
+     * מחזיר את ה-instance היחיד; יוצר אותו בפעם הראשונה.
+     * synchronized — מונע race condition ב-multi-threading.
+     */
     public static synchronized FBsingleton getInstance()
     {
         if (instance == null)
@@ -59,40 +74,29 @@ public class FBsingleton {
         this.email = email;
     }
 
-    public String getUid()
-    {
-        return uid;
-    }
-
-    public String getFirstName()
-    {
-        return firstName;
-    }
-
-    public String getLastName()
-    {
-        return lastName;
-    }
-
-    public String getEmail()
-    {
-        return email;
-    }
+    public String getUid()       { return uid; }
+    public String getFirstName() { return firstName; }
+    public String getLastName()  { return lastName; }
+    public String getEmail()     { return email; }
 
     /**
      * כותב את פרופיל ההורה ל-Firebase בנתיב /parents/{uid}.
      *
-     * משתמש ב-updateChildren כדי לעדכן רק את שדות הפרופיל
+     * משתמש ב-updateChildren() כדי לעדכן רק את שדות הפרופיל
      * בלי לדרוס children/ או task_templates/ שכבר קיימים.
+     *
+     * הערה: אם uid == null (למשל אם setUserData לא נקרא קודם),
+     *        המתודה תחזור בשקט בלי לכתוב כלום.
      */
     public void saveParentToFirebase() {
         if (uid == null)
         {
-            return;
+            return; // אין uid — אי אפשר לשמור
         }
 
         DatabaseReference ref = database.getReference("parents").child(uid);
 
+        // יוצר Map רק עם שדות הפרופיל — לא נוגע בילדים/תבניות
         Map<String, Object> profileData = new HashMap<>();
         profileData.put("uid", uid);
         profileData.put("firstName", firstName);
@@ -100,6 +104,7 @@ public class FBsingleton {
         profileData.put("email", email);
         profileData.put("role", "parent");
 
+        // updateChildren ולא setValue — שומר על נתונים קיימים!
         ref.updateChildren(profileData);
     }
 }

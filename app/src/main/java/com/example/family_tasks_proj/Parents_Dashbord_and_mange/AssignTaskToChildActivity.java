@@ -44,6 +44,16 @@ import java.util.Map;
  * - טוען רשימת ילדים מ-/parents/{uid}/children.
  * - ההורה בוחר תבנית, ילד, ותאריך יעד — ולוחץ "הקצה".
  * - שומר משימה חדשה ב-/parents/{uid}/children/{childId}/tasks/{taskId}.
+ *
+ * Layout: activity_assign_task_to_child.xml
+ *
+ * ===== באגים / הערות =====
+ * BUG: onCancelled ריק (שורות 163, 209) — שגיאות Firebase נבלעות בשקט.
+ *      צריך להוסיף Toast או Log.e כדי שהמפתח ידע על תקלות.
+ * BUG: starsWorth קבוע ל-10 — צריך להוסיף שדה/Spinner בטופס כדי שההורה יבחר ערך.
+ * TODO: להשתמש ב-ImageHelper.base64ToBitmap() במקום לפענח Base64 ידנית (שכפול קוד).
+ * TODO: להוסיף ProgressBar בזמן טעינת תבניות וילדים.
+ * TODO: לטפל במקרה שאין תבניות — להציג הודעה "צור תבנית קודם".
  */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
@@ -67,6 +77,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_assign_task_to_child);
 
+        // התאמה לשוליים של מסך (edge-to-edge)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
         {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -74,6 +85,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return insets;
         });
 
+        // חיבור views מה-layout
         etTitle = findViewById(R.id.etTitle);
         etDueDate = findViewById(R.id.etDueDate);
         spTemplates = findViewById(R.id.spTemplates);
@@ -81,6 +93,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         imgTaskPreview = findViewById(R.id.imgTaskPreview);
         btnAssign = findViewById(R.id.btnAssign);
 
+        // בדיקה שההורה מחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
         {
@@ -90,6 +103,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }
         parentUid = user.getUid();
 
+        // טעינת נתונים מ-Firebase
         loadTemplates();
         loadChildren();
 
@@ -109,6 +123,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // בחירת תאריך עם DatePicker
         etDueDate.setOnClickListener(v -> showDatePicker());
         btnAssign.setOnClickListener(v -> assignTask());
     }
@@ -116,11 +131,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     /**
      * טוען תבניות מ-/parents/{parentUid}/task_templates.
      * ממלא את templatesList ואת ה-Spinner.
+     *
+     * הערה: משתמש ב-addListenerForSingleValueEvent (לא realtime) —
+     *        אם ההורה יוצר תבנית חדשה תוך כדי, היא לא תופיע בלי רענון.
      */
     private void loadTemplates()
     {
         templatesList.clear();
-
 
         FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -152,15 +169,17 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                         spTemplates.setAdapter(adapter);
 
+                        // Spinner לא תמיד מפעיל onItemSelected בפעם הראשונה — מציגים ידנית
                         if (!templatesList.isEmpty())
                         {
-                            // Spinner לא תמיד מפעיל onItemSelected בפעם הראשונה
                             displayBase64Image(templatesList.get(0).get("imageBase64"));
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // BUG: שגיאה נבלעת — כדאי להוסיף Toast כאן
+                    }
                 });
     }
 
@@ -191,6 +210,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                             String firstName = childSnap.child("firstName").getValue(String.class);
                             String lastName = childSnap.child("lastName").getValue(String.class);
 
+                            // בניית שם תצוגה
                             String displayName = (firstName != null ? firstName : "");
                             if (lastName != null && !lastName.trim().isEmpty())
                             {
@@ -206,7 +226,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // BUG: שגיאה נבלעת — כדאי להוסיף Toast כאן
+                    }
                 });
     }
 
@@ -215,12 +237,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
      *
      * נתיב כתיבה: /parents/{parentUid}/children/{childId}/tasks/{taskId}
      * Side-effect: סוגר את ה-Activity בהצלחה.
+     *
+     * שדות המשימה: title, dueAt, isDone, starsWorth, imageBase64, createdAt
      */
     private void assignTask()
     {
         int childPos = spAssignee.getSelectedItemPosition();
         String date = etDueDate.getText().toString().trim();
 
+        // ולידציה — חייבים ילד ותאריך
         if (childPos == -1 || childPos >= childrenIds.size() || date.isEmpty())
         {
             Toast.makeText(this, "יש לבחור ילד ותאריך", Toast.LENGTH_SHORT).show();
@@ -236,6 +261,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
+        // שליפת תמונה מהתבנית שנבחרה (אם יש)
         String imageBase64 = null;
         int templatePos = spTemplates.getSelectedItemPosition();
         if (templatePos >= 0 && templatePos < templatesList.size())
@@ -243,6 +269,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             imageBase64 = templatesList.get(templatePos).get("imageBase64");
         }
 
+        // יצירת מזהה ייחודי למשימה
         String taskId = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid)
@@ -258,14 +285,16 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
+        // בניית אובייקט המשימה כ-HashMap
         Map<String, Object> task = new HashMap<>();
         task.put("title", title);
         task.put("dueAt", date);
         task.put("isDone", false);
-        task.put("starsWorth", 10);
+        task.put("starsWorth", 10); // TODO: לאפשר להורה לקבוע ערך
         task.put("imageBase64", imageBase64);
         task.put("createdAt", System.currentTimeMillis());
 
+        // שמירה ב-Firebase
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid)
@@ -277,7 +306,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid ->
                 {
                     Toast.makeText(this, "המשימה הוקצתה בהצלחה!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    finish(); // חוזר למסך הקודם
                 })
                 .addOnFailureListener(e ->
                 {
@@ -285,7 +314,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 });
     }
 
-    /** מפענח מחרוזת Base64 ומציג כ-Bitmap ב-imgTaskPreview. */
+    /**
+     * מפענח מחרוזת Base64 ומציג כ-Bitmap ב-imgTaskPreview.
+     *
+     * TODO: להשתמש ב-ImageHelper.base64ToBitmap() במקום — מונע שכפול קוד.
+     */
     private void displayBase64Image(String base64)
     {
         if (base64 == null || base64.isEmpty()) return;

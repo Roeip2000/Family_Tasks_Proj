@@ -28,18 +28,29 @@ import java.util.Calendar;
  * אחריות:
  * - מזהה את הילד מ-Intent extras (אחרי QR) או מ-SharedPreferences (סשן קודם).
  * - טוען כותרת (שם ילד) מ-/parents/{parentId}/children/{childId}.
- * - טוען משימות מ-.../tasks וסופר סה"כ, שבוצעו, ודחופות (עד יומיים).
+ * - טוען משימות מ-.../tasks וסופר סה"כ, שבוצעו, ודחופות (עד 2 ימים).
  *
- * הערה: ה-RecyclerView (rvTasks) עדיין חסר Adapter — כרגע מציג רק סיכומים.
+ * Layout: activity_child_dashboard.xml
+ *
+ * ===== באגים / הערות =====
+ * BUG: ה-RecyclerView (rvTasks) חסר Adapter — כרגע רשימת המשימות ריקה ויזואלית.
+ *      רק הסיכומים (total/done/dueSoon) מוצגים.
+ * BUG: tvStars תמיד מציג "0" — אין שדה stars ב-DB. צריך לחשב סכום starsWorth
+ *      של משימות שבוצעו (isDone == true).
+ * TODO: להוסיף כפתור logout שמנקה SharedPreferences ומחזיר ל-MainActivity.
+ * TODO: להוסיף Adapter ל-RecyclerView שמציג את רשימת המשימות עם תמונה + כפתור "בוצע".
+ * TODO: להשתמש ב-ValueEventListener (לא SingleValue) כדי לראות עדכונים בזמן אמת.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "ChildDashboard";
 
+    // מפתחות לזיהוי הסשן
     private static final String PREFS_SESSION = "child_session";
     private static final String EXTRA_PARENT_ID = "parentId";
     private static final String EXTRA_CHILD_ID = "childId";
 
+    // נתיבי Firebase
     private static final String ROOT_PARENTS = "parents";
     private static final String NODE_CHILDREN = "children";
     private static final String NODE_TASKS = "tasks";
@@ -55,6 +66,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
+        // חיבור views מה-layout
         tvChildName = findViewById(R.id.tvChildName);
         tvStars = findViewById(R.id.tvStars);
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
@@ -63,6 +75,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         rvTasks = findViewById(R.id.rvTasks);
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
 
+        // זיהוי הילד — מ-Intent (אחרי QR) או מ-SharedPreferences (סשן קודם)
         resolveSession();
         if (isBlank(parentId) || isBlank(childId)) {
             Toast.makeText(this, "Missing QR session. Please scan again.", Toast.LENGTH_LONG).show();
@@ -71,6 +84,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         Log.d(TAG, "QR session parentId=" + parentId + ", childId=" + childId);
 
+        // טעינת נתונים מ-Firebase
         loadChildHeader();
         loadTasksSummary();
     }
@@ -85,6 +99,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             parentId = i.getStringExtra(EXTRA_PARENT_ID);
             childId = i.getStringExtra(EXTRA_CHILD_ID);
         }
+        // fallback ל-SharedPreferences אם ה-Intent ריק
         if (isBlank(parentId) || isBlank(childId)) {
             SharedPreferences sp = getSharedPreferences(PREFS_SESSION, MODE_PRIVATE);
             parentId = sp.getString(EXTRA_PARENT_ID, null);
@@ -101,7 +116,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .child(childId);
     }
 
-    /** טוען שם הילד מ-Firebase ומציג ב-tvChildName. */
+    /**
+     * טוען שם הילד מ-Firebase ומציג ב-tvChildName.
+     * כמו כן מעדכן את tvStars (כרגע תמיד 0 — אין שדה stars ב-DB).
+     */
     private void loadChildHeader() {
         String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId;
         Log.d(TAG, "Reading child from: " + path);
@@ -111,11 +129,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
 
+                // בניית שם מלא
                 String full = (firstName != null ? firstName : "");
                 if (lastName != null && !lastName.trim().isEmpty()) full = full + " " + lastName;
                 tvChildName.setText(full.trim().isEmpty() ? "Child" : full.trim());
 
-                // TODO: כרגע אין שדה stars ב-DB — ברירת מחדל 0
+                // TODO: לחשב כוכבים מסכום starsWorth של משימות isDone==true
                 tvStars.setText("0");
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {
@@ -124,7 +143,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    /** טוען משימות מ-Firebase וסופר total / done / dueSoon. */
+    /**
+     * טוען משימות מ-Firebase וסופר total / done / dueSoon.
+     *
+     * הערה: משתמש ב-addListenerForSingleValueEvent — נטען פעם אחת.
+     *        כדי לראות עדכונים בזמן אמת, צריך addValueEventListener.
+     */
     private void loadTasksSummary() {
         DatabaseReference tasksRef = childRef().child(NODE_TASKS);
         String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId + "/" + NODE_TASKS;
@@ -155,10 +179,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     /**
-     * בודק אם תאריך יעד הוא בתוך 0–2 ימים מהיום.
+     * בודק אם תאריך יעד הוא בתוך 0–2 ימים מהיום (דחוף).
      *
      * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return true אם המשימה דחופה
+     * @return true אם המשימה דחופה (0-2 ימים מהיום)
      */
     private boolean isDueSoon(String dueAt) {
         if (isBlank(dueAt)) return false;
@@ -171,7 +195,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             int y = Integer.parseInt(p[2]);
 
             Calendar due = Calendar.getInstance();
-            due.set(y, m - 1, d, 0, 0, 0);
+            due.set(y, m - 1, d, 0, 0, 0); // חודשים ב-Calendar מתחילים מ-0
             due.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
@@ -187,6 +211,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
+    /** בודק אם מחרוזת ריקה או null. */
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }

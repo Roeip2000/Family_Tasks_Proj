@@ -81,4 +81,12 @@
         android:text="2. שלח משימה לילד מהמאגר"
         android:backgroundTint="#4CAF50" />
 
+    <Button
+        android:id="@+id/btnShowQR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="3. QR לילדים (בחר ילד והצג קוד)"
+        android:backgroundTint="#3F51B5" />
+
 </LinearLayout>
