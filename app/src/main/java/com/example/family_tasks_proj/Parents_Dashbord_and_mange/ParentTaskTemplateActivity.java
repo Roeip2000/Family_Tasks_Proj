@@ -1,10 +1,8 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
 import android.widget.*;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,12 +10,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.util.ImageHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,15 +24,20 @@ import java.util.UUID;
  *
  * אחריות:
  * - ההורה בוחר תמונה מהגלריה וכותב כותרת.
- * - התמונה מוקטנת ל-400×400 ומומרת ל-Base64 (JPEG 75%).
+ * - התמונה עוברת תיקון EXIF + הקטנה עם שמירת יחס גובה-רוחב (דרך ImageHelper).
+ * - אותו Bitmap בדיוק משמש לתצוגה מקדימה וגם לשמירה כ-Base64.
  * - התבנית נשמרת ב-Firebase בנתיב /parents/{uid}/task_templates/{id}.
- * - משמשת מאוחר יותר ב-AssignTaskToChildActivity להקצאת משימות.
  */
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTitle;
     private ImageView imgTask;
-    private Uri imageUri;
+
+    /**
+     * ה-Bitmap המתוקן — אותו אובייקט בדיוק משמש לתצוגה מקדימה ולשמירה.
+     * כך מובטח שמה שההורה רואה = מה שנשמר ב-Firebase = מה שהילד יראה.
+     */
+    private Bitmap correctedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,49 +49,59 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         imgTask = findViewById(R.id.imgTask);
 
         Button btnPickImage = findViewById(R.id.btnPickImage);
-
         Button btnSave = findViewById(R.id.btnSave);
 
         btnPickImage.setOnClickListener(v -> pickImage());
-
         btnSave.setOnClickListener(v -> saveTemplate());
     }
 
     /** פותח את הגלריה לבחירת תמונה. */
     private void pickImage()
     {
-
         imagePicker.launch("image/*");
-
     }
 
+    /**
+     * מקבל Uri מהגלריה, טוען ומתקן את התמונה דרך ImageHelper,
+     * ומציג את ה-Bitmap המתוקן ב-ImageView.
+     *
+     * חשוב: לא משתמשים ב-setImageURI כי הוא מציג תמונה מתוקנת-EXIF
+     * אבל ה-Base64 שנשמר אחר כך לא יהיה תואם. במקום זה — שניהם
+     * (תצוגה + שמירה) משתמשים באותו correctedBitmap.
+     */
     private final ActivityResultLauncher<String> imagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri ->
-
             {
                 if (uri != null)
                 {
-                    imageUri = uri;
-
-                    imgTask.setImageURI(uri);
+                    correctedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
+                    if (correctedBitmap != null)
+                    {
+                        imgTask.setImageBitmap(correctedBitmap);
+                    }
+                    else
+                    {
+                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
     /**
      * שומר תבנית חדשה ב-Firebase תחת /parents/{uid}/task_templates/{id}.
+     * ממיר את correctedBitmap ל-Base64 — אותו Bitmap שמוצג בתצוגה מקדימה.
      * Side-effect: סוגר את ה-Activity בהצלחה.
      */
     private void saveTemplate()
     {
         String title = etTitle.getText().toString().trim();
 
-        if (title.isEmpty() || imageUri == null)
+        if (title.isEmpty() || correctedBitmap == null)
         {
             Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String imageBase64 = imageUriToBase64(imageUri);
+        String imageBase64 = ImageHelper.bitmapToBase64(correctedBitmap);
 
         if (imageBase64 == null)
         {
@@ -117,8 +129,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .child("task_templates")
                 .child(taskId)
                 .setValue(task)
-
-
                 .addOnSuccessListener(aVoid ->
                 {
                     Toast.makeText(this, "Template saved!", Toast.LENGTH_SHORT).show();
@@ -128,39 +138,5 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 {
                     Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    /**
-     * ממיר Uri של תמונה למחרוזת Base64.
-     * מקטין ל-400×400, דוחס ל-JPEG 75%.
-     *
-     * @param uri  ה-Uri שנבחר מהגלריה
-     * @return מחרוזת Base64, או null אם ההמרה נכשלה
-     */
-    private String imageUriToBase64(Uri uri)
-    {
-
-        try (InputStream inputStream = getContentResolver().openInputStream(uri))
-        {
-
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-
-            if (bitmap == null) return null;
-
-            bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos);
-            byte[] bytes = baos.toByteArray();
-
-            return Base64.encodeToString(bytes, Base64.NO_WRAP);
-
-        }
-
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

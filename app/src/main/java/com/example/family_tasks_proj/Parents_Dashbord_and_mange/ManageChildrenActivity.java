@@ -90,6 +90,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         Intent i = new Intent(ManageChildrenActivity.this, GenerateQRActivity.class);
                         i.putExtra("parentId", parentUID);
                         i.putExtra("childId", childId);
+                        i.putExtra("childName", first + " " + last);
                         startActivity(i);
                     } else {
                         Toast.makeText(this,
