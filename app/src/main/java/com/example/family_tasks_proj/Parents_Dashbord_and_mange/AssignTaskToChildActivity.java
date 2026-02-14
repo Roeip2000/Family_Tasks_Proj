@@ -1,12 +1,10 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,12 +47,13 @@ import java.util.Map;
  *
  * Layout: activity_assign_task_to_child.xml
  *
- * ===== הערות =====
- * - לפני הקצאת משימה מוצג AlertDialog אישור למשתמש.
- * - onCancelled מטפל בשגיאות Firebase ומציג Toast + Log.
- * TODO: לאפשר להורה לקבוע starsWorth (כרגע קבוע 10).
+ * ===== באגים / הערות =====
+ * BUG: onCancelled ריק (שורות 163, 209) — שגיאות Firebase נבלעות בשקט.
+ *      צריך להוסיף Toast או Log.e כדי שהמפתח ידע על תקלות.
+ * BUG: starsWorth קבוע ל-10 — צריך להוסיף שדה/Spinner בטופס כדי שההורה יבחר ערך.
+ * TODO: להשתמש ב-ImageHelper.base64ToBitmap() במקום לפענח Base64 ידנית (שכפול קוד).
  * TODO: להוסיף ProgressBar בזמן טעינת תבניות וילדים.
- * TODO: להוסיף AlarmManager + Notification — התרעה להורה כשמשימה הוגשה או באיחור.
+ * TODO: לטפל במקרה שאין תבניות — להציג הודעה "צור תבנית קודם".
  */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
@@ -126,9 +125,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         // בחירת תאריך עם DatePicker
         etDueDate.setOnClickListener(v -> showDatePicker());
-
-        // לחיצה על "שלח משימה" — מציג AlertDialog אישור לפני שמירה
-        btnAssign.setOnClickListener(v -> showAssignConfirmDialog());
+        btnAssign.setOnClickListener(v -> assignTask());
     }
 
     /**
@@ -181,11 +178,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש ומתעד בלוג
-                        Log.e("AssignTask", "שגיאה בטעינת תבניות: " + error.getMessage());
-                        Toast.makeText(AssignTaskToChildActivity.this,
-                                "שגיאה בטעינת תבניות: " + error.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        // BUG: שגיאה נבלעת — כדאי להוסיף Toast כאן
                     }
                 });
     }
@@ -234,44 +227,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש ומתעד בלוג
-                        Log.e("AssignTask", "שגיאה בטעינת ילדים: " + error.getMessage());
-                        Toast.makeText(AssignTaskToChildActivity.this,
-                                "שגיאה בטעינת ילדים: " + error.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        // BUG: שגיאה נבלעת — כדאי להוסיף Toast כאן
                     }
                 });
-    }
-
-    /**
-     * מציג AlertDialog לאישור הקצאת המשימה לפני שמירה.
-     * מוודא שנבחרו כל הפרטים (ילד, תאריך, כותרת) לפני הצגת הדיאלוג.
-     * אם המשתמש מאשר — קורא ל-assignTask() לביצוע השמירה.
-     */
-    private void showAssignConfirmDialog()
-    {
-        String title = etTitle.getText().toString().trim();
-        String date = etDueDate.getText().toString().trim();
-        int childPos = spAssignee.getSelectedItemPosition();
-
-        // ולידציה בסיסית לפני הצגת הדיאלוג
-        if (title.isEmpty() || date.isEmpty() || childPos < 0 || childPos >= childrenIds.size())
-        {
-            // assignTask יטפל בהצגת הודעת שגיאה מפורטת
-            assignTask();
-            return;
-        }
-
-        // שליפת שם הילד הנבחר מה-Spinner
-        String childName = (String) spAssignee.getSelectedItem();
-
-        new AlertDialog.Builder(this)
-                .setTitle("אישור הקצאת משימה")
-                .setMessage("להקצות את המשימה \"" + title + "\" ל-" + childName
-                        + " עם תאריך יעד " + date + "?")
-                .setPositiveButton("אישור", (dialog, which) -> assignTask())
-                .setNegativeButton("ביטול", null)
-                .show();
     }
 
     /**

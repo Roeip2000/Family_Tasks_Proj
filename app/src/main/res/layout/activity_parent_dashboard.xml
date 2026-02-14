@@ -89,14 +89,4 @@
         android:text="3. QR לילדים (בחר ילד והצג קוד)"
         android:backgroundTint="#3F51B5" />
 
-    <!-- כפתור התנתקות -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="התנתק"
-        android:backgroundTint="#F44336"
-        android:textColor="#FFFFFF" />
-
 </LinearLayout>
