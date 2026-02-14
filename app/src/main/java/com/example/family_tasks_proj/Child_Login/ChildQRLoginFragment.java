@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +31,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
  * - פותח סורק QR (ספריית ZXing).
  * - מפענח את המחרוזת בפורמט "parent:{id}|child:{id}".
  * - מוודא מול Firebase שהילד קיים תחת ההורה.
- * - שומר סשן ב-SharedPreferences ופותח את ChildDashboardActivity.
+ * - שומר סשן ב-SharedPreferences ופותח את ChildSelectionActivity (מסך בחירת ילד).
  *
  * Layout: fragment_child_q_r_login.xml
  *
@@ -42,7 +41,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
  * 3. מפענח: "parent:XXX|child:YYY" → חילוץ parentId + childId
  * 4. בדיקה ב-Firebase שהילד קיים תחת ההורה
  * 5. שמירת סשן ב-SharedPreferences (כדי שלא יצטרך לסרוק שוב)
- * 6. פתיחת ChildDashboardActivity
+ * 6. פתיחת ChildSelectionActivity — מסך בחירת ילד עם Spinner
  *
  * ===== הערות לשיפור =====
  * TODO: להוסיף הנפשה/טעינה בזמן בדיקת Firebase (בין סריקה לפתיחת דשבורד).
@@ -152,7 +151,7 @@ public class ChildQRLoginFragment extends Fragment {
 
     /**
      * בודק ב-Firebase שהילד קיים תחת /parents/{parentId}/children/{childId}.
-     * אם כן — שומר סשן ופותח דשבורד.
+     * אם כן — שומר סשן ופותח מסך בחירת ילד (ChildSelectionActivity).
      * אם לא — מציג הודעת שגיאה.
      */
     private void checkChildExists(String parentId, String childId) {
@@ -173,10 +172,11 @@ public class ChildQRLoginFragment extends Fragment {
                 Log.d(TAG, "snapshot.exists=" + snapshot.exists());
 
                 if (snapshot.exists()) {
-                    // הילד קיים — שומרים סשן ופותחים דשבורד
+                    // הילד קיים — שומרים סשן ופותחים מסך בחירת ילד (Spinner)
+                    // ה-childId מועבר כ-preselection — ייבחר אוטומטית ב-Spinner
                     saveSession(parentId, childId);
 
-                    Intent i = new Intent(requireActivity(), ChildDashboardActivity.class);
+                    Intent i = new Intent(requireActivity(), ChildSelectionActivity.class);
                     i.putExtra("parentId", parentId);
                     i.putExtra("childId", childId);
                     startActivity(i);
