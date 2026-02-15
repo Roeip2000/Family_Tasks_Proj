@@ -12,7 +12,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="QR לילדים"
+        android:text="QR כניסה למשפחה"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -20,79 +20,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- בחירת ילד -->
+    <!-- הסבר -->
     <TextView
-        android:id="@+id/tvSelectChild"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="בחר ילד:"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
-
-    <Spinner
-        android:id="@+id/spChildren"
+        android:id="@+id/tvExplanation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSelectChild" />
-
-    <!-- שם הילד שנבחר -->
-    <TextView
-        android:id="@+id/tvChildLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="QR Code"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:text="הראה את ה-QR לילדים שלך.\nהם סורקים, בוחרים את השם שלהם, ונכנסים."
+        android:textSize="15sp"
+        android:textColor="#666666"
         android:gravity="center"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spChildren" />
-
-    <!-- ספינר בזמן טעינה -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvChildLabel" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
     <!-- QR Code Image -->
     <ImageView
         android:id="@+id/imageViewQrCode"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="24dp"
         android:contentDescription="QR code for child login"
         android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvChildLabel" />
+        app:layout_constraintTop_toBottomOf="@id/tvExplanation" />
 
-    <!-- הודעה אם אין ילדים -->
+    <!-- הודעת שגיאה -->
     <TextView
-        android:id="@+id/tvNoChildren"
+        android:id="@+id/tvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="אין ילדים רשומים.\nהוסף ילדים דרך ניהול ילדים."
+        android:text="שגיאה ביצירת QR"
         android:textSize="16sp"
-        android:textColor="#888888"
+        android:textColor="#E53935"
         android:gravity="center"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvChildLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvExplanation"
         android:layout_marginTop="32dp" />
 
     <!-- כפתור חזרה -->
