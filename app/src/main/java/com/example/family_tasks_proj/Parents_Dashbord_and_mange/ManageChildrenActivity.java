@@ -1,6 +1,5 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -107,12 +106,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     btnAddChild.setEnabled(true); // מאפשר לחיצה מחדש
 
                     if (task.isSuccessful()) {
-                        // הצלחה — פותח מסך QR לילד שנוסף (Spinner ייבחר אותו אוטומטית)
-                        Intent i = new Intent(ManageChildrenActivity.this, GenerateQRActivity.class);
-                        i.putExtra("parentId", parentUID);
-                        i.putExtra("childId", childId);
-                        i.putExtra("childName", first + " " + last);
-                        startActivity(i);
+                        // הצלחה — מציג הודעה, מנקה שדות, נשאר במסך להוספת ילדים נוספים
+                        Toast.makeText(ManageChildrenActivity.this,
+                                first + " " + last + " נוסף בהצלחה!",
+                                Toast.LENGTH_SHORT).show();
+                        etFirstName.setText("");
+                        etLastName.setText("");
+                        etFirstName.requestFocus();
                     } else {
                         Toast.makeText(this,
                                 "Failed: " + (task.getException() != null ? task.getException().getMessage() : "unknown"),

@@ -29,18 +29,19 @@ import com.journeyapps.barcodescanner.ScanOptions;
  *
  * אחריות:
  * - פותח סורק QR (ספריית ZXing).
- * - מפענח את המחרוזת בפורמט "parent:{id}|child:{id}".
- * - מוודא מול Firebase שהילד קיים תחת ההורה.
- * - שומר סשן ב-SharedPreferences ופותח את ChildSelectionActivity (מסך בחירת ילד).
+ * - מפענח את המחרוזת בפורמט "parent:{id}" (QR קבוע להורה).
+ * - תומך גם בפורמט ישן "parent:{id}|child:{id}" לתאימות אחורה.
+ * - מוודא מול Firebase שההורה קיים.
+ * - שומר parentId ב-SharedPreferences ופותח ChildSelectionActivity (מסך בחירת ילד).
  *
  * Layout: fragment_child_q_r_login.xml
  *
  * ===== תהליך מלא =====
  * 1. ילד לוחץ "סרוק QR" → נפתח סורק מצלמה
  * 2. סורק את ה-QR שההורה הציג ב-GenerateQRActivity
- * 3. מפענח: "parent:XXX|child:YYY" → חילוץ parentId + childId
- * 4. בדיקה ב-Firebase שהילד קיים תחת ההורה
- * 5. שמירת סשן ב-SharedPreferences (כדי שלא יצטרך לסרוק שוב)
+ * 3. מפענח: "parent:XXX" → חילוץ parentId
+ * 4. בדיקה ב-Firebase שההורה קיים
+ * 5. שמירת parentId ב-SharedPreferences (כדי שלא יצטרך לסרוק שוב)
  * 6. פתיחת ChildSelectionActivity — מסך בחירת ילד עם Spinner
  *
  * ===== הערות לשיפור =====
@@ -82,15 +83,14 @@ public class ChildQRLoginFragment extends Fragment {
 
                 Log.d(TAG, "parsed.parentId=" + parsed.parentId + ", parsed.childId=" + parsed.childId);
 
-                // ולידציה — חייבים גם parentId וגם childId
-                if (parsed.parentId == null || parsed.parentId.isEmpty()
-                        || parsed.childId == null || parsed.childId.isEmpty()) {
+                // ולידציה — חייבים לפחות parentId
+                if (parsed.parentId == null || parsed.parentId.isEmpty()) {
                     Toast.makeText(requireContext(), "Invalid QR format", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // בדיקה ב-Firebase שהילד קיים
-                checkChildExists(parsed.parentId, parsed.childId);
+                // בדיקה ב-Firebase שההורה קיים
+                checkParentExists(parsed.parentId, parsed.childId);
             });
 
     @Override
@@ -115,11 +115,11 @@ public class ChildQRLoginFragment extends Fragment {
      * מפענח מחרוזת QR לאובייקט ParsedQr.
      *
      * פורמטים נתמכים:
-     * 1. "parent:XXX|child:YYY" — הפורמט הנדרש (תואם ל-GenerateQRActivity)
-     * 2. "childId:YYY" — legacy/ישן, ייכשל בוולידציה כי חסר parentId
-     * 3. טקסט חופשי — legacy/ישן, ייכשל בוולידציה
+     * 1. "parent:XXX" — הפורמט החדש (QR קבוע להורה)
+     * 2. "parent:XXX|child:YYY" — הפורמט הישן (תאימות אחורה)
+     * 3. "childId:YYY" — legacy, ייכשל בוולידציה כי חסר parentId
      *
-     * @return ParsedQr עם parentId ו-childId (אחד או שניהם יכולים להיות null)
+     * @return ParsedQr עם parentId ו-childId (childId יכול להיות null בפורמט החדש)
      */
     private ParsedQr parseQr(String raw) {
         ParsedQr out = new ParsedQr();
@@ -127,7 +127,7 @@ public class ChildQRLoginFragment extends Fragment {
         if (raw == null) return out;
         raw = raw.trim();
 
-        // פורמט נדרש: parent:XXX|child:YYY
+        // פורמט עם | — ישן: "parent:XXX|child:YYY"
         if (raw.contains("|")) {
             String[] parts = raw.split("\\|");
             for (String p : parts) {
@@ -139,7 +139,13 @@ public class ChildQRLoginFragment extends Fragment {
             return out;
         }
 
-        // פורמט legacy — לתאימות אחורה (לא אמור להגיע מ-GenerateQRActivity החדש)
+        // פורמט חדש — רק "parent:XXX"
+        if (raw.startsWith("parent:")) {
+            out.parentId = raw.substring("parent:".length()).trim();
+            return out;
+        }
+
+        // פורמט legacy — לתאימות אחורה
         if (raw.startsWith("childId:")) {
             out.childId = raw.substring("childId:".length()).trim();
             return out;
@@ -150,19 +156,20 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     /**
-     * בודק ב-Firebase שהילד קיים תחת /parents/{parentId}/children/{childId}.
+     * בודק ב-Firebase שההורה קיים בנתיב /parents/{parentId}.
      * אם כן — שומר סשן ופותח מסך בחירת ילד (ChildSelectionActivity).
      * אם לא — מציג הודעת שגיאה.
+     *
+     * @param parentId מזהה ההורה מה-QR
+     * @param childId  מזהה ילד (null בפורמט החדש, קיים בפורמט הישן — לתאימות אחורה)
      */
-    private void checkChildExists(String parentId, String childId) {
-        String path = "parents/" + parentId + "/children/" + childId;
+    private void checkParentExists(String parentId, String childId) {
+        String path = "parents/" + parentId;
         Log.d(TAG, "Checking path=" + path);
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("parents")
-                .child(parentId)
-                .child("children")
-                .child(childId);
+                .child(parentId);
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -172,17 +179,19 @@ public class ChildQRLoginFragment extends Fragment {
                 Log.d(TAG, "snapshot.exists=" + snapshot.exists());
 
                 if (snapshot.exists()) {
-                    // הילד קיים — שומרים סשן ופותחים מסך בחירת ילד (Spinner)
-                    // ה-childId מועבר כ-preselection — ייבחר אוטומטית ב-Spinner
+                    // ההורה קיים — שומרים סשן ופותחים מסך בחירת ילד
                     saveSession(parentId, childId);
 
                     Intent i = new Intent(requireActivity(), ChildSelectionActivity.class);
                     i.putExtra("parentId", parentId);
-                    i.putExtra("childId", childId);
+                    // childId יכול להיות null — ChildSelectionActivity יטפל בזה
+                    if (childId != null && !childId.isEmpty()) {
+                        i.putExtra("childId", childId);
+                    }
                     startActivity(i);
                     requireActivity().finish(); // סוגר את MainActivity
                 } else {
-                    // הילד לא נמצא — QR לא תקין
+                    // ההורה לא נמצא — QR לא תקין
                     Toast.makeText(requireContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "NOT FOUND at " + path);
                 }
@@ -198,15 +207,20 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     /**
-     * שומר parentId + childId ב-SharedPreferences לסשן עתידי.
-     * כך הילד יכול לחזור לדשבורד בלי לסרוק QR שוב.
+     * שומר parentId (וגם childId אם קיים) ב-SharedPreferences לסשן עתידי.
+     * כך הילד יכול לחזור לבחירת שם בלי לסרוק QR שוב.
      */
     private void saveSession(String parentId, String childId) {
-        SharedPreferences sp = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        sp.edit()
-                .putString(KEY_PARENT, parentId)
-                .putString(KEY_CHILD, childId)
-                .apply();
+        SharedPreferences.Editor editor = requireContext()
+                .getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit()
+                .putString(KEY_PARENT, parentId);
+
+        if (childId != null && !childId.isEmpty()) {
+            editor.putString(KEY_CHILD, childId);
+        }
+
+        editor.apply();
         Log.d(TAG, "Session saved: parentId=" + parentId + " childId=" + childId);
     }
 
