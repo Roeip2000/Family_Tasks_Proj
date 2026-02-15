@@ -1,8 +1,10 @@
 package com.example.family_tasks_proj.auth;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -58,11 +60,19 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> openFragment(new ParentLoginFragment()));
         btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
 
-        // כניסה ישירה ללא QR — עובר למסך בחירת ילד (ChildSelectionActivity)
-        // שם הילד בוחר את עצמו מ-Spinner, לא נכנס אוטומטית לילד אחרון
+        // כניסה ישירה ללא QR — בודק שיש סשן שמור לפני מעבר
         btnChild.setOnClickListener(v ->
         {
+            SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
+            String savedParent = sp.getString("parentId", null);
+            if (savedParent == null) {
+                // אין סשן שמור — הילד צריך לסרוק QR קודם
+                Toast.makeText(this, "אין סשן שמור. סרוק QR קודם.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // יש סשן — עובר למסך בחירת ילד עם ה-parentId השמור
             Intent intent = new Intent(MainActivity.this, ChildSelectionActivity.class);
+            intent.putExtra("parentId", savedParent);
             startActivity(intent);
         });
     }

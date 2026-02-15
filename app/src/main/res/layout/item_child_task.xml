@@ -26,6 +26,16 @@
             android:layout_height="14dp"
             android:background="@android:drawable/radiobutton_off_background" />
 
+        <!-- תמונת המשימה — מוצגת רק אם יש imageBase64 -->
+        <ImageView
+            android:id="@+id/imgTaskImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginStart="8dp"
+            android:contentDescription="תמונת משימה" />
+
         <!-- חלק טקסטואלי: כותרת + זמן שנותר -->
         <LinearLayout
             android:layout_width="0dp"

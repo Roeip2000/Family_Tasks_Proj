@@ -84,22 +84,27 @@ public class ParentLoginFragment extends Fragment {
         // ולידציה בסיסית — שדות ריקים
         if (email.isEmpty() || password.isEmpty())
         {
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
                 {
+                    if (!isAdded()) return; // Fragment לא מחובר — מונע crash
+
                     if (task.isSuccessful())
                     {
                         // התחברות הצליחה — מעבר לדשבורד הורה
-                        startActivity(new Intent(getActivity(), ParentDashboardActivity.class));
-                        requireActivity().finish(); // סוגר את MainActivity כדי שלא יחזור אליה
+                        startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
+                        requireActivity().finish();
                     }
                     else
                     {
-                        // הערה: כדאי להציג task.getException().getMessage() לפירוט
-                        Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        // הצגת הודעת שגיאה מפורטת מ-Firebase
+                        String errorMsg = (task.getException() != null)
+                                ? task.getException().getMessage()
+                                : "שגיאת התחברות לא ידועה";
+                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }

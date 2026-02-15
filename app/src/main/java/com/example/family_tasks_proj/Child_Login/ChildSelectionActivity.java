@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
+import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -148,16 +149,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String firstName = parentSnap.child("firstName").getValue(String.class);
                     String lastName = parentSnap.child("lastName").getValue(String.class);
 
-                    // בניית שם מלא
-                    String fullName = (firstName != null ? firstName : "");
-                    if (lastName != null && !lastName.trim().isEmpty()) {
-                        fullName = fullName + " " + lastName;
-                    }
-                    if (fullName.trim().isEmpty()) {
-                        fullName = "הורה (" + uid.substring(0, Math.min(uid.length(), 6)) + ")";
-                    }
-
-                    parentList.add(new ParentItem(uid, fullName.trim()));
+                    // בניית שם מלא — משתמש ב-NameUtils
+                    String fallback = "הורה (" + uid.substring(0, Math.min(uid.length(), 6)) + ")";
+                    String fullName = NameUtils.fullNameOrDefault(firstName, lastName, fallback);
+                    parentList.add(new ParentItem(uid, fullName));
                 }
 
                 if (parentList.isEmpty()) {
@@ -251,16 +246,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String firstName = childSnap.child("firstName").getValue(String.class);
                     String lastName = childSnap.child("lastName").getValue(String.class);
 
-                    // בניית שם מלא
-                    String fullName = (firstName != null ? firstName : "");
-                    if (lastName != null && !lastName.trim().isEmpty()) {
-                        fullName = fullName + " " + lastName;
-                    }
-                    if (fullName.trim().isEmpty()) {
-                        fullName = "ילד (" + childId + ")";
-                    }
-
-                    childList.add(new ChildItem(childId, fullName.trim()));
+                    // בניית שם מלא — משתמש ב-NameUtils
+                    String fullName = NameUtils.fullNameOrDefault(firstName, lastName, "ילד (" + childId + ")");
+                    childList.add(new ChildItem(childId, fullName));
                 }
 
                 if (childList.isEmpty()) {

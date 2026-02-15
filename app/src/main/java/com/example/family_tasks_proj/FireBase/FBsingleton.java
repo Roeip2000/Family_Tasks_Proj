@@ -1,5 +1,8 @@
 package com.example.family_tasks_proj.FireBase;
 
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -88,10 +91,16 @@ public class FBsingleton {
      * הערה: אם uid == null (למשל אם setUserData לא נקרא קודם),
      *        המתודה תחזור בשקט בלי לכתוב כלום.
      */
-    public void saveParentToFirebase() {
+    /**
+     * שומר פרופיל הורה ב-Firebase עם callback לדיווח הצלחה/כישלון.
+     *
+     * @param listener callback — מקבל את תוצאת הכתיבה. null = בלי callback (שקט).
+     */
+    public void saveParentToFirebase(OnCompleteListener<Void> listener) {
         if (uid == null)
         {
-            return; // אין uid — אי אפשר לשמור
+            Log.w("FBsingleton", "saveParentToFirebase: uid == null, לא שומרים");
+            return;
         }
 
         DatabaseReference ref = database.getReference("parents").child(uid);
@@ -105,6 +114,15 @@ public class FBsingleton {
         profileData.put("role", "parent");
 
         // updateChildren ולא setValue — שומר על נתונים קיימים!
-        ref.updateChildren(profileData);
+        if (listener != null) {
+            ref.updateChildren(profileData).addOnCompleteListener(listener);
+        } else {
+            ref.updateChildren(profileData);
+        }
+    }
+
+    /** overload לתאימות אחורה — ללא callback */
+    public void saveParentToFirebase() {
+        saveParentToFirebase(null);
     }
 }

@@ -1,11 +1,13 @@
 package com.example.family_tasks_proj.child;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.Class_child.ChildTask;
+import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.util.ImageHelper;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -72,8 +75,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.tvTaskTitle.setTextColor(Color.parseColor("#222222"));
         }
 
-        // --- זמן שנותר ---
-        long daysLeft = calcDaysLeft(task.dueAt);
+        // --- זמן שנותר (משתמש ב-DateUtils למניעת שכפול) ---
+        long daysLeft = DateUtils.daysLeft(task.dueAt);
         String dueText = formatDueText(task.dueAt, daysLeft);
         holder.tvDueDate.setText(dueText);
 
@@ -102,6 +105,19 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
         holder.viewStatusDot.setBackground(dot);
 
+        // --- תמונת משימה ---
+        if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
+            Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
+            if (bmp != null) {
+                holder.imgTaskImage.setImageBitmap(bmp);
+                holder.imgTaskImage.setVisibility(View.VISIBLE);
+            } else {
+                holder.imgTaskImage.setVisibility(View.GONE);
+            }
+        } else {
+            holder.imgTaskImage.setVisibility(View.GONE);
+        }
+
         // --- כוכבים ---
         holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " ⭐" : "");
     }
@@ -112,41 +128,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     }
 
     // =====================================================================
-    //  חישוב זמן שנותר
+    //  עיצוב טקסט זמן שנותר
     // =====================================================================
-
-    /**
-     * מחשב כמה ימים נותרו עד תאריך היעד.
-     * ערך שלילי = עבר הזמן, 0 = היום, 1 = מחר, וכו'.
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return מספר ימים (שלילי אם עבר), או Long.MAX_VALUE אם הפורמט לא תקין
-     */
-    private long calcDaysLeft(String dueAt) {
-        if (dueAt == null || dueAt.trim().isEmpty()) return Long.MAX_VALUE;
-        String[] parts = dueAt.trim().split("/");
-        if (parts.length != 3) return Long.MAX_VALUE;
-
-        try {
-            int d = Integer.parseInt(parts[0]);
-            int m = Integer.parseInt(parts[1]);
-            int y = Integer.parseInt(parts[2]);
-
-            Calendar due = Calendar.getInstance();
-            due.set(y, m - 1, d, 0, 0, 0);
-            due.set(Calendar.MILLISECOND, 0);
-
-            Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 0);
-            now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0);
-            now.set(Calendar.MILLISECOND, 0);
-
-            return (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-        } catch (NumberFormatException e) {
-            return Long.MAX_VALUE;
-        }
-    }
 
     /**
      * מחזיר טקסט תצוגה לזמן שנותר.
@@ -188,6 +171,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         /** נקודת סטטוס צבעונית */
         View viewStatusDot;
+        /** תמונת המשימה */
+        ImageView imgTaskImage;
         /** כותרת המשימה */
         TextView tvTaskTitle;
         /** זמן שנותר / תאריך יעד */
@@ -198,6 +183,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             viewStatusDot = itemView.findViewById(R.id.viewStatusDot);
+            imgTaskImage = itemView.findViewById(R.id.imgTaskImage);
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
             tvDueDate = itemView.findViewById(R.id.tvDueDate);
             tvTaskStars = itemView.findViewById(R.id.tvTaskStars);

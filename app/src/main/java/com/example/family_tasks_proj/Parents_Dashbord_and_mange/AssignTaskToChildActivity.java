@@ -3,9 +3,7 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +23,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.util.ImageHelper;
+import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -217,14 +217,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                             String firstName = childSnap.child("firstName").getValue(String.class);
                             String lastName = childSnap.child("lastName").getValue(String.class);
 
-                            // בניית שם תצוגה
-                            String displayName = (firstName != null ? firstName : "");
-                            if (lastName != null && !lastName.trim().isEmpty())
-                            {
-                                displayName = displayName + " " + lastName;
-                            }
-
-                            names.add(displayName.trim().isEmpty() ? childId : displayName);
+                            // בניית שם תצוגה — משתמש ב-NameUtils למניעת שכפול
+                            names.add(NameUtils.fullNameOrDefault(firstName, lastName, childId));
                             childrenIds.add(childId);
                         }
 
@@ -358,15 +352,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     /**
      * מפענח מחרוזת Base64 ומציג כ-Bitmap ב-imgTaskPreview.
-     *
-     * TODO: להשתמש ב-ImageHelper.base64ToBitmap() במקום — מונע שכפול קוד.
+     * משתמש ב-ImageHelper למניעת שכפול קוד.
      */
     private void displayBase64Image(String base64)
     {
         if (base64 == null || base64.isEmpty()) return;
-        byte[] decoded = Base64.decode(base64, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
-        imgTaskPreview.setImageBitmap(bitmap);
+        Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
+        if (bitmap != null) {
+            imgTaskPreview.setImageBitmap(bitmap);
+        }
     }
 
     /** פותח DatePickerDialog וכותב את התאריך הנבחר ל-etDueDate בפורמט d/M/yyyy. */

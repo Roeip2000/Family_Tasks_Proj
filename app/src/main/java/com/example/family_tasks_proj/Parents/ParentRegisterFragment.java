@@ -95,7 +95,7 @@ public class ParentRegisterFragment extends Fragment {
         String password  = etPassword.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -111,10 +111,10 @@ public class ParentRegisterFragment extends Fragment {
                             FBsingleton.getInstance().setUserData(firstName, lastName, email);
                             FBsingleton.getInstance().saveParentToFirebase();
 
-                            Toast.makeText(getContext(), "Registration successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "ההרשמה הצליחה!", Toast.LENGTH_SHORT).show();
 
                             // מעבר לדשבורד — סוגר MainActivity כדי שלא יחזור אליה
-                            startActivity(new Intent(getActivity(), ParentDashboardActivity.class));
+                            startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                             requireActivity().finish();
                         }
                     }
@@ -123,8 +123,8 @@ public class ParentRegisterFragment extends Fragment {
                         // BUG-FIX: null-check ל-getException כדי למנוע NPE
                         String errorMsg = (task.getException() != null)
                                 ? task.getException().getMessage()
-                                : "Unknown error";
-                        Toast.makeText(getContext(), "Error: " + errorMsg, Toast.LENGTH_LONG).show();
+                                : "שגיאה לא ידועה";
+                        Toast.makeText(requireContext(), "שגיאה: " + errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }

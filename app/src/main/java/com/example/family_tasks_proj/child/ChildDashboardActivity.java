@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.child.Class_child.ChildTask;
+import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -158,11 +159,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
 
-                // בניית שם מלא
-                String full = (firstName != null ? firstName : "");
-                if (lastName != null && !lastName.trim().isEmpty()) full = full + " " + lastName;
-                String displayName = full.trim().isEmpty() ? "ילד" : full.trim();
-
+                // בניית שם מלא — משתמש ב-NameUtils למניעת שכפול
+                String displayName = NameUtils.fullNameOrDefault(firstName, lastName, "ילד");
                 tvChildName.setText("שלום " + displayName + "!");
             }
 
@@ -216,7 +214,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         stars += t.starsWorth; // סכום כוכבים ממשימות שבוצעו
                     }
 
-                    if (!t.isDone && isDueSoon(t.dueAt)) {
+                    if (!t.isDone && DateUtils.isDueSoon(t.dueAt)) {
                         dueSoon++;
                     }
                 }
@@ -274,39 +272,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("ביטול", null)
                 .show();
-    }
-
-    /**
-     * בודק אם תאריך יעד הוא בתוך 0–2 ימים מהיום (דחוף).
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return true אם המשימה דחופה (0-2 ימים מהיום)
-     */
-    private boolean isDueSoon(String dueAt) {
-        if (isBlank(dueAt)) return false;
-        String[] p = dueAt.trim().split("/");
-        if (p.length != 3) return false;
-
-        try {
-            int d = Integer.parseInt(p[0]);
-            int m = Integer.parseInt(p[1]);
-            int y = Integer.parseInt(p[2]);
-
-            Calendar due = Calendar.getInstance();
-            due.set(y, m - 1, d, 0, 0, 0); // חודשים ב-Calendar מתחילים מ-0
-            due.set(Calendar.MILLISECOND, 0);
-
-            Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 0);
-            now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0);
-            now.set(Calendar.MILLISECOND, 0);
-
-            long diffDays = (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-            return diffDays >= 0 && diffDays <= 2;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     /** בודק אם מחרוזת ריקה או null. */
