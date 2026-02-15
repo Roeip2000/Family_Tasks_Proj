@@ -8,10 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
+import com.example.family_tasks_proj.Child_Login.ChildSelectionActivity;
 import com.example.family_tasks_proj.Parents.ParentLoginFragment;
 import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.ChildDashboardActivity;
 
 /**
  * מסך כניסה ראשי — Launcher Activity.
@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> openFragment(new ParentLoginFragment()));
         btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
 
-        // כניסה ישירה ללא QR — משתמש בסשן שמור ב-SharedPreferences (אם קיים)
-        // הערה: אם אין סשן שמור, ChildDashboardActivity יציג שגיאה ויסגור
+        // כניסה ישירה ללא QR — עובר למסך בחירת ילד (ChildSelectionActivity)
+        // שם הילד בוחר את עצמו מ-Spinner, לא נכנס אוטומטית לילד אחרון
         btnChild.setOnClickListener(v ->
         {
-            Intent intent = new Intent(MainActivity.this, ChildDashboardActivity.class);
+            Intent intent = new Intent(MainActivity.this, ChildSelectionActivity.class);
             startActivity(intent);
         });
     }

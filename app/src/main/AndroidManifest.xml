@@ -37,6 +37,10 @@
             android:exported="false" /> <!-- Child side -->
         <activity
             android:name=".child.ChildDashboardActivity"
+            android:exported="false" />
+        <!-- מסך בחירת ילד — Spinner לבחירה לפני כניסה לדשבורד -->
+        <activity
+            android:name=".Child_Login.ChildSelectionActivity"
             android:exported="false" /> <!-- Barcode Scanner -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
