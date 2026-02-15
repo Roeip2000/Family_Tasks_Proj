@@ -78,6 +78,20 @@
             android:textColor="#FFB300"
             android:textStyle="bold" />
 
+        <!-- כפתור סימון "בוצע" — מאפשר לילד לסמן שהשלים את המשימה -->
+        <Button
+            android:id="@+id/btnDone"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:text="בוצע ✓"
+            android:textSize="12sp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:minWidth="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

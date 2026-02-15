@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,10 +25,11 @@ import java.util.List;
  * אדפטר ל-RecyclerView של רשימת המשימות בדשבורד הילד.
  *
  * אחריות:
- * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, וכוכבים.
+ * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, תמונה, וכוכבים.
  * - צובע את נקודת הסטטוס: ירוק (בוצע), כתום (דחוף — עד 2 ימים), אפור (רגיל).
  * - מחשב ומציג "היום", "מחר", או את התאריך — לפי הפרש ימים מהיום.
- * - משימה שבוצעה מקבלת קו חוצה על הכותרת.
+ * - משימה שבוצעה מקבלת קו חוצה על הכותרת וכפתור "בוצע" מוסתר.
+ * - כפתור "בוצע" — הילד לוחץ כדי לסמן שהשלים את המשימה.
  *
  * Layout: item_child_task.xml
  *
@@ -39,13 +41,29 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     /** רשימת המשימות להצגה */
     private final List<ChildTask> tasks;
 
+    /** callback — נקרא כשהילד לוחץ "בוצע" על משימה */
+    private final OnTaskDoneListener doneListener;
+
+    /**
+     * ממשק callback — ChildDashboardActivity מממש אותו כדי לעדכן Firebase.
+     */
+    public interface OnTaskDoneListener {
+        /** נקרא כשהילד לוחץ "בוצע" על משימה
+         * @param task המשימה שסומנה כ-done
+         * @param position המיקום ברשימה
+         */
+        void onTaskDone(ChildTask task, int position);
+    }
+
     /**
      * יוצר אדפטר חדש.
      *
      * @param tasks רשימת המשימות — מגיעה מ-Firebase דרך ChildDashboardActivity
+     * @param doneListener callback לעדכון Firebase כשמשימה מסומנת כ-done
      */
-    public ChildTaskAdapter(List<ChildTask> tasks) {
+    public ChildTaskAdapter(List<ChildTask> tasks, OnTaskDoneListener doneListener) {
         this.tasks = tasks;
+        this.doneListener = doneListener;
     }
 
     @NonNull
@@ -120,6 +138,18 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         // --- כוכבים ---
         holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " ⭐" : "");
+
+        // --- כפתור "בוצע" — מוצג רק אם המשימה עדיין לא הושלמה ---
+        if (task.isDone) {
+            holder.btnDone.setVisibility(View.GONE);
+        } else {
+            holder.btnDone.setVisibility(View.VISIBLE);
+            holder.btnDone.setOnClickListener(v -> {
+                if (doneListener != null) {
+                    doneListener.onTaskDone(task, holder.getAdapterPosition());
+                }
+            });
+        }
     }
 
     @Override
@@ -136,12 +166,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
      * "היום", "מחר", "עוד X ימים", "איחור (X ימים)", או התאריך עצמו.
      *
      * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @param daysLeft תוצאה מ-calcDaysLeft
+     * @param daysLeft תוצאה מ-DateUtils.daysLeft
      * @return מחרוזת תצוגה בעברית
      */
     private String formatDueText(String dueAt, long daysLeft) {
         if (daysLeft == Long.MAX_VALUE) {
-            // אין תאריך יעד
             return "ללא תאריך";
         }
         if (daysLeft < 0) {
@@ -156,7 +185,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (daysLeft <= 7) {
             return "עוד " + daysLeft + " ימים";
         }
-        // יותר משבוע — מציג תאריך
         return dueAt;
     }
 
@@ -179,6 +207,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         TextView tvDueDate;
         /** כמות כוכבים */
         TextView tvTaskStars;
+        /** כפתור סימון "בוצע" */
+        Button btnDone;
 
         TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -187,6 +217,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
             tvDueDate = itemView.findViewById(R.id.tvDueDate);
             tvTaskStars = itemView.findViewById(R.id.tvTaskStars);
+            btnDone = itemView.findViewById(R.id.btnDone);
         }
     }
 }
