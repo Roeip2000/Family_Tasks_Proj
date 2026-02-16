@@ -51,7 +51,6 @@ import java.util.List;
  *
  * ===== הערות =====
  * TODO: להוסיף AlarmManager + Notification — התרעה לילד כשמשימה מתקרבת לתאריך יעד או באיחור.
- * TODO: להוסיף כפתור "בוצע" בכל כרטיס משימה שמעדכן isDone ב-Firebase.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
@@ -96,9 +95,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
         rvTasks = findViewById(R.id.rvTasks);
         btnLogout = findViewById(R.id.btnLogout);
 
-        // הגדרת RecyclerView עם Adapter
+        // הגדרת RecyclerView עם Adapter + callback לסימון משימה כ-"בוצע"
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChildTaskAdapter(taskList);
+        adapter = new ChildTaskAdapter(taskList, this::markTaskDone);
         rvTasks.setAdapter(adapter);
 
         // כפתור יציאה — מציג AlertDialog אישור לפני מחיקת סשן
@@ -248,6 +247,50 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         "שגיאה בטעינת משימות: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Callback מ-ChildTaskAdapter — נקרא כשהילד לוחץ "בוצע" על משימה.
+     *
+     * מציג AlertDialog לאישור, ואם מאושר:
+     * 1. מעדכן isDone = true ב-Firebase.
+     * 2. טוען מחדש את רשימת המשימות (loadTasks) — כולל עדכון סיכומים וכוכבים.
+     *
+     * @param task המשימה שהילד סימן
+     * @param position המיקום ברשימה (לא בשימוש כרגע — refresh מלא)
+     */
+    private void markTaskDone(ChildTask task, int position) {
+        if (task.id == null || task.id.isEmpty()) {
+            Toast.makeText(this, "שגיאה: חסר מזהה משימה", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // אישור מהילד לפני סימון
+        new AlertDialog.Builder(this)
+                .setTitle("סימון משימה")
+                .setMessage("לסמן את \"" + task.title + "\" כבוצע?")
+                .setPositiveButton("כן, סיימתי! ✓", (dialog, which) -> {
+                    // עדכון isDone ב-Firebase
+                    DatabaseReference taskRef = childRef()
+                            .child(NODE_TASKS)
+                            .child(task.id)
+                            .child("isDone");
+
+                    taskRef.setValue(true)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(ChildDashboardActivity.this,
+                                        "כל הכבוד! 🌟", Toast.LENGTH_SHORT).show();
+                                // טוען מחדש — מעדכן סיכומים + כוכבים + רשימה
+                                loadTasks();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(ChildDashboardActivity.this,
+                                        "שגיאה בעדכון: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .setNegativeButton("עוד לא", null)
+                .show();
     }
 
     /**
