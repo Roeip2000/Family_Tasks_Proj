@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -30,8 +29,6 @@ import com.example.family_tasks_proj.R;
  * ===== הערות לשיפור =====
  * TODO: להוסיף בדיקת auto-login — אם ההורה כבר מחובר (FirebaseAuth.currentUser != null),
  *       לדלג ישירות ל-ParentDashboardActivity בלי לדרוש login מחדש.
- * TODO: כפתור "כניסה ישירה לילד" — לבדוק אם יש סשן שמור לפני פתיחת ChildDashboard,
- *       כי בלי סשן ה-Activity ייפתח ויסגור מיד (חוויית משתמש לא טובה).
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -60,19 +57,18 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> openFragment(new ParentLoginFragment()));
         btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
 
-        // כניסה ישירה ללא QR — בודק שיש סשן שמור לפני מעבר
+        // כניסה ישירה ללא QR — פותח מסך בחירת הורה+ילד.
+        // אם יש סשן שמור (parentId) — ChildSelectionActivity ידלג ישר ל-Spinner ילדים.
+        // אם אין סשן — ChildSelectionActivity יציג Spinner הורים קודם ואז ילדים.
         btnChild.setOnClickListener(v ->
         {
+            Intent intent = new Intent(MainActivity.this, ChildSelectionActivity.class);
+            // אם יש סשן שמור — מעביר כ-extra כדי לדלג על בחירת הורה
             SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
             String savedParent = sp.getString("parentId", null);
-            if (savedParent == null) {
-                // אין סשן שמור — הילד צריך לסרוק QR קודם
-                Toast.makeText(this, "אין סשן שמור. סרוק QR קודם.", Toast.LENGTH_SHORT).show();
-                return;
+            if (savedParent != null) {
+                intent.putExtra("parentId", savedParent);
             }
-            // יש סשן — עובר למסך בחירת ילד עם ה-parentId השמור
-            Intent intent = new Intent(MainActivity.this, ChildSelectionActivity.class);
-            intent.putExtra("parentId", savedParent);
             startActivity(intent);
         });
     }
