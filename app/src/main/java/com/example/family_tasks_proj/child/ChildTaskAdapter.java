@@ -25,7 +25,7 @@ import java.util.List;
  * אדפטר ל-RecyclerView של רשימת המשימות בדשבורד הילד.
  *
  * אחריות:
- * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, תמונה, וכוכבים.
+ * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, כוכבים, וכפתור "בוצע".
  * - צובע את נקודת הסטטוס: ירוק (בוצע), כתום (דחוף — עד 2 ימים), אפור (רגיל).
  * - מחשב ומציג "היום", "מחר", או את התאריך — לפי הפרש ימים מהיום.
  * - משימה שבוצעה מקבלת קו חוצה על הכותרת וכפתור "בוצע" מוסתר.
@@ -166,11 +166,12 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
      * "היום", "מחר", "עוד X ימים", "איחור (X ימים)", או התאריך עצמו.
      *
      * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @param daysLeft תוצאה מ-DateUtils.daysLeft
+     * @param daysLeft תוצאה מ-calcDaysLeft
      * @return מחרוזת תצוגה בעברית
      */
     private String formatDueText(String dueAt, long daysLeft) {
         if (daysLeft == Long.MAX_VALUE) {
+            // אין תאריך יעד
             return "ללא תאריך";
         }
         if (daysLeft < 0) {
@@ -185,6 +186,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (daysLeft <= 7) {
             return "עוד " + daysLeft + " ימים";
         }
+        // יותר משבוע — מציג תאריך
         return dueAt;
     }
 

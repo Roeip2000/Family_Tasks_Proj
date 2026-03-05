@@ -51,6 +51,7 @@ import java.util.List;
  *
  * ===== הערות =====
  * TODO: להוסיף AlarmManager + Notification — התרעה לילד כשמשימה מתקרבת לתאריך יעד או באיחור.
+ * כפתור "בוצע" בכל כרטיס — מעדכן isDone ב-Firebase דרך markTaskDone callback עם AlertDialog אישור.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
@@ -191,8 +192,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int total = 0, done = 0, dueSoon = 0;
-                long stars = 0;
                 taskList.clear();
 
                 // עוברים על כל המשימות ובונים רשימה + סיכומים
@@ -206,23 +205,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     }
 
                     taskList.add(t);
-                    total++;
-
-                    if (t.isDone) {
-                        done++;
-                        stars += t.starsWorth; // סכום כוכבים ממשימות שבוצעו
-                    }
-
-                    if (!t.isDone && DateUtils.isDueSoon(t.dueAt)) {
-                        dueSoon++;
-                    }
                 }
 
                 // עדכון סיכומים
-                tvTotalTasks.setText(String.valueOf(total));
-                tvCompleted.setText(String.valueOf(done));
-                tvDueSoon.setText(String.valueOf(dueSoon));
-                tvStars.setText(stars + " ⭐");
+                updateSummaryAndStars();
 
                 // הצגת/הסתרת הודעת "אין משימות"
                 if (taskList.isEmpty()) {
@@ -236,8 +222,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 // עדכון ה-Adapter
                 adapter.notifyDataSetChanged();
 
-                Log.d(TAG, "Tasks loaded: total=" + total + " done=" + done
-                        + " dueSoon=" + dueSoon + " stars=" + stars);
+                Log.d(TAG, "Tasks loaded: " + taskList.size() + " tasks");
             }
 
             @Override
@@ -247,6 +232,24 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         "שגיאה בטעינת משימות: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateSummaryAndStars() {
+        int done = 0;
+        int dueSoon = 0;
+        long stars = 0;
+        for (ChildTask task : taskList) {
+            if (task.isDone) {
+                done++;
+                stars += task.starsWorth;
+            } else if (DateUtils.isDueSoon(task.dueAt)) {
+                dueSoon++;
+            }
+        }
+        tvTotalTasks.setText(String.valueOf(taskList.size()));
+        tvCompleted.setText(String.valueOf(done));
+        tvDueSoon.setText(String.valueOf(dueSoon));
+        tvStars.setText(stars + " ⭐");
     }
 
     /**
