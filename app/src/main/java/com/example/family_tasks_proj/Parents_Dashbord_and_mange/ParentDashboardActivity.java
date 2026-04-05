@@ -3,9 +3,15 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +24,7 @@ import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
+import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,15 +33,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.app.DatePickerDialog;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import com.example.family_tasks_proj.util.NameUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * דשבורד ראשי של ההורה — מסך Hub.
@@ -47,12 +51,12 @@ import java.util.List;
  * 4. QR לילדים — הצגת קוד QR לכל ילד, הילד סורק כדי להתחבר (GenerateQRActivity)
  * 5. התנתקות — מנתק מ-FirebaseAuth עם AlertDialog אישור ומחזיר ל-MainActivity
  *
- * בנוסף, מציג רשימת כל המשימות שהוקצו (מכל הילדים).
+ * רשימת המשימות מציגה כרטיסים מעוצבים עם תמונת הילד, שם, תאריך וסטטוס.
  * לחיצה על משימה → פרטים + אפשרות לשנות תאריך יעד או למחוק.
  *
  * Layout: activity_parent_dashboard.xml
+ * כרטיס משימה: item_parent_task.xml
  *
- * ===== הערות =====
  * TODO: להוסיף AlarmManager + Notification — התרעה להורה כשמשימה של ילד באיחור.
  */
 public class ParentDashboardActivity extends AppCompatActivity {
@@ -68,28 +72,24 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     /**
      * בוחר תמונה מהגלריה לפרופיל ההורה.
-     * אותו דפוס בדיוק כמו בParentTaskTemplateActivity.
+     * אותו דפוס בדיוק כמו ב-ParentTaskTemplateActivity.
      */
     private final ActivityResultLauncher<String> profileImagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri == null) return;
-                // טוען ומתקן תמונה — EXIF + הקטנה — דרך ImageHelper שכבר קיים
                 Bitmap bitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
                 if (bitmap == null) {
                     Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // מציג מיד בלי לחכות ל-Firebase
                 ivParentProfile.setImageBitmap(bitmap);
-                // שומר ב-Firebase תחת /parents/{uid}/profileImageBase64
                 saveProfileImage(bitmap);
             });
 
-    /** כל המשימות מכל הילדים — לתצוגה ברשימה */
+    /** כל המשימות מכל הילדים — הנתונים שה-Adapter מציג */
     private final List<AssignedTask> assignedTasks = new ArrayList<>();
-    /** שורות טקסט להצגה ב-ListView */
-    private final List<String> taskDisplayList = new ArrayList<>();
-    private ArrayAdapter<String> taskAdapter;
+    /** ה-Adapter המעוצב שמציג כרטיסים עם תמונה + שם + תאריך + סטטוס */
+    private TaskItemAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ivParentProfile = findViewById(R.id.ivParentProfile);
         tvParentName = findViewById(R.id.tvParentName);
         Button btnChangeProfilePic = findViewById(R.id.btnChangeProfilePic);
-        // לחיצה → פותח גלריה לבחירת תמונה (אותו מנגנון כמו בתבניות)
         btnChangeProfilePic.setOnClickListener(v -> profileImagePicker.launch("image/*"));
 
         // חיבור TextViews של סיכום משימות
@@ -108,48 +107,34 @@ public class ParentDashboardActivity extends AppCompatActivity {
         tvParentCompleted = findViewById(R.id.tvParentCompleted);
         tvParentDueSoon = findViewById(R.id.tvParentDueSoon);
 
-        // חיבור רשימת משימות
+        // חיבור רשימת משימות + Adapter מעוצב
         lvTasks = findViewById(R.id.lvTasks);
         tvNoTasks = findViewById(R.id.tvNoTasks);
 
-        taskAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, taskDisplayList);
+        taskAdapter = new TaskItemAdapter();
         lvTasks.setAdapter(taskAdapter);
 
-        // לחיצה על משימה ברשימה → פרטים + שינוי תאריך / מחיקה
+        // לחיצה על משימה → פרטים + שינוי תאריך / מחיקה
         lvTasks.setOnItemClickListener((parent, view, position, id) ->
                 showTaskOptionsDialog(position));
 
         // חיבור כפתורים — כל כפתור פותח Activity ייעודי
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageChildren.setOnClickListener(v ->
-        {
-            // ניהול ילדים — הוספת ילד חדש
-            startActivity(new Intent(ParentDashboardActivity.this, ManageChildrenActivity.class));
-        });
+                startActivity(new Intent(this, ManageChildrenActivity.class)));
 
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
         btnManageTemplates.setOnClickListener(v ->
-        {
-            // מאגר תבניות — יצירת תבנית משימה חדשה עם תמונה
-            startActivity(new Intent(ParentDashboardActivity.this, ParentTaskTemplateActivity.class));
-        });
+                startActivity(new Intent(this, ParentTaskTemplateActivity.class)));
 
         btnAssignTaskToChild = findViewById(R.id.btnAssignTaskToChild);
         btnAssignTaskToChild.setOnClickListener(v ->
-        {
-            // הקצאת משימה — בחירת תבנית + ילד + תאריך
-            startActivity(new Intent(ParentDashboardActivity.this, AssignTaskToChildActivity.class));
-        });
+                startActivity(new Intent(this, AssignTaskToChildActivity.class)));
 
         btnShowQR = findViewById(R.id.btnShowQR);
         btnShowQR.setOnClickListener(v ->
-        {
-            // QR לילדים — Spinner לבחירת ילד + הצגת QR
-            startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
-        });
+                startActivity(new Intent(this, GenerateQRActivity.class)));
 
-        // כפתור התנתקות — מציג AlertDialog אישור לפני ניתוק
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> showLogoutDialog());
     }
@@ -157,16 +142,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // טוען סיכום כל פעם שחוזרים למסך — כך אחרי הקצאת משימה המספרים מתעדכנים
+        // טוען מחדש בכל פעם שחוזרים למסך — כך המספרים תמיד מעודכנים
         loadDashboardData();
-        // טוען שם ותמונת פרופיל של ההורה
         loadParentProfile();
     }
 
     /**
-     * טוען את שם ותמונת הפרופיל של ההורה מ-Firebase.
-     * נתיב: /parents/{uid} — קורא firstName, lastName, profileImageBase64.
-     * אותו מנגנון כמו loadDashboardData — ValueEventListener רגיל.
+     * טוען שם + תמונת פרופיל של ההורה מ-Firebase.
+     * נתיב: /parents/{uid}
      */
     private void loadParentProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -178,31 +161,26 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // שם ההורה
                         String firstName = snapshot.child("firstName").getValue(String.class);
                         String lastName = snapshot.child("lastName").getValue(String.class);
                         tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה"));
 
-                        // תמונת פרופיל — אם קיימת, מפענחת מ-Base64 ומציגה
                         String base64 = snapshot.child("profileImageBase64").getValue(String.class);
                         if (base64 != null && !base64.isEmpty()) {
                             Bitmap bmp = ImageHelper.base64ToBitmap(base64);
-                            if (bmp != null) {
-                                ivParentProfile.setImageBitmap(bmp);
-                            }
+                            if (bmp != null) ivParentProfile.setImageBitmap(bmp);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // לא מציגים שגיאה — הפרופיל פחות קריטי מרשימת המשימות
+                        // פרופיל ההורה פחות קריטי — לא מציגים שגיאה
                     }
                 });
     }
 
     /**
-     * שומר תמונת פרופיל ב-Firebase.
-     * משתמש ב-ImageHelper.bitmapToBase64 — אותה פונקציה כמו בשמירת תבניות.
+     * שומר תמונת פרופיל של ההורה ב-Firebase.
      * נתיב: /parents/{uid}/profileImageBase64
      */
     private void saveProfileImage(Bitmap bitmap) {
@@ -215,7 +193,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             return;
         }
 
-        // updateChildren שומר רק את השדה הזה בלי למחוק את שאר הנתונים של ההורה
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(user.getUid())
@@ -229,11 +206,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     /**
-     * טוען את כל הנתונים של הדשבורד בקריאה אחת מ-Firebase:
-     * 1. סיכום מספרי (סה"כ / הושלמו / דחופות)
-     * 2. רשימת כל המשימות מכל הילדים
+     * טוען את כל הנתונים של הדשבורד מ-Firebase:
+     * — סיכום מספרי (סה"כ / הושלמו / דחופות)
+     * — רשימת כל המשימות מכל הילדים + תמונת הפרופיל של כל ילד
      *
-     * נתיב: /parents/{uid}/children/ — עובר על כל ילד ועל כל המשימות שלו.
+     * נתיב: /parents/{uid}/children/
      */
     private void loadDashboardData() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -248,16 +225,20 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         int total = 0, done = 0, dueSoon = 0;
                         assignedTasks.clear();
-                        taskDisplayList.clear();
+                        // מנקה את מטמון התמונות כי הנתונים ייטענו מחדש
+                        taskAdapter.clearPhotoCache();
 
                         for (DataSnapshot childSnap : snapshot.getChildren()) {
                             String childId = childSnap.getKey();
                             if (childId == null) continue;
 
-                            // שם הילד — לתצוגה ברשימת המשימות
                             String firstName = childSnap.child("firstName").getValue(String.class);
                             String lastName = childSnap.child("lastName").getValue(String.class);
                             String childName = NameUtils.fullNameOrDefault(firstName, lastName, "ילד");
+
+                            // תמונת הפרופיל של הילד — אם קיימת, נשמרת בכל משימה שלו
+                            String childProfileBase64 =
+                                    childSnap.child("profileImageBase64").getValue(String.class);
 
                             for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
                                 total++;
@@ -268,28 +249,21 @@ public class ParentDashboardActivity extends AppCompatActivity {
                                 Boolean taskDone = taskSnap.child("isDone").getValue(Boolean.class);
                                 boolean isDone = taskDone != null && taskDone;
 
-                                // סיכום מספרי
                                 if (isDone) {
                                     done++;
                                 } else {
                                     if (DateUtils.isDueSoon(dueAt)) dueSoon++;
                                 }
 
-                                // שמירה לרשימה
                                 AssignedTask at = new AssignedTask();
                                 at.childId = childId;
                                 at.childName = childName;
+                                at.childProfileBase64 = childProfileBase64;
                                 at.taskId = taskId;
                                 at.title = title != null ? title : "";
                                 at.dueAt = dueAt != null ? dueAt : "";
                                 at.isDone = isDone;
                                 assignedTasks.add(at);
-
-                                // שורת תצוגה: "כותרת — ילד | תאריך [סטטוס]"
-                                String status = isDone ? "בוצע" : "ממתין";
-                                taskDisplayList.add(
-                                        at.title + "  —  " + childName
-                                        + "\n" + at.dueAt + "  [" + status + "]");
                             }
                         }
 
@@ -298,7 +272,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         tvParentCompleted.setText("הושלמו: " + done);
                         tvParentDueSoon.setText("דחופות: " + dueSoon);
 
-                        // עדכון רשימת משימות
+                        // עדכון רשימת כרטיסים
                         taskAdapter.notifyDataSetChanged();
                         if (assignedTasks.isEmpty()) {
                             tvNoTasks.setVisibility(View.VISIBLE);
@@ -322,11 +296,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     //  פרטי משימה + שינוי תאריך + מחיקה
     // =====================================================================
 
-    /**
-     * לחיצה על משימה ברשימה — מציג דיאלוג עם הפרטים ואפשרויות.
-     * ההורה יכול: לראות למי הוקצתה, מתי, ואם בוצעה.
-     * וגם: לשנות תאריך יעד או למחוק את המשימה.
-     */
     private void showTaskOptionsDialog(int position) {
         if (position < 0 || position >= assignedTasks.size()) return;
         AssignedTask task = assignedTasks.get(position);
@@ -346,10 +315,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 .show();
     }
 
-    /**
-     * פותח DatePicker לשינוי תאריך יעד של משימה שכבר הוקצתה.
-     * אחרי בחירת תאריך — מעדכן את dueAt ב-Firebase וטוען מחדש.
-     */
     private void showChangeDateDialog(int position) {
         AssignedTask task = assignedTasks.get(position);
         Calendar cal = Calendar.getInstance();
@@ -360,7 +325,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) return;
 
-            // עדכון תאריך ב-Firebase
             FirebaseDatabase.getInstance()
                     .getReference("parents")
                     .child(user.getUid())
@@ -370,7 +334,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     .setValue(newDate)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "התאריך עודכן!", Toast.LENGTH_SHORT).show();
-                        loadDashboardData(); // רענון
+                        loadDashboardData();
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "שגיאה: " + e.getMessage(),
@@ -378,9 +342,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    /**
-     * מבקש אישור ומוחק משימה מ-Firebase.
-     */
     private void showDeleteTaskDialog(int position) {
         AssignedTask task = assignedTasks.get(position);
 
@@ -398,9 +359,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
                             .child("tasks").child(task.taskId)
                             .removeValue()
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "המשימה נמחקה",
-                                        Toast.LENGTH_SHORT).show();
-                                loadDashboardData(); // רענון
+                                Toast.makeText(this, "המשימה נמחקה", Toast.LENGTH_SHORT).show();
+                                loadDashboardData();
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "שגיאה: " + e.getMessage(),
@@ -410,22 +370,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 .show();
     }
 
-    // =====================================================================
-
-    /**
-     * מציג AlertDialog לאישור התנתקות.
-     * אם המשתמש מאשר — מנתק מ-FirebaseAuth ומחזיר למסך הראשי (MainActivity).
-     * אם מבטל — לא קורה כלום.
-     */
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("התנתקות")
                 .setMessage("האם אתה בטוח שברצונך להתנתק?")
                 .setPositiveButton("כן, התנתק", (dialog, which) -> {
-                    // ניתוק מ-Firebase Auth
                     FirebaseAuth.getInstance().signOut();
-
-                    // חזרה למסך הראשי — מנקה את כל ה-Activity stack
                     Intent intent = new Intent(ParentDashboardActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -436,16 +386,149 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     // =====================================================================
+    //  Adapter מעוצב — מציג כרטיסי משימות עם תמונת ילד + שם + תאריך + סטטוס
+    // =====================================================================
+
+    /**
+     * Adapter שמציג כרטיסי משימות מעוצבים ב-ListView של הדשבורד.
+     *
+     * כל כרטיס מכיל:
+     * - תמונת הילד (עגולה, מ-Firebase אם קיימת)
+     * - שם המשימה (bold)
+     * - שם הילד
+     * - תאריך יעד עם צבע לפי דחיפות
+     * - תג סטטוס צבעוני (בוצע / ממתין / איחור)
+     *
+     * מטמון תמונות: כל Bitmap נטען פעם אחת ונשמר ב-childPhotoCache לפי childId.
+     */
+    private class TaskItemAdapter extends ArrayAdapter<AssignedTask> {
+
+        /**
+         * מטמון תמונות ילדים — מונע פענוח Base64 חוזר בכל גלילה.
+         * ה-key הוא childId, ה-value הוא ה-Bitmap המעוצב לעיגול.
+         */
+        private final Map<String, Bitmap> childPhotoCache = new HashMap<>();
+
+        TaskItemAdapter() {
+            super(ParentDashboardActivity.this, 0, assignedTasks);
+        }
+
+        /** מנקה את המטמון — נקרא לפני כל טעינה מחדש מ-Firebase */
+        void clearPhotoCache() {
+            childPhotoCache.clear();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            // שימוש חוזר בview אם קיים — שיפור ביצועים בגלילה
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_parent_task, parent, false);
+            }
+
+            AssignedTask task = getItem(position);
+            if (task == null) return convertView;
+
+            // --- חיבור Views מה-layout ---
+            ImageView ivChildPhoto = convertView.findViewById(R.id.ivChildPhoto);
+            TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
+            TextView tvChildNameCard = convertView.findViewById(R.id.tvChildNameCard);
+            TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
+            TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
+
+            // --- כותרת ---
+            tvTaskTitleCard.setText(task.title);
+
+            // --- שם הילד ---
+            tvChildNameCard.setText("👤  " + task.childName);
+
+            // --- תאריך + צבע לפי דחיפות ---
+            long daysLeft = DateUtils.daysLeft(task.dueAt);
+            if (task.isDone) {
+                tvDueDateCard.setText("✅  " + task.dueAt);
+                tvDueDateCard.setTextColor(Color.parseColor("#4CAF50"));
+            } else if (daysLeft < 0) {
+                tvDueDateCard.setText("⚠️  איחור — " + task.dueAt);
+                tvDueDateCard.setTextColor(Color.parseColor("#E53935"));
+            } else if (daysLeft <= 2) {
+                tvDueDateCard.setText("⚡  " + task.dueAt);
+                tvDueDateCard.setTextColor(Color.parseColor("#FF9800"));
+            } else {
+                tvDueDateCard.setText("📅  " + task.dueAt);
+                tvDueDateCard.setTextColor(Color.parseColor("#888888"));
+            }
+
+            // --- תג סטטוס עם רקע צבעוני עגול ---
+            String statusText;
+            int chipBgColor;
+            int chipTextColor;
+
+            if (task.isDone) {
+                statusText   = "בוצע ✓";
+                chipBgColor  = Color.parseColor("#E8F5E9");
+                chipTextColor = Color.parseColor("#2E7D32");
+            } else if (daysLeft < 0) {
+                statusText   = "איחור!";
+                chipBgColor  = Color.parseColor("#FFEBEE");
+                chipTextColor = Color.parseColor("#C62828");
+            } else if (daysLeft <= 2) {
+                statusText   = "דחוף ⚡";
+                chipBgColor  = Color.parseColor("#FFF3E0");
+                chipTextColor = Color.parseColor("#E65100");
+            } else {
+                statusText   = "ממתין";
+                chipBgColor  = Color.parseColor("#F5F5F5");
+                chipTextColor = Color.parseColor("#666666");
+            }
+
+            tvStatusChip.setText(statusText);
+            tvStatusChip.setTextColor(chipTextColor);
+
+            // רקע עגול לתג — GradientDrawable, אותו דפוס כמו ב-ChildTaskAdapter
+            GradientDrawable chipBg = new GradientDrawable();
+            chipBg.setColor(chipBgColor);
+            chipBg.setCornerRadius(20f);
+            tvStatusChip.setBackground(chipBg);
+
+            // --- תמונת הילד (עגולה) ---
+            if (task.childProfileBase64 != null && !task.childProfileBase64.isEmpty()) {
+                // בדיקה במטמון קודם — כדי לא לפענח Base64 שוב בכל גלילה
+                if (childPhotoCache.containsKey(task.childId)) {
+                    ivChildPhoto.setImageBitmap(childPhotoCache.get(task.childId));
+                } else {
+                    Bitmap raw = ImageHelper.base64ToBitmap(task.childProfileBase64);
+                    if (raw != null) {
+                        // חיתוך עגול — ImageHelper.getCircularBitmap שהוספנו
+                        Bitmap circular = ImageHelper.getCircularBitmap(raw);
+                        childPhotoCache.put(task.childId, circular);
+                        ivChildPhoto.setImageBitmap(circular);
+                    } else {
+                        // פענוח נכשל — מסתיר תמונה, נשאר רקע אפור
+                        ivChildPhoto.setImageBitmap(null);
+                    }
+                }
+            } else {
+                // אין תמונה לילד — נשאר הרקע האפור הבהיר מה-XML
+                ivChildPhoto.setImageBitmap(null);
+            }
+
+            return convertView;
+        }
+    }
+
+    // =====================================================================
     //  מחלקה פנימית — מידע על משימה שהוקצתה
     // =====================================================================
 
     /**
-     * שומרת את כל הפרטים של משימה מהרשימה.
-     * צריך את childId + taskId כדי לדעת איפה ב-Firebase לעדכן/למחוק.
+     * מחזיקה את כל הנתונים הדרושים לתצוגת כרטיס משימה אחד.
+     * כולל עכשיו גם תמונת הפרופיל של הילד (Base64).
      */
     private static class AssignedTask {
         String childId;
         String childName;
+        /** תמונת הפרופיל של הילד — Base64. יכול להיות null אם לא הוגדרה */
+        String childProfileBase64;
         String taskId;
         String title;
         String dueAt;

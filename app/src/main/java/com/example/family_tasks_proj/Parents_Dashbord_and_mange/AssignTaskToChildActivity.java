@@ -97,7 +97,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
         {
-            Toast.makeText(this, "Parent not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "הורה אינו מחובר", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

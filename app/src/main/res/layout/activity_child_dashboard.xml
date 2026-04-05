@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- דשבורד הילד — מציג שם, כוכבים, סיכום משימות, ורשימת משימות.
-     זרימה: header (שם + כוכבים) → סיכום (סה"כ / בוצעו / דחופות) → רשימת משימות.
-     ChildDashboardActivity.java אחראי על מילוי הנתונים מ-Firebase. -->
+<!-- דשבורד הילד — header עם אווטאר + שם + כוכבים, סיכום משימות, רשימת משימות.
+     הרקע הכהה (גרדיאנט) נקבע ב-ChildDashboardActivity.java כדי לא לצור קובץ drawable חדש.
+     כל ה-IDs הקיימים נשמרים בדיוק. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollRootChildDashboard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F5F7FA">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,156 +14,189 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ===== Header: שם ילד + כוכבים ===== -->
-        <LinearLayout
+        <!-- ===== כרטיס Header: תמונה + שם + כוכבים ===== -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#FFFFFF">
 
-            <!-- שם הילד -->
-            <TextView
-                android:id="@+id/tvChildName"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="שלום!"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#222" />
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="20dp">
 
-            <!-- יתרת כוכבים -->
-            <TextView
-                android:id="@+id/tvStars"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#FFB300"
-                android:drawablePadding="4dp" />
+                <!-- תמונת אווטאר עגולה של הילד — ממולאת מ-Firebase אם קיימת -->
+                <ImageView
+                    android:id="@+id/imgChildAvatar"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"
+                    android:background="#CCCCCC"
+                    android:layout_marginBottom="12dp"
+                    android:src="@android:drawable/ic_menu_my_calendar"
+                    android:contentDescription="תמונת הילד" />
 
-        </LinearLayout>
-
-        <!-- ===== סיכום: סה"כ / בוצעו / דחופות — שלוש קופסאות ===== -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp">
-
-            <!-- סה"כ משימות -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#E3F2FD"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- שם הילד -->
+                <TextView
+                    android:id="@+id/tvChildName"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="שלום!"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222"
+                    android:gravity="center"
+                    android:layout_marginBottom="6dp" />
+
+                <!-- כוכבים שנצברו -->
+                <TextView
+                    android:id="@+id/tvStars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 ⭐"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFB300"
+                    android:gravity="center" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ===== שורת סטטיסטיקות: סה"כ / בוצעו / דחופות ===== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <!-- קופסת סה"כ משימות -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="12dp">
+                    android:background="#E3F2FD"
+                    android:padding="12dp"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📋"
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/tvTotalTasks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#1565C0" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="משימות"
-                        android:textSize="12sp"
+                        android:text="סה״כ"
+                        android:textSize="11sp"
                         android:textColor="#555" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <!-- בוצעו -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#E8F5E9"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <!-- קופסת בוצעו -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="12dp">
+                    android:background="#E8F5E9"
+                    android:padding="12dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✅"
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/tvCompleted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#2E7D32" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="בוצעו"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textColor="#555" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <!-- דחופות -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFF3E0"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <!-- קופסת דחופות -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="12dp">
+                    android:background="#FFF3E0"
+                    android:padding="12dp"
+                    android:layout_marginStart="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚡"
+                        android:textSize="18sp" />
+
                     <TextView
                         android:id="@+id/tvDueSoon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#E65100" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="דחופות"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textColor="#555" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- ===== כותרת רשימת משימות ===== -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="המשימות שלי"
-            android:textSize="18sp"
+            android:text="המשימות שלי 📝"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#333"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="4dp"
             android:layout_marginBottom="8dp" />
 
         <!-- ===== הודעה כשאין משימות ===== -->
@@ -172,7 +206,7 @@
             android:layout_height="wrap_content"
             android:text="אין משימות כרגע. ההורה יוסיף בקרוב!"
             android:textSize="14sp"
-            android:textColor="#999"
+            android:textColor="#DDDDDD"
             android:gravity="center"
             android:visibility="gone"
             android:layout_marginTop="16dp" />
@@ -182,16 +216,19 @@
             android:id="@+id/rvTasks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="4dp"
             android:nestedScrollingEnabled="false" />
 
-        <!-- כפתור התנתקות ילד -->
+        <!-- ===== כפתור יציאה ===== -->
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:text="יציאה"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="#FF5252"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

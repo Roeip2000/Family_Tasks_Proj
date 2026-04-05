@@ -1,91 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- מסך ניהול ילדים — הוספה, צפייה, עריכה ומחיקה.
-     בחלק העליון: טופס הוספת ילד חדש.
+     בחלק העליון: טופס הוספת ילד חדש + בחירת תמונה לילד.
      בחלק התחתון: רשימת כל הילדים הקיימים (ListView).
      לחיצה על ילד ברשימה → תפריט "ערוך שם" / "מחק ילד". -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
     tools:context=".Parents_Dashbord_and_mange.ManageChildrenActivity">
 
-    <!-- כותרת -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
-        android:text="ניהול ילדים"
-        android:textColor="#222"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <!-- === טופס הוספת ילד === -->
-
-    <EditText
-        android:id="@+id/etFirstName"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/first_name"
-        android:inputType="textPersonName" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/etLastName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/last_name"
-        android:inputType="textPersonName" />
+        <!-- כותרת -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:text="ניהול ילדים"
+            android:textColor="#222"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnAddChild"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="#4CAF50"
-        android:text="@string/add_child" />
+        <!-- === תמונת פרופיל לילד === -->
 
-    <!-- === קו מפריד בין הטופס לרשימה === -->
+        <!-- עיגול אפור — מחזיק את תמונת הילד לפני הבחירה -->
+        <ImageView
+            android:id="@+id/imgChildPhoto"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:background="#CCCCCC"
+            android:contentDescription="תמונת ילד" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="12dp"
-        android:background="#DDDDDD" />
+        <!-- כפתור בחירת תמונה מהגלריה -->
+        <Button
+            android:id="@+id/btnPickChildPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#607D8B"
+            android:text="📷 בחר תמונה לילד"
+            android:textColor="#FFFFFF" />
 
-    <!-- === כותרת רשימת ילדים === -->
+        <!-- === טופס הוספת ילד === -->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="ילדים רשומים:"
-        android:textColor="#333"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/first_name"
+            android:inputType="textPersonName" />
 
-    <!-- הודעה כשאין ילדים -->
-    <TextView
-        android:id="@+id/tvNoChildren"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="אין ילדים רשומים עדיין. הוסף ילד למעלה."
-        android:textColor="#999"
-        android:textSize="14sp"
-        android:visibility="gone" />
+        <EditText
+            android:id="@+id/etLastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/last_name"
+            android:inputType="textPersonName" />
 
-    <!-- רשימת ילדים — לחיצה פותחת תפריט ערוך/מחק -->
-    <ListView
-        android:id="@+id/lvChildren"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="#EEEEEE"
-        android:dividerHeight="1dp" />
+        <Button
+            android:id="@+id/btnAddChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#4CAF50"
+            android:text="@string/add_child" />
 
-</LinearLayout>
+        <!-- === קו מפריד בין הטופס לרשימה === -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp"
+            android:background="#DDDDDD" />
+
+        <!-- === כותרת רשימת ילדים === -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="ילדים רשומים:"
+            android:textColor="#333"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- הודעה כשאין ילדים -->
+        <TextView
+            android:id="@+id/tvNoChildren"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="אין ילדים רשומים עדיין. הוסף ילד למעלה."
+            android:textColor="#999"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!-- רשימת ילדים — לחיצה פותחת תפריט ערוך/מחק
+             גובה קבוע כי ScrollView לא יכולה להכיל ListView עם weight -->
+        <ListView
+            android:id="@+id/lvChildren"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:divider="#EEEEEE"
+            android:dividerHeight="1dp" />
+
+    </LinearLayout>
+
+</ScrollView>

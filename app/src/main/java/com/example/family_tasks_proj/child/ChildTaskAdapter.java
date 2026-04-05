@@ -7,11 +7,13 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
@@ -27,14 +29,11 @@ import java.util.List;
  * אחריות:
  * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, כוכבים, וכפתור "בוצע".
  * - צובע את נקודת הסטטוס: ירוק (בוצע), כתום (דחוף — עד 2 ימים), אפור (רגיל).
- * - מחשב ומציג "היום", "מחר", או את התאריך — לפי הפרש ימים מהיום.
- * - משימה שבוצעה מקבלת קו חוצה על הכותרת וכפתור "בוצע" מוסתר.
- * - כפתור "בוצע" — הילד לוחץ כדי לסמן שהשלים את המשימה.
+ * - כרטיס שבוצע → רקע ירוק בהיר + קו חוצה על הכותרת + כפתור מוסתר.
+ * - אנימציית slide-in מימין לכל כרטיס כשמופיע.
+ * - לחיצה על "בוצע" → אנימציית celebrate → callback ל-ChildDashboardActivity.
  *
  * Layout: item_child_task.xml
- *
- * ===== שימוש =====
- * נוצר ב-ChildDashboardActivity ומוגדר ל-rvTasks (RecyclerView).
  */
 public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.TaskViewHolder> {
 
@@ -48,7 +47,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
      * ממשק callback — ChildDashboardActivity מממש אותו כדי לעדכן Firebase.
      */
     public interface OnTaskDoneListener {
-        /** נקרא כשהילד לוחץ "בוצע" על משימה
+        /**
+         * נקרא כשהילד לוחץ "בוצע" על משימה
          * @param task המשימה שסומנה כ-done
          * @param position המיקום ברשימה
          */
@@ -79,10 +79,29 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         ChildTask task = tasks.get(position);
 
-        // --- כותרת ---
+        // === אנימציית slide-in: כל כרטיס נכנס מימין בהדרגה ===
+        holder.itemView.setTranslationX(300f);
+        holder.itemView.setAlpha(0f);
+        holder.itemView.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(350)
+                .setStartDelay(position * 60L)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+
+        // === רקע כרטיס: ירוק בהיר אם בוצע, לבן אחרת ===
+        if (holder.itemView instanceof CardView) {
+            int bgColor = task.isDone
+                    ? Color.parseColor("#E8F5E9")  // ירוק בהיר — בוצע
+                    : Color.WHITE;
+            ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
+        }
+
+        // === כותרת ===
         holder.tvTaskTitle.setText(task.title != null ? task.title : "");
 
-        // קו חוצה אם בוצע
+        // קו חוצה אם בוצע + שינוי צבע טקסט
         if (task.isDone) {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -90,24 +109,32 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         } else {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTaskTitle.setTextColor(Color.parseColor("#222222"));
+            holder.tvTaskTitle.setTextColor(Color.parseColor("#1A1A1A"));
         }
 
-        // --- זמן שנותר (משתמש ב-DateUtils למניעת שכפול) ---
+        // === זמן שנותר (משתמש ב-DateUtils) ===
         long daysLeft = DateUtils.daysLeft(task.dueAt);
-        String dueText = formatDueText(task.dueAt, daysLeft);
+
+        // טקסט תאריך — עם אמוג'י לפי סטטוס
+        String dueText;
+        if (task.isDone) {
+            dueText = "✅ הושלם";
+            holder.tvDueDate.setTextColor(Color.parseColor("#4CAF50"));
+        } else {
+            dueText = formatDueText(task.dueAt, daysLeft);
+            // צבע טקסט לפי דחיפות
+            if (daysLeft < 0) {
+                holder.tvDueDate.setTextColor(Color.parseColor("#E53935")); // אדום — עבר זמן
+            } else if (daysLeft <= 2) {
+                dueText = "⚡ דחוף!  " + dueText;
+                holder.tvDueDate.setTextColor(Color.parseColor("#FF5722")); // כתום — דחוף
+            } else {
+                holder.tvDueDate.setTextColor(Color.parseColor("#888888")); // אפור — רגיל
+            }
+        }
         holder.tvDueDate.setText(dueText);
 
-        // צבע טקסט: אדום אם עבר, כתום אם דחוף, אפור אם רגיל
-        if (daysLeft < 0 && !task.isDone) {
-            holder.tvDueDate.setTextColor(Color.parseColor("#E53935")); // אדום — עבר זמן
-        } else if (daysLeft >= 0 && daysLeft <= 2 && !task.isDone) {
-            holder.tvDueDate.setTextColor(Color.parseColor("#FF9800")); // כתום — דחוף
-        } else {
-            holder.tvDueDate.setTextColor(Color.parseColor("#888888")); // אפור — רגיל
-        }
-
-        // --- נקודת סטטוס (עיגול צבעוני) ---
+        // === נקודת סטטוס (עיגול צבעוני) — אותה לוגיקה כמו קודם ===
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
@@ -123,7 +150,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
         holder.viewStatusDot.setBackground(dot);
 
-        // --- תמונת משימה ---
+        // === תמונת משימה ===
         if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
             if (bmp != null) {
@@ -136,18 +163,29 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.imgTaskImage.setVisibility(View.GONE);
         }
 
-        // --- כוכבים ---
+        // === כוכבים ===
         holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " ⭐" : "");
 
-        // --- כפתור "בוצע" — מוצג רק אם המשימה עדיין לא הושלמה ---
+        // === כפתור "בוצע" — מוצג רק אם המשימה עדיין לא הושלמה ===
         if (task.isDone) {
             holder.btnDone.setVisibility(View.GONE);
         } else {
             holder.btnDone.setVisibility(View.VISIBLE);
             holder.btnDone.setOnClickListener(v -> {
-                if (doneListener != null) {
-                    doneListener.onTaskDone(task, holder.getAdapterPosition());
-                }
+                if (doneListener == null) return;
+
+                // אנימציית celebrate: הכפתור מתכווץ + הכרטיס נדהה
+                // הCallback נקרא רק אחרי שהאנימציה מסתיימת
+                holder.btnDone.animate()
+                        .scaleX(0f).scaleY(0f)
+                        .setDuration(200)
+                        .start();
+                holder.itemView.animate()
+                        .alpha(0.6f)
+                        .setDuration(300)
+                        .withEndAction(() ->
+                                doneListener.onTaskDone(task, holder.getAdapterPosition()))
+                        .start();
             });
         }
     }
@@ -166,12 +204,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
      * "היום", "מחר", "עוד X ימים", "איחור (X ימים)", או התאריך עצמו.
      *
      * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @param daysLeft תוצאה מ-calcDaysLeft
+     * @param daysLeft תוצאה מ-DateUtils.daysLeft
      * @return מחרוזת תצוגה בעברית
      */
     private String formatDueText(String dueAt, long daysLeft) {
         if (daysLeft == Long.MAX_VALUE) {
-            // אין תאריך יעד
             return "ללא תאריך";
         }
         if (daysLeft < 0) {

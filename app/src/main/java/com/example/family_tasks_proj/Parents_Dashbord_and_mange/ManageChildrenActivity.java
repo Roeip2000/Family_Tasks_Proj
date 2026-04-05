@@ -1,21 +1,26 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.Class_child.Child;
+import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,14 +39,12 @@ import java.util.Map;
  * מסך ניהול ילדים — הוספה, צפייה, עריכה ומחיקה.
  *
  * המסך מחולק לשני חלקים:
- * - למעלה: טופס הוספת ילד חדש (שם פרטי + משפחה + כפתור).
+ * - למעלה: טופס הוספת ילד חדש (תמונה + שם פרטי + משפחה + כפתור).
  * - למטה: רשימת כל הילדים הרשומים של ההורה.
  *
  * לחיצה על ילד ברשימה פותחת תפריט עם שתי אפשרויות:
  * 1. ערוך שם — פותח דיאלוג עם שדות שם חדש.
  * 2. מחק ילד — מבקש אישור ומוחק מ-Firebase (כולל כל המשימות שלו).
- *
- * הרשימה מתעדכנת אוטומטית אחרי כל פעולה (הוספה / עריכה / מחיקה).
  *
  * Layout: activity_manage_children.xml
  * נתיב Firebase: /parents/{uid}/children/
@@ -53,10 +56,35 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private Button btnAddChild;
     private ListView lvChildren;
     private TextView tvNoChildren;
+    /** ImageView לתצוגה מקדימה של תמונת הילד שנבחרה */
+    private ImageView imgChildPhoto;
 
     // --- Firebase ---
     private DatabaseReference db;
     private String parentUID;
+
+    /**
+     * ה-Bitmap של תמונת הילד אחרי תיקון EXIF + הקטנה.
+     * null = לא נבחרה תמונה (ילד יישמר בלי תמונה).
+     */
+    private Bitmap childPhotosBitmap;
+
+    /**
+     * בוחר תמונה מהגלריה לפרופיל הילד.
+     * אותו דפוס בדיוק כמו ב-ParentTaskTemplateActivity — ImageHelper מטפל ב-EXIF.
+     */
+    private final ActivityResultLauncher<String> childImagePicker =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri == null) return;
+                // טוען + מתקן EXIF + מקטין — שלושה שלבים דרך ImageHelper
+                Bitmap bitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
+                if (bitmap != null) {
+                    childPhotosBitmap = bitmap;
+                    imgChildPhoto.setImageBitmap(bitmap);
+                } else {
+                    Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     // --- נתוני רשימת ילדים ---
     /** רשימת ילדים — כל אחד מכיל id, firstName, lastName */
@@ -69,6 +97,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
+
+        // חיבור תמונת הפרופיל + כפתור בחירת תמונה
+        imgChildPhoto = findViewById(R.id.imgChildPhoto);
+        Button btnPickChildPhoto = findViewById(R.id.btnPickChildPhoto);
+        // לחיצה → פותח גלריה (אותו מנגנון כמו בתבניות)
+        btnPickChildPhoto.setOnClickListener(v -> childImagePicker.launch("image/*"));
 
         // חיבור שדות טופס ההוספה
         etFirstName = findViewById(R.id.etFirstName);
@@ -117,8 +151,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
      * תהליך:
      * 1. בודק שהשדות מלאים.
      * 2. push().getKey() — מזהה ייחודי.
-     * 3. setValue — כותב ל-Firebase.
-     * 4. מנקה שדות + טוען מחדש את הרשימה.
+     * 3. אם נבחרה תמונה — ממיר ל-Base64 ושומר עם הילד.
+     * 4. setValue — כותב ל-Firebase.
+     * 5. מנקה שדות + מאפס תמונה + טוען מחדש את הרשימה.
      *
      * נתיב כתיבה: /parents/{parentUID}/children/{childId}
      */
@@ -139,7 +174,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        Child newChild = new Child(first, last);
+        // אם נבחרה תמונה — ממיר ל-Base64 (אותו תהליך כמו בתבניות)
+        String imageBase64 = null;
+        if (childPhotosBitmap != null) {
+            imageBase64 = ImageHelper.bitmapToBase64(childPhotosBitmap);
+        }
+
+        // יוצר ילד עם תמונה (יכול להיות null — זה בסדר)
+        Child newChild = new Child(first, last, imageBase64);
 
         // משבית כפתור למניעת לחיצות כפולות
         btnAddChild.setEnabled(false);
@@ -156,9 +198,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         Toast.makeText(ManageChildrenActivity.this,
                                 first + " " + last + " נוסף בהצלחה!",
                                 Toast.LENGTH_SHORT).show();
+                        // ניקוי הטופס + איפוס תמונה
                         etFirstName.setText("");
                         etLastName.setText("");
                         etFirstName.requestFocus();
+                        childPhotosBitmap = null;
+                        imgChildPhoto.setImageBitmap(null);
+                        imgChildPhoto.setBackground(
+                                getResources().getDrawable(android.R.color.darker_gray, null));
 
                         // רענון הרשימה — הילד החדש יופיע
                         loadChildren();
@@ -290,7 +337,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // עדכון ב-Firebase — updateChildren כדי לא לדרוס tasks
+                    // עדכון ב-Firebase — updateChildren כדי לא לדרוס tasks ותמונה
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("firstName", newFirst);
                     updates.put("lastName", newLast);

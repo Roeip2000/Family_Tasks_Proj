@@ -3,7 +3,11 @@ package com.example.family_tasks_proj.util;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.util.Base64;
 
@@ -97,6 +101,28 @@ public class ImageHelper {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * חותך Bitmap לצורת עיגול — לתצוגת אווטאר.
+     * לוקח את הצלע הקטנה יותר כדי לא לעוות את התמונה.
+     * משמש גם בדשבורד הילד וגם בכרטיסי המשימות של ההורה.
+     *
+     * @param src התמונה המקורית (יכולה להיות מלבנית)
+     * @return Bitmap מרובע עם פינות חתוכות לעיגול, או null אם src=null
+     */
+    public static Bitmap getCircularBitmap(Bitmap src) {
+        if (src == null) return null;
+        int size = Math.min(src.getWidth(), src.getHeight());
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // שלב 1: מציירים עיגול כמסכה
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
+        // שלב 2: מציגים את התמונה רק בתוך המסכה
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(src, 0, 0, paint);
+        return output;
     }
 
     // ========== מתודות פנימיות ==========

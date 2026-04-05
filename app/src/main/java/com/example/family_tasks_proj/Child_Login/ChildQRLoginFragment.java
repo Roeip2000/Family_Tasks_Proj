@@ -105,7 +105,7 @@ public class ChildQRLoginFragment extends Fragment {
     private void startQRScan() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false); // מאפשר סיבוב מסך
-        options.setPrompt("Scan the QR code given by your parent");
+        options.setPrompt("סרוק את קוד ה-QR שההורה שלך מציג");
         barcodeLauncher.launch(options);
     }
 
@@ -225,7 +225,7 @@ public class ChildQRLoginFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
-                Toast.makeText(requireContext(), "DB error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "שגיאת חיבור: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

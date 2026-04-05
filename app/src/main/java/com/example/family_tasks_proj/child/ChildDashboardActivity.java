@@ -3,9 +3,14 @@ package com.example.family_tasks_proj.child;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +23,7 @@ import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.child.Class_child.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,24 +39,13 @@ import java.util.List;
  *
  * אחריות:
  * - מזהה את הילד מ-Intent extras (אחרי בחירה) או מ-SharedPreferences (סשן קודם).
- * - טוען כותרת (שם ילד) מ-/parents/{parentId}/children/{childId}.
+ * - טוען כותרת (שם ילד + תמונת פרופיל) מ-/parents/{parentId}/children/{childId}.
  * - טוען משימות מ-.../tasks — סופר סה"כ, שבוצעו, ודחופות (עד 2 ימים).
  * - מחשב סכום כוכבים ממשימות שבוצעו (isDone == true).
  * - מציג רשימת משימות ב-RecyclerView עם כרטיסים (ChildTaskAdapter).
  * - כפתור יציאה — מנקה סשן ומחזיר למסך הראשי עם AlertDialog אישור.
  *
  * Layout: activity_child_dashboard.xml
- *
- * ===== ניווט =====
- * כניסה מ: ChildSelectionActivity (אחרי בחירת הורה + ילד)
- *
- * ===== נתיבי Firebase =====
- * קריאה מ: /parents/{parentId}/children/{childId} — שם הילד
- * קריאה מ: /parents/{parentId}/children/{childId}/tasks/ — רשימת משימות
- *
- * ===== הערות =====
- * TODO: להוסיף AlarmManager + Notification — התרעה לילד כשמשימה מתקרבת לתאריך יעד או באיחור.
- * כפתור "בוצע" בכל כרטיס — מעדכן isDone ב-Firebase דרך markTaskDone callback עם AlertDialog אישור.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
@@ -69,6 +64,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private TextView tvNoTasks;
     private RecyclerView rvTasks;
     private Button btnLogout;
+    /** תמונת הפרופיל של הילד — עגולה, עם אנימציית fade-in */
+    private ImageView imgChildAvatar;
 
     // --- Data ---
     private String parentId;
@@ -83,6 +80,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
+        // הגדרת רקע גרדיאנט סגול-כחול לדשבורד (מוגדר כאן כדי לא לצור קובץ drawable נפרד)
+        ScrollView rootView = findViewById(R.id.scrollRootChildDashboard);
+        GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{Color.parseColor("#7B61FF"), Color.parseColor("#4A90E2")}
+        );
+        rootView.setBackground(gradient);
+
         // חיבור views מה-layout
         tvChildName = findViewById(R.id.tvChildName);
         tvStars = findViewById(R.id.tvStars);
@@ -92,6 +97,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvNoTasks = findViewById(R.id.tvNoTasks);
         rvTasks = findViewById(R.id.rvTasks);
         btnLogout = findViewById(R.id.btnLogout);
+        imgChildAvatar = findViewById(R.id.imgChildAvatar);
 
         // הגדרת RecyclerView עם Adapter + callback לסימון משימה כ-"בוצע"
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
@@ -142,8 +148,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     /**
-     * טוען שם הילד מ-Firebase ומציג ב-tvChildName.
-     * הכוכבים מחושבים ב-loadTasks (מסכום starsWorth של משימות שבוצעו).
+     * טוען שם הילד ותמונת הפרופיל מ-Firebase.
+     * אם יש תמונה — מחתך אותה לעיגול ומציג עם אנימציית fade-in.
+     * אם אין — נשאר ה-placeholder ולא קורסת.
      */
     private void loadChildHeader() {
         childRef().addListenerForSingleValueEvent(new ValueEventListener() {
@@ -155,6 +162,19 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 // בניית שם מלא — משתמש ב-NameUtils למניעת שכפול
                 String displayName = NameUtils.fullNameOrDefault(firstName, lastName, "ילד");
                 tvChildName.setText("שלום " + displayName + "!");
+
+                // ניסיון לטעון תמונת פרופיל — אם אין, נשאר ה-placeholder
+                String base64 = snapshot.child("profileImageBase64").getValue(String.class);
+                if (base64 != null && !base64.isEmpty()) {
+                    Bitmap raw = ImageHelper.base64ToBitmap(base64);
+                    if (raw != null) {
+                        // חיתוך עגול + אנימציית fade-in
+                        Bitmap circular = ImageHelper.getCircularBitmap(raw);
+                        imgChildAvatar.setImageBitmap(circular);
+                        imgChildAvatar.setAlpha(0f);
+                        imgChildAvatar.animate().alpha(1f).setDuration(400).start();
+                    }
+                }
             }
 
             @Override
@@ -173,8 +193,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
      * - done: משימות שבוצעו (isDone == true)
      * - dueSoon: משימות דחופות (0-2 ימים, עדיין לא בוצעו)
      * - stars: סכום starsWorth של משימות שבוצעו
-     *
-     * ממלא את ה-RecyclerView ברשימת המשימות דרך ChildTaskAdapter.
      */
     private void loadTasks() {
         DatabaseReference tasksRef = childRef().child(NODE_TASKS);
@@ -184,7 +202,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskList.clear();
 
-                // עוברים על כל המשימות — מחשבים סיכומים מהכל, מציגים רק שלא בוצעו
                 int done = 0, dueSoon = 0;
                 long stars = 0;
 
@@ -236,7 +253,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-
     /**
      * Callback מ-ChildTaskAdapter — נקרא כשהילד לוחץ "בוצע" על משימה.
      *
@@ -284,7 +300,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     /**
      * מציג AlertDialog לאישור יציאה.
      * אם המשתמש מאשר — מנקה סשן מ-SharedPreferences ומחזיר למסך הראשי.
-     * אם מבטל — לא קורה כלום.
      */
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
