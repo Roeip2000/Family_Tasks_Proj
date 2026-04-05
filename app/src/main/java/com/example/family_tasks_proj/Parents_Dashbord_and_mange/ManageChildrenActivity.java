@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,21 +39,25 @@ import java.util.Map;
  * מסך ניהול ילדים — הוספה, צפייה, עריכה ומחיקה.
  *
  * המסך מחולק לשני חלקים:
- * - למעלה: טופס הוספת ילד חדש (תמונה + שם פרטי + משפחה + כפתור).
- * - למטה: רשימת כל הילדים הרשומים של ההורה.
+ * - למעלה: טופס הוספת/עריכת ילד (תמונה + שם פרטי + משפחה + כפתורי שמור/ביטול).
+ * - למטה: רשימת כל הילדים הרשומים של ההורה עם תמונות.
  *
- * לחיצה על ילד ברשימה פותחת תפריט עם שתי אפשרויות:
- * 1. ערוך שם — פותח דיאלוג עם שדות שם חדש.
+ * לחיצה על ילד ברשימה פותחת תפריט:
+ * 1. ערוך ילד — ממלא את הטופס בנתונים הנוכחיים (מצב עריכה).
  * 2. מחק ילד — מבקש אישור ומוחק מ-Firebase (כולל כל המשימות שלו).
  *
+ * מצב עריכה מופעל ע"י enterEditMode() ומתאפס ע"י resetForm().
+ * כשבמצב עריכה, כפתור "הוסף ילד" הופך ל"שמור שינויים" ומופיע כפתור ביטול.
+ *
  * Layout: activity_manage_children.xml
+ * שורת ילד ברשימה: item_manage_child.xml
  * נתיב Firebase: /parents/{uid}/children/
  */
 public class ManageChildrenActivity extends AppCompatActivity {
 
     // --- Views ---
     private EditText etFirstName, etLastName;
-    private Button btnAddChild;
+    private Button btnAddChild, btnCancelEdit;
     private ListView lvChildren;
     private TextView tvNoChildren;
     /** ImageView לתצוגה מקדימה של תמונת הילד שנבחרה */
@@ -65,13 +69,27 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     /**
      * ה-Bitmap של תמונת הילד אחרי תיקון EXIF + הקטנה.
-     * null = לא נבחרה תמונה (ילד יישמר בלי תמונה).
+     * null = לא נבחרה תמונה (ילד יישמר בלי תמונה או תישמר התמונה הישנה).
      */
     private Bitmap childPhotosBitmap;
 
     /**
+     * כשעורכים ילד קיים — מחזיק את ה-id שלו.
+     * null = מצב הוספה רגיל.
+     * לא null = מצב עריכה — כפתור השמירה יעדכן במקום להוסיף.
+     */
+    private String editingChildId = null;
+
+    /**
+     * Base64 של התמונה הנוכחית של הילד שנערך.
+     * נשמר בזמן enterEditMode() כדי שאם ההורה לא בוחר תמונה חדשה,
+     * נוכל לשמור את התמונה הישנה במקום לאבד אותה.
+     */
+    private String editingChildOldImageBase64 = null;
+
+    /**
      * בוחר תמונה מהגלריה לפרופיל הילד.
-     * אותו דפוס בדיוק כמו ב-ParentTaskTemplateActivity — ImageHelper מטפל ב-EXIF.
+     * אותו דפוס בדיוק כמו ב-ParentDashboardActivity — ImageHelper מטפל ב-EXIF.
      */
     private final ActivityResultLauncher<String> childImagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -80,18 +98,21 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 Bitmap bitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
                 if (bitmap != null) {
                     childPhotosBitmap = bitmap;
-                    imgChildPhoto.setImageBitmap(bitmap);
+                    // מציג בצורה עגולה בתצוגה המקדימה — עקבי עם שאר המסכים
+                    imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
                 } else {
                     Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
                 }
             });
 
     // --- נתוני רשימת ילדים ---
-    /** רשימת ילדים — כל אחד מכיל id, firstName, lastName */
+    /** רשימת ילדים — כל אחד מכיל id, firstName, lastName, profileImageBase64 */
     private final List<ChildItem> childItems = new ArrayList<>();
-    /** שמות לתצוגה ב-ListView — האינדקס תואם ל-childItems */
-    private final List<String> childDisplayNames = new ArrayList<>();
-    private ArrayAdapter<String> childAdapter;
+    /**
+     * אדפטר מותאם אישית — מציג תמונה + שם לכל ילד ברשימה.
+     * משתמש ב-childItems ישירות, ללא רשימת שמות מקבילה נפרדת.
+     */
+    private ChildListAdapter childListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +122,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
         // חיבור תמונת הפרופיל + כפתור בחירת תמונה
         imgChildPhoto = findViewById(R.id.imgChildPhoto);
         Button btnPickChildPhoto = findViewById(R.id.btnPickChildPhoto);
-        // לחיצה → פותח גלריה (אותו מנגנון כמו בתבניות)
+        // לחיצה → פותח גלריה (אותו מנגנון כמו בפרופיל ההורה)
         btnPickChildPhoto.setOnClickListener(v -> childImagePicker.launch("image/*"));
 
-        // חיבור שדות טופס ההוספה
-        etFirstName = findViewById(R.id.etFirstName);
-        etLastName  = findViewById(R.id.etLastName);
-        btnAddChild = findViewById(R.id.btnAddChild);
+        // חיבור שדות טופס ההוספה/עריכה
+        etFirstName   = findViewById(R.id.etFirstName);
+        etLastName    = findViewById(R.id.etLastName);
+        btnAddChild   = findViewById(R.id.btnAddChild);
+        btnCancelEdit = findViewById(R.id.btnCancelEdit);
 
         // חיבור רשימת ילדים
         lvChildren   = findViewById(R.id.lvChildren);
@@ -125,17 +147,25 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
         parentUID = currentUser.getUid();
 
-        // הגדרת ListView עם ArrayAdapter מובנה של Android
-        childAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, childDisplayNames);
-        lvChildren.setAdapter(childAdapter);
+        // הגדרת ListView עם אדפטר מותאם שמציג תמונה + שם
+        childListAdapter = new ChildListAdapter();
+        lvChildren.setAdapter(childListAdapter);
 
         // לחיצה על ילד ברשימה → תפריט ערוך/מחק
         lvChildren.setOnItemClickListener((parent, view, position, id) ->
                 showChildOptionsDialog(position));
 
-        // כפתור הוספת ילד
-        btnAddChild.setOnClickListener(v -> addChild());
+        // כפתור הוספה/שמירה — מנותב לפי מצב (הוספה / עריכה)
+        btnAddChild.setOnClickListener(v -> {
+            if (editingChildId != null) {
+                updateExistingChild();
+            } else {
+                addChild();
+            }
+        });
+
+        // כפתור ביטול עריכה — מנקה את מצב העריכה וחוזר לטופס ריק
+        btnCancelEdit.setOnClickListener(v -> resetForm());
 
         // טעינת רשימת הילדים מ-Firebase
         loadChildren();
@@ -198,16 +228,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         Toast.makeText(ManageChildrenActivity.this,
                                 first + " " + last + " נוסף בהצלחה!",
                                 Toast.LENGTH_SHORT).show();
-                        // ניקוי הטופס + איפוס תמונה
-                        etFirstName.setText("");
-                        etLastName.setText("");
-                        etFirstName.requestFocus();
-                        childPhotosBitmap = null;
-                        imgChildPhoto.setImageBitmap(null);
-                        imgChildPhoto.setBackground(
-                                getResources().getDrawable(android.R.color.darker_gray, null));
-
-                        // רענון הרשימה — הילד החדש יופיע
+                        resetForm();
                         loadChildren();
                     } else {
                         Toast.makeText(this,
@@ -219,11 +240,139 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     // =====================================================================
+    //  עריכת ילד קיים
+    // =====================================================================
+
+    /**
+     * מכניס את הטופס למצב עריכה עבור ילד קיים.
+     *
+     * ממלא את השדות בנתונים הנוכחיים ומציג תמונה קיימת בצורה עגולה (אם יש).
+     * משנה את הכפתור מ"הוסף ילד" ל"שמור שינויים" ומגלה את כפתור הביטול.
+     *
+     * @param position אינדקס הילד ברשימה
+     */
+    private void enterEditMode(int position) {
+        ChildItem item = childItems.get(position);
+
+        // שמירת מזהה הילד הנערך + תמונה ישנה (לשימוש אם לא נבחרה תמונה חדשה)
+        editingChildId = item.id;
+        editingChildOldImageBase64 = item.profileImageBase64;
+
+        // מילוי שדות הטופס בנתונים הנוכחיים
+        etFirstName.setText(item.firstName != null ? item.firstName : "");
+        etLastName.setText(item.lastName  != null ? item.lastName  : "");
+
+        // הצגת תמונה קיימת בצורה עגולה (אם יש) — עקבי עם שאר המסכים
+        childPhotosBitmap = null; // מאפס תמונה חדשה — אם ההורה לא יבחר חדשה, נשמר הישן
+        if (item.profileImageBase64 != null && !item.profileImageBase64.isEmpty()) {
+            Bitmap raw = ImageHelper.base64ToBitmap(item.profileImageBase64);
+            if (raw != null) {
+                // חיתוך עגול לתצוגה מקדימה — עקבי עם כרטיסי הדשבורד
+                imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(raw));
+            } else {
+                imgChildPhoto.setImageBitmap(null);
+                imgChildPhoto.setBackgroundColor(0xFFCCCCCC);
+            }
+        } else {
+            imgChildPhoto.setImageBitmap(null);
+            imgChildPhoto.setBackgroundColor(0xFFCCCCCC);
+        }
+
+        // שינוי כפתורים למצב עריכה
+        btnAddChild.setText("שמור שינויים");
+        btnAddChild.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(0xFF1976D2)); // כחול
+        btnCancelEdit.setVisibility(View.VISIBLE);
+
+        // גלילה לראש המסך כדי שהטופס יהיה גלוי
+        findViewById(R.id.btnPickChildPhoto).requestFocus();
+    }
+
+    /**
+     * מאפס את הטופס למצב הוספה רגיל.
+     * מנקה שדות, תמונה, ומחזיר כפתורים למצבם המקורי.
+     */
+    private void resetForm() {
+        editingChildId = null;
+        editingChildOldImageBase64 = null;
+
+        etFirstName.setText("");
+        etLastName.setText("");
+        etFirstName.requestFocus();
+
+        childPhotosBitmap = null;
+        imgChildPhoto.setImageBitmap(null);
+        imgChildPhoto.setBackgroundColor(0xFFCCCCCC);
+
+        btnAddChild.setText(getString(R.string.add_child));
+        btnAddChild.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(0xFF4CAF50)); // ירוק
+        btnCancelEdit.setVisibility(View.GONE);
+    }
+
+    /**
+     * שומר שינויים של ילד קיים ב-Firebase.
+     *
+     * משתמש ב-updateChildren() ולא ב-setValue() — כדי לא לדרוס
+     * שדות אחרים כמו tasks/ שנמצאים תחת אותו node של הילד.
+     *
+     * אם נבחרה תמונה חדשה — שומר אותה. אחרת — שומר את הישנה.
+     *
+     * נתיב עדכון: /parents/{parentUID}/children/{editingChildId}
+     */
+    private void updateExistingChild() {
+        String first = etFirstName.getText().toString().trim();
+        String last  = etLastName.getText().toString().trim();
+
+        if (first.isEmpty() || last.isEmpty()) {
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // בחירת תמונה: חדשה שנבחרה > ישנה מ-Firebase > null (ללא תמונה)
+        String imageBase64;
+        if (childPhotosBitmap != null) {
+            imageBase64 = ImageHelper.bitmapToBase64(childPhotosBitmap);
+        } else {
+            imageBase64 = editingChildOldImageBase64; // שומר את הישנה
+        }
+
+        // בונה map לעדכון — updateChildren לא נוגע בשדות שלא ציינו (כמו tasks)
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("firstName", first);
+        updates.put("lastName",  last);
+        if (imageBase64 != null) {
+            updates.put("profileImageBase64", imageBase64);
+        }
+
+        btnAddChild.setEnabled(false);
+
+        db.child("parents").child(parentUID)
+                .child("children").child(editingChildId)
+                .updateChildren(updates)
+                .addOnSuccessListener(aVoid -> {
+                    btnAddChild.setEnabled(true);
+                    Toast.makeText(this,
+                            first + " " + last + " עודכן בהצלחה!",
+                            Toast.LENGTH_SHORT).show();
+                    resetForm();
+                    loadChildren(); // רענון הרשימה
+                })
+                .addOnFailureListener(e -> {
+                    btnAddChild.setEnabled(true);
+                    Toast.makeText(this,
+                            "שגיאה: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // =====================================================================
     //  טעינת רשימת ילדים מ-Firebase
     // =====================================================================
 
     /**
      * קורא את כל הילדים מ-/parents/{parentUID}/children/ ומציג ב-ListView.
+     * טוען גם את profileImageBase64 לכל ילד (לשימוש בתצוגת הרשימה ובעריכה).
      * מטפל גם במצב ריק (אין ילדים — מציג הודעה).
      */
     private void loadChildren() {
@@ -232,23 +381,21 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         childItems.clear();
-                        childDisplayNames.clear();
 
-                        // עוברים על כל הילדים ושומרים את הנתונים
+                        // עוברים על כל הילדים ושומרים את הנתונים (כולל תמונה)
                         for (DataSnapshot childSnap : snapshot.getChildren()) {
                             String cId = childSnap.getKey();
                             if (cId == null) continue;
 
-                            String first = childSnap.child("firstName").getValue(String.class);
-                            String last  = childSnap.child("lastName").getValue(String.class);
+                            String first   = childSnap.child("firstName").getValue(String.class);
+                            String last    = childSnap.child("lastName").getValue(String.class);
+                            String imgB64  = childSnap.child("profileImageBase64").getValue(String.class);
 
-                            childItems.add(new ChildItem(cId, first, last));
-                            childDisplayNames.add(
-                                    NameUtils.fullNameOrDefault(first, last, "ילד"));
+                            childItems.add(new ChildItem(cId, first, last, imgB64));
                         }
 
                         // עדכון ה-ListView
-                        childAdapter.notifyDataSetChanged();
+                        childListAdapter.notifyDataSetChanged();
 
                         // הצגה/הסתרה של הודעת "אין ילדים"
                         if (childItems.isEmpty()) {
@@ -274,86 +421,23 @@ public class ManageChildrenActivity extends AppCompatActivity {
     // =====================================================================
 
     /**
-     * פותח תפריט עם "ערוך שם" / "מחק ילד".
+     * פותח תפריט עם "ערוך ילד" / "מחק ילד".
      * נקרא כשלוחצים על ילד ברשימה.
      */
     private void showChildOptionsDialog(int position) {
         if (position < 0 || position >= childItems.size()) return;
 
-        String name = childDisplayNames.get(position);
+        ChildItem item = childItems.get(position);
+        String name = NameUtils.fullNameOrDefault(item.firstName, item.lastName, "ילד");
 
         new AlertDialog.Builder(this)
                 .setTitle(name)
-                .setItems(new String[]{"ערוך שם", "מחק ילד"}, (dialog, which) -> {
+                .setItems(new String[]{"ערוך ילד", "מחק ילד"}, (dialog, which) -> {
                     if (which == 0) {
-                        showEditChildDialog(position);
+                        enterEditMode(position); // מעבר למצב עריכה בטופס
                     } else {
                         showDeleteChildDialog(position);
                     }
-                })
-                .setNegativeButton("ביטול", null)
-                .show();
-    }
-
-    // =====================================================================
-    //  עריכת שם ילד
-    // =====================================================================
-
-    /**
-     * פותח דיאלוג עם שדות שם פרטי + משפחה (ממולאים מראש בשם הנוכחי).
-     * אחרי שמירה — מעדכן ב-Firebase ומרענן את הרשימה.
-     *
-     * נתיב עדכון: /parents/{parentUID}/children/{childId}
-     * משתמש ב-updateChildren() כדי לא לדרוס שדות אחרים (כמו tasks).
-     */
-    private void showEditChildDialog(int position) {
-        ChildItem item = childItems.get(position);
-
-        // בניית layout לדיאלוג עם שני שדות
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(60, 30, 60, 0);
-
-        EditText etNewFirst = new EditText(this);
-        etNewFirst.setHint("שם פרטי");
-        if (item.firstName != null) etNewFirst.setText(item.firstName);
-        layout.addView(etNewFirst);
-
-        EditText etNewLast = new EditText(this);
-        etNewLast.setHint("שם משפחה");
-        if (item.lastName != null) etNewLast.setText(item.lastName);
-        layout.addView(etNewLast);
-
-        new AlertDialog.Builder(this)
-                .setTitle("עריכת שם ילד")
-                .setView(layout)
-                .setPositiveButton("שמור", (dialog, which) -> {
-                    String newFirst = etNewFirst.getText().toString().trim();
-                    String newLast  = etNewLast.getText().toString().trim();
-
-                    if (newFirst.isEmpty() || newLast.isEmpty()) {
-                        Toast.makeText(this, "יש למלא את כל השדות",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    // עדכון ב-Firebase — updateChildren כדי לא לדרוס tasks ותמונה
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("firstName", newFirst);
-                    updates.put("lastName", newLast);
-
-                    db.child("parents").child(parentUID)
-                            .child("children").child(item.id)
-                            .updateChildren(updates)
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "השם עודכן!",
-                                        Toast.LENGTH_SHORT).show();
-                                loadChildren(); // רענון הרשימה
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(this,
-                                            "שגיאה: " + e.getMessage(),
-                                            Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton("ביטול", null)
                 .show();
@@ -371,7 +455,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
      */
     private void showDeleteChildDialog(int position) {
         ChildItem item = childItems.get(position);
-        String name = childDisplayNames.get(position);
+        String name = NameUtils.fullNameOrDefault(item.firstName, item.lastName, "ילד");
 
         new AlertDialog.Builder(this)
                 .setTitle("מחיקת ילד")
@@ -383,6 +467,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, name + " נמחק",
                                             Toast.LENGTH_SHORT).show();
+                                    // אם מחקנו את הילד שאנחנו עורכים — מאפסים מצב עריכה
+                                    if (item.id.equals(editingChildId)) resetForm();
                                     loadChildren(); // רענון הרשימה
                                 })
                                 .addOnFailureListener(e ->
@@ -394,22 +480,74 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     // =====================================================================
+    //  Adapter מותאם — מציג תמונה + שם לכל ילד ברשימה
+    // =====================================================================
+
+    /**
+     * Adapter שמציג שורת ילד עם תמונת פרופיל עגולה ושם מלא.
+     *
+     * משתמש ב-childItems ישירות — אין רשימת שמות מקבילה.
+     * Layout: item_manage_child.xml
+     */
+    private class ChildListAdapter extends ArrayAdapter<ChildItem> {
+
+        ChildListAdapter() {
+            super(ManageChildrenActivity.this, 0, childItems);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            // שימוש חוזר ב-View אם קיים
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(
+                        R.layout.item_manage_child, parent, false);
+            }
+
+            ChildItem item = getItem(position);
+            if (item == null) return convertView;
+
+            ImageView ivThumb = convertView.findViewById(R.id.ivChildThumb);
+            TextView tvName   = convertView.findViewById(R.id.tvChildFullName);
+
+            tvName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, "ילד"));
+
+            // טעינת תמונת פרופיל עגולה — null אם אין
+            if (item.profileImageBase64 != null && !item.profileImageBase64.isEmpty()) {
+                Bitmap raw = ImageHelper.base64ToBitmap(item.profileImageBase64);
+                if (raw != null) {
+                    ivThumb.setImageBitmap(ImageHelper.getCircularBitmap(raw));
+                } else {
+                    ivThumb.setImageBitmap(null);
+                }
+            } else {
+                ivThumb.setImageBitmap(null);
+            }
+
+            return convertView;
+        }
+    }
+
+    // =====================================================================
     //  מחלקה פנימית — מחזיקה נתוני ילד מהרשימה
     // =====================================================================
 
     /**
-     * שומרת id + שם פרטי + שם משפחה של ילד.
+     * שומרת id + שם פרטי + שם משפחה + תמונה (Base64) של ילד.
      * משמשת את הרשימה כדי שנדע איזה ילד לערוך/למחוק בלי לקרוא שוב מ-Firebase.
      */
     private static class ChildItem {
         final String id;
         final String firstName;
         final String lastName;
+        /** Base64 של תמונת הפרופיל — יכול להיות null אם אין תמונה */
+        final String profileImageBase64;
 
-        ChildItem(String id, String firstName, String lastName) {
+        ChildItem(String id, String firstName, String lastName, String profileImageBase64) {
             this.id = id;
             this.firstName = firstName;
             this.lastName = lastName;
+            this.profileImageBase64 = profileImageBase64;
         }
     }
 }

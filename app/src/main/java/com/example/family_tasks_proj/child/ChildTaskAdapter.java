@@ -184,7 +184,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
                         .alpha(0.6f)
                         .setDuration(300)
                         .withEndAction(() ->
-                                doneListener.onTaskDone(task, holder.getAdapterPosition()))
+                                doneListener.onTaskDone(task, holder.getBindingAdapterPosition()))
                         .start();
             });
         }

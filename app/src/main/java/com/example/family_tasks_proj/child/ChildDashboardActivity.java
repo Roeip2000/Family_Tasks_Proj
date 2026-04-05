@@ -284,7 +284,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(ChildDashboardActivity.this,
                                         "כל הכבוד! 🌟", Toast.LENGTH_SHORT).show();
-                                // טוען מחדש — מעדכן סיכומים + כוכבים + רשימה
+
+                                // הסרה מיידית מהרשימה — לא מחכים לתגובה מ-Firebase
+                                // כך המשימה נעלמת מהמסך מיד, בלי עיכוב של round-trip לשרת
+                                taskList.remove(task);
+                                adapter.notifyDataSetChanged();
+
+                                // טוענים מחדש רק בשביל לעדכן את הסיכומים (כוכבים, ספירות)
                                 loadTasks();
                             })
                             .addOnFailureListener(e -> {

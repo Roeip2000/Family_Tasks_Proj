@@ -75,6 +75,16 @@
             android:backgroundTint="#4CAF50"
             android:text="@string/add_child" />
 
+        <!-- כפתור ביטול עריכה — מוצג רק כשעורכים ילד קיים -->
+        <Button
+            android:id="@+id/btnCancelEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#9E9E9E"
+            android:text="בטל עריכה"
+            android:visibility="gone" />
+
         <!-- === קו מפריד בין הטופס לרשימה === -->
 
         <View
