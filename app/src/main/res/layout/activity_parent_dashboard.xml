@@ -1,30 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- דשבורד הורה — Hub ניווט מרכזי.
-     כפתורים: ניהול ילדים, מאגר תבניות, הקצאת משימה, QR, התנתקות.
-     TODO(P1): tvParentTotalTasks/tvParentCompleted/tvParentDueSoon לא מחוברים לנתונים —
-               מציגים "0" קבוע. צריך לטעון סיכומים מ-Firebase. -->
+<!-- דשבורד הורה — מסך ראשי אחרי התחברות.
+     מציג: סיכום משימות (מספרים) + רשימת כל המשימות + כפתורי ניווט.
+     לחיצה על משימה ברשימה → פרטים + אפשרות לשנות תאריך או למחוק. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btnManageChildren"
-        android:text="ניהול ילדים"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+    <!-- כותרת -->
     <TextView
         android:text="דשבורד הורה"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!-- === סיכום מספרי: משימות / הושלמו / דחופות === -->
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -50,47 +46,66 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <!-- === כותרת רשימת משימות === -->
     <TextView
-        android:text="משימות נוכחיות"
+        android:text="משימות שהוקצו:"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <!-- הודעה כשאין משימות -->
+    <TextView
+        android:id="@+id/tvNoTasks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="אין משימות עדיין"
+        android:textColor="#888888"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
+
+    <!-- רשימת משימות — לחיצה פותחת פרטים + שינוי תאריך / מחיקה -->
+    <ListView
+        android:id="@+id/lvTasks"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center">
+        android:divider="#EEEEEE"
+        android:dividerHeight="1dp" />
 
-        <TextView
-            android:text="אין משימות עדיין"
-            android:textColor="#888888"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    <!-- === כפתורי ניווט === -->
+
+    <Button
+        android:id="@+id/btnManageChildren"
+        android:text="ניהול ילדים"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
 
     <Button
         android:id="@+id/btnManageTemplates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="1. ניהול מאגר תבניות (בנק משימות)"
+        android:layout_marginTop="4dp"
+        android:text="מאגר תבניות (בנק משימות)"
         android:backgroundTint="#607D8B" />
 
     <Button
         android:id="@+id/btnAssignTaskToChild"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="2. שלח משימה לילד מהמאגר"
+        android:layout_marginTop="4dp"
+        android:text="שלח משימה לילד"
         android:backgroundTint="#4CAF50" />
 
     <Button
         android:id="@+id/btnShowQR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="3. QR לילדים (בחר ילד והצג קוד)"
+        android:layout_marginTop="4dp"
+        android:text="QR לילדים"
         android:backgroundTint="#3F51B5" />
 
     <!-- כפתור התנתקות -->
@@ -98,7 +113,7 @@
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="התנתק"
         android:backgroundTint="#F44336"
         android:textColor="#FFFFFF" />

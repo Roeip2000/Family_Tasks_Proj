@@ -7,7 +7,7 @@
     <string name="register_parents">הרשמת הורה</string>
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
-    <string name="child_direct_login">כניסה ישירה ��ילד</string>
+    <string name="child_direct_login">כניסה ישירה לילד</string>
 
     <!-- טפסים — שדות קלט -->
     <string name="first_name">שם פרטי</string>
