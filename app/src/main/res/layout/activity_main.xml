@@ -1,67 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- מסך ראשי (Launcher) — ניווט בין: הרשמת הורה, לוגין הורה, QR ילד, כניסה ישירה.
-     כל Fragment נטען ל-fragmentContainer.
-     TODO: טקסט btnChild הוא hardcoded — יש להעביר ל-strings.xml לעקביות. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F4F7FB"
     tools:context=".auth.MainActivity">
 
-    <Button
-        android:id="@+id/btnChild"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/child_direct_login"
-        app:layout_constraintBottom_toTopOf="@+id/btnRegister"
+    <View
+        android:id="@+id/topGlow"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:background="#E7F0FB"
+        android:alpha="0.95"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tvHomeTitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/register_parents"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:text="משימות משפחתיות"
+        android:textColor="#1B2A41"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnChild" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tvHomeSubtitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/parents_login"
-        app:layout_constraintBottom_toTopOf="@+id/btnChildQR"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:text="מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד."
+        android:textColor="#5C6B80"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
+        app:layout_constraintTop_toBottomOf="@id/tvHomeTitle" />
 
-    <Button
-        android:id="@+id/btnChildQR"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/actionPanel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/child_login_qr"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentContainer"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="20dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        app:layout_constraintTop_toBottomOf="@id/tvHomeSubtitle">
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="איך תרצו להמשיך?"
+                android:textColor="#243B53"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="פעולות ההורה מרוכזות יחד, וכניסת ילד נשארת פשוטה וברורה."
+                android:textColor="#6B7C93"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#2F80ED"
+                android:elevation="0dp"
+                android:text="@string/parents_login"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#E8F1FB"
+                android:elevation="0dp"
+                android:text="@string/register_parents"
+                android:textAllCaps="false"
+                android:textColor="#1F4E79"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:background="#E7ECF3" />
+
+            <Button
+                android:id="@+id/btnChildQR"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="#34A853"
+                android:elevation="0dp"
+                android:text="@string/child_login_qr"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnChild"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#F1F5F9"
+                android:elevation="0dp"
+                android:text="@string/child_direct_login"
+                android:textAllCaps="false"
+                android:textColor="#334E68"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fragmentShell"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnChildQR" />
+        app:layout_constraintTop_toBottomOf="@id/actionPanel">
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="14dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="14dp" />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

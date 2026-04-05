@@ -23,44 +23,15 @@ import com.example.family_tasks_proj.util.ImageHelper;
 
 import java.util.List;
 
-/**
- * אדפטר ל-RecyclerView של רשימת המשימות בדשבורד הילד.
- *
- * אחריות:
- * - מציג כל משימה ככרטיס (CardView) עם כותרת, זמן שנותר, סטטוס, כוכבים, וכפתור "בוצע".
- * - צובע את נקודת הסטטוס: ירוק (בוצע), כתום (דחוף — עד 2 ימים), אפור (רגיל).
- * - כרטיס שבוצע → רקע ירוק בהיר + קו חוצה על הכותרת + כפתור מוסתר.
- * - אנימציית slide-in מימין לכל כרטיס כשמופיע.
- * - לחיצה על "בוצע" → אנימציית celebrate → callback ל-ChildDashboardActivity.
- *
- * Layout: item_child_task.xml
- */
 public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.TaskViewHolder> {
 
-    /** רשימת המשימות להצגה */
     private final List<ChildTask> tasks;
-
-    /** callback — נקרא כשהילד לוחץ "בוצע" על משימה */
     private final OnTaskDoneListener doneListener;
 
-    /**
-     * ממשק callback — ChildDashboardActivity מממש אותו כדי לעדכן Firebase.
-     */
     public interface OnTaskDoneListener {
-        /**
-         * נקרא כשהילד לוחץ "בוצע" על משימה
-         * @param task המשימה שסומנה כ-done
-         * @param position המיקום ברשימה
-         */
         void onTaskDone(ChildTask task, int position);
     }
 
-    /**
-     * יוצר אדפטר חדש.
-     *
-     * @param tasks רשימת המשימות — מגיעה מ-Firebase דרך ChildDashboardActivity
-     * @param doneListener callback לעדכון Firebase כשמשימה מסומנת כ-done
-     */
     public ChildTaskAdapter(List<ChildTask> tasks, OnTaskDoneListener doneListener) {
         this.tasks = tasks;
         this.doneListener = doneListener;
@@ -69,7 +40,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // יוצר View מה-layout של כרטיס משימה בודד
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_child_task, parent, false);
         return new TaskViewHolder(view);
@@ -79,7 +49,14 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         ChildTask task = tasks.get(position);
 
-        // === אנימציית slide-in: כל כרטיס נכנס מימין בהדרגה ===
+        // RecyclerView rows are reused, so reset transient animation state first.
+        holder.itemView.animate().cancel();
+        holder.btnDone.animate().cancel();
+        holder.itemView.setAlpha(1f);
+        holder.itemView.setTranslationX(0f);
+        holder.btnDone.setScaleX(1f);
+        holder.btnDone.setScaleY(1f);
+
         holder.itemView.setTranslationX(300f);
         holder.itemView.setAlpha(0f);
         holder.itemView.animate()
@@ -90,18 +67,15 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
 
-        // === רקע כרטיס: ירוק בהיר אם בוצע, לבן אחרת ===
         if (holder.itemView instanceof CardView) {
             int bgColor = task.isDone
-                    ? Color.parseColor("#E8F5E9")  // ירוק בהיר — בוצע
+                    ? Color.parseColor("#E8F5E9")
                     : Color.WHITE;
             ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
         }
 
-        // === כותרת ===
         holder.tvTaskTitle.setText(task.title != null ? task.title : "");
 
-        // קו חוצה אם בוצע + שינוי צבע טקסט
         if (task.isDone) {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -112,70 +86,67 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.tvTaskTitle.setTextColor(Color.parseColor("#1A1A1A"));
         }
 
-        // === זמן שנותר (משתמש ב-DateUtils) ===
         long daysLeft = DateUtils.daysLeft(task.dueAt);
 
-        // טקסט תאריך — עם אמוג'י לפי סטטוס
         String dueText;
         if (task.isDone) {
-            dueText = "✅ הושלם";
+            dueText = "בוצע";
             holder.tvDueDate.setTextColor(Color.parseColor("#4CAF50"));
         } else {
             dueText = formatDueText(task.dueAt, daysLeft);
-            // צבע טקסט לפי דחיפות
             if (daysLeft < 0) {
-                holder.tvDueDate.setTextColor(Color.parseColor("#E53935")); // אדום — עבר זמן
+                holder.tvDueDate.setTextColor(Color.parseColor("#E53935"));
             } else if (daysLeft <= 2) {
-                dueText = "⚡ דחוף!  " + dueText;
-                holder.tvDueDate.setTextColor(Color.parseColor("#FF5722")); // כתום — דחוף
+                dueText = "דחוף! " + dueText;
+                holder.tvDueDate.setTextColor(Color.parseColor("#FF5722"));
             } else {
-                holder.tvDueDate.setTextColor(Color.parseColor("#888888")); // אפור — רגיל
+                holder.tvDueDate.setTextColor(Color.parseColor("#888888"));
             }
         }
         holder.tvDueDate.setText(dueText);
 
-        // === נקודת סטטוס (עיגול צבעוני) — אותה לוגיקה כמו קודם ===
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
 
         if (task.isDone) {
-            dot.setColor(Color.parseColor("#4CAF50")); // ירוק — בוצע
+            dot.setColor(Color.parseColor("#4CAF50"));
         } else if (daysLeft >= 0 && daysLeft <= 2) {
-            dot.setColor(Color.parseColor("#FF9800")); // כתום — דחוף
+            dot.setColor(Color.parseColor("#FF9800"));
         } else if (daysLeft < 0) {
-            dot.setColor(Color.parseColor("#E53935")); // אדום — עבר זמן
+            dot.setColor(Color.parseColor("#E53935"));
         } else {
-            dot.setColor(Color.parseColor("#BDBDBD")); // אפור — רגיל
+            dot.setColor(Color.parseColor("#BDBDBD"));
         }
         holder.viewStatusDot.setBackground(dot);
 
-        // === תמונת משימה ===
         if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
             if (bmp != null) {
                 holder.imgTaskImage.setImageBitmap(bmp);
                 holder.imgTaskImage.setVisibility(View.VISIBLE);
             } else {
+                holder.imgTaskImage.setImageDrawable(null);
                 holder.imgTaskImage.setVisibility(View.GONE);
             }
         } else {
+            holder.imgTaskImage.setImageDrawable(null);
             holder.imgTaskImage.setVisibility(View.GONE);
         }
 
-        // === כוכבים ===
-        holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " ⭐" : "");
+        holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " כוכבים" : "");
 
-        // === כפתור "בוצע" — מוצג רק אם המשימה עדיין לא הושלמה ===
         if (task.isDone) {
             holder.btnDone.setVisibility(View.GONE);
+            holder.btnDone.setOnClickListener(null);
         } else {
             holder.btnDone.setVisibility(View.VISIBLE);
             holder.btnDone.setOnClickListener(v -> {
                 if (doneListener == null) return;
 
-                // אנימציית celebrate: הכפתור מתכווץ + הכרטיס נדהה
-                // הCallback נקרא רק אחרי שהאנימציה מסתיימת
+                int adapterPosition = holder.getBindingAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) return;
+
                 holder.btnDone.animate()
                         .scaleX(0f).scaleY(0f)
                         .setDuration(200)
@@ -183,8 +154,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
                 holder.itemView.animate()
                         .alpha(0.6f)
                         .setDuration(300)
-                        .withEndAction(() ->
-                                doneListener.onTaskDone(task, holder.getBindingAdapterPosition()))
+                        .withEndAction(() -> doneListener.onTaskDone(task, adapterPosition))
                         .start();
             });
         }
@@ -195,18 +165,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         return tasks.size();
     }
 
-    // =====================================================================
-    //  עיצוב טקסט זמן שנותר
-    // =====================================================================
-
-    /**
-     * מחזיר טקסט תצוגה לזמן שנותר.
-     * "היום", "מחר", "עוד X ימים", "איחור (X ימים)", או התאריך עצמו.
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @param daysLeft תוצאה מ-DateUtils.daysLeft
-     * @return מחרוזת תצוגה בעברית
-     */
     private String formatDueText(String dueAt, long daysLeft) {
         if (daysLeft == Long.MAX_VALUE) {
             return "ללא תאריך";
@@ -223,30 +181,15 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (daysLeft <= 7) {
             return "עוד " + daysLeft + " ימים";
         }
-        // יותר משבוע — מציג תאריך
         return dueAt;
     }
 
-    // =====================================================================
-    //  ViewHolder
-    // =====================================================================
-
-    /**
-     * ViewHolder — מחזיק references ל-Views בתוך כרטיס משימה בודד.
-     * מקושר ל-item_child_task.xml.
-     */
     static class TaskViewHolder extends RecyclerView.ViewHolder {
-        /** נקודת סטטוס צבעונית */
         View viewStatusDot;
-        /** תמונת המשימה */
         ImageView imgTaskImage;
-        /** כותרת המשימה */
         TextView tvTaskTitle;
-        /** זמן שנותר / תאריך יעד */
         TextView tvDueDate;
-        /** כמות כוכבים */
         TextView tvTaskStars;
-        /** כפתור סימון "בוצע" */
         Button btnDone;
 
         TaskViewHolder(@NonNull View itemView) {

@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- דשבורד הילד — header עם אווטאר + שם + כוכבים, סיכום משימות, רשימת משימות.
-     הרקע הכהה (גרדיאנט) נקבע ב-ChildDashboardActivity.java כדי לא ליצור קובץ drawable חדש.
-     כל ה-IDs הקיימים נשמרים בדיוק. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollRootChildDashboard"
@@ -35,7 +32,7 @@
                     android:layout_height="90dp"
                     android:layout_marginBottom="12dp"
                     android:background="#CCCCCC"
-                    android:contentDescription="תמונת הילד"
+                    android:contentDescription="Child avatar"
                     android:scaleType="centerCrop"
                     android:src="@android:drawable/ic_menu_my_calendar" />
 
@@ -55,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="0 ⭐"
+                    android:text="0 כוכבים"
                     android:textColor="#FFB300"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -68,51 +65,65 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="18dp"
             app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="12dp">
+                android:paddingStart="12dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="14dp">
 
                 <LinearLayout
-                    android:id="@+id/filterNotCompleted"
+                    android:id="@+id/filterUrgent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="6dp"
                     android:layout_weight="1"
-                    android:background="#E3F2FD"
+                    android:background="#FFF4E5"
                     android:clickable="true"
-                    android:contentDescription="Filter not completed tasks"
+                    android:contentDescription="Filter urgent tasks"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
+                    android:minHeight="96dp"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:minHeight="92dp">
+                    android:paddingStart="10dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="14dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📋"
-                        android:textSize="18sp" />
+                        android:layout_marginBottom="4dp"
+                        android:text="דחופות"
+                        android:textColor="#355070"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvTotalTasks"
+                        android:id="@+id/tvDueSoon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="count"
                         android:text="0"
-                        android:textColor="#1565C0"
-                        android:textSize="20sp"
+                        android:textColor="#355070"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="לא הושלמו"
-                        android:textColor="#555"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="לביצוע בקרוב"
+                        android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
 
@@ -120,78 +131,96 @@
                     android:id="@+id/filterCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
                     android:layout_weight="1"
-                    android:background="#E8F5E9"
+                    android:background="#ECF8F1"
                     android:clickable="true"
                     android:contentDescription="Filter completed tasks"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
+                    android:minHeight="96dp"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:minHeight="92dp">
+                    android:paddingStart="10dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="14dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="✅"
-                        android:textSize="18sp" />
+                        android:layout_marginBottom="4dp"
+                        android:text="הושלמו"
+                        android:textColor="#355070"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvCompleted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="count"
                         android:text="0"
-                        android:textColor="#2E7D32"
-                        android:textSize="20sp"
+                        android:textColor="#355070"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="הושלמו"
-                        android:textColor="#555"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="סיימתי כבר"
+                        android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/filterUrgent"
+                    android:id="@+id/filterNotCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:background="#FFF3E0"
+                    android:background="#EAF4FF"
                     android:clickable="true"
-                    android:contentDescription="Filter urgent tasks"
+                    android:contentDescription="Filter not completed tasks"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
+                    android:minHeight="96dp"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:minHeight="92dp">
+                    android:paddingStart="10dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="14dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="⚡"
-                        android:textSize="18sp" />
+                        android:layout_marginBottom="4dp"
+                        android:text="לא הושלמו"
+                        android:textColor="#355070"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvDueSoon"
+                        android:id="@+id/tvTotalTasks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="count"
                         android:text="0"
-                        android:textColor="#E65100"
-                        android:textSize="20sp"
+                        android:textColor="#355070"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="דחופות"
-                        android:textColor="#555"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="משימות פתוחות"
+                        android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
 
@@ -199,13 +228,14 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
+            android:id="@+id/tvTaskSectionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginBottom="8dp"
-            android:text="המשימות שלי 📝"
+            android:layout_marginBottom="10dp"
+            android:text="לא הושלמו"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -215,7 +245,7 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="אין משימות כרגע. ההורה יוסיף בקרוב!"
-            android:textColor="#DDDDDD"
+            android:textColor="#F5F7FA"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -225,7 +255,10 @@
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
-            android:padding="4dp" />
+            android:paddingStart="2dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="4dp" />
 
         <Button
             android:id="@+id/btnLogout"

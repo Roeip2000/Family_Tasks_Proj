@@ -50,6 +50,11 @@ import java.util.List;
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
+    private static final String FILTER_DEFAULT_TEXT_COLOR = "#355070";
+    private static final String FILTER_SELECTED_TEXT_COLOR = "#102A43";
+    private static final String FILTER_DEFAULT_STROKE_COLOR = "#D6E4F0";
+    private static final String FILTER_SELECTED_STROKE_COLOR = "#FFFFFF";
+
     // מפתחות לזיהוי הסשן
     private static final String PREFS_SESSION = "child_session";
     private static final String EXTRA_PARENT_ID = "parentId";
@@ -374,25 +379,43 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void updateFilterSelectionUi() {
-        updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, "#FFF3E0", "#FFCC80");
-        updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, "#E8F5E9", "#A5D6A7");
-        updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, "#E3F2FD", "#90CAF9");
+        updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, "#FFF4E5", "#FFD199");
+        updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, "#ECF8F1", "#BDE7C9");
+        updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, "#EAF4FF", "#B8DBFF");
     }
 
     private void updateFilterBlock(LinearLayout layout, boolean selected, String defaultColor, String selectedColor) {
         if (layout == null) return;
 
         GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(18f);
+        background.setCornerRadius(24f);
         background.setColor(Color.parseColor(selected ? selectedColor : defaultColor));
-        background.setStroke(selected ? 4 : 0, Color.parseColor("#FFFFFF"));
+        background.setStroke(selected ? 4 : 2,
+                Color.parseColor(selected ? FILTER_SELECTED_STROKE_COLOR : FILTER_DEFAULT_STROKE_COLOR));
 
         layout.setSelected(selected);
         layout.setBackground(background);
-        layout.setAlpha(selected ? 1f : 0.9f);
+        layout.setAlpha(1f);
         layout.setScaleX(selected ? 1.02f : 1f);
         layout.setScaleY(selected ? 1.02f : 1f);
         layout.setElevation(selected ? 6f : 0f);
+        updateFilterTexts(layout, selected);
+    }
+
+    private void updateFilterTexts(LinearLayout layout, boolean selected) {
+        int textColor = Color.parseColor(selected ? FILTER_SELECTED_TEXT_COLOR : FILTER_DEFAULT_TEXT_COLOR);
+        int countColor = textColor;
+
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            if (!(child instanceof TextView)) continue;
+
+            TextView textView = (TextView) child;
+            Object tag = textView.getTag();
+            boolean isCount = "count".equals(String.valueOf(tag));
+            textView.setTextColor(isCount ? countColor : textColor);
+            textView.setAlpha(selected ? 1f : 0.86f);
+        }
     }
 
     private void updateEmptyStateText() {
