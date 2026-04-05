@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- דשבורד הילד — header עם אווטאר + שם + כוכבים, סיכום משימות, רשימת משימות.
-     הרקע הכהה (גרדיאנט) נקבע ב-ChildDashboardActivity.java כדי לא לצור קובץ drawable חדש.
+     הרקע הכהה (גרדיאנט) נקבע ב-ChildDashboardActivity.java כדי לא ליצור קובץ drawable חדש.
      כל ה-IDs הקיימים נשמרים בדיוק. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,67 +14,62 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ===== כרטיס Header: תמונה + שם + כוכבים ===== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
-            app:cardBackgroundColor="#FFFFFF">
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- תמונת אווטאר עגולה של הילד — ממולאת מ-Firebase אם קיימת -->
                 <ImageView
                     android:id="@+id/imgChildAvatar"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
-                    android:scaleType="centerCrop"
-                    android:background="#CCCCCC"
                     android:layout_marginBottom="12dp"
-                    android:src="@android:drawable/ic_menu_my_calendar"
-                    android:contentDescription="תמונת הילד" />
+                    android:background="#CCCCCC"
+                    android:contentDescription="תמונת הילד"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/ic_menu_my_calendar" />
 
-                <!-- שם הילד -->
                 <TextView
                     android:id="@+id/tvChildName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="שלום!"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="#222222"
+                    android:layout_marginBottom="6dp"
                     android:gravity="center"
-                    android:layout_marginBottom="6dp" />
+                    android:text="שלום!"
+                    android:textColor="#222222"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-                <!-- כוכבים שנצברו -->
                 <TextView
                     android:id="@+id/tvStars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="0 ⭐"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:textColor="#FFB300"
-                    android:gravity="center" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- ===== שורת סטטיסטיקות: סה"כ / בוצעו / דחופות ===== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#FFFFFF">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,16 +77,21 @@
                 android:orientation="horizontal"
                 android:padding="12dp">
 
-                <!-- קופסת סה"כ משימות -->
                 <LinearLayout
+                    android:id="@+id/filterNotCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:background="#E3F2FD"
+                    android:clickable="true"
+                    android:contentDescription="Filter not completed tasks"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="vertical"
                     android:padding="12dp"
-                    android:layout_marginEnd="4dp">
+                    android:minHeight="92dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -104,29 +104,34 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
+                        android:textColor="#1565C0"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#1565C0" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="סה״כ"
-                        android:textSize="11sp"
-                        android:textColor="#555" />
+                        android:text="לא הושלמו"
+                        android:textColor="#555"
+                        android:textSize="11sp" />
                 </LinearLayout>
 
-                <!-- קופסת בוצעו -->
                 <LinearLayout
+                    android:id="@+id/filterCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="#E8F5E9"
-                    android:padding="12dp"
                     android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp">
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:background="#E8F5E9"
+                    android:clickable="true"
+                    android:contentDescription="Filter completed tasks"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:minHeight="92dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -139,28 +144,33 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
+                        android:textColor="#2E7D32"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#2E7D32" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="בוצעו"
-                        android:textSize="11sp"
-                        android:textColor="#555" />
+                        android:text="הושלמו"
+                        android:textColor="#555"
+                        android:textSize="11sp" />
                 </LinearLayout>
 
-                <!-- קופסת דחופות -->
                 <LinearLayout
+                    android:id="@+id/filterUrgent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:background="#FFF3E0"
+                    android:clickable="true"
+                    android:contentDescription="Filter urgent tasks"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="vertical"
                     android:padding="12dp"
-                    android:layout_marginStart="4dp">
+                    android:minHeight="92dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -173,62 +183,58 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
+                        android:textColor="#E65100"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#E65100" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="דחופות"
-                        android:textSize="11sp"
-                        android:textColor="#555" />
+                        android:textColor="#555"
+                        android:textSize="11sp" />
                 </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- ===== כותרת רשימת משימות ===== -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="המשימות שלי 📝"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
             android:layout_marginStart="4dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:text="המשימות שלי 📝"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        <!-- ===== הודעה כשאין משימות ===== -->
         <TextView
             android:id="@+id/tvNoTasks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="אין משימות כרגע. ההורה יוסיף בקרוב!"
-            android:textSize="14sp"
-            android:textColor="#DDDDDD"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginTop="16dp" />
+            android:text="אין משימות כרגע. ההורה יוסיף בקרוב!"
+            android:textColor="#DDDDDD"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
-        <!-- ===== רשימת משימות (RecyclerView) ===== -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTasks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:padding="4dp"
-            android:nestedScrollingEnabled="false" />
+            android:nestedScrollingEnabled="false"
+            android:padding="4dp" />
 
-        <!-- ===== כפתור יציאה ===== -->
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:text="יציאה"
             android:backgroundTint="#FF5252"
+            android:text="יציאה"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

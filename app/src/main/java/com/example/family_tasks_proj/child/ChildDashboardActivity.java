@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,16 +65,20 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private TextView tvNoTasks;
     private RecyclerView rvTasks;
     private Button btnLogout;
+    private LinearLayout filterNotCompleted, filterCompleted, filterUrgent;
     /** תמונת הפרופיל של הילד — עגולה, עם אנימציית fade-in */
     private ImageView imgChildAvatar;
 
     // --- Data ---
     private String parentId;
     private String childId;
-    /** רשימת המשימות — מתמלאת מ-Firebase ומוצגת ב-RecyclerView */
+    /** רשימת המקור — כוללת את כל המשימות שנטענו מ-Firebase */
+    private final List<ChildTask> allTasks = new ArrayList<>();
+    /** הרשימה המוצגת כרגע ב-RecyclerView לפי הפילטר הפעיל */
     private final List<ChildTask> taskList = new ArrayList<>();
     /** אדפטר שמציג את כרטיסי המשימות */
     private ChildTaskAdapter adapter;
+    private FilterMode activeFilter = FilterMode.NOT_COMPLETED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +103,18 @@ public class ChildDashboardActivity extends AppCompatActivity {
         rvTasks = findViewById(R.id.rvTasks);
         btnLogout = findViewById(R.id.btnLogout);
         imgChildAvatar = findViewById(R.id.imgChildAvatar);
+        filterNotCompleted = findViewById(R.id.filterNotCompleted);
+        filterCompleted = findViewById(R.id.filterCompleted);
+        filterUrgent = findViewById(R.id.filterUrgent);
 
         // הגדרת RecyclerView עם Adapter + callback לסימון משימה כ-"בוצע"
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ChildTaskAdapter(taskList, this::markTaskDone);
         rvTasks.setAdapter(adapter);
+
+        filterNotCompleted.setOnClickListener(v -> setActiveFilter(FilterMode.NOT_COMPLETED));
+        filterCompleted.setOnClickListener(v -> setActiveFilter(FilterMode.COMPLETED));
+        filterUrgent.setOnClickListener(v -> setActiveFilter(FilterMode.URGENT));
 
         // כפתור יציאה — מציג AlertDialog אישור לפני מחיקת סשן
         btnLogout.setOnClickListener(v -> showLogoutDialog());
@@ -116,6 +128,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
 
         // טעינת נתונים מ-Firebase
+        updateFilterSelectionUi();
         loadChildHeader();
         loadTasks();
     }
@@ -189,7 +202,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
      * טוען משימות מ-Firebase, מעדכן סיכומים, כוכבים, ורשימה.
      *
      * מחשב:
-     * - total: סה"כ משימות
+     * - notCompleted: משימות שעדיין לא הושלמו
      * - done: משימות שבוצעו (isDone == true)
      * - dueSoon: משימות דחופות (0-2 ימים, עדיין לא בוצעו)
      * - stars: סכום starsWorth של משימות שבוצעו
@@ -200,9 +213,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                taskList.clear();
+                allTasks.clear();
 
-                int done = 0, dueSoon = 0;
+                int done = 0, dueSoon = 0, notCompleted = 0;
                 long stars = 0;
 
                 for (DataSnapshot s : snapshot.getChildren()) {
@@ -219,30 +232,19 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         done++;
                         stars += t.starsWorth;
                     } else {
+                        notCompleted++;
                         if (DateUtils.isDueSoon(t.dueAt)) dueSoon++;
-                        // מציג ברשימה רק משימות שעדיין לא בוצעו
-                        taskList.add(t);
                     }
+
+                    allTasks.add(t);
                 }
 
                 // עדכון UI סיכומים
-                int total = done + taskList.size();
-                tvTotalTasks.setText(String.valueOf(total));
+                tvTotalTasks.setText(String.valueOf(notCompleted));
                 tvCompleted.setText(String.valueOf(done));
                 tvDueSoon.setText(String.valueOf(dueSoon));
                 tvStars.setText(stars + " ⭐");
-
-                // הצגת/הסתרת הודעת "אין משימות"
-                if (taskList.isEmpty()) {
-                    tvNoTasks.setVisibility(View.VISIBLE);
-                    rvTasks.setVisibility(View.GONE);
-                } else {
-                    tvNoTasks.setVisibility(View.GONE);
-                    rvTasks.setVisibility(View.VISIBLE);
-                }
-
-                // עדכון ה-Adapter
-                adapter.notifyDataSetChanged();
+                applyFilter();
             }
 
             @Override
@@ -285,12 +287,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
                                 Toast.makeText(ChildDashboardActivity.this,
                                         "כל הכבוד! 🌟", Toast.LENGTH_SHORT).show();
 
-                                // הסרה מיידית מהרשימה — לא מחכים לתגובה מ-Firebase
-                                // כך המשימה נעלמת מהמסך מיד, בלי עיכוב של round-trip לשרת
-                                taskList.remove(task);
-                                adapter.notifyDataSetChanged();
+                                task.isDone = true;
+                                applyFilter();
 
-                                // טוענים מחדש רק בשביל לעדכן את הסיכומים (כוכבים, ספירות)
+                                // טוענים מחדש בשביל לעדכן סיכומים ולסנכרן מול Firebase
                                 loadTasks();
                             })
                             .addOnFailureListener(e -> {
@@ -329,5 +329,92 @@ public class ChildDashboardActivity extends AppCompatActivity {
     /** בודק אם מחרוזת ריקה או null. */
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
+    }
+
+    private void setActiveFilter(FilterMode filterMode) {
+        if (filterMode == null || activeFilter == filterMode) return;
+        activeFilter = filterMode;
+        updateFilterSelectionUi();
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        taskList.clear();
+
+        for (ChildTask task : allTasks) {
+            if (task == null) continue;
+            if (matchesActiveFilter(task)) {
+                taskList.add(task);
+            }
+        }
+
+        updateEmptyStateText();
+
+        if (taskList.isEmpty()) {
+            tvNoTasks.setVisibility(View.VISIBLE);
+            rvTasks.setVisibility(View.GONE);
+        } else {
+            tvNoTasks.setVisibility(View.GONE);
+            rvTasks.setVisibility(View.VISIBLE);
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private boolean matchesActiveFilter(ChildTask task) {
+        switch (activeFilter) {
+            case COMPLETED:
+                return task.isDone;
+            case URGENT:
+                return !task.isDone && DateUtils.isDueSoon(task.dueAt);
+            case NOT_COMPLETED:
+            default:
+                return !task.isDone;
+        }
+    }
+
+    private void updateFilterSelectionUi() {
+        updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, "#FFF3E0", "#FFCC80");
+        updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, "#E8F5E9", "#A5D6A7");
+        updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, "#E3F2FD", "#90CAF9");
+    }
+
+    private void updateFilterBlock(LinearLayout layout, boolean selected, String defaultColor, String selectedColor) {
+        if (layout == null) return;
+
+        GradientDrawable background = new GradientDrawable();
+        background.setCornerRadius(18f);
+        background.setColor(Color.parseColor(selected ? selectedColor : defaultColor));
+        background.setStroke(selected ? 4 : 0, Color.parseColor("#FFFFFF"));
+
+        layout.setSelected(selected);
+        layout.setBackground(background);
+        layout.setAlpha(selected ? 1f : 0.9f);
+        layout.setScaleX(selected ? 1.02f : 1f);
+        layout.setScaleY(selected ? 1.02f : 1f);
+        layout.setElevation(selected ? 6f : 0f);
+    }
+
+    private void updateEmptyStateText() {
+        if (tvNoTasks == null) return;
+
+        switch (activeFilter) {
+            case COMPLETED:
+                tvNoTasks.setText("אין משימות שהושלמו כרגע.");
+                break;
+            case URGENT:
+                tvNoTasks.setText("אין משימות דחופות כרגע.");
+                break;
+            case NOT_COMPLETED:
+            default:
+                tvNoTasks.setText("אין משימות שלא הושלמו כרגע.");
+                break;
+        }
+    }
+
+    private enum FilterMode {
+        NOT_COMPLETED,
+        COMPLETED,
+        URGENT
     }
 }
