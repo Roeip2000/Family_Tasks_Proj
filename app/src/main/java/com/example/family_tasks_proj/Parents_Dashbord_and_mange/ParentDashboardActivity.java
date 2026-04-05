@@ -2,17 +2,22 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.util.ImageHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,6 +62,29 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private ListView lvTasks;
     private TextView tvNoTasks;
 
+    // פרופיל ההורה — תמונה + שם
+    private ImageView ivParentProfile;
+    private TextView tvParentName;
+
+    /**
+     * בוחר תמונה מהגלריה לפרופיל ההורה.
+     * אותו דפוס בדיוק כמו בParentTaskTemplateActivity.
+     */
+    private final ActivityResultLauncher<String> profileImagePicker =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri == null) return;
+                // טוען ומתקן תמונה — EXIF + הקטנה — דרך ImageHelper שכבר קיים
+                Bitmap bitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
+                if (bitmap == null) {
+                    Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // מציג מיד בלי לחכות ל-Firebase
+                ivParentProfile.setImageBitmap(bitmap);
+                // שומר ב-Firebase תחת /parents/{uid}/profileImageBase64
+                saveProfileImage(bitmap);
+            });
+
     /** כל המשימות מכל הילדים — לתצוגה ברשימה */
     private final List<AssignedTask> assignedTasks = new ArrayList<>();
     /** שורות טקסט להצגה ב-ListView */
@@ -67,6 +95,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
+
+        // חיבור אלמנטי פרופיל ההורה
+        ivParentProfile = findViewById(R.id.ivParentProfile);
+        tvParentName = findViewById(R.id.tvParentName);
+        Button btnChangeProfilePic = findViewById(R.id.btnChangeProfilePic);
+        // לחיצה → פותח גלריה לבחירת תמונה (אותו מנגנון כמו בתבניות)
+        btnChangeProfilePic.setOnClickListener(v -> profileImagePicker.launch("image/*"));
 
         // חיבור TextViews של סיכום משימות
         tvParentTotalTasks = findViewById(R.id.tvParentTotalTasks);
@@ -124,6 +159,73 @@ public class ParentDashboardActivity extends AppCompatActivity {
         super.onResume();
         // טוען סיכום כל פעם שחוזרים למסך — כך אחרי הקצאת משימה המספרים מתעדכנים
         loadDashboardData();
+        // טוען שם ותמונת פרופיל של ההורה
+        loadParentProfile();
+    }
+
+    /**
+     * טוען את שם ותמונת הפרופיל של ההורה מ-Firebase.
+     * נתיב: /parents/{uid} — קורא firstName, lastName, profileImageBase64.
+     * אותו מנגנון כמו loadDashboardData — ValueEventListener רגיל.
+     */
+    private void loadParentProfile() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(user.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // שם ההורה
+                        String firstName = snapshot.child("firstName").getValue(String.class);
+                        String lastName = snapshot.child("lastName").getValue(String.class);
+                        tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה"));
+
+                        // תמונת פרופיל — אם קיימת, מפענחת מ-Base64 ומציגה
+                        String base64 = snapshot.child("profileImageBase64").getValue(String.class);
+                        if (base64 != null && !base64.isEmpty()) {
+                            Bitmap bmp = ImageHelper.base64ToBitmap(base64);
+                            if (bmp != null) {
+                                ivParentProfile.setImageBitmap(bmp);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // לא מציגים שגיאה — הפרופיל פחות קריטי מרשימת המשימות
+                    }
+                });
+    }
+
+    /**
+     * שומר תמונת פרופיל ב-Firebase.
+     * משתמש ב-ImageHelper.bitmapToBase64 — אותה פונקציה כמו בשמירת תבניות.
+     * נתיב: /parents/{uid}/profileImageBase64
+     */
+    private void saveProfileImage(Bitmap bitmap) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String base64 = ImageHelper.bitmapToBase64(bitmap);
+        if (base64 == null) {
+            Toast.makeText(this, "שגיאה בהמרת תמונה", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // updateChildren שומר רק את השדה הזה בלי למחוק את שאר הנתונים של ההורה
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(user.getUid())
+                .child("profileImageBase64")
+                .setValue(base64)
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(this, "תמונת הפרופיל נשמרה!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "שגיאה בשמירה: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show());
     }
 
     /**

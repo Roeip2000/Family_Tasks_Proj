@@ -20,6 +20,8 @@ public class ParentInFb {
     private String email;
     private String role;
     private Map<String, Object> children;
+    /** תמונת הפרופיל של ההורה — מחרוזת Base64 של JPEG */
+    private String profileImageBase64;
 
     /** constructor ריק — חובה ל-Firebase deserialization. */
     public ParentInFb()
@@ -112,5 +114,15 @@ public class ParentInFb {
     public void setChildren(Map<String, Object> children)
     {
         this.children = children;
+    }
+
+    public String getProfileImageBase64()
+    {
+        return profileImageBase64;
+    }
+
+    public void setProfileImageBase64(String profileImageBase64)
+    {
+        this.profileImageBase64 = profileImageBase64;
     }
 }

@@ -17,6 +17,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!-- === שורת פרופיל: תמונה + שם + כפתור שינוי תמונה === -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- תמונת פרופיל ההורה — עגולה 72dp -->
+        <ImageView
+            android:id="@+id/ivParentProfile"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="centerCrop"
+            android:background="#DDDDDD"
+            android:contentDescription="תמונת פרופיל" />
+
+        <!-- שם ההורה -->
+        <TextView
+            android:id="@+id/tvParentName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="" />
+
+        <!-- כפתור קטן לשינוי תמונת הפרופיל -->
+        <Button
+            android:id="@+id/btnChangeProfilePic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="שנה תמונה"
+            android:textSize="12sp"
+            android:backgroundTint="#607D8B" />
+
+    </LinearLayout>
+
     <!-- === סיכום מספרי: משימות / הושלמו / דחופות === -->
     <LinearLayout
         android:orientation="horizontal"
