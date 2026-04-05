@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- טופס הרשמת הורה חדש — שם פרטי + משפחה + email + password.
+     Fragment שמוצג בתוך fragmentContainer של activity_main.xml.
+     ParentRegisterFragment.java יוצר חשבון ב-FirebaseAuth ושומר פרופיל ב-DB. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

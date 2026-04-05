@@ -28,10 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Layout: fragment_parent_login.xml
  *
  * ===== הערות לשיפור =====
- * TODO: להוסיף ולידציה לפורמט אימייל (Patterns.EMAIL_ADDRESS).
  * TODO: להוסיף ProgressBar/אינדיקטור טעינה בזמן ההתחברות.
- * TODO: להציג הודעת שגיאה מפורטת מ-Firebase (task.getException().getMessage())
- *       במקום הודעה גנרית "Authentication failed".
  */
 public class ParentLoginFragment extends Fragment {
 
@@ -81,10 +78,17 @@ public class ParentLoginFragment extends Fragment {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // ולידציה בסיסית — שדות ריקים
+        // ולידציה — שדות ריקים
         if (email.isEmpty() || password.isEmpty())
         {
             Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // ולידציה — פורמט אימייל (Patterns.EMAIL_ADDRESS מ-Android SDK)
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        {
+            Toast.makeText(requireContext(), "פורמט אימייל לא תקין", Toast.LENGTH_SHORT).show();
             return;
         }
 

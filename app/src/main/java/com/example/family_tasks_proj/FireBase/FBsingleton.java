@@ -1,7 +1,5 @@
 package com.example.family_tasks_proj.FireBase;
 
-import android.util.Log;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -23,11 +21,7 @@ import java.util.Map;
  * - ה-getInstance() הוא synchronized כדי למנוע יצירת שני instances ב-threads שונים.
  * - saveParentToFirebase() משתמש ב-updateChildren() ולא ב-setValue() —
  *   זה קריטי כדי לא לדרוס את /children ו-/task_templates שכבר קיימים תחת ההורה.
- *
- * ===== הערות לשיפור =====
- * TODO: הוספת callback/listener ל-saveParentToFirebase כדי לדעת אם השמירה הצליחה.
- * TODO: שימוש ב-FirebaseUser.getUid() ישירות במקום שמירה ב-field — מונע מצב
- *       שבו uid לא מסונכרן עם ה-user המחובר.
+ * - saveParentToFirebase(listener) מאפשר לקרוא ל-callback אחרי כתיבה — שימושי לוולידציה.
  */
 public class FBsingleton {
 
@@ -83,25 +77,12 @@ public class FBsingleton {
     public String getEmail()     { return email; }
 
     /**
-     * כותב את פרופיל ההורה ל-Firebase בנתיב /parents/{uid}.
-     *
-     * משתמש ב-updateChildren() כדי לעדכן רק את שדות הפרופיל
-     * בלי לדרוס children/ או task_templates/ שכבר קיימים.
-     *
-     * הערה: אם uid == null (למשל אם setUserData לא נקרא קודם),
-     *        המתודה תחזור בשקט בלי לכתוב כלום.
-     */
-    /**
      * שומר פרופיל הורה ב-Firebase עם callback לדיווח הצלחה/כישלון.
      *
      * @param listener callback — מקבל את תוצאת הכתיבה. null = בלי callback (שקט).
      */
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
-        if (uid == null)
-        {
-            Log.w("FBsingleton", "saveParentToFirebase: uid == null, לא שומרים");
-            return;
-        }
+        if (uid == null) return;
 
         DatabaseReference ref = database.getReference("parents").child(uid);
 

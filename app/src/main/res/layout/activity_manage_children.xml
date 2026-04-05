@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך הוספת ילד חדש — שדות שם פרטי + משפחה + כפתור הוספה.
+     ManageChildrenActivity.java אחראי על שמירה ב-Firebase.
+     TODO: להוסיף RecyclerView של ילדים קיימים מתחת לטופס. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

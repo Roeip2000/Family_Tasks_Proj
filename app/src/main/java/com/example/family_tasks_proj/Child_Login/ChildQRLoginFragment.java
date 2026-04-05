@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +48,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
  */
 public class ChildQRLoginFragment extends Fragment {
 
-    private static final String TAG = "ChildQRLogin";
-
     // מפתחות SharedPreferences לסשן הילד
     private static final String PREFS = "child_session";
     private static final String KEY_PARENT = "parentId";
@@ -70,17 +67,14 @@ public class ChildQRLoginFragment extends Fragment {
                 String raw = result.getContents();
                 if (raw == null) {
                     // המשתמש ביטל את הסריקה
-                    Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "הסריקה בוטלה", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 raw = raw.trim();
-                Log.d(TAG, "RAW=" + raw);
 
                 // פענוח המחרוזת
                 ParsedQr parsed = parseQr(raw);
-
-                Log.d(TAG, "parsed.parentId=" + parsed.parentId + ", parsed.childId=" + parsed.childId);
 
                 // ולידציה — חייבים לפחות parentId
                 if (parsed.parentId == null || parsed.parentId.isEmpty()) {
@@ -165,8 +159,6 @@ public class ChildQRLoginFragment extends Fragment {
      * אם קיים — שומר סשן ופותח מסך בחירת ילד.
      */
     private void checkParentExists(String parentId) {
-        Log.d(TAG, "Checking parent exists: " + parentId);
-
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId);
@@ -186,14 +178,12 @@ public class ChildQRLoginFragment extends Fragment {
                     requireActivity().finish();
                 } else {
                     Toast.makeText(requireContext(), "QR לא תקין — הורה לא נמצא", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Parent NOT FOUND: " + parentId);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
-                Log.e(TAG, "DB error: " + error.getMessage());
                 Toast.makeText(requireContext(), "שגיאת DB: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -205,9 +195,6 @@ public class ChildQRLoginFragment extends Fragment {
      * אם לא — מציג הודעת שגיאה.
      */
     private void checkChildExists(String parentId, String childId) {
-        String path = "parents/" + parentId + "/children/" + childId;
-        Log.d(TAG, "Checking path=" + path);
-
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
@@ -218,8 +205,6 @@ public class ChildQRLoginFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) return; // Fragment לא מחובר — לא עושים כלום
-
-                Log.d(TAG, "snapshot.exists=" + snapshot.exists());
 
                 if (snapshot.exists()) {
                     // הילד קיים — שומרים סשן ופותחים מסך בחירת ילד (Spinner)
@@ -233,15 +218,13 @@ public class ChildQRLoginFragment extends Fragment {
                     requireActivity().finish(); // סוגר את MainActivity
                 } else {
                     // הילד לא נמצא — QR לא תקין
-                    Toast.makeText(requireContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "NOT FOUND at " + path);
+                    Toast.makeText(requireContext(), "קוד QR לא תקין — ילד לא נמצא", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
-                Log.e(TAG, "DB error: " + error.getMessage());
                 Toast.makeText(requireContext(), "DB error: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -260,7 +243,6 @@ public class ChildQRLoginFragment extends Fragment {
             editor.putString(KEY_CHILD, childId);
         }
         editor.apply();
-        Log.d(TAG, "Session saved: parentId=" + parentId + " childId=" + childId);
     }
 
     /** מחלקה פנימית — תוצאת פענוח QR. מחזיקה parentId ו-childId. */

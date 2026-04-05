@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך ראשי (Launcher) — ניווט בין: הרשמת הורה, לוגין הורה, QR ילד, כניסה ישירה.
+     כל Fragment נטען ל-fragmentContainer.
+     TODO: טקסט btnChild הוא hardcoded — יש להעביר ל-strings.xml לעקביות. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +14,7 @@
         android:id="@+id/btnChild"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="כניסה ישירה לילד"
+        android:text="@string/child_direct_login"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

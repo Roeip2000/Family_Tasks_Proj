@@ -2,7 +2,6 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,8 +36,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  */
 public class GenerateQRActivity extends AppCompatActivity {
 
-    private static final String TAG = "QR";
-
     private ImageView imageViewQrCode;
     private TextView tvError;
 
@@ -57,7 +54,7 @@ public class GenerateQRActivity extends AppCompatActivity {
         // זיהוי ההורה המחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Parent not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "הורה לא מחובר", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -74,7 +71,6 @@ public class GenerateQRActivity extends AppCompatActivity {
      */
     private void generateParentQR(String parentId) {
         String payload = "parent:" + parentId;
-        Log.d(TAG, "QR payload=" + payload);
 
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -87,7 +83,6 @@ public class GenerateQRActivity extends AppCompatActivity {
         } catch (WriterException e) {
             imageViewQrCode.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
-            Log.e(TAG, "WriterException", e);
         }
     }
 }

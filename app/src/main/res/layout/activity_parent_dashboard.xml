@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- דשבורד הורה — Hub ניווט מרכזי.
+     כפתורים: ניהול ילדים, מאגר תבניות, הקצאת משימה, QR, התנתקות.
+     TODO(P1): tvParentTotalTasks/tvParentCompleted/tvParentDueSoon לא מחוברים לנתונים —
+               מציגים "0" קבוע. צריך לטעון סיכומים מ-Firebase. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="16dp"
@@ -7,12 +11,12 @@
 
     <Button
         android:id="@+id/btnManageChildren"
-        android:text="Manage Children"
+        android:text="ניהול ילדים"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="Parent Dashboard"
+        android:text="דשבורד הורה"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_width="wrap_content"
@@ -26,28 +30,28 @@
 
         <TextView
             android:id="@+id/tvParentTotalTasks"
-            android:text="Tasks: 0"
+            android:text="משימות: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvParentCompleted"
-            android:text="Completed: 0"
+            android:text="הושלמו: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvParentDueSoon"
-            android:text="Due Soon: 0"
+            android:text="דחופות: 0"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
-        android:text="Current Home Tasks"
+        android:text="משימות נוכחיות"
         android:textStyle="bold"
         android:layout_marginTop="24dp"
         android:layout_width="wrap_content"
@@ -60,7 +64,7 @@
         android:gravity="center">
 
         <TextView
-            android:text="No tasks yet"
+            android:text="אין משימות עדיין"
             android:textColor="#888888"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

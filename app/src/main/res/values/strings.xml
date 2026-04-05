@@ -1,17 +1,19 @@
+<!-- strings.xml — כל המחרוזות של האפליקציה.
+     מרוכז כאן כדי למנוע hardcoded text ולהקל על תרגום עתידי. -->
 <resources>
-    <string name="app_name">Family_Tasks_Proj</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_login">Login</string>
-    <string name="action_go_to_register">Don\'t have an account? Register</string>
-    <string name="first_name">First Name</string>
-    <string name="last_name">Last Name</string>
-    <string name="add_child">Add Child</string>
-    <string name="scan_qr">Scan QR</string>
-    <string name="register_parents">Register Parents</string>
-    <string name="parents_login">Parents Login</string>
-    <string name="child_login_qr">Child Login (QR)</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_cloudinary_upload">Cloudinary_Upload</string>
+    <string name="app_name">Family Tasks</string>
+
+    <!-- מסך ראשי — כפתורי ניווט -->
+    <string name="register_parents">הרשמת הורה</string>
+    <string name="parents_login">כניסת הורה</string>
+    <string name="child_login_qr">כניסת ילד (QR)</string>
+    <string name="child_direct_login">כניסה ישירה ��ילד</string>
+
+    <!-- טפסים — שדות קלט -->
+    <string name="first_name">שם פרטי</string>
+    <string name="last_name">שם משפחה</string>
+
+    <!-- כפתורים -->
+    <string name="add_child">הוסף ילד</string>
+    <string name="scan_qr">סרוק QR</string>
 </resources>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך הקצאת משימה לילד — בחירת תבנית (Spinner) + ילד (Spinner) + תאריך (DatePicker).
+     תצוגה מקדימה של תמונת התבנית מוצגת ב-imgTaskPreview.
+     AssignTaskToChildActivity.java אחראי על טעינת נתונים מ-Firebase ושמירה. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

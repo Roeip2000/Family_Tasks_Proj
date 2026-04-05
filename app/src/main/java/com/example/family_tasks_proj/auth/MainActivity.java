@@ -25,10 +25,6 @@ import com.example.family_tasks_proj.R;
  * - כניסה ישירה לדשבורד ילד — משתמש בסשן שמור (SharedPreferences)
  *
  * כל Fragment נטען לתוך fragmentContainer שב-layout.
- *
- * ===== הערות לשיפור =====
- * TODO: להוסיף בדיקת auto-login — אם ההורה כבר מחובר (FirebaseAuth.currentUser != null),
- *       לדלג ישירות ל-ParentDashboardActivity בלי לדרוש login מחדש.
  */
 public class MainActivity extends AppCompatActivity {
 

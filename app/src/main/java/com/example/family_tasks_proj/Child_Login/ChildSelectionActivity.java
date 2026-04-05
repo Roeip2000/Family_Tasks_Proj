@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -39,8 +38,6 @@ import java.util.List;
  * קריאה מ: /parents/{parentId}/children/ — טוען ילדים של הורה ספציפי
  */
 public class ChildSelectionActivity extends AppCompatActivity {
-
-    private static final String TAG = "ChildSelection";
 
     // מפתחות SharedPreferences לסשן הילד
     private static final String PREFS = "child_session";
@@ -120,7 +117,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
             parentId = sp.getString(KEY_PARENT, null);
             preselectedChildId = sp.getString(KEY_CHILD, null);
         }
-        Log.d(TAG, "resolveIds: parentId=" + parentId + ", preselectedChildId=" + preselectedChildId);
     }
 
     // =====================================================================
@@ -167,7 +163,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Firebase error loading parents: " + error.getMessage());
                 Toast.makeText(ChildSelectionActivity.this,
                         "שגיאה בטעינת הורים: " + error.getMessage(),
                         Toast.LENGTH_LONG).show();
@@ -197,7 +192,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 if (pos < 0 || pos >= parentList.size()) return;
                 ParentItem selected = parentList.get(pos);
                 parentId = selected.id;
-                Log.d(TAG, "Parent selected: " + selected.name + " (" + selected.id + ")");
 
                 // מציגים את אזור בחירת ילד וטוענים מ-Firebase
                 tvChildLabel.setVisibility(View.VISIBLE);
@@ -269,7 +263,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Firebase error loading children: " + error.getMessage());
                 Toast.makeText(ChildSelectionActivity.this,
                         "שגיאה בטעינת ילדים: " + error.getMessage(),
                         Toast.LENGTH_LONG).show();
@@ -325,7 +318,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
         }
 
         ChildItem selected = childList.get(pos);
-        Log.d(TAG, "Entering dashboard: parentId=" + parentId + " childId=" + selected.id + " name=" + selected.name);
 
         // שמירת סשן ב-SharedPreferences — בפעם הבאה לא יצטרך לבחור שוב
         saveSession(parentId, selected.id);
@@ -348,7 +340,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 .putString(KEY_PARENT, parentId)
                 .putString(KEY_CHILD, childId)
                 .apply();
-        Log.d(TAG, "Session saved: parentId=" + parentId + " childId=" + childId);
     }
 
     // =====================================================================

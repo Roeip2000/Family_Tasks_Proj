@@ -81,7 +81,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -97,7 +97,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
         if (title.isEmpty() || correctedBitmap == null)
         {
-            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "יש למלא כותרת ולבחור תמונה", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -105,7 +105,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
         if (imageBase64 == null)
         {
-            Toast.makeText(this, "Image conversion failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה בהמרת תמונה", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,7 +119,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
         {
-            Toast.makeText(this, "Parent not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "הורה לא מחובר", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -131,12 +131,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .setValue(task)
                 .addOnSuccessListener(aVoid ->
                 {
-                    Toast.makeText(this, "Template saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "התבנית נשמרה בהצלחה!", Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e ->
                 {
-                    Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "שגיאה בשמירה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }

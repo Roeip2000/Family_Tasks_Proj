@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -54,8 +53,6 @@ import java.util.List;
  * כפתור "בוצע" בכל כרטיס — מעדכן isDone ב-Firebase דרך markTaskDone callback עם AlertDialog אישור.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
-
-    private static final String TAG = "ChildDashboard";
 
     // מפתחות לזיהוי הסשן
     private static final String PREFS_SESSION = "child_session";
@@ -111,7 +108,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
             finish();
             return;
         }
-        Log.d(TAG, "Session: parentId=" + parentId + ", childId=" + childId);
 
         // טעינת נתונים מ-Firebase
         loadChildHeader();
@@ -150,9 +146,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
      * הכוכבים מחושבים ב-loadTasks (מסכום starsWorth של משימות שבוצעו).
      */
     private void loadChildHeader() {
-        String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId;
-        Log.d(TAG, "Reading child from: " + path);
-
         childRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -166,7 +159,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Failed to load child header: " + error.getMessage());
                 Toast.makeText(ChildDashboardActivity.this,
                         "שגיאה בטעינת שם: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -186,15 +178,16 @@ public class ChildDashboardActivity extends AppCompatActivity {
      */
     private void loadTasks() {
         DatabaseReference tasksRef = childRef().child(NODE_TASKS);
-        String path = ROOT_PARENTS + "/" + parentId + "/" + NODE_CHILDREN + "/" + childId + "/" + NODE_TASKS;
-        Log.d(TAG, "Reading tasks from: " + path);
 
         tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskList.clear();
 
-                // עוברים על כל המשימות ובונים רשימה + סיכומים
+                // עוברים על כל המשימות — מחשבים סיכומים מהכל, מציגים רק שלא בוצעו
+                int done = 0, dueSoon = 0;
+                long stars = 0;
+
                 for (DataSnapshot s : snapshot.getChildren()) {
                     ChildTask t = s.getValue(ChildTask.class);
                     if (t == null) continue;
@@ -204,11 +197,23 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         t.id = s.getKey();
                     }
 
-                    taskList.add(t);
+                    // סיכום מכל המשימות (כולל שבוצעו)
+                    if (t.isDone) {
+                        done++;
+                        stars += t.starsWorth;
+                    } else {
+                        if (DateUtils.isDueSoon(t.dueAt)) dueSoon++;
+                        // מציג ברשימה רק משימות שעדיין לא בוצעו
+                        taskList.add(t);
+                    }
                 }
 
-                // עדכון סיכומים
-                updateSummaryAndStars();
+                // עדכון UI סיכומים
+                int total = done + taskList.size();
+                tvTotalTasks.setText(String.valueOf(total));
+                tvCompleted.setText(String.valueOf(done));
+                tvDueSoon.setText(String.valueOf(dueSoon));
+                tvStars.setText(stars + " ⭐");
 
                 // הצגת/הסתרת הודעת "אין משימות"
                 if (taskList.isEmpty()) {
@@ -221,36 +226,16 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
                 // עדכון ה-Adapter
                 adapter.notifyDataSetChanged();
-
-                Log.d(TAG, "Tasks loaded: " + taskList.size() + " tasks");
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Failed to load tasks: " + error.getMessage());
                 Toast.makeText(ChildDashboardActivity.this,
                         "שגיאה בטעינת משימות: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void updateSummaryAndStars() {
-        int done = 0;
-        int dueSoon = 0;
-        long stars = 0;
-        for (ChildTask task : taskList) {
-            if (task.isDone) {
-                done++;
-                stars += task.starsWorth;
-            } else if (DateUtils.isDueSoon(task.dueAt)) {
-                dueSoon++;
-            }
-        }
-        tvTotalTasks.setText(String.valueOf(taskList.size()));
-        tvCompleted.setText(String.valueOf(done));
-        tvDueSoon.setText(String.valueOf(dueSoon));
-        tvStars.setText(stars + " ⭐");
-    }
 
     /**
      * Callback מ-ChildTaskAdapter — נקרא כשהילד לוחץ "בוצע" על משימה.

@@ -1,3 +1,5 @@
+<!-- מסך יצירת תבנית משימה — כותרת + בחירת תמונה מהגלריה + שמירה ב-Firebase.
+     ParentTaskTemplateActivity.java אחראי על תיקון EXIF, הקטנה, והמרה ל-Base64. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
@@ -10,7 +12,7 @@
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Task name"/>
+        android:hint="שם המשימה"/>
 
     <ImageView
         android:id="@+id/imgTask"
@@ -24,11 +26,11 @@
         android:id="@+id/btnPickImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose Image"/>
+        android:text="בחר תמונה"/>
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Template"/>
+        android:text="שמור תבנית"/>
 </LinearLayout>

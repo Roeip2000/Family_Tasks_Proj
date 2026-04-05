@@ -20,15 +20,14 @@ import com.google.firebase.database.FirebaseDatabase;
  * אחריות:
  * - מקבל שם פרטי + שם משפחה מהמשתמש.
  * - יוצר רשומת ילד ב-Firebase תחת /parents/{uid}/children/{childId}.
- * - בהצלחה — פותח את GenerateQRActivity ליצירת קוד QR לילד.
+ * - בהצלחה — מציג הודעה, מנקה את השדות, ונשאר במסך להוספת ילדים נוספים.
  *
  * Layout: activity_manage_children.xml
  *
- * ===== באגים / הערות =====
+ * ===== הערות לשיפור =====
  * TODO: להוסיף רשימת ילדים קיימים מתחת לטופס ההוספה (ListView/RecyclerView).
  *       כרגע המסך מאפשר רק הוספה — אין צפייה ברשימה, עריכה, או מחיקה.
  * TODO: להוסיף ולידציה (למשל: אורך שם מינימלי, תווים חוקיים בלבד).
- * TODO: לנקות את שדות הטופס (etFirstName, etLastName) אחרי הוספה מוצלחת.
  */
 public class ManageChildrenActivity extends AppCompatActivity {
 
@@ -54,7 +53,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         // בדיקה שההורה מחובר — אחרת אין מה לעשות
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this, "Not signed in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "אינך מחובר", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -64,13 +63,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     /**
-     * שומר ילד חדש ב-Firebase ופותח מסך QR.
+     * שומר ילד חדש ב-Firebase.
      *
      * תהליך:
      * 1. ולידציה — בודק שהשדות מלאים.
      * 2. push().getKey() — מייצר מזהה ייחודי לילד.
      * 3. setValue — כותב את אובייקט Child ל-Firebase.
-     * 4. בהצלחה — פותח GenerateQRActivity עם childId ושם.
+     * 4. בהצלחה — מציג Toast, מנקה שדות, נשאר במסך להוספת ילדים נוספים.
      *
      * נתיב כתיבה: /parents/{parentUID}/children/{childId}
      * Side-effect: משבית את הכפתור בזמן הכתיבה למניעת כפילויות.
@@ -81,14 +80,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         // ולידציה — שדות ריקים
         if (first.isEmpty() || last.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // יצירת מזהה ייחודי לילד עם push()
         String childId = db.child("parents").child(parentUID).child("children").push().getKey();
         if (childId == null) {
-            Toast.makeText(this, "Failed to create childId", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה ביצירת מזהה ילד", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -115,7 +114,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         etFirstName.requestFocus();
                     } else {
                         Toast.makeText(this,
-                                "Failed: " + (task.getException() != null ? task.getException().getMessage() : "unknown"),
+                                "שגיאה: " + (task.getException() != null ? task.getException().getMessage() : "לא ידועה"),
                                 Toast.LENGTH_LONG).show();
                     }
                 });

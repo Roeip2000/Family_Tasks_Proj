@@ -1,5 +1,8 @@
 package com.example.family_tasks_proj.FireBase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * מודל נתונים של הורה כפי שנשמר ב-Firebase Realtime Database.
  *
@@ -16,7 +19,7 @@ public class ParentInFb {
     private String lastName;
     private String email;
     private String role;
-    private java.util.Map<String, Object> children;
+    private Map<String, Object> children;
 
     /** constructor ריק — חובה ל-Firebase deserialization. */
     public ParentInFb()
@@ -38,7 +41,7 @@ public class ParentInFb {
         this.lastName = lastName;
         this.email = email;
         this.role = "parent";
-        this.children = new java.util.HashMap<>();
+        this.children = new HashMap<>();
     }
 
     // Getters & Setters — חובה ל-Firebase serialization
@@ -72,7 +75,6 @@ public class ParentInFb {
 
     public void setLastName(String lastName)
     {
-
         this.lastName = lastName;
     }
 
@@ -101,13 +103,13 @@ public class ParentInFb {
     {
         return "ParentInFb{" + "uid='" + uid + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", role='" + role + '\'' + '}';
     }
-    public java.util.Map<String, Object> getChildren()
+    public Map<String, Object> getChildren()
     {
         return children;
     }
 
 
-    public void setChildren(java.util.Map<String, Object> children)
+    public void setChildren(Map<String, Object> children)
     {
         this.children = children;
     }

@@ -4,12 +4,21 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
+import com.example.family_tasks_proj.util.DateUtils;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * דשבורד ראשי של ההורה — מסך Hub.
@@ -25,18 +34,22 @@ import com.google.firebase.auth.FirebaseAuth;
  * Layout: activity_parent_dashboard.xml
  *
  * ===== הערות =====
- * TODO: להוסיף סיכום כמות ילדים/משימות מ-Firebase (הנתונים ב-layout קיימים אבל לא מאוכלסים).
- * TODO: להציג שם ההורה המחובר בכותרת המסך.
  * TODO: להוסיף AlarmManager + Notification — התרעה להורה כשמשימה של ילד באיחור.
  */
 public class ParentDashboardActivity extends AppCompatActivity {
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
+    private TextView tvParentTotalTasks, tvParentCompleted, tvParentDueSoon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
+
+        // חיבור TextViews של סיכום משימות
+        tvParentTotalTasks = findViewById(R.id.tvParentTotalTasks);
+        tvParentCompleted = findViewById(R.id.tvParentCompleted);
+        tvParentDueSoon = findViewById(R.id.tvParentDueSoon);
 
         // חיבור כפתורים — כל כפתור פותח Activity ייעודי
         btnManageChildren = findViewById(R.id.btnManageChildren);
@@ -70,6 +83,65 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // כפתור התנתקות — מציג AlertDialog אישור לפני ניתוק
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> showLogoutDialog());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // טוען סיכום כל פעם שחוזרים למסך — כך אחרי הקצאת משימה המספרים מתעדכנים
+        loadParentStats();
+    }
+
+    /**
+     * טוען סיכום משימות מכל הילדים של ההורה.
+     *
+     * סורק /parents/{uid}/children/ — לכל ילד עובר על tasks/ וסופר:
+     * - total: סה"כ משימות מכל הילדים
+     * - done: משימות שבוצעו (isDone == true)
+     * - dueSoon: משימות דחופות (0-2 ימים, לא בוצעו)
+     *
+     * משתמש ב-DateUtils.isDueSoon() — אותה לוגיקה כמו ChildDashboardActivity.
+     */
+    private void loadParentStats() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(user.getUid())
+                .child("children")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int total = 0, done = 0, dueSoon = 0;
+
+                        // עוברים על כל הילדים ועל המשימות של כל ילד
+                        for (DataSnapshot childSnap : snapshot.getChildren()) {
+                            for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
+                                total++;
+                                Boolean isDone = taskSnap.child("isDone").getValue(Boolean.class);
+                                if (isDone != null && isDone) {
+                                    done++;
+                                } else {
+                                    String dueAt = taskSnap.child("dueAt").getValue(String.class);
+                                    if (DateUtils.isDueSoon(dueAt)) dueSoon++;
+                                }
+                            }
+                        }
+
+                        // עדכון TextViews בסיכום
+                        tvParentTotalTasks.setText("משימות: " + total);
+                        tvParentCompleted.setText("הושלמו: " + done);
+                        tvParentDueSoon.setText("ד��ופות: " + dueSoon);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(ParentDashboardActivity.this,
+                                "שגיאה בטעינת סיכום: " + error.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     /**

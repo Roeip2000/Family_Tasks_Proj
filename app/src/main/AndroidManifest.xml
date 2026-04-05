@@ -46,7 +46,9 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
-        <activity android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"></activity>
+        <activity
+            android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

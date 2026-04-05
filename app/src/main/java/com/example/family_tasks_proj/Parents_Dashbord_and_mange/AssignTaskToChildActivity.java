@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -181,8 +180,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש ומתעד בלוג
-                        Log.e("AssignTask", "שגיאה בטעינת תבניות: " + error.getMessage());
+                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש
                         Toast.makeText(AssignTaskToChildActivity.this,
                                 "שגיאה בטעינת תבניות: " + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
@@ -228,8 +226,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש ומתעד בלוג
-                        Log.e("AssignTask", "שגיאה בטעינת ילדים: " + error.getMessage());
+                        // טיפול בשגיאת Firebase — מציג הודעה למשתמש
                         Toast.makeText(AssignTaskToChildActivity.this,
                                 "שגיאה בטעינת ילדים: " + error.getMessage(),
                                 Toast.LENGTH_LONG).show();

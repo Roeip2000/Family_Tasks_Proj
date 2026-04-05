@@ -34,9 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
  * BUG-FIX: task.getException() יכול להחזיר null — נוסף null-check.
  *
  * ===== הערות לשיפור =====
- * TODO: להוסיף ולידציה לאורך סיסמה (מינימום 6 תווים — דרישת Firebase).
  * TODO: להוסיף ProgressBar בזמן ההרשמה.
- * TODO: להוסיף ולידציה לפורמט email.
  */
 public class ParentRegisterFragment extends Fragment {
 
@@ -96,6 +94,18 @@ public class ParentRegisterFragment extends Fragment {
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // ולידציה — פורמט אימייל
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), "פורמט אימייל לא תקין", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // ולידציה — סיסמה מינימום 6 תווים (דרישת Firebase)
+        if (password.length() < 6) {
+            Toast.makeText(requireContext(), "הסיסמה חייבת להכיל לפחות 6 תווים", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך QR קבוע להורה — מציג QR אחד שכל הילדים סורקים.
+     פורמט: "parent:{parentId}". הילד סורק ומגיע למסך בחירת שם (ChildSelectionActivity).
+     GenerateQRActivity.java מייצר את ה-QR מ-UID ההורה המחובר. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
