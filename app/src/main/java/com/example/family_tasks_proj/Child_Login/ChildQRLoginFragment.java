@@ -23,10 +23,14 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
- * מסך סריקת QR לילד — הילד סורק קוד QR שההורה מציג.
+ * מסך סריקת QR לילד.
  *
- * פורמט QR: "parent:{parentId}|child:{childId}"
- * אחרי סריקה — בודק שההורה/ילד קיימים ב-Firebase ומעביר ל-ChildSelectionActivity.
+ * הפורמטים שהקוד תומך בהם:
+ * - "parent:{parentId}"
+ * - "parent:{parentId}|child:{childId}"
+ *
+ * אחרי הסריקה הקוד בודק שההורה או הילד קיימים ב-Firebase
+ * ואז מעביר ל-ChildSelectionActivity.
  */
 public class ChildQRLoginFragment extends Fragment {
 
