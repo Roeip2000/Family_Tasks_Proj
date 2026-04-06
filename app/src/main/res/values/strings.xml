@@ -8,12 +8,95 @@
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
     <string name="child_direct_login">כניסה ישירה לילד</string>
+    <string name="home_title">משימות משפחתיות</string>
+    <string name="home_subtitle">מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד.</string>
+    <string name="home_question">איך תרצו להמשיך?</string>
+    <string name="home_description">פעולות ההורה מרוכזות יחד, וכניסת ילד נשארת פשוטה וברורה.</string>
 
     <!-- טפסים — שדות קלט -->
     <string name="first_name">שם פרטי</string>
     <string name="last_name">שם משפחה</string>
+    <string name="label_email">אימייל</string>
+    <string name="label_password">סיסמה</string>
+    <string name="hint_email">הזן אימייל</string>
+    <string name="hint_password">הזן סיסמה</string>
+    <string name="hint_first_name">הזן שם פרטי</string>
+    <string name="hint_last_name">הזן שם משפחה</string>
+    <string name="hint_create_password">צור סיסמה</string>
+    <string name="hint_task_title">שם המשימה</string>
+    <string name="hint_task_title_assign">כותרת המשימה</string>
+    <string name="hint_due_date">תאריך יעד לביצוע</string>
 
     <!-- כפתורים -->
     <string name="add_child">הוסף ילד</string>
     <string name="scan_qr">סרוק QR</string>
+    <string name="btn_login">התחברות</string>
+    <string name="btn_create_account">יצירת חשבון</string>
+    <string name="btn_pick_image">בחר תמונה</string>
+    <string name="btn_save_template">שמור תבנית</string>
+    <string name="btn_pick_child_photo">📷 בחר תמונה לילד</string>
+    <string name="btn_cancel_edit">בטל עריכה</string>
+    <string name="btn_assign_task">שלח משימה לילד</string>
+    <string name="btn_back_to_dashboard">חזרה לדשבורד</string>
+    <string name="btn_enter">כניסה</string>
+    <string name="btn_logout">יציאה</string>
+    <string name="btn_done">✓ בוצע</string>
+
+    <!-- כותרות מסכים -->
+    <string name="title_parent_login">כניסת הורה</string>
+    <string name="title_parent_register">הרשמת הורה</string>
+    <string name="title_manage_children">ניהול ילדים</string>
+    <string name="title_assign_task">הקצאת משימה מהמאגר</string>
+    <string name="title_qr_family">QR כניסה למשפחה</string>
+    <string name="title_child_login">כניסת ילד</string>
+    <string name="title_parent_dashboard">דשבורד הורה</string>
+
+    <!-- תיאורי מסכים -->
+    <string name="desc_parent_login">התחברו כדי לנהל ילדים, להקצות משימות ולעקוב אחרי ההתקדמות.</string>
+    <string name="desc_parent_register">פתחו חשבון חדש והתחילו לנהל משימות משפחתיות בצורה מסודרת ונעימה.</string>
+    <string name="desc_qr_explanation">הראה את ה-QR לילדים שלך.\nהם סורקים, בוחרים את השם שלהם, ונכנסים.</string>
+
+    <!-- תוויות -->
+    <string name="label_choose_template">בחר תבנית משימה:</string>
+    <string name="label_assign_to_child">שייך לילד:</string>
+    <string name="label_choose_parent">בחר את ההורה שלך:</string>
+    <string name="label_choose_child">בחר את הילד שנכנס למערכת:</string>
+    <string name="label_registered_children">ילדים רשומים:</string>
+
+    <!-- סטטוס ריק -->
+    <string name="empty_no_children">אין ילדים רשומים עדיין. הוסף ילד למעלה.</string>
+    <string name="empty_no_children_selection">אין ילדים רשומים. בקש מההורה להוסיף אותך.</string>
+    <string name="empty_no_tasks_child">אין משימות כרגע. ההורה יוסיף בקרוב!</string>
+    <string name="error_qr_creation">שגיאה ביצירת QR</string>
+
+    <!-- פילטרים -->
+    <string name="filter_urgent">דחופות</string>
+    <string name="filter_completed">הושלמו</string>
+    <string name="filter_not_completed">לא הושלמו</string>
+    <string name="filter_due_soon">לביצוע בקרוב</string>
+    <string name="filter_already_done">סיימתי כבר</string>
+    <string name="filter_open_tasks">משימות פתוחות</string>
+
+    <!-- דשבורד ילד -->
+    <string name="child_hello">שלום!</string>
+    <string name="child_stars_default">0 כוכבים</string>
+
+    <!-- נגישות — contentDescription -->
+    <string name="cd_profile_image">תמונת פרופיל</string>
+    <string name="cd_child_photo">תמונת ילד</string>
+    <string name="cd_child_avatar">תמונת ילד</string>
+    <string name="cd_task_image">תמונת משימה</string>
+    <string name="cd_task_preview">תצוגה מקדימה של משימה</string>
+    <string name="cd_qr_code">קוד QR לכניסת ילד</string>
+    <string name="cd_filter_urgent">סינון משימות דחופות</string>
+    <string name="cd_filter_completed">סינון משימות שהושלמו</string>
+    <string name="cd_filter_not_completed">סינון משימות שלא הושלמו</string>
+    <string name="cd_status_dot">נקודת סטטוס</string>
+
+    <!-- ברירות מחדל לפריטי רשימה -->
+    <string name="default_task_name">שם המשימה</string>
+    <string name="default_child_name">שם הילד</string>
+    <string name="default_date">תאריך</string>
+    <string name="default_status">ממתין</string>
+    <string name="default_today">היום</string>
 </resources>

@@ -12,7 +12,7 @@
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="שם המשימה"/>
+        android:hint="@string/hint_task_title"/>
 
     <ImageView
         android:id="@+id/imgTask"
@@ -20,17 +20,18 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
+        android:contentDescription="@string/cd_task_image"
         android:src="@android:drawable/ic_menu_gallery"/>
 
     <Button
         android:id="@+id/btnPickImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="בחר תמונה"/>
+        android:text="@string/btn_pick_image"/>
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="שמור תבנית"/>
+        android:text="@string/btn_save_template"/>
 </LinearLayout>

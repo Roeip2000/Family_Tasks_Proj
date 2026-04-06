@@ -26,7 +26,7 @@
         android:layout_marginTop="34dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
-        android:text="משימות משפחתיות"
+        android:text="@string/home_title"
         android:textColor="#1B2A41"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -42,7 +42,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:gravity="center"
-        android:text="מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד."
+        android:text="@string/home_subtitle"
         android:textColor="#5C6B80"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="איך תרצו להמשיך?"
+                android:text="@string/home_question"
                 android:textColor="#243B53"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
-                android:text="פעולות ההורה מרוכזות יחד, וכניסת ילד נשארת פשוטה וברורה."
+                android:text="@string/home_description"
                 android:textColor="#6B7C93"
                 android:textSize="13sp" />
 

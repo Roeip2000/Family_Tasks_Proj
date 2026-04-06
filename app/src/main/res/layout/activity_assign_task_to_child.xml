@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="הקצאת משימה מהמאגר"
+        android:text="@string/title_assign_task"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,6 +38,7 @@
             android:id="@+id/imgTaskPreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/cd_task_preview"
             android:scaleType="centerCrop"
             android:src="@android:drawable/ic_menu_gallery" />
     </androidx.cardview.widget.CardView>
@@ -47,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="בחר תבנית משימה:"
+        android:text="@string/label_choose_template"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cvImagePreview" />
@@ -67,7 +68,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="כותרת המשימה"
+        android:hint="@string/hint_task_title_assign"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="שייך לילד:"
+        android:text="@string/label_assign_to_child"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTitle" />
@@ -101,7 +102,7 @@
         android:clickable="true"
         android:drawableEnd="@android:drawable/ic_menu_my_calendar"
         android:focusable="false"
-        android:hint="תאריך יעד לביצוע"
+        android:hint="@string/hint_due_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spAssignee" />
@@ -112,7 +113,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="#4CAF50"
-        android:text="שלח משימה לילד"
+        android:text="@string/btn_assign_task"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

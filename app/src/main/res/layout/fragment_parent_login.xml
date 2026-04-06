@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="כניסת הורה"
+            android:text="@string/title_parent_login"
             android:textColor="#1B2A41"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:gravity="center"
-            android:text="התחברו כדי לנהל ילדים, להקצות משימות ולעקוב אחרי ההתקדמות."
+            android:text="@string/desc_parent_login"
             android:textColor="#6B7C93"
             android:textSize="14sp" />
 
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="אימייל"
+            android:text="@string/label_email"
             android:textColor="#243B53"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -48,7 +48,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="#C9D6E2"
-            android:hint="הזן אימייל"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="סיסמה"
+            android:text="@string/label_password"
             android:textColor="#243B53"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -70,7 +70,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="#C9D6E2"
-            android:hint="הזן סיסמה"
+            android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
@@ -84,7 +84,7 @@
             android:layout_marginTop="26dp"
             android:backgroundTint="#2F80ED"
             android:elevation="0dp"
-            android:text="התחברות"
+            android:text="@string/btn_login"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
