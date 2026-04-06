@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
-import com.example.family_tasks_proj.child.ChildTask;
+import com.example.family_tasks_proj.child.model.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
@@ -143,6 +143,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             return;
         }
 
+        // אם לא הגיעו extras, מנסים להשלים את הסשן מהכניסה האחרונה של הילד
         SharedPreferences preferences = getSharedPreferences(PREFS_SESSION, MODE_PRIVATE);
         parentId = preferences.getString(EXTRA_PARENT_ID, parentId);
         childId = preferences.getString(EXTRA_CHILD_ID, childId);
@@ -228,6 +229,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     allTasks.add(task);
                 }
 
+                // קודם מעדכנים את הסיכום העליון, ואז מפעילים את הפילטר הפעיל על הרשימה
                 tvTotalTasks.setText(String.valueOf(openCount));
                 tvCompleted.setText(String.valueOf(completedCount));
                 tvDueSoon.setText(String.valueOf(urgentCount));
@@ -247,7 +249,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void markTaskDone(ChildTask task, int position) {
+    private void markTaskDone(ChildTask task) {
         if (task == null || isBlank(task.id)) {
             Toast.makeText(this, R.string.child_error_missing_task_id, Toast.LENGTH_SHORT).show();
             return;
@@ -269,6 +271,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT
                                     ).show();
                                     task.isDone = true;
+                                    // מרעננים כדי לעדכן גם את הספירות וגם את תוצאות הפילטר
                                     loadTasks();
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(
@@ -285,6 +288,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .setTitle(R.string.child_logout_title)
                 .setMessage(R.string.child_logout_message)
                 .setPositiveButton(R.string.child_logout_confirm, (dialog, which) -> {
+                    // מוחקים את הסשן המקומי כדי שלא ניכנס אוטומטית עם ילד ישן
                     SharedPreferences preferences = getSharedPreferences(PREFS_SESSION, MODE_PRIVATE);
                     preferences.edit().clear().apply();
 
@@ -311,6 +315,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void applyFilter() {
         visibleTasks.clear();
 
+        // הפילטר עובד רק על הרשימה שכבר נטענה מה-Firebase — בלי query נוסף
         for (ChildTask task : allTasks) {
             if (task != null && matchesActiveFilter(task)) {
                 visibleTasks.add(task);

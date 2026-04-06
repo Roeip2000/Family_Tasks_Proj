@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,42 +12,46 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Family_Tasks_Proj">
 
+        <!-- מסכי הורה אחרי התחברות -->
         <activity
             android:name=".Parents_Dashbord_and_mange.AssignTaskToChildActivity"
             android:exported="false" />
         <activity
             android:name=".Parents_Dashbord_and_mange.ParentTaskTemplateActivity"
-            android:exported="false" /> <!-- MAIN / Launcher -->
-        <activity
-            android:name=".auth.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <!-- Parent side -->
+            android:exported="false" />
         <activity
             android:name=".Parents_Dashbord_and_mange.ParentDashboardActivity"
             android:exported="false" />
         <activity
             android:name=".Parents_Dashbord_and_mange.ManageChildrenActivity"
-            android:exported="false" /> <!-- Child side -->
+            android:exported="false" />
+        <activity
+            android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"
+            android:exported="false" />
+
+        <!-- מסך פתיחה ראשי -->
+        <activity
+            android:name=".auth.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- מסכי ילד -->
         <activity
             android:name=".child.ChildDashboardActivity"
             android:exported="false" />
-        <!-- מסך בחירת ילד — Spinner לבחירה לפני כניסה לדשבורד -->
         <activity
             android:name=".Child_Login.ChildSelectionActivity"
-            android:exported="false" /> <!-- Barcode Scanner -->
+            android:exported="false" />
+
+        <!-- מסך סריקת QR -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
-        <activity
-            android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

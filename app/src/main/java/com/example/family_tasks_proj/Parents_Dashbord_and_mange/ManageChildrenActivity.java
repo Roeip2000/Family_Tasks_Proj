@@ -20,7 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.Child;
+import com.example.family_tasks_proj.child.model.Child;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -139,11 +139,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        String childId = database.child("parents")
-                .child(parentUid)
-                .child("children")
-                .push()
-                .getKey();
+        String childId = childrenRef().push().getKey();
 
         if (childId == null) {
             Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
@@ -157,9 +153,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         Child child = new Child(firstName, lastName, imageBase64);
         btnAddChild.setEnabled(false);
 
-        database.child("parents")
-                .child(parentUid)
-                .child("children")
+        // שומר את הילד החדש תחת ההורה שמחובר כרגע
+        childrenRef()
                 .child(childId)
                 .setValue(child)
                 .addOnSuccessListener(aVoid -> {
@@ -204,9 +199,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
 
         btnAddChild.setEnabled(false);
-        database.child("parents")
-                .child(parentUid)
-                .child("children")
+        childrenRef()
                 .child(editingChildId)
                 .updateChildren(updates)
                 .addOnSuccessListener(aVoid -> {
@@ -230,9 +223,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void loadChildren() {
-        database.child("parents")
-                .child(parentUid)
-                .child("children")
+        childrenRef()
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -351,9 +342,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .setTitle(R.string.manage_children_delete_title)
                 .setMessage(getString(R.string.manage_children_delete_message, childName))
                 .setPositiveButton(R.string.manage_children_option_delete, (dialog, which) ->
-                        database.child("parents")
-                                .child(parentUid)
-                                .child("children")
+                        childrenRef()
                                 .child(item.id)
                                 .removeValue()
                                 .addOnSuccessListener(aVoid -> {
@@ -374,6 +363,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
                                 ).show()))
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
+    }
+
+    private DatabaseReference childrenRef() {
+        return database.child("parents")
+                .child(parentUid)
+                .child("children");
     }
 
     private String safeText(String value) {

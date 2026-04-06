@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.auth;
+package com.example.family_tasks_proj.Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,6 +76,7 @@ public class ParentLoginFragment extends Fragment {
 
             setLoading(false);
             if (task.isSuccessful()) {
+                // רק אחרי התחברות מוצלחת פותחים את דשבורד ההורה
                 startActivity(new Intent(
                         requireActivity(),
                         com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity.class

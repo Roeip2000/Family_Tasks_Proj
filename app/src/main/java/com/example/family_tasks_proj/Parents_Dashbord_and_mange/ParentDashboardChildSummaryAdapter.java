@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.ChildSummary;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.google.android.material.card.MaterialCardView;

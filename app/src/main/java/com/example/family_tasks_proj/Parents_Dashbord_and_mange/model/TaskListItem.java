@@ -1,13 +1,13 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
 /** שורה ברשימת המשימות — יכולה להיות כותרת קבוצה (header) או משימה רגילה. */
-class TaskListItem {
-    boolean isHeader;
-    String headerTitle;
-    int headerCount;
-    AssignedTask task;
+public class TaskListItem {
+    public boolean isHeader;
+    public String headerTitle;
+    public int headerCount;
+    public AssignedTask task;
 
-    static TaskListItem createHeader(String title, int count) {
+    public static TaskListItem createHeader(String title, int count) {
         TaskListItem item = new TaskListItem();
         item.isHeader = true;
         item.headerTitle = title;
@@ -15,7 +15,7 @@ class TaskListItem {
         return item;
     }
 
-    static TaskListItem createTask(AssignedTask task) {
+    public static TaskListItem createTask(AssignedTask task) {
         TaskListItem item = new TaskListItem();
         item.task = task;
         return item;

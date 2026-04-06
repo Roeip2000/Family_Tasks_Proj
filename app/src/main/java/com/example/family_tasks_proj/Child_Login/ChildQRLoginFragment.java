@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.example.family_tasks_proj.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -55,6 +54,7 @@ public class ChildQRLoginFragment extends Fragment {
                     return;
                 }
 
+                // QR של הורה בלבד פותח בחירת ילד; QR מלא יכול לבחור ילד מראש
                 if (isBlank(parsed.childId)) {
                     checkParentExists(parsed.parentId);
                 } else {
@@ -188,6 +188,7 @@ public class ChildQRLoginFragment extends Fragment {
 
     private void openChildSelection(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
+        // שומרים את ה-parentId ב-extra כדי שהמסך הבא לא יצטרך לשאול שוב מי ההורה
         intent.putExtra(KEY_PARENT, parentId);
         if (!isBlank(childId)) {
             intent.putExtra(KEY_CHILD, childId);
@@ -200,6 +201,7 @@ public class ChildQRLoginFragment extends Fragment {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit().putString(KEY_PARENT, parentId);
 
+        // אם נסרק QR של הורה בלבד, מוחקים childId ישן כדי לא להיכנס לילד הלא נכון
         if (isBlank(childId)) {
             editor.remove(KEY_CHILD);
         } else {

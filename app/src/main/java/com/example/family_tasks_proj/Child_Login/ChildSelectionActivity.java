@@ -94,6 +94,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
             return;
         }
 
+        // אם לא הגענו מ-QR עכשיו, מנסים להמשיך מהסשן האחרון של הילד
         SharedPreferences preferences = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         parentId = preferences.getString(KEY_PARENT, null);
         preselectedChildId = preferences.getString(KEY_CHILD, null);
@@ -288,9 +289,11 @@ public class ChildSelectionActivity extends AppCompatActivity {
         }
 
         ChildItem childItem = childItems.get(selectedIndex);
+        // שומרים את הבחירה כדי שהילד יוכל לחזור ישירות לדשבורד בפעם הבאה
         saveSession(parentId, childItem.id);
 
         Intent intent = new Intent(this, ChildDashboardActivity.class);
+        // מעבירים extras מפורשים כדי שהדשבורד ידע בדיוק איזה ילד לפתוח
         intent.putExtra(KEY_PARENT, parentId);
         intent.putExtra(KEY_CHILD, childItem.id);
         startActivity(intent);
