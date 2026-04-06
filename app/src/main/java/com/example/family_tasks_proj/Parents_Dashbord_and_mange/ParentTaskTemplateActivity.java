@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -110,7 +111,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         templateList.clear();
-                        List<String> titles = new ArrayList<>();
 
                         for (DataSnapshot snap : snapshot.getChildren()) {
                             TaskTemplate template = snap.getValue(TaskTemplate.class);
@@ -118,13 +118,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                             if (template.id == null) template.id = snap.getKey();
 
                             templateList.add(template);
-                            titles.add(template.title != null ? template.title : "");
                         }
 
                         lvTemplates.setAdapter(new ArrayAdapter<>(
                                 ParentTaskTemplateActivity.this,
                                 android.R.layout.simple_list_item_1,
-                                titles));
+                                templateList));
 
                         // הצגת/הסתרת הודעה אם אין תבניות
                         boolean empty = templateList.isEmpty();

@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.auth;
+package com.example.family_tasks_proj.Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -90,6 +90,7 @@ public class ParentRegisterFragment extends Fragment {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
                     FBsingleton.getInstance().setUserData(firstName, lastName, email);
+                    // מחכים לשמירת פרופיל ההורה ב-Firebase לפני פתיחת הדשבורד
                     FBsingleton.getInstance().saveParentToFirebase(saveTask -> {
                         if (!isAdded()) return;
 

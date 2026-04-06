@@ -17,7 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.ChildTask;
+import com.example.family_tasks_proj.child.model.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
 
@@ -34,7 +34,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     private final OnTaskDoneListener doneListener;
 
     public interface OnTaskDoneListener {
-        void onTaskDone(ChildTask task, int position);
+        void onTaskDone(ChildTask task);
     }
 
     public ChildTaskAdapter(List<ChildTask> tasks, OnTaskDoneListener doneListener) {
@@ -179,9 +179,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         holder.btnDone.setOnClickListener(v -> {
             if (doneListener == null) return;
 
-            int adapterPosition = holder.getBindingAdapterPosition();
-            if (adapterPosition == RecyclerView.NO_POSITION) return;
-
             holder.btnDone.animate()
                     .scaleX(0f).scaleY(0f)
                     .setDuration(200)
@@ -189,7 +186,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.itemView.animate()
                     .alpha(0.6f)
                     .setDuration(300)
-                    .withEndAction(() -> doneListener.onTaskDone(task, adapterPosition))
+                    .withEndAction(() -> doneListener.onTaskDone(task))
                     .start();
         });
     }

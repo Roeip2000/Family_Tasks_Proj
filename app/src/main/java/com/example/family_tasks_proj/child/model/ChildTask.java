@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.child;
+package com.example.family_tasks_proj.child.model;
 
 /**
  * מודל משימה מצד הילד — נקרא מ-Firebase ב-ChildDashboardActivity.

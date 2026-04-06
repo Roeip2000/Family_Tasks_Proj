@@ -22,8 +22,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskTemplate;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -59,7 +61,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private Button btnAssign;
 
     private final List<String> childIds = new ArrayList<>();
-    private final List<Map<String, String>> templates = new ArrayList<>();
+    private final List<TaskTemplate> templates = new ArrayList<>();
 
     private String parentUid;
 
@@ -96,9 +98,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     return;
                 }
 
-                Map<String, String> selectedTemplate = templates.get(position);
-                etTitle.setText(selectedTemplate.get("title"));
-                displayBase64Image(selectedTemplate.get("imageBase64"));
+                // בחירת תבנית מעדכנת אוטומטית את שם המשימה והתמונה המקדימה
+                TaskTemplate selectedTemplate = templates.get(position);
+                etTitle.setText(selectedTemplate.toDisplayTitle());
+                displayBase64Image(selectedTemplate.imageBase64);
             }
 
             @Override
@@ -122,9 +125,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void loadTemplates() {
         templates.clear();
 
-        FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentUid)
+        parentRef()
                 .child("task_templates")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -132,14 +133,16 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                         List<String> titles = new ArrayList<>();
 
                         for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
-                            String title = templateSnapshot.child("title").getValue(String.class);
-                            String imageBase64 = templateSnapshot.child("imageBase64").getValue(String.class);
+                            TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
+                            if (template == null) {
+                                continue;
+                            }
+                            if (template.id == null) {
+                                template.id = templateSnapshot.getKey();
+                            }
 
-                            Map<String, String> template = new HashMap<>();
-                            template.put("title", title == null ? "" : title);
-                            template.put("imageBase64", imageBase64);
                             templates.add(template);
-                            titles.add(template.get("title"));
+                            titles.add(template.toDisplayTitle());
                         }
 
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -150,7 +153,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                         spTemplates.setAdapter(adapter);
 
                         if (!templates.isEmpty()) {
-                            displayBase64Image(templates.get(0).get("imageBase64"));
+                            displayBase64Image(templates.get(0).imageBase64);
                         }
                     }
 
@@ -168,9 +171,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void loadChildren() {
         childIds.clear();
 
-        FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentUid)
+        parentRef()
                 .child("children")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -254,17 +255,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String imageBase64 = null;
         int templatePosition = spTemplates.getSelectedItemPosition();
         if (templatePosition >= 0 && templatePosition < templates.size()) {
-            imageBase64 = templates.get(templatePosition).get("imageBase64");
+            imageBase64 = templates.get(templatePosition).imageBase64;
         }
 
-        String taskId = FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentUid)
-                .child("children")
-                .child(childId)
-                .child("tasks")
-                .push()
-                .getKey();
+        String taskId = tasksRef(childId).push().getKey();
 
         if (taskId == null) {
             Toast.makeText(this, R.string.assign_task_error_create_id, Toast.LENGTH_SHORT).show();
@@ -279,12 +273,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         task.put("imageBase64", imageBase64);
         task.put("createdAt", System.currentTimeMillis());
 
-        FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentUid)
-                .child("children")
-                .child(childId)
-                .child("tasks")
+        // כתיבה אחת פשוטה לנתיב של הילד שנבחר
+        tasksRef(childId)
                 .child(taskId)
                 .setValue(task)
                 .addOnSuccessListener(aVoid -> {
@@ -296,6 +286,19 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                         getString(R.string.error_save_generic, e.getMessage()),
                         Toast.LENGTH_SHORT
                 ).show());
+    }
+
+    private DatabaseReference parentRef() {
+        return FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(parentUid);
+    }
+
+    private DatabaseReference tasksRef(String childId) {
+        return parentRef()
+                .child("children")
+                .child(childId)
+                .child("tasks");
     }
 
     private void displayBase64Image(String base64) {

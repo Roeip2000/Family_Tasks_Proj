@@ -26,13 +26,13 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  * - אחרי הסריקה הילד מגיע למסך בחירת שם (ChildSelectionActivity).
  *
  * פורמט ה-QR: "parent:{parentId}"
- * פורמט זהה לזה שה-ChildQRLoginFragment מפענח.
+ * פורמט זהה לזה ש-ChildQRLoginFragment מפענח.
  *
  * Layout: activity_generate_qr.xml
  *
- * ===== הערות לשיפור =====
- * TODO: להוסיף כפתור "שתף QR" — לשמור/לשלוח את תמונת ה-QR.
- * TODO: לשמור את ה-Bitmap ב-onSaveInstanceState כדי לשרוד סיבוב מסך.
+ * הערה להמשך:
+ * אם ירצו בעתיד, אפשר להוסיף שיתוף של תמונת ה-QR
+ * ואפשר גם לשמור את ה-Bitmap כדי לשרוד סיבוב מסך.
  */
 public class GenerateQRActivity extends AppCompatActivity {
 
@@ -59,13 +59,13 @@ public class GenerateQRActivity extends AppCompatActivity {
             return;
         }
 
-        // יצירת QR קבוע להורה — כל הילדים סורקים אותו
+        // יצירת QR קבוע להורה, שכל הילדים סורקים
         generateParentQR(user.getUid());
     }
 
     /**
      * מייצר ומציג QR עבור ההורה.
-     * הפורמט: "parent:{parentId}" — הילד סורק, מגיע למסך בחירת שם.
+     * הפורמט: "parent:{parentId}" כדי שהילד יגיע למסך בחירת שם.
      *
      * @param parentId UID של ההורה המחובר
      */

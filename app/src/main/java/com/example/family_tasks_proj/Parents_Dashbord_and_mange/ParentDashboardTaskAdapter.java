@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTask;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListItem;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;

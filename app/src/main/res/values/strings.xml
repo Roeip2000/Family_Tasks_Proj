@@ -4,7 +4,7 @@
     <string name="register_parents">הרשמת הורה</string>
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
-    <string name="child_direct_login">כניסה ישירה לילד</string>
+    <string name="child_direct_login">כניסה ישירה לילד(ללא QR לבדיקות) </string>
     <string name="home_title">משימות משפחתיות</string>
     <string name="home_subtitle">מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד.</string>
     <string name="home_question">איך תרצו להמשיך?</string>

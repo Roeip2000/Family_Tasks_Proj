@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
 /**
  * מודל תבנית משימה — נשמר ב-Firebase.
@@ -7,9 +7,8 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
  * שדות: id (מזהה ייחודי), title (כותרת), imageBase64 (תמונה מקודדת).
  *
  * הערה: constructor ריק חובה ל-Firebase deserialization.
- *
- * הערה: כרגע המחלקה הזו לא בשימוש ישיר — התבניות נשמרות כ-HashMap.
- *        ניתן להשתמש בה בעתיד כדי לקרוא תבניות עם DataSnapshot.getValue(TaskTemplate.class).
+ * המחלקה משמשת ישירות במסכי ניהול התבניות והקצאת המשימה,
+ * כדי לשמור על קוד פשוט וברור בלי לעבוד עם HashMap ידני.
  */
 public class TaskTemplate {
     public String id;
@@ -26,5 +25,14 @@ public class TaskTemplate {
         this.id = id;
         this.title = title;
         this.imageBase64 = imageBase64;
+    }
+
+    public String toDisplayTitle() {
+        return title == null ? "" : title.trim();
+    }
+
+    @Override
+    public String toString() {
+        return toDisplayTitle();
     }
 }

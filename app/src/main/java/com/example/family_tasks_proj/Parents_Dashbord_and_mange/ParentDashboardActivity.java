@@ -21,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTask;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.ChildSummary;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListItem;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.util.DateUtils;
