@@ -31,8 +31,8 @@
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_marginBottom="12dp"
-                    android:background="#CCCCCC"
-                    android:contentDescription="Child avatar"
+                    android:background="@drawable/bg_avatar_placeholder"
+                    android:contentDescription="@string/cd_child_avatar"
                     android:scaleType="centerCrop"
                     android:src="@android:drawable/ic_menu_my_calendar" />
 
@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
                     android:gravity="center"
-                    android:text="שלום!"
+                    android:text="@string/child_hello"
                     android:textColor="#222222"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -52,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="0 כוכבים"
+                    android:text="@string/child_stars_default"
                     android:textColor="#FFB300"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -87,7 +87,7 @@
                     android:layout_weight="1"
                     android:background="#FFF4E5"
                     android:clickable="true"
-                    android:contentDescription="Filter urgent tasks"
+                    android:contentDescription="@string/cd_filter_urgent"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
@@ -102,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="דחופות"
+                        android:text="@string/filter_urgent"
                         android:textColor="#355070"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -122,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:gravity="center"
-                        android:text="לביצוע בקרוב"
+                        android:text="@string/filter_due_soon"
                         android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -136,7 +136,7 @@
                     android:layout_weight="1"
                     android:background="#ECF8F1"
                     android:clickable="true"
-                    android:contentDescription="Filter completed tasks"
+                    android:contentDescription="@string/cd_filter_completed"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
@@ -151,7 +151,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="הושלמו"
+                        android:text="@string/filter_completed"
                         android:textColor="#355070"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -171,7 +171,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:gravity="center"
-                        android:text="סיימתי כבר"
+                        android:text="@string/filter_already_done"
                         android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -184,7 +184,7 @@
                     android:layout_weight="1"
                     android:background="#EAF4FF"
                     android:clickable="true"
-                    android:contentDescription="Filter not completed tasks"
+                    android:contentDescription="@string/cd_filter_not_completed"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
@@ -199,7 +199,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="לא הושלמו"
+                        android:text="@string/filter_not_completed"
                         android:textColor="#355070"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -219,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:gravity="center"
-                        android:text="משימות פתוחות"
+                        android:text="@string/filter_open_tasks"
                         android:textColor="#355070"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -233,7 +233,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginBottom="10dp"
-            android:text="לא הושלמו"
+            android:text="@string/filter_not_completed"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -244,7 +244,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="אין משימות כרגע. ההורה יוסיף בקרוב!"
+            android:text="@string/empty_no_tasks_child"
             android:textColor="#F5F7FA"
             android:textSize="14sp"
             android:visibility="gone" />
@@ -267,7 +267,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="#FF5252"
-            android:text="יציאה"
+            android:text="@string/btn_logout"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

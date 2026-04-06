@@ -90,14 +90,14 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         String dueText;
         if (task.isDone) {
-            dueText = "בוצע";
+            dueText = holder.itemView.getContext().getString(R.string.child_due_done);
             holder.tvDueDate.setTextColor(Color.parseColor("#4CAF50"));
         } else {
-            dueText = formatDueText(task.dueAt, daysLeft);
+            dueText = formatDueText(holder, task.dueAt, daysLeft);
             if (daysLeft < 0) {
                 holder.tvDueDate.setTextColor(Color.parseColor("#E53935"));
             } else if (daysLeft <= 2) {
-                dueText = "דחוף! " + dueText;
+                dueText = holder.itemView.getContext().getString(R.string.child_due_urgent_prefix, dueText);
                 holder.tvDueDate.setTextColor(Color.parseColor("#FF5722"));
             } else {
                 holder.tvDueDate.setTextColor(Color.parseColor("#888888"));
@@ -134,7 +134,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.imgTaskImage.setVisibility(View.GONE);
         }
 
-        holder.tvTaskStars.setText(task.starsWorth > 0 ? task.starsWorth + " כוכבים" : "");
+        holder.tvTaskStars.setText(task.starsWorth > 0
+                ? holder.itemView.getContext().getString(R.string.child_stars_worth, task.starsWorth)
+                : "");
 
         if (task.isDone) {
             holder.btnDone.setVisibility(View.GONE);
@@ -165,21 +167,21 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         return tasks.size();
     }
 
-    private String formatDueText(String dueAt, long daysLeft) {
+    private String formatDueText(@NonNull TaskViewHolder holder, String dueAt, long daysLeft) {
         if (daysLeft == Long.MAX_VALUE) {
-            return "ללא תאריך";
+            return holder.itemView.getContext().getString(R.string.child_due_no_date);
         }
         if (daysLeft < 0) {
-            return "איחור (" + Math.abs(daysLeft) + " ימים)";
+            return holder.itemView.getContext().getString(R.string.child_due_late, Math.abs(daysLeft));
         }
         if (daysLeft == 0) {
-            return "היום";
+            return holder.itemView.getContext().getString(R.string.child_due_today);
         }
         if (daysLeft == 1) {
-            return "מחר";
+            return holder.itemView.getContext().getString(R.string.child_due_tomorrow);
         }
         if (daysLeft <= 7) {
-            return "עוד " + daysLeft + " ימים";
+            return holder.itemView.getContext().getString(R.string.child_due_days_left, daysLeft);
         }
         return dueAt;
     }

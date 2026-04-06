@@ -45,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
         // טעינת Fragment ברירת מחדל — מסך לוגין הורה
         if (savedInstanceState == null)
         {
-            openFragment(new ParentLoginFragment());
+            showFragment(new ParentLoginFragment(), false);
         }
 
         // ניווט בין מסכים — כל לחיצה מחליפה את ה-Fragment
-        btnRegister.setOnClickListener(v -> openFragment(new ParentRegisterFragment()));
-        btnLogin.setOnClickListener(v -> openFragment(new ParentLoginFragment()));
-        btnChildQR.setOnClickListener(v -> openFragment(new ChildQRLoginFragment()));
+        btnRegister.setOnClickListener(v -> showFragment(new ParentRegisterFragment(), true));
+        btnLogin.setOnClickListener(v -> showFragment(new ParentLoginFragment(), true));
+        btnChildQR.setOnClickListener(v -> showFragment(new ChildQRLoginFragment(), true));
 
         // כניסה ישירה ללא QR — פותח מסך בחירת הורה+ילד.
         // אם יש סשן שמור (parentId) — ChildSelectionActivity ידלג ישר ל-Spinner ילדים.
@@ -73,12 +73,22 @@ public class MainActivity extends AppCompatActivity {
      * מחליף את ה-Fragment המוצג ב-fragmentContainer ושומר ב-back stack.
      * ה-addToBackStack מאפשר לחזור ל-Fragment הקודם עם כפתור "חזרה".
      */
-    private void openFragment(Fragment fragment)
+    private void showFragment(Fragment fragment, boolean addToBackStack)
     {
-        getSupportFragmentManager()
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (currentFragment != null
+                && currentFragment.getClass().equals(fragment.getClass())) {
+            return;
+        }
+
+        androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit();
+                .replace(R.id.fragmentContainer, fragment);
+
+        if (addToBackStack) {
+            transaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
+
+        transaction.commit();
     }
 }

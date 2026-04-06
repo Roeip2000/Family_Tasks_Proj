@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -117,11 +118,15 @@ public class ImageHelper {
         Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        int left = (src.getWidth() - size) / 2;
+        int top = (src.getHeight() - size) / 2;
+        Rect srcRect = new Rect(left, top, left + size, top + size);
+        Rect dstRect = new Rect(0, 0, size, size);
         // שלב 1: מציירים עיגול כמסכה
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
         // שלב 2: מציגים את התמונה רק בתוך המסכה
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(src, 0, 0, paint);
+        canvas.drawBitmap(src, srcRect, dstRect, paint);
         return output;
     }
 

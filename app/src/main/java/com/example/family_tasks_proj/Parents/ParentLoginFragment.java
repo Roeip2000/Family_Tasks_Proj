@@ -14,42 +14,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
 import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * ׳׳¡׳ ׳”׳×׳—׳‘׳¨׳•׳× ׳׳”׳•׳¨׳” ג€” Fragment ׳©׳׳•׳¦׳’ ׳‘׳×׳•׳ MainActivity.
- *
- * ׳׳—׳¨׳™׳•׳×:
- * - ׳׳‘׳¦׳¢ ׳׳™׳׳•׳× (email + password) ׳“׳¨׳ FirebaseAuth.
- * - ׳‘׳”׳¦׳׳—׳”: ׳₪׳•׳×׳— ParentDashboardActivity ׳•׳¡׳•׳’׳¨ ׳׳× MainActivity.
- * - ׳‘׳›׳™׳©׳׳•׳: ׳׳¦׳™׳’ ׳”׳•׳“׳¢׳× ׳©׳’׳™׳׳”.
- *
- * Layout: fragment_parent_login.xml
+ * מסך התחברות להורה שמוצג בתוך MainActivity.
+ * בודק אימייל וסיסמה, מתחבר דרך FirebaseAuth,
+ * ובכניסה מוצלחת מעביר למסך ParentDashboardActivity.
  */
 public class ParentLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
-    private EditText etEmail, etPassword;
+    private EditText etEmail;
+    private EditText etPassword;
     private Button btnLogin;
     private ProgressBar progressLogin;
 
-    public ParentLoginFragment()
-    {
+    public ParentLoginFragment() {
         // Required empty public constructor
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
-    {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
@@ -62,47 +56,42 @@ public class ParentLoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
-    private void loginUser()
-    {
+    private void loginUser() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty())
-        {
-            Toast.makeText(requireContext(), "׳™׳© ׳׳׳׳ ׳׳× ׳›׳ ׳”׳©׳“׳•׳×", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
-        {
-            Toast.makeText(requireContext(), "׳₪׳•׳¨׳׳˜ ׳׳™׳׳™׳™׳ ׳׳ ׳×׳§׳™׳", Toast.LENGTH_SHORT).show();
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
-                {
-                    if (!isAdded()) return;
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
+            if (!isAdded()) return;
 
-                    setLoading(false);
-                    if (task.isSuccessful())
-                    {
-                        startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
-                        requireActivity().finish();
-                    }
-                    else
-                    {
-                        String errorMsg = (task.getException() != null)
-                                ? task.getException().getMessage()
-                                : "׳©׳’׳™׳׳× ׳”׳×׳—׳‘׳¨׳•׳× ׳׳ ׳™׳“׳•׳¢׳”";
-                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                });
+            setLoading(false);
+            if (task.isSuccessful()) {
+                startActivity(new Intent(
+                        requireActivity(),
+                        com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity.class
+                ));
+                requireActivity().finish();
+            } else {
+                String errorMsg = (task.getException() != null)
+                        ? task.getException().getMessage()
+                        : getString(R.string.error_unknown_login);
+                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /** מציג טעינה קצרה ומונע לחיצות כפולות בזמן ההתחברות. */
-    private void setLoading(boolean isLoading)
-    {
+    private void setLoading(boolean isLoading) {
         btnLogin.setEnabled(!isLoading);
         if (progressLogin != null) {
             progressLogin.setVisibility(isLoading ? View.VISIBLE : View.GONE);

@@ -54,7 +54,7 @@ public class GenerateQRActivity extends AppCompatActivity {
         // זיהוי ההורה המחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "הורה לא מחובר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_parent_session_missing, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

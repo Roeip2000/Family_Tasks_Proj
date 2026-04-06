@@ -1,9 +1,11 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -19,29 +21,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * מסך יצירת תבנית משימה (Task Template).
- *
- * אחריות:
- * - ההורה בוחר תמונה מהגלריה וכותב כותרת.
- * - התמונה עוברת תיקון EXIF + הקטנה עם שמירת יחס גובה-רוחב (דרך ImageHelper).
- * - אותו Bitmap בדיוק משמש לתצוגה מקדימה וגם לשמירה כ-Base64.
- * - התבנית נשמרת ב-Firebase בנתיב /parents/{uid}/task_templates/{id}.
- */
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTitle;
     private ImageView imgTask;
-
-    /**
-     * ה-Bitmap המתוקן — אותו אובייקט בדיוק משמש לתצוגה מקדימה ולשמירה.
-     * כך מובטח שמה שההורה רואה = מה שנשמר ב-Firebase = מה שהילד יראה.
-     */
     private Bitmap correctedBitmap;
 
+    private final ActivityResultLauncher<String> imagePicker =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri == null) {
+                    return;
+                }
+
+                correctedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
+                if (correctedBitmap == null) {
+                    Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                imgTask.setImageBitmap(correctedBitmap);
+            });
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_task_template);
 
@@ -51,77 +53,35 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         Button btnPickImage = findViewById(R.id.btnPickImage);
         Button btnSave = findViewById(R.id.btnSave);
 
-        btnPickImage.setOnClickListener(v -> pickImage());
+        btnPickImage.setOnClickListener(v -> imagePicker.launch("image/*"));
         btnSave.setOnClickListener(v -> saveTemplate());
     }
 
-    /** פותח את הגלריה לבחירת תמונה. */
-    private void pickImage()
-    {
-        imagePicker.launch("image/*");
-    }
-
-    /**
-     * מקבל Uri מהגלריה, טוען ומתקן את התמונה דרך ImageHelper,
-     * ומציג את ה-Bitmap המתוקן ב-ImageView.
-     *
-     * חשוב: לא משתמשים ב-setImageURI כי הוא מציג תמונה מתוקנת-EXIF
-     * אבל ה-Base64 שנשמר אחר כך לא יהיה תואם. במקום זה — שניהם
-     * (תצוגה + שמירה) משתמשים באותו correctedBitmap.
-     */
-    private final ActivityResultLauncher<String> imagePicker =
-            registerForActivityResult(new ActivityResultContracts.GetContent(), uri ->
-            {
-                if (uri != null)
-                {
-                    correctedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
-                    if (correctedBitmap != null)
-                    {
-                        imgTask.setImageBitmap(correctedBitmap);
-                    }
-                    else
-                    {
-                        Toast.makeText(this, "שגיאה בטעינת תמונה", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-    /**
-     * שומר תבנית חדשה ב-Firebase תחת /parents/{uid}/task_templates/{id}.
-     * ממיר את correctedBitmap ל-Base64 — אותו Bitmap שמוצג בתצוגה מקדימה.
-     * Side-effect: סוגר את ה-Activity בהצלחה.
-     */
-    private void saveTemplate()
-    {
+    private void saveTemplate() {
         String title = etTitle.getText().toString().trim();
-
-        if (title.isEmpty() || correctedBitmap == null)
-        {
-            Toast.makeText(this, "יש למלא כותרת ולבחור תמונה", Toast.LENGTH_SHORT).show();
+        if (title.isEmpty() || correctedBitmap == null) {
+            Toast.makeText(this, R.string.template_missing_title_or_image, Toast.LENGTH_SHORT).show();
             return;
         }
 
         String imageBase64 = ImageHelper.bitmapToBase64(correctedBitmap);
+        if (imageBase64 == null) {
+            Toast.makeText(this, R.string.error_image_conversion, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        if (imageBase64 == null)
-        {
-            Toast.makeText(this, "שגיאה בהמרת תמונה", Toast.LENGTH_SHORT).show();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, R.string.template_parent_not_logged_in, Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
         String taskId = UUID.randomUUID().toString();
-
         Map<String, Object> task = new HashMap<>();
         task.put("id", taskId);
         task.put("title", title);
         task.put("imageBase64", imageBase64);
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null)
-        {
-            Toast.makeText(this, "הורה לא מחובר", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -129,14 +89,14 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .child("task_templates")
                 .child(taskId)
                 .setValue(task)
-                .addOnSuccessListener(aVoid ->
-                {
-                    Toast.makeText(this, "התבנית נשמרה בהצלחה!", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, R.string.template_saved_success, Toast.LENGTH_SHORT).show();
                     finish();
                 })
-                .addOnFailureListener(e ->
-                {
-                    Toast.makeText(this, "שגיאה בשמירה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(
+                        this,
+                        getString(R.string.error_save_generic, e.getMessage()),
+                        Toast.LENGTH_SHORT
+                ).show());
     }
 }

@@ -23,231 +23,192 @@ import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-/**
- * מסך התחברות ילד באמצעות סריקת QR.
- *
- * אחריות:
- * - פותח סורק QR (ספריית ZXing).
- * - מפענח את המחרוזת בפורמט "parent:{id}|child:{id}".
- * - מוודא מול Firebase שהילד קיים תחת ההורה.
- * - שומר סשן ב-SharedPreferences ופותח את ChildSelectionActivity (מסך בחירת ילד).
- *
- * Layout: fragment_child_q_r_login.xml
- *
- * ===== תהליך מלא =====
- * 1. ילד לוחץ "סרוק QR" → נפתח סורק מצלמה
- * 2. סורק את ה-QR שההורה הציג ב-GenerateQRActivity
- * 3. מפענח: "parent:XXX|child:YYY" → חילוץ parentId + childId
- * 4. בדיקה ב-Firebase שהילד קיים תחת ההורה
- * 5. שמירת סשן ב-SharedPreferences (כדי שלא יצטרך לסרוק שוב)
- * 6. פתיחת ChildSelectionActivity — מסך בחירת ילד עם Spinner
- *
- * ===== הערות לשיפור =====
- * TODO: להוסיף הנפשה/טעינה בזמן בדיקת Firebase (בין סריקה לפתיחת דשבורד).
- * TODO: לטפל בהרשאות מצלמה (CAMERA permission) — כרגע ZXing מטפל בזה.
- */
 public class ChildQRLoginFragment extends Fragment {
 
-    // מפתחות SharedPreferences לסשן הילד
     private static final String PREFS = "child_session";
     private static final String KEY_PARENT = "parentId";
     private static final String KEY_CHILD = "childId";
 
     private Button btnScanQR;
 
-    /**
-     * Launcher לסריקת QR — משתמש ב-ActivityResult API (לא deprecated onActivityResult).
-     * ה-callback מקבל את תוצאת הסריקה ומעבד אותה.
-     */
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(new ScanContract(), result -> {
-                // בדיקה שה-Fragment עדיין מחובר — מונע crash
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
 
                 String raw = result.getContents();
                 if (raw == null) {
-                    // המשתמש ביטל את הסריקה
-                    Toast.makeText(requireContext(), "הסריקה בוטלה", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                raw = raw.trim();
-
-                // פענוח המחרוזת
-                ParsedQr parsed = parseQr(raw);
-
-                // ולידציה — חייבים לפחות parentId
-                if (parsed.parentId == null || parsed.parentId.isEmpty()) {
-                    Toast.makeText(requireContext(), "QR לא תקין", Toast.LENGTH_SHORT).show();
+                ParsedQr parsed = parseQr(raw.trim());
+                if (isBlank(parsed.parentId)) {
+                    Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // אם יש childId — בודקים שהוא קיים, אחרת עוברים לבחירת ילד
-                if (parsed.childId != null && !parsed.childId.isEmpty()) {
-                    checkChildExists(parsed.parentId, parsed.childId);
-                } else {
-                    // QR קבוע להורה — בודקים שההורה קיים ועוברים לבחירת ילד
+                if (isBlank(parsed.childId)) {
                     checkParentExists(parsed.parentId);
+                } else {
+                    checkChildExists(parsed.parentId, parsed.childId);
                 }
             });
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
-
         btnScanQR = view.findViewById(R.id.btnScanQR);
-        btnScanQR.setOnClickListener(v -> startQRScan());
-
+        btnScanQR.setOnClickListener(v -> startQrScan());
         return view;
     }
 
-    /** פותח את מצלמת הסורק עם ZXing. */
-    private void startQRScan() {
+    private void startQrScan() {
         ScanOptions options = new ScanOptions();
-        options.setOrientationLocked(false); // מאפשר סיבוב מסך
-        options.setPrompt("סרוק את קוד ה-QR שההורה שלך מציג");
+        options.setOrientationLocked(false);
+        options.setPrompt(getString(R.string.child_qr_scan_prompt));
         barcodeLauncher.launch(options);
     }
 
-    /**
-     * מפענח מחרוזת QR לאובייקט ParsedQr.
-     *
-     * פורמטים נתמכים:
-     * 1. "parent:XXX|child:YYY" — הפורמט הנדרש (תואם ל-GenerateQRActivity)
-     * 2. "childId:YYY" — legacy/ישן, ייכשל בוולידציה כי חסר parentId
-     * 3. טקסט חופשי — legacy/ישן, ייכשל בוולידציה
-     *
-     * @return ParsedQr עם parentId ו-childId (אחד או שניהם יכולים להיות null)
-     */
     private ParsedQr parseQr(String raw) {
-        ParsedQr out = new ParsedQr();
+        ParsedQr parsedQr = new ParsedQr();
+        if (isBlank(raw)) {
+            return parsedQr;
+        }
 
-        if (raw == null) return out;
-        raw = raw.trim();
-
-        // פורמט מלא: parent:XXX|child:YYY (תאימות אחורה)
         if (raw.contains("|")) {
             String[] parts = raw.split("\\|");
-            for (String p : parts) {
-                if (p == null) continue;
-                p = p.trim();
-                if (p.startsWith("parent:")) out.parentId = p.substring("parent:".length()).trim();
-                else if (p.startsWith("child:")) out.childId = p.substring("child:".length()).trim();
-            }
-            return out;
-        }
+            for (String part : parts) {
+                if (part == null) {
+                    continue;
+                }
 
-        // פורמט חדש: parent:XXX (QR קבוע להורה — בלי childId)
-        if (raw.startsWith("parent:")) {
-            out.parentId = raw.substring("parent:".length()).trim();
-            return out;
-        }
-
-        // פורמט legacy — לתאימות אחורה
-        if (raw.startsWith("childId:")) {
-            out.childId = raw.substring("childId:".length()).trim();
-            return out;
-        }
-
-        out.childId = raw;
-        return out;
-    }
-
-    /**
-     * בודק ב-Firebase שההורה קיים ב-/parents/{parentId}.
-     * משמש ל-QR קבוע (פורמט "parent:XXX" בלי childId).
-     * אם קיים — שומר סשן ופותח מסך בחירת ילד.
-     */
-    private void checkParentExists(String parentId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentId);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
-
-                if (snapshot.exists()) {
-                    // הורה קיים — שומרים סשן ופותחים מסך בחירת ילד
-                    saveSession(parentId, null);
-
-                    Intent i = new Intent(requireActivity(), ChildSelectionActivity.class);
-                    i.putExtra("parentId", parentId);
-                    startActivity(i);
-                    requireActivity().finish();
-                } else {
-                    Toast.makeText(requireContext(), "QR לא תקין — הורה לא נמצא", Toast.LENGTH_SHORT).show();
+                String trimmed = part.trim();
+                if (trimmed.startsWith("parent:")) {
+                    parsedQr.parentId = trimmed.substring("parent:".length()).trim();
+                } else if (trimmed.startsWith("child:")) {
+                    parsedQr.childId = trimmed.substring("child:".length()).trim();
                 }
             }
+            return parsedQr;
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                if (!isAdded()) return;
-                Toast.makeText(requireContext(), "שגיאת DB: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        if (raw.startsWith("parent:")) {
+            parsedQr.parentId = raw.substring("parent:".length()).trim();
+            return parsedQr;
+        }
+
+        if (raw.startsWith("childId:")) {
+            parsedQr.childId = raw.substring("childId:".length()).trim();
+            return parsedQr;
+        }
+
+        parsedQr.childId = raw;
+        return parsedQr;
     }
 
-    /**
-     * בודק ב-Firebase שהילד קיים תחת /parents/{parentId}/children/{childId}.
-     * אם כן — שומר סשן ופותח מסך בחירת ילד (ChildSelectionActivity).
-     * אם לא — מציג הודעת שגיאה.
-     */
+    private void checkParentExists(String parentId) {
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(parentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!isAdded()) {
+                            return;
+                        }
+
+                        if (!snapshot.exists()) {
+                            Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        saveSession(parentId, null);
+                        openChildSelection(parentId, null);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        if (!isAdded()) {
+                            return;
+                        }
+
+                        Toast.makeText(
+                                requireContext(),
+                                getString(R.string.child_qr_db_error, error.getMessage()),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+    }
+
     private void checkChildExists(String parentId, String childId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance()
+        FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(childId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!isAdded()) {
+                            return;
+                        }
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return; // Fragment לא מחובר — לא עושים כלום
+                        if (!snapshot.exists()) {
+                            Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                if (snapshot.exists()) {
-                    // הילד קיים — שומרים סשן ופותחים מסך בחירת ילד (Spinner)
-                    // ה-childId מועבר כ-preselection — ייבחר אוטומטית ב-Spinner
-                    saveSession(parentId, childId);
+                        saveSession(parentId, childId);
+                        openChildSelection(parentId, childId);
+                    }
 
-                    Intent i = new Intent(requireActivity(), ChildSelectionActivity.class);
-                    i.putExtra("parentId", parentId);
-                    i.putExtra("childId", childId);
-                    startActivity(i);
-                    requireActivity().finish(); // סוגר את MainActivity
-                } else {
-                    // הילד לא נמצא — QR לא תקין
-                    Toast.makeText(requireContext(), "קוד QR לא תקין — ילד לא נמצא", Toast.LENGTH_SHORT).show();
-                }
-            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        if (!isAdded()) {
+                            return;
+                        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                if (!isAdded()) return;
-                Toast.makeText(requireContext(), "שגיאת חיבור: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                        Toast.makeText(
+                                requireContext(),
+                                getString(R.string.child_qr_connection_error, error.getMessage()),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
     }
 
-    /**
-     * שומר parentId + childId ב-SharedPreferences לסשן עתידי.
-     * כך הילד יכול לחזור לדשבורד בלי לסרוק QR שוב.
-     */
+    private void openChildSelection(String parentId, String childId) {
+        Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
+        intent.putExtra(KEY_PARENT, parentId);
+        if (!isBlank(childId)) {
+            intent.putExtra(KEY_CHILD, childId);
+        }
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
     private void saveSession(String parentId, String childId) {
-        SharedPreferences sp = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit()
-                .putString(KEY_PARENT, parentId);
-        // שומר childId רק אם קיים — בפורמט QR חדש הוא null
-        if (childId != null) {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit().putString(KEY_PARENT, parentId);
+
+        if (isBlank(childId)) {
+            editor.remove(KEY_CHILD);
+        } else {
             editor.putString(KEY_CHILD, childId);
         }
+
         editor.apply();
     }
 
-    /** מחלקה פנימית — תוצאת פענוח QR. מחזיקה parentId ו-childId. */
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
     private static class ParsedQr {
-        String parentId;
-        String childId;
+        private String parentId;
+        private String childId;
     }
 }
