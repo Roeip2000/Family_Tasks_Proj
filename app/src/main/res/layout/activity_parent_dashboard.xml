@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F7FA"
-    android:orientation="vertical"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="16dp">
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -324,9 +329,8 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:layout_weight="1"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="22dp"
         app:cardElevation="1dp"
@@ -440,9 +444,8 @@
             <ListView
                 android:id="@+id/lvTasks"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp" />
         </LinearLayout>
@@ -527,4 +530,6 @@
         android:textAllCaps="false"
         android:textColor="#C0392B" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

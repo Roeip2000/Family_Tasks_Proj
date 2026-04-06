@@ -114,7 +114,7 @@
     <string name="parent_dashboard_selected_child_empty_title">משימות הילדים</string>
     <string name="parent_dashboard_selected_child_empty_subtitle">בחרו ילד כדי לראות את המשימות שלו.</string>
     <string name="parent_dashboard_selected_child_title">המשימות של %1$s</string>
-    <string name="parent_dashboard_selected_child_stats">פתוחות: %1$d | הושלמו: %2$d | דחופות: %3$d</string>
+    <string name="parent_dashboard_selected_child_stats">נשלחו: %1$d | בוצעו: %2$d | דחופות: %3$d</string>
     <string name="parent_dashboard_no_tasks_all">אין כרגע משימות ל-%1$s.</string>
     <string name="parent_dashboard_no_tasks_open">אין ל-%1$s משימות פתוחות כרגע.</string>
     <string name="parent_dashboard_no_tasks_completed">אין ל-%1$s משימות שהושלמו כרגע.</string>
@@ -139,8 +139,16 @@
     <string name="parent_dashboard_logout_title">התנתקות</string>
     <string name="parent_dashboard_logout_message">האם אתם בטוחים שברצונכם להתנתק?</string>
     <string name="parent_dashboard_logout_confirm">כן, התנתק</string>
-    <string name="parent_dashboard_child_counts">פתוחות: %1$d | הושלמו: %2$d | דחופות: %3$d</string>
+    <string name="parent_dashboard_child_counts">נשלחו: %1$d | בוצעו: %2$d | דחופות: %3$d</string>
     <string name="parent_dashboard_child_content_description">כרטיס ילד: %1$s</string>
+    <string name="parent_dashboard_metric_with_count">%1$s %2$d</string>
+    <string name="parent_dashboard_summary_total">הכול</string>
+    <string name="parent_dashboard_summary_assigned">נשלח</string>
+    <string name="parent_dashboard_summary_completed">בוצע</string>
+    <string name="parent_dashboard_summary_urgent">דחוף</string>
+    <string name="parent_dashboard_group_urgent">דחופות</string>
+    <string name="parent_dashboard_group_assigned">נשלחו</string>
+    <string name="parent_dashboard_group_completed">הושלמו</string>
 
     <string name="manage_children_not_logged_in">אינך מחובר</string>
     <string name="manage_children_error_create_child_id">שגיאה ביצירת מזהה לילד</string>

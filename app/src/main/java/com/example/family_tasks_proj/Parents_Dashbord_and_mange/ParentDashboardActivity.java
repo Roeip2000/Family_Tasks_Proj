@@ -7,10 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -29,7 +26,6 @@ import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,14 +41,18 @@ import java.util.Map;
 
 public class ParentDashboardActivity extends AppCompatActivity {
 
-    private static final String CHIP_DEFAULT_TEXT_COLOR = "#355070";
-    private static final String CHIP_SELECTED_TEXT_COLOR = "#FFFFFF";
-    private static final String CHIP_DEFAULT_BG_COLOR = "#EFF4FA";
-    private static final String CHIP_SELECTED_BG_COLOR = "#2F80ED";
-    private static final String CHILD_CARD_DEFAULT_BG = "#FFFFFF";
-    private static final String CHILD_CARD_SELECTED_BG = "#F3F8FF";
-    private static final String CHILD_CARD_DEFAULT_STROKE = "#D9E2EC";
-    private static final String CHILD_CARD_SELECTED_STROKE = "#2F80ED";
+    private static final String METRIC_NEUTRAL_BG = "#EEF4FA";
+    private static final String METRIC_NEUTRAL_TEXT = "#355070";
+    private static final String METRIC_NEUTRAL_STROKE = "#D6E4F0";
+    private static final String METRIC_BLUE_BG = "#EAF4FF";
+    private static final String METRIC_BLUE_TEXT = "#1F4E79";
+    private static final String METRIC_BLUE_STROKE = "#B8DBFF";
+    private static final String METRIC_GREEN_BG = "#ECF8F1";
+    private static final String METRIC_GREEN_TEXT = "#1E7A45";
+    private static final String METRIC_GREEN_STROKE = "#BDE7C9";
+    private static final String METRIC_ORANGE_BG = "#FFF4E5";
+    private static final String METRIC_ORANGE_TEXT = "#9C5A00";
+    private static final String METRIC_ORANGE_STROKE = "#FFD199";
 
     private Button btnManageChildren;
     private Button btnManageTemplates;
@@ -76,13 +76,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private TextView filterUrgentTasks;
 
     private final List<AssignedTask> allAssignedTasks = new ArrayList<>();
-    private final List<AssignedTask> filteredAssignedTasks = new ArrayList<>();
+    private final List<TaskListItem> visibleTaskItems = new ArrayList<>();
     private final List<ChildSummary> childSummaries = new ArrayList<>();
     private final Map<String, Bitmap> childPhotoCache = new HashMap<>();
 
-    private TaskItemAdapter taskAdapter;
-    private ChildSummaryAdapter childSummaryAdapter;
-    private FilterMode activeFilter = FilterMode.ALL;
+    private ParentDashboardTaskAdapter taskAdapter;
+    private ParentDashboardChildSummaryAdapter childSummaryAdapter;
     private String selectedChildId;
 
     private final ActivityResultLauncher<String> profileImagePicker =
@@ -168,21 +167,25 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void setupChildrenList() {
         rvChildren.setLayoutManager(new LinearLayoutManager(this));
-        childSummaryAdapter = new ChildSummaryAdapter();
+        childSummaryAdapter = new ParentDashboardChildSummaryAdapter(
+                this,
+                childSummaries,
+                childPhotoCache,
+                this::selectChild);
         rvChildren.setAdapter(childSummaryAdapter);
     }
 
     private void setupTaskList() {
-        taskAdapter = new TaskItemAdapter();
+        taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems, childPhotoCache);
         lvTasks.setAdapter(taskAdapter);
         lvTasks.setOnItemClickListener((parent, view, position, id) -> showTaskOptionsDialog(position));
     }
 
     private void setupTaskFilters() {
-        filterAllTasks.setOnClickListener(v -> setActiveFilter(FilterMode.ALL));
-        filterOpenTasks.setOnClickListener(v -> setActiveFilter(FilterMode.OPEN));
-        filterCompletedTasks.setOnClickListener(v -> setActiveFilter(FilterMode.COMPLETED));
-        filterUrgentTasks.setOnClickListener(v -> setActiveFilter(FilterMode.URGENT));
+        filterAllTasks.setOnClickListener(null);
+        filterOpenTasks.setOnClickListener(null);
+        filterCompletedTasks.setOnClickListener(null);
+        filterUrgentTasks.setOnClickListener(null);
         updateTaskFilterSelectionUi();
     }
 
@@ -265,7 +268,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         int done = 0;
                         int urgent = 0;
-                        int open = 0;
+                        int assigned = 0;
 
                         allAssignedTasks.clear();
                         childSummaries.clear();
@@ -301,13 +304,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
                                 Boolean isDoneValue = taskSnap.child("isDone").getValue(Boolean.class);
                                 task.isDone = isDoneValue != null && isDoneValue;
 
+                                summary.totalCount++;
+
                                 if (task.isDone) {
                                     done++;
                                     summary.completedCount++;
                                 } else {
-                                    open++;
-                                    summary.openCount++;
-                                    if (DateUtils.isDueSoon(task.dueAt)) {
+                                    assigned++;
+                                    summary.assignedCount++;
+                                    if (isUrgentTask(task)) {
                                         urgent++;
                                         summary.urgentCount++;
                                     }
@@ -320,16 +325,17 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         }
 
                         ensureSelectedChild();
+                        childSummaryAdapter.setSelectedChildId(selectedChildId);
                         updateTaskFilterSelectionUi();
                         childSummaryAdapter.notifyDataSetChanged();
                         updateChildrenVisibility();
 
-                        tvParentTotalTasks.setText(String.valueOf(open));
+                        tvParentTotalTasks.setText(String.valueOf(assigned));
                         tvParentCompleted.setText(String.valueOf(done));
                         tvParentDueSoon.setText(String.valueOf(urgent));
 
                         updateSelectedChildSection();
-                        applyFilter();
+                        buildSelectedChildTaskList();
                     }
 
                     @Override
@@ -366,42 +372,47 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void setActiveFilter(FilterMode filterMode) {
-        if (filterMode == null || activeFilter == filterMode) return;
-
-        activeFilter = filterMode;
-        updateTaskFilterSelectionUi();
-        applyFilter();
-    }
-
     private void updateTaskFilterSelectionUi() {
-        updateFilterChip(filterAllTasks, activeFilter == FilterMode.ALL);
-        updateFilterChip(filterOpenTasks, activeFilter == FilterMode.OPEN);
-        updateFilterChip(filterCompletedTasks, activeFilter == FilterMode.COMPLETED);
-        updateFilterChip(filterUrgentTasks, activeFilter == FilterMode.URGENT);
+        ChildSummary selectedChild = getSelectedChildSummary();
 
-        boolean enabled = selectedChildId != null;
-        filterAllTasks.setEnabled(enabled);
-        filterOpenTasks.setEnabled(enabled);
-        filterCompletedTasks.setEnabled(enabled);
-        filterUrgentTasks.setEnabled(enabled);
+        int totalCount = selectedChild == null ? 0 : selectedChild.totalCount;
+        int assignedCount = selectedChild == null ? 0 : selectedChild.assignedCount;
+        int completedCount = selectedChild == null ? 0 : selectedChild.completedCount;
+        int urgentCount = selectedChild == null ? 0 : selectedChild.urgentCount;
 
-        float alpha = enabled ? 1f : 0.5f;
-        filterAllTasks.setAlpha(alpha);
-        filterOpenTasks.setAlpha(alpha);
-        filterCompletedTasks.setAlpha(alpha);
-        filterUrgentTasks.setAlpha(alpha);
+        bindMetricChip(filterAllTasks, R.string.parent_dashboard_summary_total,
+                totalCount, METRIC_NEUTRAL_BG, METRIC_NEUTRAL_TEXT, METRIC_NEUTRAL_STROKE);
+        bindMetricChip(filterOpenTasks, R.string.parent_dashboard_summary_assigned,
+                assignedCount, METRIC_BLUE_BG, METRIC_BLUE_TEXT, METRIC_BLUE_STROKE);
+        bindMetricChip(filterCompletedTasks, R.string.parent_dashboard_summary_completed,
+                completedCount, METRIC_GREEN_BG, METRIC_GREEN_TEXT, METRIC_GREEN_STROKE);
+        bindMetricChip(filterUrgentTasks, R.string.parent_dashboard_summary_urgent,
+                urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE);
+
+        setSummaryChipEnabled(filterAllTasks, selectedChild != null);
+        setSummaryChipEnabled(filterOpenTasks, selectedChild != null);
+        setSummaryChipEnabled(filterCompletedTasks, selectedChild != null);
+        setSummaryChipEnabled(filterUrgentTasks, selectedChild != null);
     }
 
-    private void updateFilterChip(TextView textView, boolean selected) {
+    private void bindMetricChip(TextView textView, int labelResId, int count,
+                                String backgroundColor, String textColor, String strokeColor) {
         GradientDrawable background = new GradientDrawable();
         background.setCornerRadius(dpToPx(18));
-        background.setColor(Color.parseColor(selected ? CHIP_SELECTED_BG_COLOR : CHIP_DEFAULT_BG_COLOR));
-        background.setStroke(dpToPx(selected ? 2 : 1),
-                Color.parseColor(selected ? CHIP_SELECTED_BG_COLOR : "#D6E4F0"));
+        background.setColor(Color.parseColor(backgroundColor));
+        background.setStroke(dpToPx(1), Color.parseColor(strokeColor));
 
         textView.setBackground(background);
-        textView.setTextColor(Color.parseColor(selected ? CHIP_SELECTED_TEXT_COLOR : CHIP_DEFAULT_TEXT_COLOR));
+        textView.setTextColor(Color.parseColor(textColor));
+        textView.setText(getString(R.string.parent_dashboard_metric_with_count,
+                getString(labelResId), count));
+    }
+
+    private void setSummaryChipEnabled(TextView textView, boolean enabled) {
+        textView.setEnabled(false);
+        textView.setClickable(false);
+        textView.setFocusable(false);
+        textView.setAlpha(enabled ? 1f : 0.5f);
     }
 
     private void updateSelectedChildSection() {
@@ -416,13 +427,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 getString(R.string.parent_dashboard_selected_child_title, selectedChild.displayName));
         tvTaskSectionSubtitle.setText(
                 getString(R.string.parent_dashboard_selected_child_stats,
-                        selectedChild.openCount,
+                        selectedChild.assignedCount,
                         selectedChild.completedCount,
                         selectedChild.urgentCount));
     }
 
-    private void applyFilter() {
-        filteredAssignedTasks.clear();
+    private void buildSelectedChildTaskList() {
+        visibleTaskItems.clear();
 
         ChildSummary selectedChild = getSelectedChildSummary();
         if (selectedChild == null) {
@@ -434,18 +445,32 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
 
         // הסינון מתבצע רק על הילד שנבחר, כדי לא לערבב משימות של כל הבית
+        List<AssignedTask> urgentTasks = new ArrayList<>();
+        List<AssignedTask> assignedTasks = new ArrayList<>();
+        List<AssignedTask> completedTasks = new ArrayList<>();
+
+        // כאן מחלקים את המשימות של הילד שנבחר לשלוש קבוצות פשוטות וברורות.
         for (AssignedTask task : allAssignedTasks) {
             if (task == null) continue;
             if (!selectedChild.childId.equals(task.childId)) continue;
-            if (matchesActiveFilter(task)) {
-                filteredAssignedTasks.add(task);
+
+            if (task.isDone) {
+                completedTasks.add(task);
+            } else if (isUrgentTask(task)) {
+                urgentTasks.add(task);
+            } else {
+                assignedTasks.add(task);
             }
         }
 
-        updateEmptyStateText(selectedChild.displayName);
+        addTaskSection(getString(R.string.parent_dashboard_group_urgent), urgentTasks);
+        addTaskSection(getString(R.string.parent_dashboard_group_assigned), assignedTasks);
+        addTaskSection(getString(R.string.parent_dashboard_group_completed), completedTasks);
+
+        tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_all, selectedChild.displayName));
         taskAdapter.notifyDataSetChanged();
 
-        if (filteredAssignedTasks.isEmpty()) {
+        if (visibleTaskItems.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
             lvTasks.setVisibility(View.GONE);
         } else {
@@ -454,36 +479,19 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private boolean matchesActiveFilter(AssignedTask task) {
-        switch (activeFilter) {
-            case OPEN:
-                return !task.isDone;
-            case COMPLETED:
-                return task.isDone;
-            case URGENT:
-                return !task.isDone && DateUtils.isDueSoon(task.dueAt);
-            case ALL:
-            default:
-                return true;
+    private void addTaskSection(String title, List<AssignedTask> tasks) {
+        if (tasks == null || tasks.isEmpty()) {
+            return;
+        }
+
+        visibleTaskItems.add(TaskListItem.createHeader(title, tasks.size()));
+        for (AssignedTask task : tasks) {
+            visibleTaskItems.add(TaskListItem.createTask(task));
         }
     }
 
-    private void updateEmptyStateText(String childName) {
-        switch (activeFilter) {
-            case OPEN:
-                tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_open, childName));
-                break;
-            case COMPLETED:
-                tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_completed, childName));
-                break;
-            case URGENT:
-                tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_urgent, childName));
-                break;
-            case ALL:
-            default:
-                tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_all, childName));
-                break;
-        }
+    private boolean isUrgentTask(AssignedTask task) {
+        return task != null && !task.isDone && DateUtils.isDueSoon(task.dueAt);
     }
 
     private ChildSummary getSelectedChildSummary() {
@@ -503,16 +511,29 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         // כאן מחליפים את הילד הפעיל, ואז מרעננים רק את החלקים שתלויים בבחירה
         selectedChildId = childId;
+        childSummaryAdapter.setSelectedChildId(selectedChildId);
         childSummaryAdapter.notifyDataSetChanged();
         updateSelectedChildSection();
         updateTaskFilterSelectionUi();
-        applyFilter();
+        buildSelectedChildTaskList();
+    }
+
+    private AssignedTask getTaskAtPosition(int position) {
+        if (position < 0 || position >= visibleTaskItems.size()) {
+            return null;
+        }
+
+        TaskListItem item = visibleTaskItems.get(position);
+        if (item == null || item.isHeader) {
+            return null;
+        }
+
+        return item.task;
     }
 
     private void showTaskOptionsDialog(int position) {
-        if (position < 0 || position >= filteredAssignedTasks.size()) return;
-
-        AssignedTask task = filteredAssignedTasks.get(position);
+        AssignedTask task = getTaskAtPosition(position);
+        if (task == null) return;
         String status = getTaskStatusLabel(task);
 
         String details = getString(R.string.parent_dashboard_task_details,
@@ -525,17 +546,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 .setTitle(R.string.parent_dashboard_task_details_title)
                 .setMessage(details)
                 .setPositiveButton(R.string.parent_dashboard_change_date,
-                        (dialog, which) -> showChangeDateDialog(position))
+                        (dialog, which) -> showChangeDateDialog(task))
                 .setNeutralButton(R.string.parent_dashboard_delete_task,
-                        (dialog, which) -> showDeleteTaskDialog(position))
+                        (dialog, which) -> showDeleteTaskDialog(task))
                 .setNegativeButton(R.string.parent_dashboard_close, null)
                 .show();
     }
 
-    private void showChangeDateDialog(int position) {
-        if (position < 0 || position >= filteredAssignedTasks.size()) return;
-
-        AssignedTask task = filteredAssignedTasks.get(position);
+    private void showChangeDateDialog(AssignedTask task) {
+        if (task == null) return;
         Calendar cal = Calendar.getInstance();
 
         new DatePickerDialog(this, (view, year, month, day) -> {
@@ -561,14 +580,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         }
                     })
                     .addOnFailureListener(e ->
-                            Toast.makeText(this, "שגיאה: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            Toast.makeText(this,
+                                    getString(R.string.error_with_details, e.getMessage()),
+                                    Toast.LENGTH_SHORT).show());
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void showDeleteTaskDialog(int position) {
-        if (position < 0 || position >= filteredAssignedTasks.size()) return;
-
-        AssignedTask task = filteredAssignedTasks.get(position);
+    private void showDeleteTaskDialog(AssignedTask task) {
+        if (task == null) return;
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.parent_dashboard_delete_task_title)
@@ -593,7 +612,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
                                 }
                             })
                             .addOnFailureListener(e ->
-                                    Toast.makeText(this, "שגיאה: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                    Toast.makeText(this,
+                                            getString(R.string.error_with_details, e.getMessage()),
+                                            Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
@@ -615,28 +636,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     // כאן טוענים את תמונת הילד לכל כרטיס או שורה, עם fallback אם אין תמונה תקינה
-    private void bindChildPhoto(ImageView imageView, String childId, String base64) {
-        imageView.setImageDrawable(null);
-
-        if (base64 == null || base64.trim().isEmpty()) {
-            return;
-        }
-
-        if (childPhotoCache.containsKey(childId)) {
-            imageView.setImageBitmap(childPhotoCache.get(childId));
-            return;
-        }
-
-        Bitmap raw = ImageHelper.base64ToBitmap(base64);
-        if (raw == null) {
-            return;
-        }
-
-        Bitmap circular = ImageHelper.getCircularBitmap(raw);
-        childPhotoCache.put(childId, circular);
-        imageView.setImageBitmap(circular);
-    }
-
     private String getTaskStatusLabel(AssignedTask task) {
         if (task.isDone) {
             return getString(R.string.parent_dashboard_task_status_done);
@@ -684,147 +683,4 @@ public class ParentDashboardActivity extends AppCompatActivity {
         return text == null ? "" : text.trim();
     }
 
-    private class TaskItemAdapter extends ArrayAdapter<AssignedTask> {
-
-        TaskItemAdapter() {
-            super(ParentDashboardActivity.this, 0, filteredAssignedTasks);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.item_parent_task, parent, false);
-            }
-
-            AssignedTask task = getItem(position);
-            if (task == null) return convertView;
-
-            ImageView ivChildPhoto = convertView.findViewById(R.id.ivChildPhoto);
-            TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
-            TextView tvChildNameCard = convertView.findViewById(R.id.tvChildNameCard);
-            TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
-            TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
-
-            tvTaskTitleCard.setText(task.title.isEmpty()
-                    ? getString(R.string.default_task_name)
-                    : task.title);
-            tvChildNameCard.setText(task.childName);
-            tvDueDateCard.setText(getDueLine(task));
-            tvDueDateCard.setTextColor(getDueLineColor(task));
-
-            String statusText = getTaskStatusLabel(task);
-            int chipBgColor;
-            int chipTextColor;
-
-            if (task.isDone) {
-                chipBgColor = Color.parseColor("#E8F5E9");
-                chipTextColor = Color.parseColor("#2E7D32");
-            } else if (DateUtils.daysLeft(task.dueAt) < 0) {
-                chipBgColor = Color.parseColor("#FFEBEE");
-                chipTextColor = Color.parseColor("#C62828");
-            } else if (DateUtils.isDueSoon(task.dueAt)) {
-                chipBgColor = Color.parseColor("#FFF3E0");
-                chipTextColor = Color.parseColor("#E65100");
-            } else {
-                chipBgColor = Color.parseColor("#EEF2F7");
-                chipTextColor = Color.parseColor("#52606D");
-            }
-
-            tvStatusChip.setText(statusText);
-            tvStatusChip.setTextColor(chipTextColor);
-
-            GradientDrawable chipBg = new GradientDrawable();
-            chipBg.setColor(chipBgColor);
-            chipBg.setCornerRadius(dpToPx(14));
-            tvStatusChip.setBackground(chipBg);
-
-            bindChildPhoto(ivChildPhoto, task.childId, task.childProfileBase64);
-            return convertView;
-        }
-    }
-
-    private class ChildSummaryAdapter extends RecyclerView.Adapter<ChildSummaryAdapter.ChildSummaryViewHolder> {
-
-        @NonNull
-        @Override
-        public ChildSummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_parent_child_summary, parent, false);
-            return new ChildSummaryViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ChildSummaryViewHolder holder, int position) {
-            ChildSummary childSummary = childSummaries.get(position);
-            boolean isSelected = childSummary.childId.equals(selectedChildId);
-
-            holder.tvChildSummaryName.setText(childSummary.displayName);
-            holder.tvChildSummaryCounts.setText(
-                    getString(R.string.parent_dashboard_child_counts,
-                            childSummary.openCount,
-                            childSummary.completedCount,
-                            childSummary.urgentCount));
-
-            holder.cardChildSummary.setCardBackgroundColor(
-                    Color.parseColor(isSelected ? CHILD_CARD_SELECTED_BG : CHILD_CARD_DEFAULT_BG));
-            holder.cardChildSummary.setStrokeColor(
-                    Color.parseColor(isSelected ? CHILD_CARD_SELECTED_STROKE : CHILD_CARD_DEFAULT_STROKE));
-            holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
-            holder.itemView.setContentDescription(
-                    getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
-
-            bindChildPhoto(holder.ivChildSummaryPhoto,
-                    childSummary.childId,
-                    childSummary.childProfileBase64);
-
-            holder.itemView.setOnClickListener(v -> selectChild(childSummary.childId));
-        }
-
-        @Override
-        public int getItemCount() {
-            return childSummaries.size();
-        }
-
-        class ChildSummaryViewHolder extends RecyclerView.ViewHolder {
-            private final MaterialCardView cardChildSummary;
-            private final ImageView ivChildSummaryPhoto;
-            private final TextView tvChildSummaryName;
-            private final TextView tvChildSummaryCounts;
-
-            ChildSummaryViewHolder(@NonNull View itemView) {
-                super(itemView);
-                cardChildSummary = itemView.findViewById(R.id.cardChildSummary);
-                ivChildSummaryPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
-                tvChildSummaryName = itemView.findViewById(R.id.tvChildSummaryName);
-                tvChildSummaryCounts = itemView.findViewById(R.id.tvChildSummaryCounts);
-            }
-        }
-    }
-
-    private static class AssignedTask {
-        String childId;
-        String childName;
-        String childProfileBase64;
-        String taskId;
-        String title;
-        String dueAt;
-        boolean isDone;
-    }
-
-    private static class ChildSummary {
-        String childId;
-        String displayName;
-        String childProfileBase64;
-        int openCount;
-        int completedCount;
-        int urgentCount;
-    }
-
-    private enum FilterMode {
-        ALL,
-        OPEN,
-        COMPLETED,
-        URGENT
-    }
 }
