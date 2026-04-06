@@ -67,7 +67,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // --- Views ---
     private TextView tvChildName, tvStars, tvTotalTasks, tvCompleted, tvDueSoon;
-    private TextView tvNoTasks;
+    private TextView tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
     private Button btnLogout;
     private LinearLayout filterNotCompleted, filterCompleted, filterUrgent;
@@ -105,6 +105,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvCompleted = findViewById(R.id.tvCompleted);
         tvDueSoon = findViewById(R.id.tvDueSoon);
         tvNoTasks = findViewById(R.id.tvNoTasks);
+        tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvTasks);
         btnLogout = findViewById(R.id.btnLogout);
         imgChildAvatar = findViewById(R.id.imgChildAvatar);
@@ -134,6 +135,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         // טעינת נתונים מ-Firebase
         updateFilterSelectionUi();
+        updateTaskSectionTitle();
         loadChildHeader();
         loadTasks();
     }
@@ -340,6 +342,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         if (filterMode == null || activeFilter == filterMode) return;
         activeFilter = filterMode;
         updateFilterSelectionUi();
+        updateTaskSectionTitle();
         applyFilter();
     }
 
@@ -431,6 +434,23 @@ public class ChildDashboardActivity extends AppCompatActivity {
             case NOT_COMPLETED:
             default:
                 tvNoTasks.setText("אין משימות שלא הושלמו כרגע.");
+                break;
+        }
+    }
+
+    private void updateTaskSectionTitle() {
+        if (tvTaskSectionTitle == null) return;
+
+        switch (activeFilter) {
+            case COMPLETED:
+                tvTaskSectionTitle.setText("׳”׳•׳©׳׳׳•");
+                break;
+            case URGENT:
+                tvTaskSectionTitle.setText("׳“׳—׳•׳₪׳•׳×");
+                break;
+            case NOT_COMPLETED:
+            default:
+                tvTaskSectionTitle.setText("׳׳ ׳”׳•׳©׳׳׳•");
                 break;
         }
     }

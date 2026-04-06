@@ -48,7 +48,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private static final String FILTER_SELECTED_STROKE_COLOR = "#FFFFFF";
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
-    private TextView tvParentTotalTasks, tvParentCompleted, tvParentDueSoon, tvNoTasks;
+    private TextView tvParentTotalTasks, tvParentCompleted, tvParentDueSoon, tvNoTasks, tvTaskSectionTitle;
     private ListView lvTasks;
     private ImageView ivParentProfile;
     private TextView tvParentName;
@@ -85,6 +85,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         tvParentCompleted = findViewById(R.id.tvParentCompleted);
         tvParentDueSoon = findViewById(R.id.tvParentDueSoon);
         tvNoTasks = findViewById(R.id.tvNoTasks);
+        tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         lvTasks = findViewById(R.id.lvTasks);
         filterUrgent = findViewById(R.id.filterUrgent);
         filterCompleted = findViewById(R.id.filterCompleted);
@@ -98,6 +99,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         filterCompleted.setOnClickListener(v -> setActiveFilter(FilterMode.COMPLETED));
         filterNotCompleted.setOnClickListener(v -> setActiveFilter(FilterMode.NOT_COMPLETED));
         updateFilterSelectionUi();
+        updateTaskSectionTitle();
 
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageChildren.setOnClickListener(v ->
@@ -145,7 +147,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
                         Bitmap bmp = ImageHelper.base64ToBitmap(base64);
                         if (bmp != null) {
-                            ivParentProfile.setImageBitmap(bmp);
+                            ivParentProfile.setImageBitmap(ImageHelper.getCircularBitmap(bmp));
                         }
                     }
 
@@ -254,6 +256,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         if (filterMode == null || activeFilter == filterMode) return;
         activeFilter = filterMode;
         updateFilterSelectionUi();
+        updateTaskSectionTitle();
         applyFilter();
     }
 
@@ -304,6 +307,23 @@ public class ParentDashboardActivity extends AppCompatActivity {
             case NOT_COMPLETED:
             default:
                 tvNoTasks.setText("אין משימות שלא הושלמו כרגע.");
+                break;
+        }
+    }
+
+    private void updateTaskSectionTitle() {
+        if (tvTaskSectionTitle == null) return;
+
+        switch (activeFilter) {
+            case COMPLETED:
+                tvTaskSectionTitle.setText("׳”׳•׳©׳׳׳•");
+                break;
+            case URGENT:
+                tvTaskSectionTitle.setText("׳“׳—׳•׳₪׳•׳×");
+                break;
+            case NOT_COMPLETED:
+            default:
+                tvTaskSectionTitle.setText("׳׳ ׳”׳•׳©׳׳׳•");
                 break;
         }
     }

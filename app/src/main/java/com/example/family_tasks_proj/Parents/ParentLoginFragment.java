@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,25 +19,22 @@ import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * מסך התחברות להורה — Fragment שמוצג בתוך MainActivity.
+ * ׳׳¡׳ ׳”׳×׳—׳‘׳¨׳•׳× ׳׳”׳•׳¨׳” ג€” Fragment ׳©׳׳•׳¦׳’ ׳‘׳×׳•׳ MainActivity.
  *
- * אחריות:
- * - מבצע אימות (email + password) דרך FirebaseAuth.
- * - בהצלחה: פותח ParentDashboardActivity וסוגר את MainActivity.
- * - בכישלון: מציג הודעת שגיאה.
+ * ׳׳—׳¨׳™׳•׳×:
+ * - ׳׳‘׳¦׳¢ ׳׳™׳׳•׳× (email + password) ׳“׳¨׳ FirebaseAuth.
+ * - ׳‘׳”׳¦׳׳—׳”: ׳₪׳•׳×׳— ParentDashboardActivity ׳•׳¡׳•׳’׳¨ ׳׳× MainActivity.
+ * - ׳‘׳›׳™׳©׳׳•׳: ׳׳¦׳™׳’ ׳”׳•׳“׳¢׳× ׳©׳’׳™׳׳”.
  *
  * Layout: fragment_parent_login.xml
- *
- * ===== הערות לשיפור =====
- * TODO: להוסיף ProgressBar/אינדיקטור טעינה בזמן ההתחברות.
  */
 public class ParentLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private EditText etEmail, etPassword;
     private Button btnLogin;
+    private ProgressBar progressLogin;
 
-    /** constructor ריק — חובה ל-Fragment (מערכת Android יוצרת מחדש בסיבוב מסך). */
     public ParentLoginFragment()
     {
         // Required empty public constructor
@@ -56,60 +54,58 @@ public class ParentLoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // חיבור שדות מה-layout
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
+        progressLogin = view.findViewById(R.id.progressLogin);
 
         btnLogin.setOnClickListener(v -> loginUser());
     }
 
-    /**
-     * מבצע התחברות עם email + password דרך FirebaseAuth.
-     *
-     * בהצלחה — פותח ParentDashboardActivity וסוגר את ה-Activity הנוכחי.
-     * בכישלון — מציג Toast עם הודעת שגיאה.
-     *
-     * הערה: requireActivity() ב-addOnCompleteListener מבטיח שה-callback
-     *        ירוץ רק אם ה-Activity עדיין חי — מונע crash בסיבוב מסך.
-     */
     private void loginUser()
     {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // ולידציה — שדות ריקים
         if (email.isEmpty() || password.isEmpty())
         {
-            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "׳™׳© ׳׳׳׳ ׳׳× ׳›׳ ׳”׳©׳“׳•׳×", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // ולידציה — פורמט אימייל (Patterns.EMAIL_ADDRESS מ-Android SDK)
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
-            Toast.makeText(requireContext(), "פורמט אימייל לא תקין", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "׳₪׳•׳¨׳׳˜ ׳׳™׳׳™׳™׳ ׳׳ ׳×׳§׳™׳", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        setLoading(true);
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
                 {
-                    if (!isAdded()) return; // Fragment לא מחובר — מונע crash
+                    if (!isAdded()) return;
 
+                    setLoading(false);
                     if (task.isSuccessful())
                     {
-                        // התחברות הצליחה — מעבר לדשבורד הורה
                         startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                         requireActivity().finish();
                     }
                     else
                     {
-                        // הצגת הודעת שגיאה מפורטת מ-Firebase
                         String errorMsg = (task.getException() != null)
                                 ? task.getException().getMessage()
-                                : "שגיאת התחברות לא ידועה";
+                                : "׳©׳’׳™׳׳× ׳”׳×׳—׳‘׳¨׳•׳× ׳׳ ׳™׳“׳•׳¢׳”";
                         Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    /** מציג טעינה קצרה ומונע לחיצות כפולות בזמן ההתחברות. */
+    private void setLoading(boolean isLoading)
+    {
+        btnLogin.setEnabled(!isLoading);
+        if (progressLogin != null) {
+            progressLogin.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
     }
 }

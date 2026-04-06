@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
@@ -21,20 +22,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
- * מסך הרשמה להורה חדש — Fragment שמוצג בתוך MainActivity.
+ * ׳׳¡׳ ׳”׳¨׳©׳׳” ׳׳”׳•׳¨׳” ׳—׳“׳© ג€” Fragment ׳©׳׳•׳¦׳’ ׳‘׳×׳•׳ MainActivity.
  *
- * אחריות:
- * - יוצר חשבון חדש ב-FirebaseAuth (email + password).
- * - שומר את פרופיל ההורה ב-Realtime Database דרך FBsingleton.
- * - מעביר ל-ParentDashboardActivity בהצלחה.
+ * ׳׳—׳¨׳™׳•׳×:
+ * - ׳™׳•׳¦׳¨ ׳—׳©׳‘׳•׳ ׳—׳“׳© ׳‘-FirebaseAuth (email + password).
+ * - ׳©׳•׳׳¨ ׳׳× ׳₪׳¨׳•׳₪׳™׳ ׳”׳”׳•׳¨׳” ׳‘-Realtime Database ׳“׳¨׳ FBsingleton.
+ * - ׳׳¢׳‘׳™׳¨ ׳-ParentDashboardActivity ׳‘׳”׳¦׳׳—׳”.
  *
  * Layout: fragment_parent_register.xml
- *
- * ===== באגים שתוקנו =====
- * BUG-FIX: task.getException() יכול להחזיר null — נוסף null-check.
- *
- * ===== הערות לשיפור =====
- * TODO: להוסיף ProgressBar בזמן ההרשמה.
  */
 public class ParentRegisterFragment extends Fragment {
 
@@ -42,8 +37,8 @@ public class ParentRegisterFragment extends Fragment {
 
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
+    private ProgressBar progressRegister;
 
-    /** constructor ריק — חובה ל-Fragment. */
     public ParentRegisterFragment()
     {
         // Required empty public constructor
@@ -60,31 +55,18 @@ public class ParentRegisterFragment extends Fragment {
     {
         super.onViewCreated(view, savedInstanceState);
 
-        // אתחול Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // חיבור שדות מה-layout
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName  = view.findViewById(R.id.etLastName);
         etEmail     = view.findViewById(R.id.etEmail);
         etPassword  = view.findViewById(R.id.etPassword);
         btnRegister = view.findViewById(R.id.btnRegister);
+        progressRegister = view.findViewById(R.id.progressRegister);
 
         btnRegister.setOnClickListener(v -> registerParent());
     }
 
-    /**
-     * יוצר חשבון חדש ב-FirebaseAuth ושומר פרופיל ב-DB.
-     *
-     * תהליך:
-     * 1. ולידציה — בודק ששדות לא ריקים.
-     * 2. createUserWithEmailAndPassword — יוצר חשבון ב-Firebase.
-     * 3. FBsingleton.setUserData + saveParentToFirebase — שומר פרופיל ב-Realtime Database.
-     * 4. ניווט ל-ParentDashboardActivity.
-     *
-     * הערה חשובה: FBsingleton.saveParentToFirebase() משתמש ב-updateChildren()
-     *              ולא ב-setValue(), כדי לא לדרוס ילדים/תבניות שכבר קיימים.
-     */
     private void registerParent()
     {
         String firstName = etFirstName.getText().toString().trim();
@@ -93,49 +75,57 @@ public class ParentRegisterFragment extends Fragment {
         String password  = etPassword.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "׳™׳© ׳׳׳׳ ׳׳× ׳›׳ ׳”׳©׳“׳•׳×", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // ולידציה — פורמט אימייל
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), "פורמט אימייל לא תקין", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "׳₪׳•׳¨׳׳˜ ׳׳™׳׳™׳™׳ ׳׳ ׳×׳§׳™׳", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // ולידציה — סיסמה מינימום 6 תווים (דרישת Firebase)
         if (password.length() < 6) {
-            Toast.makeText(requireContext(), "הסיסמה חייבת להכיל לפחות 6 תווים", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "׳”׳¡׳™׳¡׳׳” ׳—׳™׳™׳‘׳× ׳׳”׳›׳™׳ ׳׳₪׳—׳•׳× 6 ׳×׳•׳•׳™׳", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        setLoading(true);
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task ->
         {
+                    if (!isAdded()) return;
+
+                    setLoading(false);
                     if (task.isSuccessful())
                     {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null)
                         {
-                            // שמירת פרטי ההורה ב-Singleton ואז כתיבה ל-Firebase
                             FBsingleton.getInstance().setUserData(firstName, lastName, email);
                             FBsingleton.getInstance().saveParentToFirebase();
 
-                            Toast.makeText(requireContext(), "ההרשמה הצליחה!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "׳”׳”׳¨׳©׳׳” ׳”׳¦׳׳™׳—׳”!", Toast.LENGTH_SHORT).show();
 
-                            // מעבר לדשבורד — סוגר MainActivity כדי שלא יחזור אליה
                             startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                             requireActivity().finish();
                         }
                     }
                     else
                     {
-                        // BUG-FIX: null-check ל-getException כדי למנוע NPE
                         String errorMsg = (task.getException() != null)
                                 ? task.getException().getMessage()
-                                : "שגיאה לא ידועה";
-                        Toast.makeText(requireContext(), "שגיאה: " + errorMsg, Toast.LENGTH_LONG).show();
+                                : "׳©׳’׳™׳׳” ׳׳ ׳™׳“׳•׳¢׳”";
+                        Toast.makeText(requireContext(), "׳©׳’׳™׳׳”: " + errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    /** מציג טעינה קצרה ומונע לחיצות כפולות בזמן ההרשמה. */
+    private void setLoading(boolean isLoading)
+    {
+        btnRegister.setEnabled(!isLoading);
+        if (progressRegister != null) {
+            progressRegister.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
     }
 }
