@@ -23,6 +23,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+/**
+ * מסך סריקת QR לילד — הילד סורק קוד QR שההורה מציג.
+ *
+ * פורמט QR: "parent:{parentId}|child:{childId}"
+ * אחרי סריקה — בודק שההורה/ילד קיימים ב-Firebase ומעביר ל-ChildSelectionActivity.
+ */
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String PREFS = "child_session";

@@ -20,6 +20,11 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * אדפטר לרשימת הילדים בדשבורד ההורה.
+ * כל כרטיס מציג שם ילד, תמונה, וספירות משימות (נשלחו/בוצעו/דחופות).
+ * לחיצה על כרטיס בוחרת את הילד ומציגה רק את המשימות שלו.
+ */
 class ParentDashboardChildSummaryAdapter
         extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 
@@ -116,6 +121,7 @@ class ParentDashboardChildSummaryAdapter
                 context.getString(labelResId), count));
     }
 
+    // טוען תמונת ילד מ-Base64, עם cache כדי לא לפענח שוב ושוב
     private void bindChildPhoto(ImageView imageView, String childId, String base64) {
         imageView.setImageDrawable(null);
 

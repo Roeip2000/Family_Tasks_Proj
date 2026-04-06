@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.child.Class_child;
+package com.example.family_tasks_proj.child;
 
 /**
  * מודל נתונים של ילד.

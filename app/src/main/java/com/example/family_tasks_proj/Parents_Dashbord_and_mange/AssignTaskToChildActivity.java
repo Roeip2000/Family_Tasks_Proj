@@ -37,6 +37,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * מסך הקצאת משימה לילד — ההורה בוחר תבנית, ילד, תאריך יעד ושולח.
+ *
+ * תהליך:
+ * 1. טוען תבניות מ-Firebase → מוצגות ב-Spinner
+ * 2. טוען ילדים → מוצגים ב-Spinner שני
+ * 3. ההורה בוחר תבנית → הכותרת והתמונה מוצגות אוטומטית
+ * 4. ההורה בוחר תאריך → DatePicker
+ * 5. לחיצה על "שלח" → שומרת את המשימה ב-Firebase תחת הילד שנבחר
+ *
+ * נתיב Firebase: /parents/{uid}/children/{childId}/tasks/{taskId}
+ */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTitle;

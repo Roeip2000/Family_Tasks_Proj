@@ -1,5 +1,5 @@
-<!-- מסך יצירת תבנית משימה — כותרת + בחירת תמונה מהגלריה + שמירה ב-Firebase.
-     ParentTaskTemplateActivity.java אחראי על תיקון EXIF, הקטנה, והמרה ל-Base64. -->
+<!-- מסך ניהול תבניות משימה — רשימה של תבניות קיימות + טופס יצירה/עריכה.
+     ParentTaskTemplateActivity.java מטפל ביצירה, עריכה ומחיקה של תבניות. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
@@ -8,30 +8,99 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <EditText
-        android:id="@+id/etTitle"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_task_title"/>
+        android:text="@string/template_screen_title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"/>
 
-    <ImageView
-        android:id="@+id/imgTask"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/cd_task_image"
-        android:src="@android:drawable/ic_menu_gallery"/>
-
-    <Button
-        android:id="@+id/btnPickImage"
+    <!-- טופס יצירה/עריכה -->
+    <LinearLayout
+        android:id="@+id/layoutForm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_pick_image"/>
+        android:orientation="vertical"
+        android:background="#F5F5F5"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp">
 
-    <Button
-        android:id="@+id/btnSave"
+        <TextView
+            android:id="@+id/tvFormTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/template_form_title_new"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_task_title"/>
+
+        <ImageView
+            android:id="@+id/imgTask"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/cd_task_image"
+            android:src="@android:drawable/ic_menu_gallery"/>
+
+        <Button
+            android:id="@+id/btnPickImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_pick_image"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_save_template"/>
+
+            <Button
+                android:id="@+id/btnCancelEdit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_cancel_edit"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- רשימת תבניות קיימות -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_save_template"/>
+        android:text="@string/template_existing_title"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView
+        android:id="@+id/tvNoTemplates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/template_empty_list"
+        android:gravity="center"
+        android:textColor="#888888"
+        android:visibility="gone"/>
+
+    <ListView
+        android:id="@+id/lvTemplates"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
 </LinearLayout>

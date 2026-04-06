@@ -20,6 +20,11 @@ import com.example.family_tasks_proj.util.ImageHelper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * אדפטר לרשימת המשימות בדשבורד ההורה.
+ * תומך בשני סוגי שורות: כותרת קבוצה (header) ושורת משימה רגילה.
+ * כל משימה מציגה כותרת, תאריך יעד, סטטוס (בוצע/דחוף/ממתין) ותמונת ילד.
+ */
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
     private static final int VIEW_TYPE_HEADER = 0;

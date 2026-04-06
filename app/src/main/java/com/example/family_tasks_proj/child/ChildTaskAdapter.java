@@ -17,12 +17,17 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.Class_child.ChildTask;
+import com.example.family_tasks_proj.child.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
 
 import java.util.List;
 
+/**
+ * אדפטר למשימות הילד — מציג כרטיס לכל משימה עם כותרת, תאריך, כוכבים וכפתור "בוצע".
+ * משימה שהושלמה מקבלת קו חוצה ורקע ירוק.
+ * משימה דחופה מודגשת בכתום/אדום לפי ימים שנשארו.
+ */
 public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.TaskViewHolder> {
 
     private final List<ChildTask> tasks;
@@ -48,8 +53,20 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         ChildTask task = tasks.get(position);
+        long daysLeft = DateUtils.daysLeft(task.dueAt);
 
-        // RecyclerView rows are reused, so reset transient animation state first.
+        animateEntry(holder, position);
+        bindCardBackground(holder, task);
+        bindTitle(holder, task);
+        bindDueDate(holder, task, daysLeft);
+        bindStatusDot(holder, task, daysLeft);
+        bindTaskImage(holder, task);
+        bindStars(holder, task);
+        bindDoneButton(holder, task);
+    }
+
+    // אנימציית כניסה — כל שורה נכנסת מימין עם השהייה קטנה
+    private void animateEntry(TaskViewHolder holder, int position) {
         holder.itemView.animate().cancel();
         holder.btnDone.animate().cancel();
         holder.itemView.setAlpha(1f);
@@ -66,14 +83,18 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
                 .setStartDelay(position * 60L)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
+    }
 
+    // משימה שבוצעה מקבלת רקע ירוק
+    private void bindCardBackground(TaskViewHolder holder, ChildTask task) {
         if (holder.itemView instanceof CardView) {
-            int bgColor = task.isDone
-                    ? Color.parseColor("#E8F5E9")
-                    : Color.WHITE;
+            int bgColor = task.isDone ? Color.parseColor("#E8F5E9") : Color.WHITE;
             ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
         }
+    }
 
+    // כותרת המשימה — עם קו חוצה אם בוצעה
+    private void bindTitle(TaskViewHolder holder, ChildTask task) {
         holder.tvTaskTitle.setText(task.title != null ? task.title : "");
 
         if (task.isDone) {
@@ -85,9 +106,10 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
                     holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTaskTitle.setTextColor(Color.parseColor("#1A1A1A"));
         }
+    }
 
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
-
+    // תאריך יעד — צבע משתנה לפי דחיפות
+    private void bindDueDate(TaskViewHolder holder, ChildTask task, long daysLeft) {
         String dueText;
         if (task.isDone) {
             dueText = holder.itemView.getContext().getString(R.string.child_due_done);
@@ -104,7 +126,10 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             }
         }
         holder.tvDueDate.setText(dueText);
+    }
 
+    // נקודת סטטוס צבעונית — ירוק/כתום/אדום/אפור
+    private void bindStatusDot(TaskViewHolder holder, ChildTask task, long daysLeft) {
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
@@ -119,47 +144,54 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             dot.setColor(Color.parseColor("#BDBDBD"));
         }
         holder.viewStatusDot.setBackground(dot);
+    }
 
+    // תמונת משימה — מוצגת רק אם קיימת
+    private void bindTaskImage(TaskViewHolder holder, ChildTask task) {
         if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
             if (bmp != null) {
                 holder.imgTaskImage.setImageBitmap(bmp);
                 holder.imgTaskImage.setVisibility(View.VISIBLE);
-            } else {
-                holder.imgTaskImage.setImageDrawable(null);
-                holder.imgTaskImage.setVisibility(View.GONE);
+                return;
             }
-        } else {
-            holder.imgTaskImage.setImageDrawable(null);
-            holder.imgTaskImage.setVisibility(View.GONE);
         }
+        holder.imgTaskImage.setImageDrawable(null);
+        holder.imgTaskImage.setVisibility(View.GONE);
+    }
 
+    // כוכבים — מוצגים רק אם יש ערך חיובי
+    private void bindStars(TaskViewHolder holder, ChildTask task) {
         holder.tvTaskStars.setText(task.starsWorth > 0
                 ? holder.itemView.getContext().getString(R.string.child_stars_worth, task.starsWorth)
                 : "");
+    }
 
+    // כפתור "בוצע" — מוצג רק למשימות פתוחות, עם אנימציה בלחיצה
+    private void bindDoneButton(TaskViewHolder holder, ChildTask task) {
         if (task.isDone) {
             holder.btnDone.setVisibility(View.GONE);
             holder.btnDone.setOnClickListener(null);
-        } else {
-            holder.btnDone.setVisibility(View.VISIBLE);
-            holder.btnDone.setOnClickListener(v -> {
-                if (doneListener == null) return;
-
-                int adapterPosition = holder.getBindingAdapterPosition();
-                if (adapterPosition == RecyclerView.NO_POSITION) return;
-
-                holder.btnDone.animate()
-                        .scaleX(0f).scaleY(0f)
-                        .setDuration(200)
-                        .start();
-                holder.itemView.animate()
-                        .alpha(0.6f)
-                        .setDuration(300)
-                        .withEndAction(() -> doneListener.onTaskDone(task, adapterPosition))
-                        .start();
-            });
+            return;
         }
+
+        holder.btnDone.setVisibility(View.VISIBLE);
+        holder.btnDone.setOnClickListener(v -> {
+            if (doneListener == null) return;
+
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION) return;
+
+            holder.btnDone.animate()
+                    .scaleX(0f).scaleY(0f)
+                    .setDuration(200)
+                    .start();
+            holder.itemView.animate()
+                    .alpha(0.6f)
+                    .setDuration(300)
+                    .withEndAction(() -> doneListener.onTaskDone(task, adapterPosition))
+                    .start();
+        });
     }
 
     @Override

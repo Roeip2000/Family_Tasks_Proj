@@ -20,7 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.Class_child.Child;
+import com.example.family_tasks_proj.child.Child;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +36,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * מסך ניהול ילדים — הוספה, עריכה ומחיקה.
+ *
+ * ההורה רואה רשימת ילדים רשומים ויכול:
+ * - להוסיף ילד חדש (שם + תמונה)
+ * - ללחוץ על ילד ברשימה כדי לערוך/למחוק
+ *
+ * נתיב Firebase: /parents/{uid}/children/{childId}
+ */
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName;
@@ -259,6 +268,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 });
     }
 
+    // כניסה למצב עריכה — ממלא את הטופס בנתוני הילד שנבחר
     private void enterEditMode(int position) {
         ChildItem item = childItems.get(position);
         editingChildId = item.id;

@@ -190,8 +190,20 @@
     <string name="assign_task_success">המשימה הוקצתה בהצלחה!</string>
 
     <string name="template_missing_title_or_image">יש למלא כותרת ולבחור תמונה</string>
+    <string name="template_missing_title">יש למלא כותרת</string>
     <string name="template_parent_not_logged_in">ההורה לא מחובר</string>
     <string name="template_saved_success">התבנית נשמרה בהצלחה!</string>
+    <string name="template_updated_success">התבנית עודכנה בהצלחה!</string>
+    <string name="template_deleted_success">התבנית נמחקה</string>
+    <string name="template_screen_title">מאגר תבניות משימה</string>
+    <string name="template_form_title_new">יצירת תבנית חדשה</string>
+    <string name="template_form_title_edit">עריכת תבנית</string>
+    <string name="template_existing_title">תבניות קיימות</string>
+    <string name="template_empty_list">אין תבניות עדיין. צרו את הראשונה!</string>
+    <string name="template_option_edit">ערוך תבנית</string>
+    <string name="template_option_delete">מחק תבנית</string>
+    <string name="template_delete_title">מחיקת תבנית</string>
+    <string name="template_delete_message">למחוק את "%1$s"?</string>
 
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
     <string name="error_invalid_email">פורמט אימייל לא תקין</string>

@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
-import com.example.family_tasks_proj.child.Class_child.ChildTask;
+import com.example.family_tasks_proj.child.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
