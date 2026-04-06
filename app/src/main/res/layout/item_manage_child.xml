@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- שורת ילד ברשימת ניהול הילדים.
+     מציג: תמונת פרופיל עגולה (40dp) + שם מלא.
+     משמש ב-ChildListAdapter ב-ManageChildrenActivity. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- תמונת הפרופיל — עגולה (הביטמפ מחותך ל-getCircularBitmap ב-Adapter).
+         רקע אפור בהיר מופיע כשאין תמונה. -->
+    <ImageView
+        android:id="@+id/ivChildThumb"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_avatar_placeholder"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/cd_child_avatar" />
+
+    <!-- שם מלא של הילד -->
+    <TextView
+        android:id="@+id/tvChildFullName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#222222"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
