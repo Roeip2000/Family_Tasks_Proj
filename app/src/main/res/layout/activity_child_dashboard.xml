@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="count"
-                        android:text="0"
+                        android:text="@string/default_zero"
                         android:textColor="#355070"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -161,7 +161,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="count"
-                        android:text="0"
+                        android:text="@string/default_zero"
                         android:textColor="#355070"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -209,7 +209,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="count"
-                        android:text="0"
+                        android:text="@string/default_zero"
                         android:textColor="#355070"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -233,7 +233,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/filter_not_completed"
+            android:text="@string/child_task_section_open"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -244,7 +244,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="@string/empty_no_tasks_child"
+            android:text="@string/child_no_tasks_open"
             android:textColor="#F5F7FA"
             android:textSize="14sp"
             android:visibility="gone" />
