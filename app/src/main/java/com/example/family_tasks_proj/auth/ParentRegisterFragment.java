@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents;
+package com.example.family_tasks_proj.auth;
 
 import android.content.Intent;
 import android.os.Bundle;

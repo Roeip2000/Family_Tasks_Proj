@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
 import com.example.family_tasks_proj.Child_Login.ChildSelectionActivity;
-import com.example.family_tasks_proj.Parents.ParentLoginFragment;
-import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
+// ParentLoginFragment ו-ParentRegisterFragment באותה חבילה — לא צריך import
 import com.example.family_tasks_proj.R;
 
 /**
