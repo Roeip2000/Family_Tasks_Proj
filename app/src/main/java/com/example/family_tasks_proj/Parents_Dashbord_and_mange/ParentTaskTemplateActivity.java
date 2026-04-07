@@ -92,11 +92,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveOrUpdateTemplate());
         btnCancelEdit.setOnClickListener(v -> resetForm());
 
-        // לחיצה ארוכה על תבנית ברשימה — פותחת תפריט עריכה/מחיקה
-        lvTemplates.setOnItemLongClickListener((parent, view, position, id) -> {
-            showTemplateOptionsDialog(position);
-            return true;
-        });
+        // לחיצה על תבנית ברשימה — פותחת תפריט עריכה/מחיקה
+        lvTemplates.setOnItemClickListener((parent, view, position, id) ->
+                showTemplateOptionsDialog(position));
+
+        // חזרה לדשבורד ההורה
+        findViewById(R.id.btnBackToDashboard).setOnClickListener(v -> finish());
 
         loadTemplates();
     }

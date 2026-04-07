@@ -75,7 +75,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
-        setupBackground();
+        // רקע גרדיאנט סגול-כחול למסך הילד
+        ScrollView root = findViewById(R.id.scrollRootChildDashboard);
+        root.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{Color.parseColor("#7B61FF"), Color.parseColor("#4A90E2")}));
+
         bindViews();
         setupTaskList();
         setupFilters();
@@ -90,18 +95,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
 
         updateFilterSelectionUi();
-        updateTaskSectionTitle();
+        updateFilterLabels();
         loadChildHeader();
         loadTasks();
-    }
-
-    private void setupBackground() {
-        ScrollView rootView = findViewById(R.id.scrollRootChildDashboard);
-        GradientDrawable gradient = new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                new int[]{Color.parseColor("#7B61FF"), Color.parseColor("#4A90E2")}
-        );
-        rootView.setBackground(gradient);
     }
 
     private void bindViews() {
@@ -302,13 +298,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void setActiveFilter(FilterMode filterMode) {
-        if (filterMode == null || filterMode == activeFilter) {
-            return;
-        }
+        if (filterMode == null || filterMode == activeFilter) return;
 
         activeFilter = filterMode;
         updateFilterSelectionUi();
-        updateTaskSectionTitle();
+        updateFilterLabels();
         applyFilter();
     }
 
@@ -322,8 +316,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
             }
         }
 
-        updateEmptyStateText();
-
         boolean hasTasks = !visibleTasks.isEmpty();
         tvNoTasks.setVisibility(hasTasks ? View.GONE : View.VISIBLE);
         rvTasks.setVisibility(hasTasks ? View.VISIBLE : View.GONE);
@@ -332,42 +324,26 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     private boolean matchesActiveFilter(ChildTask task) {
         switch (activeFilter) {
-            case COMPLETED:
-                return task.isDone;
-            case URGENT:
-                return !task.isDone && DateUtils.isDueSoon(task.dueAt);
-            case NOT_COMPLETED:
-            default:
-                return !task.isDone;
+            case COMPLETED:  return task.isDone;
+            case URGENT:     return !task.isDone && DateUtils.isDueSoon(task.dueAt);
+            default:         return !task.isDone;
         }
     }
 
-    private void updateEmptyStateText() {
-        switch (activeFilter) {
-            case COMPLETED:
-                tvNoTasks.setText(R.string.child_no_tasks_completed);
-                break;
-            case URGENT:
-                tvNoTasks.setText(R.string.child_no_tasks_urgent);
-                break;
-            case NOT_COMPLETED:
-            default:
-                tvNoTasks.setText(R.string.child_no_tasks_open);
-                break;
-        }
-    }
-
-    private void updateTaskSectionTitle() {
+    // מעדכן את כותרת הסקשן ואת טקסט ה-empty state לפי הפילטר הנוכחי
+    private void updateFilterLabels() {
         switch (activeFilter) {
             case COMPLETED:
                 tvTaskSectionTitle.setText(R.string.child_task_section_completed);
+                tvNoTasks.setText(R.string.child_no_tasks_completed);
                 break;
             case URGENT:
                 tvTaskSectionTitle.setText(R.string.child_task_section_urgent);
+                tvNoTasks.setText(R.string.child_no_tasks_urgent);
                 break;
-            case NOT_COMPLETED:
             default:
                 tvTaskSectionTitle.setText(R.string.child_task_section_open);
+                tvNoTasks.setText(R.string.child_no_tasks_open);
                 break;
         }
     }

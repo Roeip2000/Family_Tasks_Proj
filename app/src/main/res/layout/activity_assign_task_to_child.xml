@@ -8,6 +8,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F7FA"
     android:padding="20dp"
     tools:context=".Parents_Dashbord_and_mange.AssignTaskToChildActivity">
 
@@ -119,5 +120,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etDueDate" />
+
+    <!-- כפתור חזרה לדשבורד ההורה -->
+    <Button
+        android:id="@+id/btnBackToDashboard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#E8F1FB"
+        android:text="@string/btn_back_to_dashboard"
+        android:textAllCaps="false"
+        android:textColor="#1F4E79"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAssign" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

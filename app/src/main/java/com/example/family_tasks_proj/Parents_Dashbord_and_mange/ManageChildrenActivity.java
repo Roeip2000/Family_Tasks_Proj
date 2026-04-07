@@ -116,6 +116,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         Button btnPickChildPhoto = findViewById(R.id.btnPickChildPhoto);
         btnPickChildPhoto.setOnClickListener(v -> childImagePicker.launch("image/*"));
+
+        // חזרה לדשבורד ההורה
+        findViewById(R.id.btnBackToDashboard).setOnClickListener(v -> finish());
     }
 
     private void bindActions() {
@@ -297,17 +300,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void showChildOptionsDialog(int position) {
-        if (position < 0 || position >= childItems.size()) {
-            return;
-        }
+        if (position < 0 || position >= childItems.size()) return;
 
-        ChildItem item = childItems.get(position);
-        String childName = NameUtils.fullNameOrDefault(
-                item.firstName,
-                item.lastName,
-                getString(R.string.default_child_name)
-        );
-
+        String childName = getChildDisplayName(childItems.get(position));
         String[] options = {
                 getString(R.string.manage_children_option_edit),
                 getString(R.string.manage_children_option_delete)
@@ -316,27 +311,18 @@ public class ManageChildrenActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(childName)
                 .setItems(options, (dialog, which) -> {
-                    if (which == 0) {
-                        enterEditMode(position);
-                    } else {
-                        showDeleteChildDialog(position);
-                    }
+                    if (which == 0) enterEditMode(position);
+                    else showDeleteChildDialog(position);
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
     private void showDeleteChildDialog(int position) {
-        if (position < 0 || position >= childItems.size()) {
-            return;
-        }
+        if (position < 0 || position >= childItems.size()) return;
 
         ChildItem item = childItems.get(position);
-        String childName = NameUtils.fullNameOrDefault(
-                item.firstName,
-                item.lastName,
-                getString(R.string.default_child_name)
-        );
+        String childName = getChildDisplayName(item);
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.manage_children_delete_title)
@@ -371,6 +357,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .child("children");
     }
 
+    private String getChildDisplayName(ChildItem item) {
+        return NameUtils.fullNameOrDefault(item.firstName, item.lastName,
+                getString(R.string.default_child_name));
+    }
+
     private String safeText(String value) {
         return value == null ? "" : value;
     }
@@ -396,11 +387,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             ImageView ivChildThumb = convertView.findViewById(R.id.ivChildThumb);
             TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
 
-            tvChildFullName.setText(NameUtils.fullNameOrDefault(
-                    item.firstName,
-                    item.lastName,
-                    getString(R.string.default_child_name)
-            ));
+            tvChildFullName.setText(getChildDisplayName(item));
 
             if (item.profileImageBase64 == null || item.profileImageBase64.isEmpty()) {
                 ivChildThumb.setImageDrawable(null);
