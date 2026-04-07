@@ -7,6 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F7FA"
     tools:context=".Parents_Dashbord_and_mange.ManageChildrenActivity">
 
     <LinearLayout
@@ -126,6 +127,17 @@
             android:layout_height="300dp"
             android:divider="#EEEEEE"
             android:dividerHeight="1dp" />
+
+        <!-- כפתור חזרה לדשבורד ההורה -->
+        <Button
+            android:id="@+id/btnBackToDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E8F1FB"
+            android:text="@string/btn_back_to_dashboard"
+            android:textAllCaps="false"
+            android:textColor="#1F4E79" />
 
     </LinearLayout>
 

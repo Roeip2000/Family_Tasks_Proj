@@ -4,7 +4,7 @@
     <string name="register_parents">הרשמת הורה</string>
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
-    <string name="child_direct_login">כניסה ישירה לילד(ללא QR לבדיקות) </string>
+    <string name="child_direct_login">כניסה ישירה לילד (ללא QR)</string>
     <string name="home_title">משימות משפחתיות</string>
     <string name="home_subtitle">מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד.</string>
     <string name="home_question">איך תרצו להמשיך?</string>
@@ -196,6 +196,7 @@
     <string name="template_form_title_new">יצירת תבנית חדשה</string>
     <string name="template_form_title_edit">עריכת תבנית</string>
     <string name="template_existing_title">תבניות קיימות</string>
+    <string name="template_list_hint">לחצו על תבנית כדי לערוך או למחוק.</string>
     <string name="template_empty_list">אין תבניות עדיין. צרו את הראשונה!</string>
     <string name="template_option_edit">ערוך תבנית</string>
     <string name="template_option_delete">מחק תבנית</string>

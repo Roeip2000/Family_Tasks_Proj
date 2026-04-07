@@ -377,93 +377,68 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void refreshDashboardUi(int assigned, int done, int urgent) {
         ensureSelectedChild();
         childSummaryAdapter.setSelectedChildId(selectedChildId);
-        updateTaskFilterSelectionUi();
         childSummaryAdapter.notifyDataSetChanged();
-        updateChildrenVisibility();
+
+        boolean hasChildren = !childSummaries.isEmpty();
+        rvChildren.setVisibility(hasChildren ? View.VISIBLE : View.GONE);
+        tvNoChildren.setVisibility(hasChildren ? View.GONE : View.VISIBLE);
 
         tvParentTotalTasks.setText(String.valueOf(assigned));
         tvParentCompleted.setText(String.valueOf(done));
         tvParentDueSoon.setText(String.valueOf(urgent));
 
+        updateTaskFilterSelectionUi();
         updateSelectedChildSection();
         buildSelectedChildTaskList();
     }
 
+    // מוודא שיש ילד נבחר תקף — אם לא, בוחר את הראשון ברשימה
     private void ensureSelectedChild() {
         if (childSummaries.isEmpty()) {
             selectedChildId = null;
             return;
         }
-
-        for (ChildSummary summary : childSummaries) {
-            if (summary.childId.equals(selectedChildId)) {
-                return;
-            }
+        for (ChildSummary s : childSummaries) {
+            if (s.childId.equals(selectedChildId)) return;
         }
-
         selectedChildId = childSummaries.get(0).childId;
     }
 
-    private void updateChildrenVisibility() {
-        if (childSummaries.isEmpty()) {
-            rvChildren.setVisibility(View.GONE);
-            tvNoChildren.setVisibility(View.VISIBLE);
-        } else {
-            rvChildren.setVisibility(View.VISIBLE);
-            tvNoChildren.setVisibility(View.GONE);
-        }
-    }
-
     private void updateTaskFilterSelectionUi() {
-        ChildSummary selectedChild = getSelectedChildSummary();
-
-        int totalCount = selectedChild == null ? 0 : selectedChild.totalCount;
-        int assignedCount = selectedChild == null ? 0 : selectedChild.assignedCount;
-        int completedCount = selectedChild == null ? 0 : selectedChild.completedCount;
-        int urgentCount = selectedChild == null ? 0 : selectedChild.urgentCount;
+        ChildSummary sc = getSelectedChildSummary();
+        boolean hasChild = sc != null;
 
         // כאן מעדכנים את הצ'יפים — הפילטר הפעיל מקבל מסגרת עבה יותר כדי שההורה ידע מה נבחר
         bindMetricChip(filterAllTasks, R.string.parent_dashboard_summary_total,
-                totalCount, METRIC_NEUTRAL_BG, METRIC_NEUTRAL_TEXT, METRIC_NEUTRAL_STROKE,
-                activeFilter == FilterMode.ALL);
+                hasChild ? sc.totalCount : 0, METRIC_NEUTRAL_BG, METRIC_NEUTRAL_TEXT,
+                METRIC_NEUTRAL_STROKE, activeFilter == FilterMode.ALL, hasChild);
         bindMetricChip(filterOpenTasks, R.string.parent_dashboard_summary_assigned,
-                assignedCount, METRIC_BLUE_BG, METRIC_BLUE_TEXT, METRIC_BLUE_STROKE,
-                activeFilter == FilterMode.ASSIGNED);
+                hasChild ? sc.assignedCount : 0, METRIC_BLUE_BG, METRIC_BLUE_TEXT,
+                METRIC_BLUE_STROKE, activeFilter == FilterMode.ASSIGNED, hasChild);
         bindMetricChip(filterCompletedTasks, R.string.parent_dashboard_summary_completed,
-                completedCount, METRIC_GREEN_BG, METRIC_GREEN_TEXT, METRIC_GREEN_STROKE,
-                activeFilter == FilterMode.COMPLETED);
+                hasChild ? sc.completedCount : 0, METRIC_GREEN_BG, METRIC_GREEN_TEXT,
+                METRIC_GREEN_STROKE, activeFilter == FilterMode.COMPLETED, hasChild);
         bindMetricChip(filterUrgentTasks, R.string.parent_dashboard_summary_urgent,
-                urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE,
-                activeFilter == FilterMode.URGENT);
-
-        setSummaryChipEnabled(filterAllTasks, selectedChild != null);
-        setSummaryChipEnabled(filterOpenTasks, selectedChild != null);
-        setSummaryChipEnabled(filterCompletedTasks, selectedChild != null);
-        setSummaryChipEnabled(filterUrgentTasks, selectedChild != null);
+                hasChild ? sc.urgentCount : 0, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT,
+                METRIC_ORANGE_STROKE, activeFilter == FilterMode.URGENT, hasChild);
     }
 
-    private void bindMetricChip(TextView textView, int labelResId, int count,
-                                String backgroundColor, String textColor, String strokeColor,
-                                boolean selected) {
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dpToPx(18));
-        background.setColor(Color.parseColor(backgroundColor));
-        // הצ'יפ הפעיל מקבל מסגרת עבה כדי שיהיה ברור מה נבחר
-        background.setStroke(dpToPx(selected ? 3 : 1), Color.parseColor(strokeColor));
+    // מעצב צ'יפ בודד — צבע רקע, טקסט, מסגרת, ומצב פעיל/כבוי
+    private void bindMetricChip(TextView tv, int labelResId, int count,
+                                String bgColor, String txtColor, String strokeColor,
+                                boolean selected, boolean enabled) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(dpToPx(18));
+        bg.setColor(Color.parseColor(bgColor));
+        bg.setStroke(dpToPx(selected ? 3 : 1), Color.parseColor(strokeColor));
 
-        textView.setBackground(background);
-        textView.setTextColor(Color.parseColor(textColor));
-        textView.setText(getString(R.string.parent_dashboard_metric_with_count,
+        tv.setBackground(bg);
+        tv.setTextColor(Color.parseColor(txtColor));
+        tv.setText(getString(R.string.parent_dashboard_metric_with_count,
                 getString(labelResId), count));
-        textView.setElevation(selected ? dpToPx(4) : 0);
-    }
-
-    // מפעיל/מכבה צ'יפ — רק כשיש ילד נבחר אפשר ללחוץ על הפילטרים
-    private void setSummaryChipEnabled(TextView textView, boolean enabled) {
-        textView.setEnabled(enabled);
-        textView.setClickable(enabled);
-        textView.setFocusable(enabled);
-        textView.setAlpha(enabled ? 1f : 0.5f);
+        tv.setElevation(selected ? dpToPx(4) : 0);
+        tv.setEnabled(enabled);
+        tv.setAlpha(enabled ? 1f : 0.5f);
     }
 
     private void updateSelectedChildSection() {

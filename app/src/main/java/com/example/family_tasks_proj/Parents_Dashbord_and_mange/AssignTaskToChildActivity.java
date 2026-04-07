@@ -111,6 +111,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         etDueDate.setOnClickListener(v -> showDatePicker());
         btnAssign.setOnClickListener(v -> showAssignConfirmDialog());
+
+        // חזרה לדשבורד ההורה
+        findViewById(R.id.btnBackToDashboard).setOnClickListener(v -> finish());
     }
 
     private void bindViews() {

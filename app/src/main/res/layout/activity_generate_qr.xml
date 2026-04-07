@@ -7,6 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F7FA"
     android:padding="24dp"
     tools:context=".Parents_Dashbord_and_mange.GenerateQRActivity">
 
