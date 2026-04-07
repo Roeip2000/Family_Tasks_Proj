@@ -22,6 +22,10 @@
 /.claude/settings.local.json
 /.claude/worktrees/
 /_claude/
+/\.ai/raw_claude_cli_full/
+/\.ai/snapshots/
+/\.ai/*combined*.txt
+/\.ai/*index*.txt
 
 # Windows local artifact
 /nul
