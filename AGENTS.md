@@ -1,5 +1,17 @@
 # Family Tasks Project Agent Notes
 
+## Startup Checklist
+- Before making suggestions, plans, or code edits, read these files first:
+  - `AGENTS.md`
+  - `CLAUDE.md`
+  - `.ai/history/project_history.md`
+  - `.ai/decisions/architecture_decisions.md`
+  - `.ai/bugs/resolved_issues.md`
+  - `.ai/status/current_focus.md`
+  - `.ai/status/recovered_sources.md`
+- Treat `.ai/raw_claude_cli_full` as the permanent local source of truth for recovered Claude CLI history.
+- Do not commit, delete, overwrite, or reorganize the raw archive unless the user explicitly asks.
+
 ## Scope
 - This repo is a student-level Android final project in Java with Firebase Auth + Firebase Realtime Database.
 - Use `.ai/raw_claude_cli_full` as the historical source of truth when reconstructing intent or prior work.
@@ -53,3 +65,4 @@
 - Update `.ai/decisions/architecture_decisions.md` when a structural rule changes.
 - Update `.ai/bugs/resolved_issues.md` for real fixes, not for planned work.
 - Update `.ai/status/current_focus.md` for the next actionable work and known gaps.
+- Update `.ai/status/recovered_sources.md` when new archive sources are scanned, reclassified, or found to conflict.
