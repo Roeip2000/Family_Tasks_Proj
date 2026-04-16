@@ -2,4 +2,31 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- פלטת צבעים ראשית — 3 צבעים בלבד -->
+    <color name="primary">#2F80ED</color>
+    <color name="primary_light">#E8F1FB</color>
+    <color name="primary_dark">#1F4E79</color>
+
+    <color name="accent">#4CAF50</color>
+    <color name="accent_light">#ECF8F1</color>
+
+    <color name="urgent">#E8740C</color>
+    <color name="urgent_light">#FFF4E5</color>
+
+    <!-- רקעים -->
+    <color name="bg_screen">#F5F7FA</color>
+    <color name="bg_card">#FFFFFF</color>
+
+    <!-- טקסט -->
+    <color name="text_primary">#102A43</color>
+    <color name="text_secondary">#52606D</color>
+    <color name="text_hint">#829AB1</color>
+
+    <!-- גבולות -->
+    <color name="border_light">#E4ECF3</color>
+
+    <!-- התנתקות -->
+    <color name="logout_bg">#FFF0F0</color>
+    <color name="logout_text">#B33A3A</color>
 </resources>

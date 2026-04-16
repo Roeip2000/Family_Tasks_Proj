@@ -25,3 +25,19 @@
 - This is a student-level Android Java project and should stay explainable and simple.
 - Preserve the current package mental map unless there is a concrete reason to change it.
 - Prefer small, safe edits over broad refactors.
+
+## End Of Session Rule
+Before ending any meaningful session, update:
+- .ai/history/project_history.md
+- .ai/decisions/architecture_decisions.md
+- .ai/bugs/resolved_issues.md
+- .ai/status/current_focus.md
+- .ai/status/recovered_sources.md
+
+Rules for updates:
+- add only concrete new information from the current session
+- do not rewrite old content unnecessarily
+- clearly mark anything inferred versus explicitly verified
+- if a bug was fixed, record the confirmed fix
+- if a decision was made, record the decision and why
+- if work is still incomplete, record it under pending work

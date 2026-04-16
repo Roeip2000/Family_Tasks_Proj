@@ -7,24 +7,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/bg_card"
     tools:context=".Child_Login.ChildQRLoginFragment">
+
+    <!-- הסבר קצר מעל הכפתור -->
+    <TextView
+        android:id="@+id/tvQrHint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/child_qr_scan_prompt"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/btnScanQR"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnScanQR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/scan_qr"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:backgroundTint="@color/primary"
         android:paddingHorizontal="32dp"
         android:paddingVertical="14dp"
-        android:backgroundTint="#3F51B5"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/scan_qr"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

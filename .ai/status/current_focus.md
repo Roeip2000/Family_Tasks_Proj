@@ -40,6 +40,22 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Final review for any remaining hardcoded strings or weak error states.
 - Final review of oral-defense readiness and demo sequencing.
 
+## UI/UX Redesign (2026-04-16)
+- Completed smart redesign of all app screens (XML-only, no logic changes)
+- Critical fix: ChildDashboard had white text on light background (invisible section titles)
+- Added proper color palette to colors.xml (was only black/white)
+- Set theme colors in themes.xml (colorPrimary, statusBarColor)
+- ParentDashboard: primary action "שלח משימה" now full-width and prominent, secondary actions in one row
+- ChildDashboard: rounded filter boxes, proper text colors, softer logout button
+- QR fragment: added context text above scan button
+- ManageChildren: form wrapped in MaterialCard
+- Templates: form has rounded background with border
+- AssignTask: reduced oversized image preview (150dp → 100dp)
+- Child task item: replaced radiobutton_off_background with proper status dot drawable
+- All logout buttons now use soft pink instead of aggressive red
+- New drawables: bg_filter_urgent, bg_filter_completed, bg_filter_open, bg_status_dot, bg_form_card
+- Build verified: assembleDebug SUCCESS
+
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.
 - Prefer the current source tree over stale todo files when deciding what is already done.

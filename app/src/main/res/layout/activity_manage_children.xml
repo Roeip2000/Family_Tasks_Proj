@@ -27,74 +27,83 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- === תמונת פרופיל לילד === -->
-
-        <!-- עיגול אפור — מחזיק את תמונת הילד לפני הבחירה -->
-        <ImageView
-            android:id="@+id/imgChildPhoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_avatar_placeholder"
-            android:clipToOutline="true"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/cd_child_photo" />
-
-        <!-- כפתור בחירת תמונה מהגלריה -->
-        <Button
-            android:id="@+id/btnPickChildPhoto"
-            android:layout_width="wrap_content"
+        <!-- === טופס הוספת ילד בכרטיס === -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#607D8B"
-            android:text="@string/btn_pick_child_photo"
-            android:textColor="#FFFFFF" />
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_light"
+            app:strokeWidth="1dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <!-- === טופס הוספת ילד === -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_horizontal">
 
-        <EditText
-            android:id="@+id/etFirstName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/first_name"
-            android:inputType="textPersonName" />
+                <ImageView
+                    android:id="@+id/imgChildPhoto"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_avatar_placeholder"
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/cd_child_photo" />
 
-        <EditText
-            android:id="@+id/etLastName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/last_name"
-            android:inputType="textPersonName" />
+                <Button
+                    android:id="@+id/btnPickChildPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:backgroundTint="@color/primary_light"
+                    android:text="@string/btn_pick_child_photo"
+                    android:textAllCaps="false"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="13sp" />
 
-        <Button
-            android:id="@+id/btnAddChild"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#4CAF50"
-            android:text="@string/add_child" />
+                <EditText
+                    android:id="@+id/etFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/first_name"
+                    android:inputType="textPersonName" />
 
-        <!-- כפתור ביטול עריכה — מוצג רק כשעורכים ילד קיים -->
-        <Button
-            android:id="@+id/btnCancelEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:backgroundTint="#9E9E9E"
-            android:text="@string/btn_cancel_edit"
-            android:visibility="gone" />
+                <EditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/last_name"
+                    android:inputType="textPersonName" />
 
-        <!-- === קו מפריד בין הטופס לרשימה === -->
+                <Button
+                    android:id="@+id/btnAddChild"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/accent"
+                    android:text="@string/add_child"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="12dp"
-            android:background="#DDDDDD" />
+                <Button
+                    android:id="@+id/btnCancelEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:backgroundTint="#9E9E9E"
+                    android:text="@string/btn_cancel_edit"
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- === כותרת רשימת ילדים === -->
 

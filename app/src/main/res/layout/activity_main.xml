@@ -1,64 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך פתיחה ראשי — כפתורי התחברות/הרשמה להורה, וכניסת ילד.
+     לחיצה על כפתור פותחת Fragment בתוך fragmentContainer. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F7FB"
+    android:background="@color/bg_screen"
     tools:context=".auth.MainActivity">
 
+    <!-- רקע עליון עדין -->
     <View
         android:id="@+id/topGlow"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:background="#E7F0FB"
+        android:layout_height="160dp"
         android:alpha="0.95"
+        android:background="@color/primary_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- כותרת ראשית -->
     <TextView
         android:id="@+id/tvHomeTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:text="@string/home_title"
-        android:textColor="#1B2A41"
-        android:textSize="30sp"
+        android:textColor="@color/text_primary"
+        android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- תיאור קצר -->
     <TextView
         android:id="@+id/tvHomeSubtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
         android:gravity="center"
         android:text="@string/home_subtitle"
-        android:textColor="#5C6B80"
-        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvHomeTitle" />
 
+    <!-- כרטיס פעולות -->
     <androidx.cardview.widget.CardView
         android:id="@+id/actionPanel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="20dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="4dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="18dp"
+        app:cardBackgroundColor="@color/bg_card"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvHomeSubtitle">
@@ -67,101 +73,94 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp">
+            android:paddingStart="18dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/home_question"
-                android:textColor="#243B53"
-                android:textSize="18sp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:text="@string/home_description"
-                android:textColor="#6B7C93"
-                android:textSize="13sp" />
-
+            <!-- === פעולות הורה === -->
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="20dp"
-                android:backgroundTint="#2F80ED"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:backgroundTint="@color/primary"
                 android:elevation="0dp"
                 android:text="@string/parents_login"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnRegister"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="#E8F1FB"
+                android:layout_height="46dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/primary_light"
                 android:elevation="0dp"
                 android:text="@string/register_parents"
                 android:textAllCaps="false"
-                android:textColor="#1F4E79"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/primary_dark"
+                android:textSize="14sp" />
 
+            <!-- קו הפרדה -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="18dp"
-                android:layout_marginBottom="18dp"
-                android:background="#E7ECF3" />
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="14dp"
+                android:background="@color/border_light" />
 
+            <!-- === פעולות ילד === -->
             <Button
                 android:id="@+id/btnChildQR"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:backgroundTint="#34A853"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/accent"
                 android:elevation="0dp"
                 android:text="@string/child_login_qr"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnChild"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="#F1F5F9"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/accent_light"
                 android:elevation="0dp"
                 android:text="@string/child_direct_login"
                 android:textAllCaps="false"
-                android:textColor="#334E68"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- אזור Fragment — כניסת הורה / הרשמה / QR -->
     <androidx.cardview.widget.CardView
         android:id="@+id/fragmentShell"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="22dp"
-        app:cardElevation="3dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/bg_card"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -172,9 +171,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="14dp"
-            android:paddingTop="14dp"
+            android:paddingTop="10dp"
             android:paddingEnd="14dp"
-            android:paddingBottom="14dp" />
+            android:paddingBottom="10dp" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- פרגמנט הרשמת הורה — 4 שדות + כפתור יצירת חשבון.
+     מוצג בתוך fragmentContainer של activity_main.xml. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,127 +12,136 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="12dp">
+        android:paddingStart="6dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="20dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/title_parent_register"
-            android:textColor="#1B2A41"
-            android:textSize="24sp"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@string/desc_parent_register"
-            android:textColor="#6B7C93"
-            android:textSize="14sp" />
+            android:textColor="@color/text_hint"
+            android:textSize="13sp" />
 
+        <!-- שם פרטי -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="14dp"
             android:text="@string/first_name"
-            android:textColor="#243B53"
+            android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etFirstName"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#C9D6E2"
+            android:layout_height="46dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input_field"
             android:hint="@string/hint_first_name"
             android:inputType="textPersonName"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="#102A43"
-            android:textColorHint="#829AB1" />
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:textSize="15sp" />
 
+        <!-- שם משפחה -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:text="@string/last_name"
-            android:textColor="#243B53"
+            android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etLastName"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#C9D6E2"
+            android:layout_height="46dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input_field"
             android:hint="@string/hint_last_name"
             android:inputType="textPersonName"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="#102A43"
-            android:textColorHint="#829AB1" />
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:textSize="15sp" />
 
+        <!-- אימייל -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:text="@string/label_email"
-            android:textColor="#243B53"
+            android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#C9D6E2"
+            android:layout_height="46dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input_field"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="#102A43"
-            android:textColorHint="#829AB1" />
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:textSize="15sp" />
 
+        <!-- סיסמה -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:text="@string/label_password"
-            android:textColor="#243B53"
+            android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#C9D6E2"
+            android:layout_height="46dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input_field"
             android:hint="@string/hint_create_password"
             android:inputType="textPassword"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="#102A43"
-            android:textColorHint="#829AB1" />
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:textSize="15sp" />
 
+        <!-- כפתור הרשמה -->
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="26dp"
-            android:backgroundTint="#2F80ED"
+            android:layout_height="50dp"
+            android:layout_marginTop="18dp"
+            android:backgroundTint="@color/primary"
             android:elevation="0dp"
             android:text="@string/btn_create_account"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -138,7 +149,7 @@
             android:id="@+id/progressRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:visibility="gone" />
 
     </LinearLayout>

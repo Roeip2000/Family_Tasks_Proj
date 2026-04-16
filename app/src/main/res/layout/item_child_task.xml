@@ -36,10 +36,10 @@
              נמצא לפני הטקסט — ממוקם צמוד לתמונה או לקצה -->
         <View
             android:id="@+id/viewStatusDot"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:layout_marginEnd="10dp"
-            android:background="@android:drawable/radiobutton_off_background" />
+            android:background="@drawable/bg_status_dot" />
 
         <!-- === חלק טקסטואלי: כותרת + זמן שנותר + כוכבים === -->
         <LinearLayout
