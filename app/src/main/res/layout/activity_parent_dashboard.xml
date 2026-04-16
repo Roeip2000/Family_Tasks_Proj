@@ -242,11 +242,14 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvChildren"
                     android:layout_width="match_parent"
-                    android:layout_height="124dp"
+                    android:layout_height="104dp"
                     android:layout_marginTop="10dp"
                     android:clipToPadding="false"
-                    android:nestedScrollingEnabled="true"
-                    android:scrollbars="vertical" />
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
+                    android:scrollbars="horizontal" />
 
                 <View
                     android:layout_width="match_parent"

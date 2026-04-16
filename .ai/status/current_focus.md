@@ -84,12 +84,13 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - lighter top header
   - three quick-summary cards
   - one main card for child selection + task list
+  - child selection refined into a horizontal picker so the task list keeps priority
   - visible task tabs reduced to urgent/open/completed
   - primary action remains dominant at the bottom
 - Verified state:
   - `assembleDebug` succeeded after the redesign
 - Next useful verification:
-  - check the dashboard on a real device or emulator with multiple children/tasks to confirm the smaller child-list area still feels comfortable
+  - check the dashboard on a real device or emulator with multiple children/tasks to confirm the horizontal child picker feels natural in RTL and on narrow phones
 
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.

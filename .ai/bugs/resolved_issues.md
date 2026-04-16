@@ -93,6 +93,7 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
 - Resolution:
   - Rebuilt the screen into a lighter header, summary cards, one main workspace card, and a quieter action footer.
   - Merged child selection and task viewing into the same main card.
+  - Changed the child selector from a vertical stacked list into a horizontal picker to keep the tasks area visually primary.
   - Changed the default task filter to `ASSIGNED` and hid the `ALL` tab from the visible layout.
   - Verified the redesign with `./gradlew.bat assembleDebug`.
 - Confidence: explicit current-session verification

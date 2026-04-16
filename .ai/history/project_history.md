@@ -134,6 +134,7 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - the top profile card was simplified into a lighter header row
   - the three summary cards were kept, but the main content was restructured into one larger workspace card instead of separate stacked child/tasks cards
   - the child selector and task list now live in the same card so the screen feels like one flow instead of many competing sections
+  - the child selector itself was later refined from a vertical mini-list into a horizontal picker so it stops competing with the task list for vertical attention
   - the visible task tabs were reduced in the UI to `Urgent / Open / Completed`
   - the default active task view was changed from `ALL` to `ASSIGNED` so the screen opens on one focused list instead of multiple grouped sections
   - action buttons were kept at the bottom with one dominant primary button and weaker secondary/destructive actions

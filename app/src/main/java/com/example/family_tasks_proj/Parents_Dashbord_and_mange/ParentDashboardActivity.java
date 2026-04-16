@@ -176,7 +176,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void setupChildrenList() {
-        rvChildren.setLayoutManager(new LinearLayoutManager(this));
+        rvChildren.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         childSummaryAdapter = new ParentDashboardChildSummaryAdapter(
                 this,
                 childSummaries,
