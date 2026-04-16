@@ -88,7 +88,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private String selectedChildId;
 
     // מצב הפילטר הנוכחי — איזה סוג משימות מוצג ברשימה
-    private FilterMode activeFilter = FilterMode.ALL;
+    private FilterMode activeFilter = FilterMode.ASSIGNED;
 
     private enum FilterMode {
         ALL, ASSIGNED, COMPLETED, URGENT

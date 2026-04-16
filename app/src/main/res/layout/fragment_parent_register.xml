@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- פרגמנט הרשמת הורה — 4 שדות + כפתור יצירת חשבון.
-     מוצג בתוך fragmentContainer של activity_main.xml. -->
+<!-- מסך הרשמת הורה: ריווח עקבי וזרימת קלט נוחה -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,10 +11,10 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingStart="6dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="6dp"
-        android:paddingBottom="20dp">
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="28dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -29,13 +28,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:gravity="center"
             android:text="@string/desc_parent_register"
-            android:textColor="@color/text_hint"
+            android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <!-- שם פרטי -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,22 +46,25 @@
         <EditText
             android:id="@+id/etFirstName"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:autofillHints="givenName"
             android:background="@drawable/bg_input_field"
             android:hint="@string/hint_first_name"
+            android:imeOptions="actionNext"
             android:inputType="textPersonName"
+            android:maxLines="1"
+            android:nextFocusDown="@id/etLastName"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint"
             android:textSize="15sp" />
 
-        <!-- שם משפחה -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:text="@string/last_name"
             android:textColor="@color/text_primary"
             android:textSize="13sp"
@@ -72,22 +73,25 @@
         <EditText
             android:id="@+id/etLastName"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:autofillHints="familyName"
             android:background="@drawable/bg_input_field"
             android:hint="@string/hint_last_name"
+            android:imeOptions="actionNext"
             android:inputType="textPersonName"
+            android:maxLines="1"
+            android:nextFocusDown="@id/etEmail"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint"
             android:textSize="15sp" />
 
-        <!-- אימייל -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:text="@string/label_email"
             android:textColor="@color/text_primary"
             android:textSize="13sp"
@@ -96,22 +100,25 @@
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:autofillHints="emailAddress"
             android:background="@drawable/bg_input_field"
             android:hint="@string/hint_email"
+            android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:nextFocusDown="@id/etPassword"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint"
             android:textSize="15sp" />
 
-        <!-- סיסמה -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:text="@string/label_password"
             android:textColor="@color/text_primary"
             android:textSize="13sp"
@@ -120,18 +127,20 @@
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:autofillHints="newPassword"
             android:background="@drawable/bg_input_field"
             android:hint="@string/hint_create_password"
+            android:imeOptions="actionDone"
             android:inputType="textPassword"
+            android:maxLines="1"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint"
             android:textSize="15sp" />
 
-        <!-- כפתור הרשמה -->
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
@@ -149,7 +158,7 @@
             android:id="@+id/progressRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:visibility="gone" />
 
     </LinearLayout>

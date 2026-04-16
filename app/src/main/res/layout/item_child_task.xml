@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- כרטיס משימה — מציג תמונה, כותרת, תאריך יעד, כוכבים, נקודת סטטוס, כפתור "בוצע".
-     רקע לבן רגיל — הAdaptor יכול לשנות ל-#E8F5E9 (ירוק בהיר) כשהמשימה בוצעה.
-     משמש ב-ChildTaskAdapter עם RecyclerView. -->
-<androidx.cardview.widget.CardView
+<!-- כרטיס משימה של הילד: אותו מבנה, עם גימור רגוע ועקבי יותר -->
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    android:layout_marginBottom="10dp"
+    app:cardBackgroundColor="@color/bg_card"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardElevation="1dp"
+    app:strokeColor="@color/border_light"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="14dp"
-        android:gravity="center_vertical">
+        android:padding="14dp">
 
-        <!-- === צד שמאל: תמונת המשימה (56dp) — גלויה רק אם יש תמונה === -->
         <ImageView
             android:id="@+id/imgTaskImage"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
             android:layout_marginEnd="12dp"
-            android:background="#F5F5F5"
-            android:contentDescription="@string/cd_task_image" />
+            android:background="@color/primary_light"
+            android:contentDescription="@string/cd_task_image"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
-        <!-- === אייקון סטטוס: עיגול צבעוני (ירוק=בוצע, כתום=דחוף, אפור=רגיל) ===
-             נמצא לפני הטקסט — ממוקם צמוד לתמונה או לקצה -->
         <View
             android:id="@+id/viewStatusDot"
             android:layout_width="12dp"
@@ -41,62 +38,57 @@
             android:layout_marginEnd="10dp"
             android:background="@drawable/bg_status_dot" />
 
-        <!-- === חלק טקסטואלי: כותרת + זמן שנותר + כוכבים === -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginEnd="8dp">
+            android:orientation="vertical">
 
-            <!-- כותרת המשימה — bold, 2 שורות מקסימום -->
             <TextView
                 android:id="@+id/tvTaskTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/default_task_name"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A1A"
+                android:ellipsize="end"
                 android:maxLines="2"
-                android:ellipsize="end" />
+                android:text="@string/default_task_name"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <!-- זמן שנותר / תאריך יעד — הצבע נקבע ב-Adapter לפי סטטוס -->
             <TextView
                 android:id="@+id/tvDueDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:text="@string/default_today"
-                android:textSize="13sp"
-                android:textColor="#888888"
-                android:layout_marginTop="3dp" />
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
 
-            <!-- כוכבים שאפשר להרוויח — מוסתר אם 0 -->
             <TextView
                 android:id="@+id/tvTaskStars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:layout_marginTop="2dp"
                 android:textColor="#FFB300"
-                android:textStyle="bold"
-                android:layout_marginTop="2dp" />
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- === כפתור "בוצע" — מוצג רק אם לא הושלם, מוסתר אם כבר בוצע === -->
         <Button
             android:id="@+id/btnDone"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="38dp"
             android:layout_marginStart="6dp"
-            android:text="@string/btn_done"
-            android:textSize="12sp"
-            android:backgroundTint="#7B61FF"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/accent"
             android:minWidth="0dp"
             android:paddingStart="12dp"
-            android:paddingEnd="12dp" />
+            android:paddingEnd="12dp"
+            android:text="@string/btn_done"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

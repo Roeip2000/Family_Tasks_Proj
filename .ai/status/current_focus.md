@@ -10,6 +10,9 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - task template management with edit/delete
   - child dashboard adapter/filter/logout behavior
   - parent dashboard child summaries and filter-driven task views
+- Latest verified build status:
+  - `./gradlew.bat assembleDebug` passed on 2026-04-16 after restoring the missing `bg_spinner` drawable used by the assign-task screen.
+  - `./gradlew.bat assembleDebug` also passed on 2026-04-16 after a second-pass XML polish/refinement sweep across auth, dashboard, QR, and management screens.
 
 ## Highest-Value Remaining Work
 - Run a fresh end-to-end verification on the latest code state.
@@ -55,6 +58,38 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - All logout buttons now use soft pink instead of aggressive red
 - New drawables: bg_filter_urgent, bg_filter_completed, bg_filter_open, bg_status_dot, bg_form_card
 - Build verified: assembleDebug SUCCESS
+
+## Build Fix (2026-04-16)
+- Resolved current build blocker:
+  - `activity_assign_task_to_child.xml` referenced `@drawable/bg_spinner`, but the drawable file was missing.
+- Fix applied:
+  - added `app/src/main/res/drawable/bg_spinner.xml`
+- Verification:
+  - `assembleDebug` succeeded after the fix
+
+## UI Polish Pass (2026-04-16)
+- Completed a second-pass refinement, not a redesign:
+  - tighter auth form spacing and keyboard flow
+  - calmer parent dashboard metrics and secondary actions
+  - child task cards aligned with the current palette
+  - QR and child-selection screens now match the rest of the app visually
+  - manage-children and template screens no longer stand out as older styling
+- Highest-value remaining work is still outside XML polish:
+  - fresh end-to-end emulator/device verification
+  - review of hardcoded `starsWorth = 10`
+  - any final demo/oral-defense prep
+
+## ParentDashboard Redesign (2026-04-16)
+- Completed a focused overload-reduction pass on ParentDashboard:
+  - lighter top header
+  - three quick-summary cards
+  - one main card for child selection + task list
+  - visible task tabs reduced to urgent/open/completed
+  - primary action remains dominant at the bottom
+- Verified state:
+  - `assembleDebug` succeeded after the redesign
+- Next useful verification:
+  - check the dashboard on a real device or emulator with multiple children/tasks to confirm the smaller child-list area still feels comfortable
 
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.

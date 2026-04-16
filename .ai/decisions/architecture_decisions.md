@@ -69,3 +69,29 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The user repeatedly asked for minimal, safe changes and rejected new screens/classes unless strictly necessary.
   - Current source implements this pattern.
+
+## AD-009: Restore missing shared UI resources instead of rewriting working layout references
+- Status: active
+- Decision:
+  - If a screen already references a shared drawable/style resource and the build breaks only because that resource file is missing, restore the resource first.
+- Why:
+  - This keeps fixes local, preserves the intended screen styling, and avoids unnecessary layout churn in a student-level project.
+  - The 2026-04-16 `bg_spinner` fix for the assign-task screen followed this rule and cleared the resource-linking failure without changing screen logic.
+
+## AD-010: Late UI polish should stay XML-only and inside the current visual system
+- Status: active
+- Decision:
+  - Final submission polish should prefer XML spacing, color, input, and card refinements over logic changes or new UI flows.
+  - Reuse the existing palette and shared field/card resources instead of introducing a second styling system.
+- Why:
+  - The project is already functionally complete; the highest-value remaining polish is clarity and consistency.
+  - The 2026-04-16 second-pass refinement was completed entirely through small XML edits and preserved the student-readable structure.
+
+## AD-011: ParentDashboard should open in a focused task mode, not an everything-at-once mode
+- Status: active
+- Decision:
+  - The ParentDashboard task area should default to the `assigned/open` filter instead of the `all` view.
+  - The `all` filter can remain in code for compatibility, but it should not dominate the visible UI.
+- Why:
+  - The main dashboard problem was cognitive overload from showing too much at once.
+  - Defaulting to one focused list fits the screen’s purpose better and matches the 2026-04-16 overload-reduction pass.

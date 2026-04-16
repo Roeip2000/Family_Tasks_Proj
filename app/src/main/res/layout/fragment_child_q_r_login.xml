@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- מסך סריקת QR לילד — כפתור יחיד שפותח את מצלמת הסורק (ZXing).
-     Fragment שמוצג בתוך fragmentContainer של activity_main.xml.
-     ChildQRLoginFragment.java אחראי על פענוח, בדיקה מול Firebase, ושמירת סשן. -->
+<!-- מסך סריקת QR לילד: אותה פעולה, עם כפתור ברור ועקבי -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,7 +8,6 @@
     android:background="@color/bg_card"
     tools:context=".Child_Login.ChildQRLoginFragment">
 
-    <!-- הסבר קצר מעל הכפתור -->
     <TextView
         android:id="@+id/tvQrHint"
         android:layout_width="0dp"
@@ -28,15 +25,15 @@
 
     <Button
         android:id="@+id/btnScanQR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/primary"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="14dp"
         android:text="@string/scan_qr"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

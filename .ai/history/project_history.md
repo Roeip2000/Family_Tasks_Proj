@@ -108,3 +108,35 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
 - `file-history/*` snapshots were not fully mapped back to every exact filename during this recovery pass.
 - No final device/emulator verification transcript for the latest April state was found in the raw export.
 - No finished in-repo final submission packet or oral-defense cheat sheet was recovered from raw history.
+
+## 2026-04-16: Assign-task resource-linking fix
+- The build failed in `activity_assign_task_to_child.xml` because both Spinner views referenced `@drawable/bg_spinner`, but that drawable file was missing from `app/src/main/res/drawable/`.
+- The fix restored the intended shared style resource by adding `app/src/main/res/drawable/bg_spinner.xml` with the same simple rounded-field look already used by the screen.
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully after the drawable was added.
+- Confidence: explicitly verified in the current session
+
+## 2026-04-16: Second-pass UI polish and consistency pass
+- A later refinement pass focused on making the already-redesigned UI feel more intentional without changing logic or adding screens.
+- Concrete XML-only improvements made in this session:
+  - login/register forms gained cleaner spacing plus `imeOptions` and autofill hints for smoother keyboard flow
+  - main entry shell and parent dashboard spacing were tightened so primary vs. secondary actions read faster
+  - child dashboard task cards were softened and the `Done` button was moved from an off-palette purple to the app accent color
+  - QR and child-selection screens were rebuilt into the same card/spacing/color system as the rest of the app
+  - manage-children and template screens were brought closer to the newer input/button styling so they no longer looked like older untouched screens
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully after the polish pass.
+- Confidence: explicitly verified in the current session
+
+## 2026-04-16: ParentDashboard overload reduction pass
+- A focused ParentDashboard redesign was completed to make the screen easier to scan without changing its data model or navigation targets.
+- Concrete changes made in this session:
+  - the top profile card was simplified into a lighter header row
+  - the three summary cards were kept, but the main content was restructured into one larger workspace card instead of separate stacked child/tasks cards
+  - the child selector and task list now live in the same card so the screen feels like one flow instead of many competing sections
+  - the visible task tabs were reduced in the UI to `Urgent / Open / Completed`
+  - the default active task view was changed from `ALL` to `ASSIGNED` so the screen opens on one focused list instead of multiple grouped sections
+  - action buttons were kept at the bottom with one dominant primary button and weaker secondary/destructive actions
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully after the ParentDashboard restructure.
+- Confidence: explicitly verified in the current session

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- מסך ניהול ילדים — הוספה, צפייה, עריכה ומחיקה.
-     בחלק העליון: טופס הוספת ילד חדש + בחירת תמונה לילד.
-     בחלק התחתון: רשימת כל הילדים הקיימים (ListView).
-     לחיצה על ילד ברשימה → תפריט "ערוך שם" / "מחק ילד". -->
+<!-- ניהול ילדים: אותו מבנה, עם ריווח ושדות שמתאימים לשאר המערכת -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
+    android:background="@color/bg_screen"
     tools:context=".Parents_Dashbord_and_mange.ManageChildrenActivity">
 
     <LinearLayout
@@ -16,18 +14,16 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- כותרת -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
             android:text="@string/title_manage_children"
-            android:textColor="#222"
+            android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- === טופס הוספת ילד בכרטיס === -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,15 +32,14 @@
             app:cardCornerRadius="18dp"
             app:cardElevation="2dp"
             app:strokeColor="@color/border_light"
-            app:strokeWidth="1dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:gravity="center_horizontal">
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/imgChildPhoto"
@@ -53,13 +48,13 @@
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/bg_avatar_placeholder"
                     android:clipToOutline="true"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/cd_child_photo" />
+                    android:contentDescription="@string/cd_child_photo"
+                    android:scaleType="centerCrop" />
 
                 <Button
                     android:id="@+id/btnPickChildPhoto"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_marginBottom="12dp"
                     android:backgroundTint="@color/primary_light"
                     android:text="@string/btn_pick_child_photo"
@@ -70,23 +65,33 @@
                 <EditText
                     android:id="@+id/etFirstName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="46dp"
+                    android:background="@drawable/bg_input_field"
                     android:hint="@string/first_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint" />
 
                 <EditText
                     android:id="@+id/etLastName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_input_field"
                     android:hint="@string/last_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint" />
 
                 <Button
                     android:id="@+id/btnAddChild"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="14dp"
                     android:backgroundTint="@color/accent"
                     android:text="@string/add_child"
                     android:textAllCaps="false"
@@ -95,28 +100,26 @@
                 <Button
                     android:id="@+id/btnCancelEdit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:backgroundTint="#9E9E9E"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/primary_light"
                     android:text="@string/btn_cancel_edit"
                     android:textAllCaps="false"
+                    android:textColor="@color/primary_dark"
                     android:visibility="gone" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <!-- === כותרת רשימת ילדים === -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/label_registered_children"
-            android:textColor="#333"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- הודעה כשאין ילדים -->
         <TextView
             android:id="@+id/tvNoChildren"
             android:layout_width="match_parent"
@@ -124,29 +127,26 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="@string/empty_no_children"
-            android:textColor="#999"
-            android:textSize="14sp"
+            android:textColor="@color/text_hint"
+            android:textSize="13sp"
             android:visibility="gone" />
 
-        <!-- רשימת ילדים — לחיצה פותחת תפריט ערוך/מחק
-             גובה קבוע כי ScrollView לא יכולה להכיל ListView עם weight -->
         <ListView
             android:id="@+id/lvChildren"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:divider="#EEEEEE"
+            android:divider="@color/border_light"
             android:dividerHeight="1dp" />
 
-        <!-- כפתור חזרה לדשבורד ההורה -->
         <Button
             android:id="@+id/btnBackToDashboard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="#E8F1FB"
+            android:backgroundTint="@color/primary_light"
             android:text="@string/btn_back_to_dashboard"
             android:textAllCaps="false"
-            android:textColor="#1F4E79" />
+            android:textColor="@color/primary_dark" />
 
     </LinearLayout>
 
