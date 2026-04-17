@@ -65,7 +65,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     private void bindCardBackground(TaskViewHolder holder, ChildTask task) {
         if (holder.itemView instanceof CardView) {
             int bgColor = holder.itemView.getContext().getColor(
-                    task.isDone ? R.color.accent_light : R.color.bg_card);
+                    task.isDone ? R.color.surface_soft_green : R.color.bg_card);
             ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
         }
     }
@@ -139,9 +139,14 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כוכבים — מוצגים רק אם יש ערך חיובי
     private void bindStars(TaskViewHolder holder, ChildTask task) {
-        holder.tvTaskStars.setText(task.starsWorth > 0
-                ? holder.itemView.getContext().getString(R.string.child_stars_worth, task.starsWorth)
-                : "");
+        if (task.starsWorth > 0) {
+            holder.tvTaskStars.setText(holder.itemView.getContext()
+                    .getString(R.string.child_stars_worth, task.starsWorth));
+            holder.tvTaskStars.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvTaskStars.setText("");
+            holder.tvTaskStars.setVisibility(View.GONE);
+        }
     }
 
     // כפתור "בוצע" — מוצג רק למשימות פתוחות, עם אנימציה בלחיצה

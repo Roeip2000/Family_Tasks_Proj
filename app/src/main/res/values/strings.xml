@@ -261,4 +261,11 @@
     <string name="default_status">ממתין</string>
     <string name="default_today">היום</string>
     <string name="default_zero">0</string>
+    <string name="btn_login_loading">מתחברים...</string>
+    <string name="btn_create_account_loading">יוצרים חשבון...</string>
+    <string name="child_dashboard_header_eyebrow">היום שלי</string>
+    <string name="child_dashboard_workspace_eyebrow">המשימות שלי</string>
+    <string name="child_qr_helper_card">סורקים את הקוד, בוחרים את השם שלך וממשיכים ישר למשימות.</string>
+    <string name="child_selection_subtitle_parent_unknown">אם לא נסרק QR, בוחרים קודם הורה ואז את השם.</string>
+    <string name="child_selection_subtitle_parent_known">כבר זיהינו את המשפחה. נשאר רק לבחור שם ולהיכנס.</string>
 </resources>

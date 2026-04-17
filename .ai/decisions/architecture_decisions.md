@@ -114,3 +114,13 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The remaining parent-side UX problems were caused more by layout mechanics and competing section weight than by missing features.
   - Compact selectors plus content-sized lists keep the UI calmer, more believable, and easier to explain in a school presentation.
+
+## AD-014: Child-side screens should stay simpler than the parent side, but still follow the same visual grammar
+- Status: active
+- Decision:
+  - Keep the child experience lighter than the parent experience: one compact header, one focused task workspace, and minimal supporting chrome.
+  - Reuse the same button, spacing, card, and muted-surface language across child QR login and child selection instead of inventing a second styling approach.
+  - Use inline loading feedback on auth buttons instead of extra flows or dialogs.
+- Why:
+  - The whole-app review showed that the child flow was still drifting back toward the older "separate classroom screens" feel.
+  - A shared visual grammar with a simpler child hierarchy improves cohesion without making the child side too dense or hard to explain.

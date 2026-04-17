@@ -189,3 +189,18 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat lintDebug` completed successfully and produced an HTML lint report in `app/build/reports/lint-results-debug.html`.
   - `./gradlew.bat testDebugUnitTest` completed successfully.
 - Confidence: explicitly verified in the current session
+
+## 2026-04-17: Whole-app second pass for child-side consistency and auth feedback
+- A second follow-up pass extended the redesign beyond the parent flow so the child-side no longer felt like an older leftover screen set next to the newer parent UI.
+- Concrete changes completed in this session:
+  - `ChildDashboard` was rebuilt from a mini-dashboard stack into a lighter child header plus one focused task workspace card.
+  - The child filter controls were simplified from three full visual blocks into a calmer segmented strip that still preserves the same urgent/open/completed behavior.
+  - Child task rows were tightened with smaller preview images, quieter completed-state tinting, and a compact stars pill that only appears when relevant.
+  - Child QR login and child selection were converted to the same top-aligned scrollable structure as the rest of the app, so the child flow now feels like part of the same product.
+  - `ChildSelectionActivity` now changes its subtitle depending on whether the parent was already identified by QR/session or still needs to be chosen.
+  - Parent login/register gained clearer loading feedback by disabling fields during submission and swapping the CTA text to a loading state.
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully.
+  - `./gradlew.bat lintDebug` completed successfully and rewrote the HTML lint report in `app/build/reports/lint-results-debug.html`.
+  - `./gradlew.bat testDebugUnitTest` completed successfully.
+- Confidence: explicitly verified in the current session

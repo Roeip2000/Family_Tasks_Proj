@@ -74,6 +74,7 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
 - The 2026-04-16 ParentDashboard redesign pass was likewise based on current source inspection and local build verification only.
 - The 2026-04-16 whole-app redesign pass was likewise based on current source inspection and local build verification only; no new raw archive material was needed.
 - The 2026-04-17 parent-side refinement pass also used current source inspection only; no new `.ai/raw_claude_cli_full` files were scanned.
+- The 2026-04-17 child-side consistency/auth-feedback pass also used current source inspection only; no new `.ai/raw_claude_cli_full` files were scanned.
 - External context used in that session:
   - Figma connector availability check via `whoami` only (no project file key was available in the repo to inspect actual frames)
   - focused web benchmarking against official Todoist, Google Tasks, Microsoft To Do, Cozi, and Android documentation pages

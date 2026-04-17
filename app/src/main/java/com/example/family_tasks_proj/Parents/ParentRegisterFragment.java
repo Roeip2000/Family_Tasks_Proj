@@ -139,6 +139,11 @@ public class ParentRegisterFragment extends Fragment {
     /** מציג טעינה קצרה ומונע לחיצות כפולות בזמן ההרשמה. */
     private void setLoading(boolean isLoading) {
         btnRegister.setEnabled(!isLoading);
+        etFirstName.setEnabled(!isLoading);
+        etLastName.setEnabled(!isLoading);
+        etEmail.setEnabled(!isLoading);
+        etPassword.setEnabled(!isLoading);
+        btnRegister.setText(isLoading ? R.string.btn_create_account_loading : R.string.btn_create_account);
         if (progressRegister != null) {
             progressRegister.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         }

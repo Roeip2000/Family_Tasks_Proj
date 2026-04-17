@@ -42,6 +42,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private static final String KEY_CHILD = "childId";
 
     private TextView tvParentLabel;
+    private TextView tvSubtitle;
     private Spinner spinnerParents;
     private TextView tvChildLabel;
     private Spinner spinnerChildren;
@@ -62,6 +63,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
         bindViews();
         resolveIds();
+        updateSubtitle();
         btnEnter.setOnClickListener(v -> onEnterClicked());
 
         if (isBlank(parentId)) {
@@ -74,6 +76,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
+        tvSubtitle = findViewById(R.id.tvSubtitle);
         tvParentLabel = findViewById(R.id.tvParentLabel);
         spinnerParents = findViewById(R.id.spinnerParents);
         tvChildLabel = findViewById(R.id.tvChildLabel);
@@ -98,6 +101,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         parentId = preferences.getString(KEY_PARENT, null);
         preselectedChildId = preferences.getString(KEY_CHILD, null);
+        updateSubtitle();
     }
 
     private void showParentPicker() {
@@ -106,6 +110,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         tvChildLabel.setVisibility(View.GONE);
         spinnerChildren.setVisibility(View.GONE);
         btnEnter.setEnabled(false);
+        updateSubtitle();
     }
 
     private void hideParentPicker() {
@@ -113,6 +118,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         spinnerParents.setVisibility(View.GONE);
         tvChildLabel.setVisibility(View.VISIBLE);
         spinnerChildren.setVisibility(View.VISIBLE);
+        updateSubtitle();
     }
 
     private void loadParents() {
@@ -184,6 +190,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 }
 
                 parentId = parentItems.get(position).id;
+                updateSubtitle();
                 tvChildLabel.setVisibility(View.VISIBLE);
                 spinnerChildren.setVisibility(View.VISIBLE);
                 loadChildren(parentId);
@@ -191,9 +198,11 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                parentId = null;
                 btnEnter.setEnabled(false);
                 tvChildLabel.setVisibility(View.GONE);
                 spinnerChildren.setVisibility(View.GONE);
+                updateSubtitle();
             }
         });
     }
@@ -310,6 +319,17 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+
+    private void updateSubtitle() {
+        if (tvSubtitle == null) {
+            return;
+        }
+
+        int subtitleRes = isBlank(parentId)
+                ? R.string.child_selection_subtitle_parent_unknown
+                : R.string.child_selection_subtitle_parent_known;
+        tvSubtitle.setText(subtitleRes);
     }
 
     private static class ParentItem {

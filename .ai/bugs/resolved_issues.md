@@ -135,3 +135,18 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Added small helper labels to assign-task and QR screens so the flows look intentional without adding new logic.
   - Verified with `./gradlew.bat assembleDebug` and `./gradlew.bat lintDebug`.
 - Confidence: explicit current-session verification
+
+## RI-013: Child-side screens still looked like an older mini-dashboard and did not match the refined parent flow
+- First clear evidence: 2026-04-17 whole-app redesign review of `ChildDashboard`, `ChildQRLoginFragment`, and `ChildSelectionActivity`
+- Problem:
+  - The child dashboard still used three separate metric-like filter blocks plus a separate task area, which recreated the same stacked-widget problem that had already been fixed on the parent side.
+  - Child QR login and child selection were functional, but their structure still felt disconnected from the rest of the redesigned app.
+  - Parent login/register still lacked stronger inline submission feedback while waiting on Firebase.
+- Resolution:
+  - Rebuilt `ChildDashboard` into a lighter top header and one task workspace card with calmer segmented filters.
+  - Simplified child task rows and hid the stars pill when it is not relevant.
+  - Converted child QR login and child selection into the same top-aligned scroll-based structure used elsewhere in the app.
+  - Added subtitle logic in `ChildSelectionActivity` so the child understands whether the parent was already identified.
+  - Added loading-state CTA text and field disabling in parent login/register.
+  - Verified with `./gradlew.bat assembleDebug`, `./gradlew.bat lintDebug`, and `./gradlew.bat testDebugUnitTest`.
+- Confidence: explicit current-session verification

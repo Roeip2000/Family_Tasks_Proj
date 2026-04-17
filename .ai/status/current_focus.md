@@ -14,6 +14,7 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - `./gradlew.bat assembleDebug` passed on 2026-04-16 after restoring the missing `bg_spinner` drawable used by the assign-task screen.
   - `./gradlew.bat assembleDebug` also passed on 2026-04-16 after a second-pass XML polish/refinement sweep across auth, dashboard, QR, and management screens.
   - `./gradlew.bat assembleDebug` passed again on 2026-04-17 after the parent-side refinement pass.
+  - `./gradlew.bat assembleDebug` passed again on 2026-04-17 after the child-side consistency and auth-feedback pass.
   - `./gradlew.bat lintDebug` also passed on 2026-04-17 after the same pass.
   - `./gradlew.bat testDebugUnitTest` also passed on 2026-04-17 after the same pass.
 
@@ -23,7 +24,7 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Review `AssignTaskToChildActivity` scoring behavior.
   - Current source still hardcodes `starsWorth = 10`.
 - Decide whether parent login still needs final UX polish.
-  - Earlier history explicitly wanted a loading indicator and smoother login feedback.
+  - Inline loading feedback is now present; the remaining question is whether a final end-to-end device check still reveals missing polish.
 - Prepare final demo/oral-defense material if still needed.
   - Raw history contains repeated review and readiness prompts, but no final submission brief inside the repo.
 
@@ -127,6 +128,8 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - the compact dashboard child selector in RTL
   - the auto-sized dashboard/manage-children lists with 1-2 items and with many items
   - login/register CTA reachability while the keyboard is open
+  - the new child dashboard segmented filter strip and smaller task cards on a narrow screen
+  - the child QR -> child selection flow when a parent is preselected by QR and when it is not
 
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.

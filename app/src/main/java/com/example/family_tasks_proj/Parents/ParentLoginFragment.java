@@ -106,6 +106,9 @@ public class ParentLoginFragment extends Fragment {
     /** מציג טעינה קצרה ומונע לחיצות כפולות בזמן ההתחברות. */
     private void setLoading(boolean isLoading) {
         btnLogin.setEnabled(!isLoading);
+        etEmail.setEnabled(!isLoading);
+        etPassword.setEnabled(!isLoading);
+        btnLogin.setText(isLoading ? R.string.btn_login_loading : R.string.btn_login);
         if (progressLogin != null) {
             progressLogin.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         }

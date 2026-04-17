@@ -342,21 +342,21 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void updateFilterBlock(LinearLayout layout, boolean selected, int fillColorRes) {
         GradientDrawable background = new GradientDrawable();
         background.setCornerRadius(24f);
-        background.setColor(getColor(fillColorRes));
-        background.setStroke(selected ? 3 : 1,
-                getColor(selected ? R.color.primary : R.color.border_light));
+        background.setColor(getColor(selected ? fillColorRes : android.R.color.transparent));
+        background.setStroke(selected ? 2 : 0,
+                getColor(selected ? R.color.primary : android.R.color.transparent));
 
         layout.setSelected(selected);
         layout.setBackground(background);
         layout.setAlpha(1f);
         layout.setElevation(0f);
 
-        int textColor = getColor(selected ? R.color.text_primary : R.color.surface_text_soft);
+        int textColor = getColor(selected ? R.color.text_primary : R.color.text_secondary);
         for (int index = 0; index < layout.getChildCount(); index++) {
             View child = layout.getChildAt(index);
             if (child instanceof TextView) {
                 ((TextView) child).setTextColor(textColor);
-                child.setAlpha(selected ? 1f : 0.92f);
+                child.setAlpha(selected ? 1f : 0.9f);
             }
         }
     }
