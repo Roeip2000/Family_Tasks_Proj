@@ -1,7 +1,6 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.app.DatePickerDialog;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,14 +35,12 @@ import java.util.Map;
 
 /**
  * מסך הקצאת משימה לילד — ההורה בוחר תבנית, ילד, תאריך יעד ושולח.
- *
  * תהליך:
  * 1. טוען תבניות מ-Firebase → מוצגות ב-Spinner
  * 2. טוען ילדים → מוצגים ב-Spinner שני
  * 3. ההורה בוחר תבנית → הכותרת והתמונה מוצגות אוטומטית
  * 4. ההורה בוחר תאריך → DatePicker
  * 5. לחיצה על "שלח" → שומרת את המשימה ב-Firebase תחת הילד שנבחר
- *
  * נתיב Firebase: /parents/{uid}/children/{childId}/tasks/{taskId}
  */
 public class AssignTaskToChildActivity extends AppCompatActivity {
@@ -271,10 +268,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         return true;
     }
 
-    private String getSelectedTemplateImage() {
+    private TaskTemplate getSelectedTemplate() {
         int templatePosition = spTemplates.getSelectedItemPosition();
         return templatePosition >= 0 && templatePosition < templates.size()
-                ? templates.get(templatePosition).imageBase64
+                ? templates.get(templatePosition)
                 : null;
     }
 
