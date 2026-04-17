@@ -143,8 +143,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnShowQR = findViewById(R.id.btnShowQR);
         btnLogout = findViewById(R.id.btnLogout);
 
+        // גם האווטאר עצמו וגם הכפתור הקטן ליד השם פותחים את בורר התמונה —
+        // כך שאם מישהו מנסה "ללחוץ על התמונה" כמו ברוב האפליקציות זה פשוט עובד.
         Button btnChangeProfilePic = findViewById(R.id.btnChangeProfilePic);
-        btnChangeProfilePic.setOnClickListener(v -> profileImagePicker.launch("image/*"));
+        View.OnClickListener profileClick = v -> profileImagePicker.launch("image/*");
+        btnChangeProfilePic.setOnClickListener(profileClick);
+        ivParentProfile.setOnClickListener(profileClick);
     }
 
     private void bindActions() {
@@ -400,15 +404,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
         bindTaskTab(filterUrgentTasks, activeFilter == FilterMode.URGENT, enabled);
     }
 
+    // הטאב הפעיל מקבל מילוי מלא בצבע הראשי וטקסט לבן — מצב נבחר ברור וחד,
+    // במקום הטאב-"שקט" הישן שהיה כמעט זהה למצב הלא-נבחר.
     private void bindTaskTab(TextView tv, boolean selected, boolean enabled) {
         GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dpToPx(14));
-        background.setColor(getColor(selected ? R.color.bg_card : android.R.color.transparent));
-        background.setStroke(dpToPx(selected ? 1 : 0),
-                getColor(selected ? R.color.primary : android.R.color.transparent));
+        background.setCornerRadius(dpToPx(12));
+        background.setColor(getColor(selected ? R.color.primary : android.R.color.transparent));
 
         tv.setBackground(background);
-        tv.setTextColor(getColor(selected ? R.color.primary_dark : R.color.text_secondary));
+        tv.setTextColor(getColor(selected ? R.color.white : R.color.text_secondary));
         tv.setEnabled(enabled);
         tv.setAlpha(enabled ? 1f : 0.45f);
     }
