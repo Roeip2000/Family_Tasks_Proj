@@ -144,6 +144,7 @@
     <string name="parent_dashboard_task_status_late">באיחור</string>
     <string name="parent_dashboard_task_status_urgent">דחוף</string>
     <string name="parent_dashboard_date_updated">התאריך עודכן!</string>
+    <string name="parent_dashboard_task_completed_readonly">משימה שהושלמה היא לקריאה בלבד ולא ניתן לערוך אותה.</string>
     <string name="parent_dashboard_task_deleted">המשימה נמחקה</string>
     <string name="parent_dashboard_delete_task_title">מחיקת משימה</string>
     <string name="parent_dashboard_delete_task_message">למחוק את "%1$s"?</string>

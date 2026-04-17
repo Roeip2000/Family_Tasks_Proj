@@ -282,8 +282,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         childSummaries.clear();
                         childPhotoCache.clear();
 
-                        // סופרים את כל המשימות לסיכום הבית הכללי
-                        int[] counts = parseDashboardData(snapshot);
+                        // מעבדים את הנתונים מה-Snapshot וממלאים את הרשימות
+                        parseDashboardData(snapshot);
+
+                        // מחשבים את סיכום הבית הכללי (סטטיסטיקה)
+                        int[] counts = calculateHouseStats();
 
                         refreshDashboardUi(counts[0], counts[1], counts[2]);
                     }
@@ -299,13 +302,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     /**
      * מפענח את כל נתוני הילדים והמשימות מה-Snapshot.
-     * מחזיר מערך [assigned, done, urgent] — ספירות כלליות לסיכום הבית.
+     * מעדכן את הרשימות allAssignedTasks ו-childSummaries.
      */
-    private int[] parseDashboardData(DataSnapshot snapshot) {
-        int done = 0;
-        int urgent = 0;
-        int assigned = 0;
-
+    private void parseDashboardData(DataSnapshot snapshot) {
         for (DataSnapshot childSnap : snapshot.getChildren()) {
             String childId = childSnap.getKey();
             if (childId == null || childId.trim().isEmpty()) continue;
@@ -328,13 +327,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
                 summary.totalCount++;
                 if (task.isDone) {
-                    done++;
                     summary.completedCount++;
                 } else {
-                    assigned++;
                     summary.assignedCount++;
                     if (isUrgentTask(task)) {
-                        urgent++;
                         summary.urgentCount++;
                     }
                 }
@@ -343,7 +339,27 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
             childSummaries.add(summary);
         }
+    }
 
+    /**
+     * מחשב ספירות כלליות לסיכום הבית מתוך רשימת המשימות שכבר נטענה.
+     * מחזיר מערך [assigned, done, urgent].
+     */
+    private int[] calculateHouseStats() {
+        int done = 0;
+        int urgent = 0;
+        int assigned = 0;
+
+        for (AssignedTask task : allAssignedTasks) {
+            if (task.isDone) {
+                done++;
+            } else {
+                assigned++;
+                if (isUrgentTask(task)) {
+                    urgent++;
+                }
+            }
+        }
         return new int[]{assigned, done, urgent};
     }
 
@@ -570,19 +586,28 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 safeText(task.dueAt),
                 status);
 
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.parent_dashboard_task_details_title)
-                .setMessage(details)
-                .setPositiveButton(R.string.parent_dashboard_change_date,
-                        (dialog, which) -> showChangeDateDialog(task))
-                .setNeutralButton(R.string.parent_dashboard_delete_task,
-                        (dialog, which) -> showDeleteTaskDialog(task))
-                .setNegativeButton(R.string.parent_dashboard_close, null)
-                .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.parent_dashboard_task_details_title);
+
+        if (task.isDone) {
+            // משימה שהושלמה היא לקריאה בלבד — מציגים הודעה מתאימה ללא כפתורי עריכה
+            String readOnlyDetails = details + "\n\n" + getString(R.string.parent_dashboard_task_completed_readonly);
+            builder.setMessage(readOnlyDetails)
+                    .setNegativeButton(R.string.parent_dashboard_close, null);
+        } else {
+            builder.setMessage(details)
+                    .setPositiveButton(R.string.parent_dashboard_change_date,
+                            (dialog, which) -> showChangeDateDialog(task))
+                    .setNeutralButton(R.string.parent_dashboard_delete_task,
+                            (dialog, which) -> showDeleteTaskDialog(task))
+                    .setNegativeButton(R.string.parent_dashboard_close, null);
+        }
+
+        builder.show();
     }
 
     private void showChangeDateDialog(AssignedTask task) {
-        if (task == null) return;
+        if (task == null || task.isDone) return;
         Calendar cal = Calendar.getInstance();
 
         new DatePickerDialog(this, (view, year, month, day) -> {
@@ -597,7 +622,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void showDeleteTaskDialog(AssignedTask task) {
-        if (task == null) return;
+        if (task == null || task.isDone) return;
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.parent_dashboard_delete_task_title)
