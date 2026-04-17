@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,6 +99,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (f.isEmpty() || l.isEmpty()) { Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show(); return; }
 
         String id = editingChildId != null ? editingChildId : childrenRef().push().getKey();
+        if (id == null) return;
         String img = selectedChildPhoto != null ? ImageHelper.bitmapToBase64(selectedChildPhoto) : editingChildOldImageBase64;
         btnAddChild.setEnabled(false);
 
@@ -214,9 +216,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
         @NonNull @Override public View getView(int pos, View v, @NonNull ViewGroup p) {
             if (v == null) v = getLayoutInflater().inflate(R.layout.item_manage_child, p, false);
             ChildItem item = getItem(pos);
+            if (item == null) return v;
             ((TextView) v.findViewById(R.id.tvChildFullName)).setText(getChildDisplayName(item));
             ImageView iv = v.findViewById(R.id.ivChildThumb);
-            if (item != null && item.profileImageBase64 != null) {
+            if (item.profileImageBase64 != null) {
                 iv.setImageBitmap(ImageHelper.getCircularBitmap(ImageHelper.base64ToBitmap(item.profileImageBase64)));
             } else iv.setImageDrawable(null);
             return v;

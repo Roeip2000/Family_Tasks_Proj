@@ -46,12 +46,17 @@ import java.util.UUID;
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTitle;
+    private EditText etStarsWorth;
     private ImageView imgTask;
     private Button btnSave;
     private Button btnCancelEdit;
     private TextView tvFormTitle;
     private TextView tvNoTemplates;
     private ListView lvTemplates;
+
+    // טווח חוקי לכמות כוכבים — פשוט ומספיק לפרויקט כיתה
+    private static final int MIN_STARS = 1;
+    private static final int MAX_STARS = 100;
 
     private Bitmap correctedBitmap;
 
@@ -81,6 +86,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parent_task_template);
 
         etTitle = findViewById(R.id.etTitle);
+        etStarsWorth = findViewById(R.id.etStarsWorth);
         imgTask = findViewById(R.id.imgTask);
         btnSave = findViewById(R.id.btnSave);
         btnCancelEdit = findViewById(R.id.btnCancelEdit);
@@ -156,6 +162,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
+        // אימות מספר כוכבים — נדרש ערך חוקי לפני שמירה
+        int stars = parseStarsOrNotify();
+        if (stars <= 0) return;
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, R.string.template_parent_not_logged_in, Toast.LENGTH_SHORT).show();
@@ -167,6 +177,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         Map<String, Object> data = new HashMap<>();
         data.put("id", templateId);
         data.put("title", title);
+        data.put("starsWorth", stars);
 
         // אם נבחרה תמונה חדשה — ממירים ושומרים
         if (correctedBitmap != null) {
@@ -196,6 +207,22 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show());
     }
 
+    // מנסה לקרוא את מספר הכוכבים; אם לא חוקי — מציג הודעה ומחזיר -1
+    private int parseStarsOrNotify() {
+        String raw = etStarsWorth.getText().toString().trim();
+        try {
+            int value = Integer.parseInt(raw);
+            if (value < MIN_STARS || value > MAX_STARS) {
+                Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
+                return -1;
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+    }
+
     // תפריט אפשרויות לתבנית — עריכה או מחיקה
     private void showTemplateOptionsDialog(int position) {
         if (position < 0 || position >= templateList.size()) return;
@@ -222,6 +249,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private void startEditTemplate(TaskTemplate template) {
         editingTemplateId = template.id;
         etTitle.setText(template.title);
+        etStarsWorth.setText(String.valueOf(template.safeStarsWorth()));
         correctedBitmap = null;
 
         // מציג את התמונה הקיימת של התבנית
@@ -271,6 +299,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         editingTemplateId = null;
         correctedBitmap = null;
         etTitle.setText("");
+        etStarsWorth.setText("");
         imgTask.setImageResource(android.R.drawable.ic_menu_gallery);
         tvFormTitle.setText(R.string.template_form_title_new);
         btnSave.setText(R.string.btn_save_template);
@@ -305,8 +334,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             ImageView ivTemplateThumb = convertView.findViewById(R.id.ivTemplateThumb);
             TextView tvTemplateTitle = convertView.findViewById(R.id.tvTemplateTitle);
+            TextView tvTemplateStars = convertView.findViewById(R.id.tvTemplateStars);
 
             tvTemplateTitle.setText(template.toDisplayTitle());
+            tvTemplateStars.setText(getString(R.string.template_item_stars, template.safeStarsWorth()));
 
             if (template.imageBase64 == null || template.imageBase64.isEmpty()) {
                 ivTemplateThumb.setImageResource(android.R.drawable.ic_menu_gallery);

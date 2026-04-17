@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,6 +58,28 @@
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint" />
 
+        <!-- שדה מספר כוכבים — נשמר על התבנית ומשמש כברירת מחדל להקצאת משימה -->
+        <TextView
+            style="@style/Widget.Family.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/label_template_stars" />
+
+        <EditText
+            android:id="@+id/etStarsWorth"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input_field"
+            android:hint="@string/hint_template_stars"
+            android:inputType="number"
+            android:maxLength="3"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint" />
+
         <ImageView
             android:id="@+id/imgTask"
             android:layout_width="116dp"
@@ -102,40 +125,64 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        style="@style/Widget.Family.SectionTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/template_existing_title"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tvTemplateListHint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/template_list_hint"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/tvNoTemplates"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/template_empty_list"
-        android:textColor="@color/text_hint"
-        android:visibility="gone" />
-
-    <ListView
-        android:id="@+id/lvTemplates"
+    <!-- כרטיס רשימת התבניות — מעוצב כמו כרטיס הטופס שמעליו, כדי שההיררכיה
+         בין "תבנית חדשה" ל-"תבניות קיימות" תהיה חזקה ויזואלית. -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
         android:layout_weight="1"
-        android:divider="@color/divider"
-        android:dividerHeight="1dp" />
+        app:cardBackgroundColor="@color/bg_card"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/border_light"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="14dp">
+
+            <TextView
+                style="@style/Widget.Family.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/template_existing_title"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvTemplateListHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/template_list_hint"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvNoTemplates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/template_empty_list"
+                android:textColor="@color/text_hint"
+                android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/lvTemplates"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:divider="@color/divider"
+                android:dividerHeight="1dp" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/btnBackToDashboard"

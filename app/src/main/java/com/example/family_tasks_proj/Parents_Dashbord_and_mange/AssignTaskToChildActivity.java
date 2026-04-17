@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -117,8 +116,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void loadTemplates() {
         templates.clear();
 
-        parentRef()
-                .child("task_templates")
+        parentRef().child("task_templates")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -137,16 +135,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                             titles.add(template.toDisplayTitle());
                         }
 
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                AssignTaskToChildActivity.this,
-                                android.R.layout.simple_spinner_dropdown_item,
-                                titles
-                        );
-                        spTemplates.setAdapter(adapter);
-
-                        if (!templates.isEmpty()) {
-                            displayBase64Image(templates.get(0).imageBase64);
-                        }
+                        setSpinnerItems(spTemplates, titles);
+                        if (!templates.isEmpty()) displayBase64Image(templates.get(0).imageBase64);
                     }
 
                     @Override
@@ -163,8 +153,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void loadChildren() {
         childIds.clear();
 
-        parentRef()
-                .child("children")
+        parentRef().child("children")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -186,11 +175,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                             ));
                         }
 
-                        spAssignee.setAdapter(new ArrayAdapter<>(
-                                AssignTaskToChildActivity.this,
-                                android.R.layout.simple_spinner_dropdown_item,
-                                childNames
-                        ));
+                        setSpinnerItems(spAssignee, childNames);
                     }
 
                     @Override
@@ -206,68 +191,49 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private void showAssignConfirmDialog() {
         String title = etTitle.getText().toString().trim();
-        String date = etDueDate.getText().toString().trim();
+        String dueDate = etDueDate.getText().toString().trim();
         int childPosition = spAssignee.getSelectedItemPosition();
-
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (date.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
-            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (!validateAssignment(title, dueDate, childPosition)) return;
 
         String childName = String.valueOf(spAssignee.getSelectedItem());
         new AlertDialog.Builder(this)
                 .setTitle(R.string.assign_task_confirm_title)
-                .setMessage(getString(R.string.assign_task_confirm_message, title, childName, date))
+                .setMessage(getString(R.string.assign_task_confirm_message, title, childName, dueDate))
                 .setPositiveButton(R.string.assign_task_confirm_action, (dialog, which) -> assignTask())
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
     private void assignTask() {
-        int childPosition = spAssignee.getSelectedItemPosition();
         String title = etTitle.getText().toString().trim();
         String dueDate = etDueDate.getText().toString().trim();
+        int childPosition = spAssignee.getSelectedItemPosition();
+        if (!validateAssignment(title, dueDate, childPosition)) return;
 
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
-            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String childId = childIds.get(childPosition);
-        String imageBase64 = null;
-        int templatePosition = spTemplates.getSelectedItemPosition();
-        if (templatePosition >= 0 && templatePosition < templates.size()) {
-            imageBase64 = templates.get(templatePosition).imageBase64;
-        }
-
-        String taskId = tasksRef(childId).push().getKey();
+        DatabaseReference tasksRef = tasksRef(childIds.get(childPosition));
+        String taskId = tasksRef.push().getKey();
 
         if (taskId == null) {
             Toast.makeText(this, R.string.assign_task_error_create_id, Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // ערך הכוכבים נלקח מהתבנית שנבחרה — כך שכל משימה יורשת את מה שההורה הגדיר
+        TaskTemplate selectedTemplate = getSelectedTemplate();
+        int starsWorth = selectedTemplate != null
+                ? selectedTemplate.safeStarsWorth()
+                : TaskTemplate.DEFAULT_STARS_WORTH;
+
         Map<String, Object> task = new HashMap<>();
         task.put("title", title);
         task.put("dueAt", dueDate);
         task.put("isDone", false);
-        task.put("starsWorth", 10);
-        task.put("imageBase64", imageBase64);
+        task.put("starsWorth", starsWorth);
+        task.put("imageBase64", selectedTemplate != null ? selectedTemplate.imageBase64 : null);
         task.put("createdAt", System.currentTimeMillis());
 
         // כתיבה אחת פשוטה לנתיב של הילד שנבחר
-        tasksRef(childId)
-                .child(taskId)
+        tasksRef.child(taskId)
                 .setValue(task)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, R.string.assign_task_success, Toast.LENGTH_SHORT).show();
@@ -293,19 +259,45 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .child("tasks");
     }
 
+    private boolean validateAssignment(String title, String dueDate, int childPosition) {
+        if (title.isEmpty()) {
+            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
+            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private String getSelectedTemplateImage() {
+        int templatePosition = spTemplates.getSelectedItemPosition();
+        return templatePosition >= 0 && templatePosition < templates.size()
+                ? templates.get(templatePosition).imageBase64
+                : null;
+    }
+
+    private void setSpinnerItems(Spinner spinner, List<String> items) {
+        spinner.setAdapter(new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                items
+        ));
+    }
+
     private void displayBase64Image(String base64) {
         if (base64 == null || base64.isEmpty()) {
             imgTaskPreview.setImageDrawable(null);
             return;
         }
 
-        Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
-        imgTaskPreview.setImageBitmap(bitmap);
+        imgTaskPreview.setImageBitmap(ImageHelper.base64ToBitmap(base64));
     }
 
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        new DatePickerDialog(this, (DatePicker view, int year, int month, int dayOfMonth) ->
+        new DatePickerDialog(this, (view, year, month, dayOfMonth) ->
                 etDueDate.setText(getString(R.string.default_date_format, dayOfMonth, month + 1, year)),
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),

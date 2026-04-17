@@ -226,6 +226,10 @@
     <string name="template_option_delete">מחק תבנית</string>
     <string name="template_delete_title">מחיקת תבנית</string>
     <string name="template_delete_message">למחוק את "%1$s"?</string>
+    <string name="label_template_stars">כוכבים שהמשימה שווה</string>
+    <string name="hint_template_stars">מספר בין 1 ל-100</string>
+    <string name="template_stars_invalid">יש להזין מספר כוכבים חוקי (בין 1 ל-100)</string>
+    <string name="template_item_stars">שווה %1$d כוכבים</string>
 
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
     <string name="error_invalid_email">פורמט אימייל לא תקין</string>
