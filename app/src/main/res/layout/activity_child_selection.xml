@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- בחירת הורה/ילד אחרי QR: בלי שינוי זרימה, רק ניקוי חזותי ושימוש באותה שפה -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen"
-    android:padding="20dp">
+    android:paddingStart="16dp"
+    android:paddingTop="18dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="20dp">
 
     <TextView
         android:id="@+id/tvTitle"
+        style="@style/Widget.Family.ScreenTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
+        android:gravity="start"
         android:text="@string/title_child_login"
-        android:textColor="@color/text_primary"
         android:textSize="22sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        style="@style/Widget.Family.ScreenSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="start"
+        android:text="@string/subtitle_child_login"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/selectionCard"
@@ -28,11 +40,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="18dp"
-        app:cardElevation="1dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:strokeColor="@color/border_light"
         app:strokeWidth="1dp">
 
@@ -40,25 +52,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tvParentLabel"
+                style="@style/Widget.Family.FieldLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_choose_parent"
-                android:textColor="@color/text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold"
                 android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/spinnerParents"
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_spinner"
                 android:spinnerMode="dropdown"
@@ -66,18 +73,16 @@
 
             <TextView
                 android:id="@+id/tvChildLabel"
+                style="@style/Widget.Family.FieldLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="@string/label_choose_child"
-                android:textColor="@color/text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:text="@string/label_choose_child" />
 
             <Spinner
                 android:id="@+id/spinnerChildren"
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_spinner"
                 android:spinnerMode="dropdown" />
@@ -95,15 +100,11 @@
 
             <Button
                 android:id="@+id/btnEnter"
+                style="@style/Widget.Family.AccentButton"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:backgroundTint="@color/accent"
-                android:text="@string/btn_enter"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:text="@string/btn_enter" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

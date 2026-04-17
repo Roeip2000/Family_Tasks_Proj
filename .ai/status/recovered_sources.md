@@ -72,6 +72,7 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
 - The 2026-04-16 assign-task resource-linking fix was based on current source inspection and local build verification only; no additional raw archive files were scanned for that fix session.
 - The 2026-04-16 second-pass UI refinement was also based on current source inspection and local build verification only; no new raw archive material was needed for that pass.
 - The 2026-04-16 ParentDashboard redesign pass was likewise based on current source inspection and local build verification only.
+- The 2026-04-16 whole-app redesign pass was likewise based on current source inspection and local build verification only; no new raw archive material was needed.
 
 ## Local Preservation Rule
 - Keep `.ai/raw_claude_cli_full/` and `.ai/snapshots/` locally as permanent source material.

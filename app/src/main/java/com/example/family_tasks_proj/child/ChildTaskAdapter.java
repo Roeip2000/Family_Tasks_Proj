@@ -1,13 +1,11 @@
 package com.example.family_tasks_proj.child;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,7 +53,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         ChildTask task = tasks.get(position);
         long daysLeft = DateUtils.daysLeft(task.dueAt);
 
-        animateEntry(holder, position);
         bindCardBackground(holder, task);
         bindTitle(holder, task);
         bindDueDate(holder, task, daysLeft);
@@ -65,30 +62,10 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         bindDoneButton(holder, task);
     }
 
-    // אנימציית כניסה — כל שורה נכנסת מימין עם השהייה קטנה
-    private void animateEntry(TaskViewHolder holder, int position) {
-        holder.itemView.animate().cancel();
-        holder.btnDone.animate().cancel();
-        holder.itemView.setAlpha(1f);
-        holder.itemView.setTranslationX(0f);
-        holder.btnDone.setScaleX(1f);
-        holder.btnDone.setScaleY(1f);
-
-        holder.itemView.setTranslationX(300f);
-        holder.itemView.setAlpha(0f);
-        holder.itemView.animate()
-                .translationX(0f)
-                .alpha(1f)
-                .setDuration(350)
-                .setStartDelay(position * 60L)
-                .setInterpolator(new DecelerateInterpolator())
-                .start();
-    }
-
-    // משימה שבוצעה מקבלת רקע ירוק
     private void bindCardBackground(TaskViewHolder holder, ChildTask task) {
         if (holder.itemView instanceof CardView) {
-            int bgColor = task.isDone ? Color.parseColor("#E8F5E9") : Color.WHITE;
+            int bgColor = holder.itemView.getContext().getColor(
+                    task.isDone ? R.color.accent_light : R.color.bg_card);
             ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
         }
     }
@@ -100,11 +77,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (task.isDone) {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTaskTitle.setTextColor(Color.parseColor("#999999"));
+            holder.tvTaskTitle.setTextColor(holder.itemView.getContext().getColor(R.color.text_hint));
         } else {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTaskTitle.setTextColor(Color.parseColor("#1A1A1A"));
+            holder.tvTaskTitle.setTextColor(holder.itemView.getContext().getColor(R.color.text_primary));
         }
     }
 
@@ -113,16 +90,16 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         String dueText;
         if (task.isDone) {
             dueText = holder.itemView.getContext().getString(R.string.child_due_done);
-            holder.tvDueDate.setTextColor(Color.parseColor("#4CAF50"));
+            holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.success_dark));
         } else {
             dueText = formatDueText(holder, task.dueAt, daysLeft);
             if (daysLeft < 0) {
-                holder.tvDueDate.setTextColor(Color.parseColor("#E53935"));
+                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.danger));
             } else if (daysLeft <= 2) {
                 dueText = holder.itemView.getContext().getString(R.string.child_due_urgent_prefix, dueText);
-                holder.tvDueDate.setTextColor(Color.parseColor("#FF5722"));
+                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.warning_dark));
             } else {
-                holder.tvDueDate.setTextColor(Color.parseColor("#888888"));
+                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.text_secondary));
             }
         }
         holder.tvDueDate.setText(dueText);
@@ -135,13 +112,13 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         dot.setSize(14, 14);
 
         if (task.isDone) {
-            dot.setColor(Color.parseColor("#4CAF50"));
+            dot.setColor(holder.itemView.getContext().getColor(R.color.success_dark));
         } else if (daysLeft >= 0 && daysLeft <= 2) {
-            dot.setColor(Color.parseColor("#FF9800"));
+            dot.setColor(holder.itemView.getContext().getColor(R.color.warning_dark));
         } else if (daysLeft < 0) {
-            dot.setColor(Color.parseColor("#E53935"));
+            dot.setColor(holder.itemView.getContext().getColor(R.color.danger));
         } else {
-            dot.setColor(Color.parseColor("#BDBDBD"));
+            dot.setColor(holder.itemView.getContext().getColor(R.color.text_hint));
         }
         holder.viewStatusDot.setBackground(dot);
     }
@@ -177,17 +154,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         holder.btnDone.setVisibility(View.VISIBLE);
         holder.btnDone.setOnClickListener(v -> {
-            if (doneListener == null) return;
-
-            holder.btnDone.animate()
-                    .scaleX(0f).scaleY(0f)
-                    .setDuration(200)
-                    .start();
-            holder.itemView.animate()
-                    .alpha(0.6f)
-                    .setDuration(300)
-                    .withEndAction(() -> doneListener.onTaskDone(task))
-                    .start();
+            if (doneListener != null) {
+                doneListener.onTaskDone(task);
+            }
         });
     }
 

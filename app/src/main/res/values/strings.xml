@@ -4,11 +4,15 @@
     <string name="register_parents">הרשמת הורה</string>
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
-    <string name="child_direct_login">כניסה ישירה לילד (ללא QR)</string>
+    <string name="child_direct_login">בחירת ילד מהירה</string>
     <string name="home_title">משימות משפחתיות</string>
-    <string name="home_subtitle">מכאן נכנסים, נרשמים וממשיכים בקלות למסך המתאים להורה או לילד.</string>
-    <string name="home_question">איך תרצו להמשיך?</string>
-    <string name="home_description">פעולות ההורה מרוכזות יחד, וכניסת ילד נשארת פשוטה וברורה.</string>
+    <string name="home_subtitle">ניהול ביתי פשוט להורים, עם כניסה מהירה וברורה לילדים.</string>
+    <string name="home_question">איך ממשיכים?</string>
+    <string name="home_description">להורה יש כניסה והרשמה במקום אחד, ולילד יש סריקת QR או כניסה מהירה עם בחירת שם.</string>
+    <string name="home_parent_section_title">להורים</string>
+    <string name="home_parent_section_subtitle">כניסה והרשמה לניהול הילדים והמשימות.</string>
+    <string name="home_child_section_title">לילדים</string>
+    <string name="home_child_section_subtitle">סריקת QR או כניסה מהירה עם בחירת ילד.</string>
 
     <string name="first_name">שם פרטי</string>
     <string name="last_name">שם משפחה</string>
@@ -36,9 +40,12 @@
     <string name="btn_enter">כניסה</string>
     <string name="btn_logout">התנתק</string>
     <string name="btn_done">בוצע</string>
-    <string name="btn_change_parent_photo">עדכן תמונה</string>
+    <string name="btn_change_parent_photo">עדכון תמונה</string>
     <string name="btn_manage_templates">מאגר תבניות</string>
     <string name="btn_show_children_qr">QR לילדים</string>
+    <string name="btn_manage_children_short">ניהול ילדים</string>
+    <string name="btn_manage_templates_short">תבניות</string>
+    <string name="btn_show_children_qr_short">קוד QR</string>
     <string name="action_cancel">ביטול</string>
 
     <string name="title_parent_login">כניסת הורה</string>
@@ -47,6 +54,10 @@
     <string name="title_assign_task">הקצאת משימה מהמאגר</string>
     <string name="title_qr_family">QR כניסה למשפחה</string>
     <string name="title_child_login">כניסת ילד</string>
+    <string name="subtitle_manage_children">מוסיפים, מעדכנים ומנהלים ילד אחד בכל פעם.</string>
+    <string name="subtitle_assign_task">בוחרים תבנית, ילד ותאריך יעד ואז שולחים.</string>
+    <string name="subtitle_qr_family">הילדים סורקים את הקוד ובוחרים את השם שלהם.</string>
+    <string name="subtitle_child_login">בוחרים את הילד שנכנס וממשיכים ישר למשימות.</string>
 
     <string name="desc_parent_login">התחברו כדי לנהל ילדים, להקצות משימות ולעקוב אחרי ההתקדמות.</string>
     <string name="desc_parent_register">פתחו חשבון חדש והתחילו לנהל משימות משפחתיות בצורה מסודרת ונעימה.</string>
@@ -104,15 +115,17 @@
 
     <string name="parent_dashboard_header_title">מרכז ההורה</string>
     <string name="parent_dashboard_header_subtitle">תמונת ההורה, סיכום הבית וכלי הניהול במקום אחד.</string>
+    <string name="parent_dashboard_header_note">בוחרים ילד אחד ורואים מיד מה פתוח, מה דחוף ומה כבר הושלם.</string>
     <string name="parent_dashboard_household_title">סיכום הבית</string>
     <string name="parent_dashboard_children_title">ילדים בבית</string>
     <string name="parent_dashboard_children_subtitle">לחצו על ילד כדי לראות רק את המשימות שלו.</string>
+    <string name="parent_dashboard_child_inline_stats">פתוחות %1$d • הושלמו %2$d • דחופות %3$d</string>
     <string name="parent_dashboard_quick_actions">פעולות מהירות</string>
     <string name="parent_dashboard_no_children">אין ילדים מחוברים עדיין. הוסיפו ילד כדי להתחיל.</string>
     <string name="parent_dashboard_selected_child_empty_title">משימות הילדים</string>
     <string name="parent_dashboard_selected_child_empty_subtitle">בחרו ילד כדי לראות את המשימות שלו.</string>
     <string name="parent_dashboard_selected_child_title">המשימות של %1$s</string>
-    <string name="parent_dashboard_selected_child_stats">נשלחו: %1$d | בוצעו: %2$d | דחופות: %3$d</string>
+    <string name="parent_dashboard_selected_child_stats">פתוחות: %1$d | הושלמו: %2$d | דחופות: %3$d</string>
     <string name="parent_dashboard_no_tasks_all">אין כרגע משימות ל-%1$s.</string>
     <string name="parent_dashboard_no_tasks_open">אין ל-%1$s משימות פתוחות כרגע.</string>
     <string name="parent_dashboard_no_tasks_completed">אין ל-%1$s משימות שהושלמו כרגע.</string>
@@ -193,6 +206,7 @@
     <string name="template_updated_success">התבנית עודכנה בהצלחה!</string>
     <string name="template_deleted_success">התבנית נמחקה</string>
     <string name="template_screen_title">מאגר תבניות משימה</string>
+    <string name="template_screen_subtitle">שומרים משימות קבועות כדי לשלוח אותן מהר.</string>
     <string name="template_form_title_new">יצירת תבנית חדשה</string>
     <string name="template_form_title_edit">עריכת תבנית</string>
     <string name="template_existing_title">תבניות קיימות</string>
@@ -226,6 +240,7 @@
     <string name="cd_filter_urgent">סינון משימות דחופות</string>
     <string name="cd_filter_completed">סינון משימות שהושלמו</string>
     <string name="cd_filter_not_completed">סינון משימות שלא הושלמו</string>
+    <string name="child_dashboard_header_note">הכוכבים למעלה, והמשימות של היום ממש מתחת.</string>
 
     <string name="default_task_name">שם המשימה</string>
     <string name="default_parent_name">הורה</string>

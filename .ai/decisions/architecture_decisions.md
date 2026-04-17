@@ -94,4 +94,14 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
   - The `all` filter can remain in code for compatibility, but it should not dominate the visible UI.
 - Why:
   - The main dashboard problem was cognitive overload from showing too much at once.
-  - Defaulting to one focused list fits the screen’s purpose better and matches the 2026-04-16 overload-reduction pass.
+  - Defaulting to one focused list fits the screen's purpose better and matches the 2026-04-16 overload-reduction pass.
+
+## AD-012: Final UI redesign should stay task-first, lighter, and mostly resource-driven
+- Status: active
+- Decision:
+  - Prefer XML/layout/style/drawable/string changes over logic rewrites for final-stage UI redesign.
+  - Reduce repeated full-weight cards and keep one clear focal area per screen.
+  - ParentDashboard should stay task-first: compact header, quiet summary, focused child selector, one visible task state at a time, and one dominant primary action.
+- Why:
+  - The project's main remaining weakness was presentation quality and scanability, not missing business logic.
+  - This keeps the redesign explainable in an oral exam and avoids risky late-stage architecture churn.

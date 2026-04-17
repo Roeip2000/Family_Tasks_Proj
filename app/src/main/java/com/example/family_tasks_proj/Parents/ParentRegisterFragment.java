@@ -2,9 +2,11 @@ package com.example.family_tasks_proj.Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -59,6 +61,16 @@ public class ParentRegisterFragment extends Fragment {
         progressRegister = view.findViewById(R.id.progressRegister);
 
         btnRegister.setOnClickListener(v -> registerParent());
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            boolean isEnterKey = event != null
+                    && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                    && event.getAction() == KeyEvent.ACTION_DOWN;
+            if (actionId == EditorInfo.IME_ACTION_DONE || isEnterKey) {
+                registerParent();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void registerParent() {

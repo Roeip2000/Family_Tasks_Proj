@@ -141,3 +141,33 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
 - Verification in this session:
   - `./gradlew.bat assembleDebug` completed successfully after the ParentDashboard restructure.
 - Confidence: explicitly verified in the current session
+
+## 2026-04-16: Whole-app UI/UX redesign pass for submission quality
+- A deeper redesign pass was completed across the actual project screens to reduce the template-like dashboard feel and make the app more believable as a strong student final project.
+- This pass preserved the existing functionality and flows:
+  - no Firebase path changes
+  - no new screens
+  - no new product logic
+  - mostly XML, drawable, string, and style work with only small Java support edits
+- Shared design-language work completed in this session:
+  - replaced the old black/white-only palette with a restrained app palette for primary, accent, urgent, soft surfaces, dividers, and quiet destructive states
+  - added shared title/section/button styles so screens stop looking like separate iterations
+  - rebuilt common field, button, summary-strip, and tab/filter backgrounds to reduce heavy repeated card shapes
+- ParentDashboard redesign completed in this session:
+  - converted the screen into a lighter header, one quiet summary strip, one main task workspace, and a weaker secondary-action footer
+  - refined the child selector into a compact horizontal picker so the task list remains the clear main focus
+  - reduced the visible task states to `urgent / open / completed` and styled them as tabs instead of metric chips
+  - simplified task rows and child selector rows so the screen stops feeling like stacked generated widgets
+- Other screen redesigns completed in this session:
+  - `MainActivity` now separates parent actions from child actions more clearly
+  - parent login/register were rebuilt as top-aligned forms with better keyboard-safe spacing and direct submit actions from the keyboard
+  - child dashboard was softened into a calmer, lighter task screen with less decoration and fewer competing containers
+  - child QR login, child selection, QR generation, manage children, assign task, and template management were all brought into the same visual language
+- Small Java support changes completed in this session:
+  - login/register password fields now submit on `Done`
+  - ParentDashboard filter styling was simplified without changing task logic
+  - ChildDashboard and task adapters dropped extra motion/gimmick styling so the UI feels more practical
+  - `AssignTaskToChildActivity` no longer forces edge-to-edge padding behavior that fought the form layout
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully after the redesign pass.
+- Confidence: explicitly verified in the current session

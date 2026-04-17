@@ -92,6 +92,35 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Next useful verification:
   - check the dashboard on a real device or emulator with multiple children/tasks to confirm the horizontal child picker feels natural in RTL and on narrow phones
 
+## Whole-App Redesign Baseline (2026-04-16)
+- The current UI baseline is no longer the older "cards everywhere" design.
+- Latest verified UI state now includes:
+  - restrained shared palette in `colors.xml`
+  - shared screen title/section/button styles in `styles.xml`
+  - quieter summary/tab/button/input drawables
+  - ParentDashboard rebuilt around one focused task workspace
+  - auth forms rebuilt for better keyboard use on small phones
+  - child dashboard simplified and visually calmer than the parent side
+  - QR/manage/template/assign-task screens aligned to the same visual language
+- Latest verified build status:
+  - `./gradlew.bat assembleDebug` passed on 2026-04-16 after the whole-app redesign pass.
+
+## Highest-Value Remaining Work After The Redesign
+- Run one deliberate device/emulator verification pass on the redesigned UI:
+  - parent entry -> login/register -> dashboard
+  - manage children
+  - generate QR
+  - child QR login + child selection
+  - child dashboard completion flow
+  - template create/edit/delete
+  - assign-task flow
+- Decide whether `starsWorth = 10` in `AssignTaskToChildActivity` is acceptable for submission or should become user-controlled later.
+- If submission prep is still pending, write a short oral-defense explanation focused on:
+  - task-first ParentDashboard
+  - keyboard-safe auth forms
+  - simpler child-side UI
+  - preserved Firebase/data-flow architecture
+
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.
 - Prefer the current source tree over stale todo files when deciding what is already done.

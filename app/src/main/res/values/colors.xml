@@ -3,30 +3,37 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- פלטת צבעים ראשית — 3 צבעים בלבד -->
-    <color name="primary">#2F80ED</color>
-    <color name="primary_light">#E8F1FB</color>
-    <color name="primary_dark">#1F4E79</color>
+    <color name="primary">#2C6A84</color>
+    <color name="primary_light">#EAF3F7</color>
+    <color name="primary_dark">#1D4E63</color>
 
-    <color name="accent">#4CAF50</color>
-    <color name="accent_light">#ECF8F1</color>
+    <color name="accent">#4E8F5F</color>
+    <color name="accent_light">#EEF7F0</color>
 
-    <color name="urgent">#E8740C</color>
-    <color name="urgent_light">#FFF4E5</color>
+    <color name="urgent">#C9771F</color>
+    <color name="urgent_light">#FFF5E8</color>
 
-    <!-- רקעים -->
-    <color name="bg_screen">#F5F7FA</color>
+    <color name="bg_screen">#F7F4EE</color>
     <color name="bg_card">#FFFFFF</color>
+    <color name="surface_muted">#F4EFE6</color>
+    <color name="surface_soft_blue">#EDF5F8</color>
+    <color name="surface_soft_green">#EEF7F0</color>
+    <color name="surface_soft_orange">#FFF5E8</color>
 
-    <!-- טקסט -->
-    <color name="text_primary">#102A43</color>
-    <color name="text_secondary">#52606D</color>
-    <color name="text_hint">#829AB1</color>
+    <color name="text_primary">#1F2A33</color>
+    <color name="text_secondary">#61707A</color>
+    <color name="text_hint">#8C98A3</color>
 
-    <!-- גבולות -->
-    <color name="border_light">#E4ECF3</color>
+    <color name="border_light">#E3DDD3</color>
+    <color name="divider">#EBE4DA</color>
+    <color name="surface_text_soft">#3B5563</color>
 
-    <!-- התנתקות -->
-    <color name="logout_bg">#FFF0F0</color>
-    <color name="logout_text">#B33A3A</color>
+    <color name="success_dark">#256246</color>
+    <color name="warning_dark">#985A15</color>
+    <color name="danger">#B24A43</color>
+    <color name="danger_light">#FBEFED</color>
+    <color name="gold">#D29A1D</color>
+
+    <color name="logout_bg">@color/danger_light</color>
+    <color name="logout_text">@color/danger</color>
 </resources>

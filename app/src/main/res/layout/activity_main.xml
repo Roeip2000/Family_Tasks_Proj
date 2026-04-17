@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- מסך פתיחה ראשי — כפתורי התחברות/הרשמה להורה, וכניסת ילד.
-     לחיצה על כפתור פותחת Fragment בתוך fragmentContainer. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,64 +8,59 @@
     android:background="@color/bg_screen"
     tools:context=".auth.MainActivity">
 
-    <!-- רקע עליון עדין -->
     <View
         android:id="@+id/topGlow"
         android:layout_width="0dp"
-        android:layout_height="160dp"
-        android:alpha="0.95"
+        android:layout_height="136dp"
+        android:alpha="0.9"
         android:background="@color/primary_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- כותרת ראשית -->
     <TextView
         android:id="@+id/tvHomeTitle"
+        style="@style/Widget.Family.ScreenTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="24dp"
-        android:gravity="center"
+        android:layout_marginEnd="20dp"
+        android:gravity="start"
         android:text="@string/home_title"
-        android:textColor="@color/text_primary"
-        android:textSize="26sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- תיאור קצר -->
     <TextView
         android:id="@+id/tvHomeSubtitle"
+        style="@style/Widget.Family.ScreenSubtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="6dp"
-        android:layout_marginEnd="32dp"
-        android:gravity="center"
+        android:layout_marginEnd="28dp"
+        android:gravity="start"
         android:text="@string/home_subtitle"
-        android:textColor="@color/text_secondary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvHomeTitle" />
 
-    <!-- כרטיס פעולות -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/actionPanel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="16dp"
         app:cardBackgroundColor="@color/bg_card"
         app:cardCornerRadius="20dp"
-        app:cardElevation="2dp"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvHomeSubtitle">
+        app:layout_constraintTop_toBottomOf="@id/tvHomeSubtitle"
+        app:strokeColor="@color/border_light"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,101 +72,125 @@
             android:paddingBottom="16dp">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_parent_section_title"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/Widget.Family.ScreenSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/home_question"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="2dp"
+                android:text="@string/home_parent_section_subtitle"
+                android:textSize="12sp" />
 
-            <!-- === פעולות הורה === -->
-            <Button
-                android:id="@+id/btnLogin"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="14dp"
-                android:backgroundTint="@color/primary"
-                android:elevation="0dp"
-                android:text="@string/parents_login"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnRegister"
-                android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/primary_light"
-                android:elevation="0dp"
-                android:text="@string/register_parents"
-                android:textAllCaps="false"
-                android:textColor="@color/primary_dark"
-                android:textSize="14sp" />
+                <Button
+                    android:id="@+id/btnLogin"
+                    style="@style/Widget.Family.PrimaryButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/parents_login" />
 
-            <!-- קו הפרדה -->
+                <Button
+                    android:id="@+id/btnRegister"
+                    style="@style/Widget.Family.SecondaryButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/register_parents" />
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="14dp"
                 android:layout_marginBottom="14dp"
-                android:background="@color/border_light" />
+                android:background="@color/divider" />
 
-            <!-- === פעולות ילד === -->
-            <Button
-                android:id="@+id/btnChildQR"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/accent"
-                android:elevation="0dp"
-                android:text="@string/child_login_qr"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="15sp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_child_section_title"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnChild"
+            <TextView
+                style="@style/Widget.Family.ScreenSubtitle"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/accent_light"
-                android:elevation="0dp"
-                android:text="@string/child_direct_login"
-                android:textAllCaps="false"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/home_child_section_subtitle"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnChildQR"
+                    style="@style/Widget.Family.AccentButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/child_login_qr" />
+
+                <Button
+                    android:id="@+id/btnChild"
+                    style="@style/Widget.Family.SecondaryButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/child_direct_login" />
+            </LinearLayout>
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <!-- אזור Fragment — כניסת הורה / הרשמה / QR -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/fragmentShell"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="16dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="2dp"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actionPanel">
+        app:layout_constraintTop_toBottomOf="@id/actionPanel"
+        app:strokeColor="@color/border_light"
+        app:strokeWidth="1dp">
 
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="16dp"
-            android:paddingTop="12dp"
+            android:paddingTop="14dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="12dp" />
-    </androidx.cardview.widget.CardView>
+            android:paddingBottom="14dp" />
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

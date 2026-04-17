@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- כרטיס משימה של הילד: אותו מבנה, עם גימור רגוע ועקבי יותר -->
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
     android:layout_marginBottom="10dp"
     app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
     app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
 
@@ -19,12 +15,15 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="14dp">
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="14dp">
 
         <ImageView
             android:id="@+id/imgTaskImage"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
             android:layout_marginEnd="12dp"
             android:background="@color/primary_light"
             android:contentDescription="@string/cd_task_image"
@@ -69,8 +68,8 @@
                 android:id="@+id/tvTaskStars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="#FFB300"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/gold"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -78,15 +77,14 @@
 
         <Button
             android:id="@+id/btnDone"
+            style="@style/Widget.Family.AccentButton"
             android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:layout_marginStart="6dp"
-            android:backgroundTint="@color/accent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:minWidth="0dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:text="@string/btn_done"
-            android:textColor="@color/white"
             android:textSize="12sp" />
 
     </LinearLayout>

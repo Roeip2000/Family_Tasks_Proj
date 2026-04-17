@@ -3,14 +3,12 @@ package com.example.family_tasks_proj.child;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChildDashboardActivity extends AppCompatActivity {
-
-    private static final String FILTER_DEFAULT_TEXT_COLOR = "#355070";
-    private static final String FILTER_SELECTED_TEXT_COLOR = "#102A43";
-    private static final String FILTER_DEFAULT_STROKE_COLOR = "#D6E4F0";
-    private static final String FILTER_SELECTED_STROKE_COLOR = "#FFFFFF";
 
     private static final String PREFS_SESSION = "child_session";
     private static final String EXTRA_PARENT_ID = "parentId";
@@ -74,12 +67,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
-
-        // רקע גרדיאנט סגול-כחול למסך הילד
-        ScrollView root = findViewById(R.id.scrollRootChildDashboard);
-        root.setBackground(new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                new int[]{Color.parseColor("#7B61FF"), Color.parseColor("#4A90E2")}));
 
         bindViews();
         setupTaskList();
@@ -176,8 +163,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 }
 
                 imgChildAvatar.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
-                imgChildAvatar.setAlpha(0f);
-                imgChildAvatar.animate().alpha(1f).setDuration(300).start();
             }
 
             @Override
@@ -349,31 +334,29 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void updateFilterSelectionUi() {
-        updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, "#FFF4E5", "#FFD199");
-        updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, "#ECF8F1", "#BDE7C9");
-        updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, "#EAF4FF", "#B8DBFF");
+        updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, R.color.surface_soft_orange);
+        updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, R.color.surface_soft_green);
+        updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, R.color.surface_soft_blue);
     }
 
-    private void updateFilterBlock(LinearLayout layout, boolean selected, String defaultColor, String selectedColor) {
+    private void updateFilterBlock(LinearLayout layout, boolean selected, int fillColorRes) {
         GradientDrawable background = new GradientDrawable();
         background.setCornerRadius(24f);
-        background.setColor(Color.parseColor(selected ? selectedColor : defaultColor));
-        background.setStroke(selected ? 4 : 2,
-                Color.parseColor(selected ? FILTER_SELECTED_STROKE_COLOR : FILTER_DEFAULT_STROKE_COLOR));
+        background.setColor(getColor(fillColorRes));
+        background.setStroke(selected ? 3 : 1,
+                getColor(selected ? R.color.primary : R.color.border_light));
 
         layout.setSelected(selected);
         layout.setBackground(background);
         layout.setAlpha(1f);
-        layout.setScaleX(selected ? 1.02f : 1f);
-        layout.setScaleY(selected ? 1.02f : 1f);
-        layout.setElevation(selected ? 6f : 0f);
+        layout.setElevation(0f);
 
-        int textColor = Color.parseColor(selected ? FILTER_SELECTED_TEXT_COLOR : FILTER_DEFAULT_TEXT_COLOR);
+        int textColor = getColor(selected ? R.color.text_primary : R.color.surface_text_soft);
         for (int index = 0; index < layout.getChildCount(); index++) {
             View child = layout.getChildAt(index);
             if (child instanceof TextView) {
                 ((TextView) child).setTextColor(textColor);
-                child.setAlpha(selected ? 1f : 0.86f);
+                child.setAlpha(selected ? 1f : 0.92f);
             }
         }
     }

@@ -2,7 +2,6 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,6 +99,7 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
 
+        ivChildPhoto.setVisibility(View.GONE);
         tvTaskTitleCard.setText(task.title == null || task.title.isEmpty()
                 ? getContext().getString(R.string.default_task_name)
                 : task.title);
@@ -112,17 +112,17 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         int chipTextColor;
 
         if (task.isDone) {
-            chipBgColor = Color.parseColor("#E8F5E9");
-            chipTextColor = Color.parseColor("#2E7D32");
+            chipBgColor = getContext().getColor(R.color.accent_light);
+            chipTextColor = getContext().getColor(R.color.success_dark);
         } else if (DateUtils.daysLeft(task.dueAt) < 0) {
-            chipBgColor = Color.parseColor("#FFEBEE");
-            chipTextColor = Color.parseColor("#C62828");
+            chipBgColor = getContext().getColor(R.color.danger_light);
+            chipTextColor = getContext().getColor(R.color.danger);
         } else if (isUrgentTask(task)) {
-            chipBgColor = Color.parseColor("#FFF3E0");
-            chipTextColor = Color.parseColor("#E65100");
+            chipBgColor = getContext().getColor(R.color.urgent_light);
+            chipTextColor = getContext().getColor(R.color.warning_dark);
         } else {
-            chipBgColor = Color.parseColor("#EEF2F7");
-            chipTextColor = Color.parseColor("#52606D");
+            chipBgColor = getContext().getColor(R.color.surface_muted);
+            chipTextColor = getContext().getColor(R.color.text_secondary);
         }
 
         tvStatusChip.setText(statusText);
@@ -190,12 +190,12 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     private int getDueLineColor(AssignedTask task) {
-        if (task.isDone) return Color.parseColor("#2E7D32");
+        if (task.isDone) return getContext().getColor(R.color.success_dark);
 
         long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) return Color.parseColor("#C62828");
-        if (daysLeft <= 2) return Color.parseColor("#E65100");
-        return Color.parseColor("#6B7280");
+        if (daysLeft < 0) return getContext().getColor(R.color.danger);
+        if (daysLeft <= 2) return getContext().getColor(R.color.warning_dark);
+        return getContext().getColor(R.color.text_secondary);
     }
 
     private boolean isUrgentTask(AssignedTask task) {

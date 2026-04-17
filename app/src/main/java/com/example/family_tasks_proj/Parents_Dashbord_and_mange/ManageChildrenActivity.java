@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -280,7 +281,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
 
         btnAddChild.setText(R.string.manage_children_save_changes);
-        btnAddChild.setBackgroundTintList(ColorStateList.valueOf(0xFF1976D2));
+        btnAddChild.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.primary)));
         btnCancelEdit.setVisibility(View.VISIBLE);
         etFirstName.requestFocus();
     }
@@ -295,7 +297,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         imgChildPhoto.setImageDrawable(null);
 
         btnAddChild.setText(R.string.add_child);
-        btnAddChild.setBackgroundTintList(ColorStateList.valueOf(0xFF4CAF50));
+        btnAddChild.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.accent)));
         btnCancelEdit.setVisibility(View.GONE);
     }
 

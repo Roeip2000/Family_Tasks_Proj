@@ -2,8 +2,6 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,20 +30,6 @@ class ParentDashboardChildSummaryAdapter
     interface OnChildSelectedListener {
         void onChildSelected(String childId);
     }
-
-    private static final String METRIC_BLUE_BG = "#EAF4FF";
-    private static final String METRIC_BLUE_TEXT = "#1F4E79";
-    private static final String METRIC_BLUE_STROKE = "#B8DBFF";
-    private static final String METRIC_GREEN_BG = "#ECF8F1";
-    private static final String METRIC_GREEN_TEXT = "#1E7A45";
-    private static final String METRIC_GREEN_STROKE = "#BDE7C9";
-    private static final String METRIC_ORANGE_BG = "#FFF4E5";
-    private static final String METRIC_ORANGE_TEXT = "#9C5A00";
-    private static final String METRIC_ORANGE_STROKE = "#FFD199";
-    private static final String CHILD_CARD_DEFAULT_BG = "#FFFFFF";
-    private static final String CHILD_CARD_SELECTED_BG = "#F3F8FF";
-    private static final String CHILD_CARD_DEFAULT_STROKE = "#D9E2EC";
-    private static final String CHILD_CARD_SELECTED_STROKE = "#2F80ED";
 
     private final Context context;
     private final LayoutInflater inflater;
@@ -82,17 +66,16 @@ class ParentDashboardChildSummaryAdapter
         boolean isSelected = childSummary.childId.equals(selectedChildId);
 
         holder.tvChildSummaryName.setText(childSummary.displayName);
-        bindMetricChip(holder.tvChildSummaryAssigned, R.string.parent_dashboard_summary_assigned,
-                childSummary.assignedCount, METRIC_BLUE_BG, METRIC_BLUE_TEXT, METRIC_BLUE_STROKE);
-        bindMetricChip(holder.tvChildSummaryCompleted, R.string.parent_dashboard_summary_completed,
-                childSummary.completedCount, METRIC_GREEN_BG, METRIC_GREEN_TEXT, METRIC_GREEN_STROKE);
-        bindMetricChip(holder.tvChildSummaryUrgent, R.string.parent_dashboard_summary_urgent,
-                childSummary.urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE);
-
-        holder.cardChildSummary.setCardBackgroundColor(
-                Color.parseColor(isSelected ? CHILD_CARD_SELECTED_BG : CHILD_CARD_DEFAULT_BG));
-        holder.cardChildSummary.setStrokeColor(
-                Color.parseColor(isSelected ? CHILD_CARD_SELECTED_STROKE : CHILD_CARD_DEFAULT_STROKE));
+        holder.tvChildSummaryAssigned.setText(context.getString(
+                R.string.parent_dashboard_child_inline_stats,
+                childSummary.assignedCount,
+                childSummary.completedCount,
+                childSummary.urgentCount
+        ));
+        holder.cardChildSummary.setCardBackgroundColor(context.getColor(
+                isSelected ? R.color.primary_light : R.color.bg_card));
+        holder.cardChildSummary.setStrokeColor(context.getColor(
+                isSelected ? R.color.primary : R.color.border_light));
         holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
         holder.itemView.setContentDescription(
                 context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
@@ -107,19 +90,6 @@ class ParentDashboardChildSummaryAdapter
     @Override
     public int getItemCount() {
         return childSummaries.size();
-    }
-
-    private void bindMetricChip(TextView textView, int labelResId, int count,
-                                String backgroundColor, String textColor, String strokeColor) {
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dpToPx(18));
-        background.setColor(Color.parseColor(backgroundColor));
-        background.setStroke(dpToPx(1), Color.parseColor(strokeColor));
-
-        textView.setBackground(background);
-        textView.setTextColor(Color.parseColor(textColor));
-        textView.setText(context.getString(R.string.parent_dashboard_metric_with_count,
-                context.getString(labelResId), count));
     }
 
     // טוען תמונת ילד מ-Base64, עם cache כדי לא לפענח שוב ושוב

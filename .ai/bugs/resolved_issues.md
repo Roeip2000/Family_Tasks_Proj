@@ -97,3 +97,15 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Changed the default task filter to `ASSIGNED` and hid the `ALL` tab from the visible layout.
   - Verified the redesign with `./gradlew.bat assembleDebug`.
 - Confidence: explicit current-session verification
+
+## RI-010: Final app screens still looked inconsistent, too card-heavy, and too template-like
+- First clear evidence: 2026-04-16 full UI audit of the current repository state
+- Problem:
+  - Several screens still felt like separate iterations of the project, with uneven spacing, repeated rounded boxes, weak action hierarchy, and a generic generated-dashboard feel.
+  - Parent login/register also remained uncomfortable on smaller screens when the keyboard opened.
+- Resolution:
+  - Introduced a shared visual system through colors, styles, button backgrounds, quieter surfaces, and more consistent typography.
+  - Rebuilt `MainActivity`, auth screens, ParentDashboard, ChildDashboard, QR/login helper screens, manage-children, assign-task, and template management layouts into one calmer RTL Hebrew-first language.
+  - Top-aligned the auth forms, increased keyboard-safe bottom padding, kept scrolling natural, and added keyboard `Done` submission on password fields.
+  - Verified the redesign pass with `./gradlew.bat assembleDebug`.
+- Confidence: explicit current-session verification

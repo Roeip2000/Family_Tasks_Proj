@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -43,19 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ParentDashboardActivity extends AppCompatActivity {
-
-    private static final String METRIC_NEUTRAL_BG = "#EEF4FA";
-    private static final String METRIC_NEUTRAL_TEXT = "#355070";
-    private static final String METRIC_NEUTRAL_STROKE = "#D6E4F0";
-    private static final String METRIC_BLUE_BG = "#EAF4FF";
-    private static final String METRIC_BLUE_TEXT = "#1F4E79";
-    private static final String METRIC_BLUE_STROKE = "#B8DBFF";
-    private static final String METRIC_GREEN_BG = "#ECF8F1";
-    private static final String METRIC_GREEN_TEXT = "#1E7A45";
-    private static final String METRIC_GREEN_STROKE = "#BDE7C9";
-    private static final String METRIC_ORANGE_BG = "#FFF4E5";
-    private static final String METRIC_ORANGE_TEXT = "#9C5A00";
-    private static final String METRIC_ORANGE_STROKE = "#FFD199";
 
     private Button btnManageChildren;
     private Button btnManageTemplates;
@@ -406,40 +392,23 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void updateTaskFilterSelectionUi() {
-        ChildSummary sc = getSelectedChildSummary();
-        boolean hasChild = sc != null;
-
-        // כאן מעדכנים את הצ'יפים — הפילטר הפעיל מקבל מסגרת עבה יותר כדי שההורה ידע מה נבחר
-        bindMetricChip(filterAllTasks, R.string.parent_dashboard_summary_total,
-                hasChild ? sc.totalCount : 0, METRIC_NEUTRAL_BG, METRIC_NEUTRAL_TEXT,
-                METRIC_NEUTRAL_STROKE, activeFilter == FilterMode.ALL, hasChild);
-        bindMetricChip(filterOpenTasks, R.string.parent_dashboard_summary_assigned,
-                hasChild ? sc.assignedCount : 0, METRIC_BLUE_BG, METRIC_BLUE_TEXT,
-                METRIC_BLUE_STROKE, activeFilter == FilterMode.ASSIGNED, hasChild);
-        bindMetricChip(filterCompletedTasks, R.string.parent_dashboard_summary_completed,
-                hasChild ? sc.completedCount : 0, METRIC_GREEN_BG, METRIC_GREEN_TEXT,
-                METRIC_GREEN_STROKE, activeFilter == FilterMode.COMPLETED, hasChild);
-        bindMetricChip(filterUrgentTasks, R.string.parent_dashboard_summary_urgent,
-                hasChild ? sc.urgentCount : 0, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT,
-                METRIC_ORANGE_STROKE, activeFilter == FilterMode.URGENT, hasChild);
+        boolean enabled = getSelectedChildSummary() != null;
+        bindTaskTab(filterOpenTasks, activeFilter == FilterMode.ASSIGNED, enabled);
+        bindTaskTab(filterCompletedTasks, activeFilter == FilterMode.COMPLETED, enabled);
+        bindTaskTab(filterUrgentTasks, activeFilter == FilterMode.URGENT, enabled);
     }
 
-    // מעצב צ'יפ בודד — צבע רקע, טקסט, מסגרת, ומצב פעיל/כבוי
-    private void bindMetricChip(TextView tv, int labelResId, int count,
-                                String bgColor, String txtColor, String strokeColor,
-                                boolean selected, boolean enabled) {
-        GradientDrawable bg = new GradientDrawable();
-        bg.setCornerRadius(dpToPx(18));
-        bg.setColor(Color.parseColor(bgColor));
-        bg.setStroke(dpToPx(selected ? 3 : 1), Color.parseColor(strokeColor));
+    private void bindTaskTab(TextView tv, boolean selected, boolean enabled) {
+        GradientDrawable background = new GradientDrawable();
+        background.setCornerRadius(dpToPx(14));
+        background.setColor(getColor(selected ? R.color.bg_card : android.R.color.transparent));
+        background.setStroke(dpToPx(selected ? 1 : 0),
+                getColor(selected ? R.color.primary : android.R.color.transparent));
 
-        tv.setBackground(bg);
-        tv.setTextColor(Color.parseColor(txtColor));
-        tv.setText(getString(R.string.parent_dashboard_metric_with_count,
-                getString(labelResId), count));
-        tv.setElevation(selected ? dpToPx(4) : 0);
+        tv.setBackground(background);
+        tv.setTextColor(getColor(selected ? R.color.primary_dark : R.color.text_secondary));
         tv.setEnabled(enabled);
-        tv.setAlpha(enabled ? 1f : 0.5f);
+        tv.setAlpha(enabled ? 1f : 0.45f);
     }
 
     private void updateSelectedChildSection() {
