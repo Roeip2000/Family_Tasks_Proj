@@ -11,9 +11,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingStart="16dp"
-        android:paddingTop="18dp"
+        android:paddingTop="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="28dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,7 +66,7 @@
 
             <Button
                 android:id="@+id/btnChangeProfilePic"
-                style="@style/Widget.Family.SecondaryButton"
+                style="@style/Widget.Family.CompactSecondaryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="0dp"
@@ -79,7 +79,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:background="@drawable/bg_summary_strip"
             android:baselineAligned="false"
             android:orientation="horizontal"
@@ -182,7 +182,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
@@ -194,24 +194,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="16dp"
-                android:paddingTop="16dp"
+                android:paddingTop="18dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="18dp">
 
                 <TextView
+                    style="@style/Widget.Family.Eyebrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/parent_dashboard_children_title"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_secondary" />
 
                 <TextView
+                    style="@style/Widget.Family.HelperText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:text="@string/parent_dashboard_children_subtitle"
-                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
                 <TextView
@@ -228,7 +227,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvChildren"
                     android:layout_width="match_parent"
-                    android:layout_height="88dp"
+                    android:layout_height="98dp"
                     android:layout_marginTop="12dp"
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
@@ -240,8 +239,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
                     android:background="@color/divider" />
 
                 <TextView
@@ -263,7 +262,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/bg_tab_bar"
                     android:baselineAligned="false"
                     android:orientation="horizontal"
@@ -337,10 +336,11 @@
                 <ListView
                     android:id="@+id/lvTasks"
                     android:layout_width="match_parent"
-                    android:layout_height="320dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:divider="@android:color/transparent"
                     android:dividerHeight="0dp"
+                    android:nestedScrollingEnabled="true"
                     android:listSelector="@android:color/transparent" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -362,34 +362,31 @@
 
             <Button
                 android:id="@+id/btnManageChildren"
-                style="@style/Widget.Family.SecondaryButton"
+                style="@style/Widget.Family.CompactSecondaryButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="@string/btn_manage_children_short"
-                android:textSize="12sp" />
+                android:text="@string/btn_manage_children_short" />
 
             <Button
                 android:id="@+id/btnManageTemplates"
-                style="@style/Widget.Family.SecondaryButton"
+                style="@style/Widget.Family.CompactSecondaryButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="@string/btn_manage_templates_short"
-                android:textSize="12sp" />
+                android:text="@string/btn_manage_templates_short" />
 
             <Button
                 android:id="@+id/btnShowQR"
-                style="@style/Widget.Family.SecondaryButton"
+                style="@style/Widget.Family.CompactSecondaryButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="@string/btn_show_children_qr_short"
-                android:textSize="12sp" />
+                android:text="@string/btn_show_children_qr_short" />
         </LinearLayout>
 
         <Button

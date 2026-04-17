@@ -139,7 +139,7 @@
 
     <Button
         android:id="@+id/btnBackToDashboard"
-        style="@style/Widget.Family.SecondaryButton"
+        style="@style/Widget.Family.CompactSecondaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"

@@ -7,8 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -173,7 +175,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void setupTaskList() {
-        taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems, childPhotoCache);
+        taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems);
         lvTasks.setAdapter(taskAdapter);
         lvTasks.setOnItemClickListener((parent, view, position, id) -> showTaskOptionsDialog(position));
     }
@@ -462,15 +464,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // כאן הפילטר הפעיל קובע אילו קבוצות להציג ברשימה
         switch (activeFilter) {
             case ASSIGNED:
-                addTaskSection(getString(R.string.parent_dashboard_group_assigned), assignedTasks);
+                addTasks(assignedTasks);
                 tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_open, selectedChild.displayName));
                 break;
             case COMPLETED:
-                addTaskSection(getString(R.string.parent_dashboard_group_completed), completedTasks);
+                addTasks(completedTasks);
                 tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_completed, selectedChild.displayName));
                 break;
             case URGENT:
-                addTaskSection(getString(R.string.parent_dashboard_group_urgent), urgentTasks);
+                addTasks(urgentTasks);
                 tvNoTasks.setText(getString(R.string.parent_dashboard_no_tasks_urgent, selectedChild.displayName));
                 break;
             case ALL:
@@ -482,6 +484,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 break;
         }
         taskAdapter.notifyDataSetChanged();
+        updateListViewHeight(lvTasks);
 
         if (visibleTaskItems.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
@@ -498,6 +501,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
 
         visibleTaskItems.add(TaskListItem.createHeader(title, tasks.size()));
+        addTasks(tasks);
+    }
+
+    private void addTasks(List<AssignedTask> tasks) {
+        if (tasks == null || tasks.isEmpty()) {
+            return;
+        }
+
         for (AssignedTask task : tasks) {
             visibleTaskItems.add(TaskListItem.createTask(task));
         }
@@ -655,6 +666,33 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private String safeText(String text) {
         return text == null ? "" : text.trim();
+    }
+
+    // מתאים את גובה הרשימה לכמות המשימות, כדי שלא יישאר שטח ריק גדול במסך.
+    private void updateListViewHeight(ListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+        if (adapter == null) {
+            return;
+        }
+
+        int listWidth = listView.getWidth();
+        if (listWidth <= 0) {
+            listWidth = getResources().getDisplayMetrics().widthPixels - dpToPx(32);
+        }
+
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+        int totalHeight = 0;
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View item = adapter.getView(i, null, listView);
+            item.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += item.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * Math.max(adapter.getCount() - 1, 0));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
 }

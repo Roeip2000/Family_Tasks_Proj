@@ -66,12 +66,7 @@ class ParentDashboardChildSummaryAdapter
         boolean isSelected = childSummary.childId.equals(selectedChildId);
 
         holder.tvChildSummaryName.setText(childSummary.displayName);
-        holder.tvChildSummaryAssigned.setText(context.getString(
-                R.string.parent_dashboard_child_inline_stats,
-                childSummary.assignedCount,
-                childSummary.completedCount,
-                childSummary.urgentCount
-        ));
+        holder.tvChildSummaryAssigned.setText(getCompactStats(childSummary));
         holder.cardChildSummary.setCardBackgroundColor(context.getColor(
                 isSelected ? R.color.primary_light : R.color.bg_card));
         holder.cardChildSummary.setStrokeColor(context.getColor(
@@ -119,13 +114,30 @@ class ParentDashboardChildSummaryAdapter
         return Math.round(context.getResources().getDisplayMetrics().density * value);
     }
 
+    private String getCompactStats(ChildSummary childSummary) {
+        if (childSummary.assignedCount <= 0) {
+            return context.getString(R.string.parent_dashboard_child_compact_none);
+        }
+
+        if (childSummary.urgentCount > 0) {
+            return context.getString(
+                    R.string.parent_dashboard_child_compact_urgent,
+                    childSummary.assignedCount,
+                    childSummary.urgentCount
+            );
+        }
+
+        return context.getString(
+                R.string.parent_dashboard_child_compact_open,
+                childSummary.assignedCount
+        );
+    }
+
     static class ChildSummaryViewHolder extends RecyclerView.ViewHolder {
         private final MaterialCardView cardChildSummary;
         private final ImageView ivChildSummaryPhoto;
         private final TextView tvChildSummaryName;
         private final TextView tvChildSummaryAssigned;
-        private final TextView tvChildSummaryCompleted;
-        private final TextView tvChildSummaryUrgent;
 
         ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -133,8 +145,6 @@ class ParentDashboardChildSummaryAdapter
             ivChildSummaryPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
             tvChildSummaryName = itemView.findViewById(R.id.tvChildSummaryName);
             tvChildSummaryAssigned = itemView.findViewById(R.id.tvChildSummaryAssigned);
-            tvChildSummaryCompleted = itemView.findViewById(R.id.tvChildSummaryCompleted);
-            tvChildSummaryUrgent = itemView.findViewById(R.id.tvChildSummaryUrgent);
         }
     }
 }

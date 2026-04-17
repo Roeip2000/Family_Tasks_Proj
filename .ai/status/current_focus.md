@@ -13,6 +13,9 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Latest verified build status:
   - `./gradlew.bat assembleDebug` passed on 2026-04-16 after restoring the missing `bg_spinner` drawable used by the assign-task screen.
   - `./gradlew.bat assembleDebug` also passed on 2026-04-16 after a second-pass XML polish/refinement sweep across auth, dashboard, QR, and management screens.
+  - `./gradlew.bat assembleDebug` passed again on 2026-04-17 after the parent-side refinement pass.
+  - `./gradlew.bat lintDebug` also passed on 2026-04-17 after the same pass.
+  - `./gradlew.bat testDebugUnitTest` also passed on 2026-04-17 after the same pass.
 
 ## Highest-Value Remaining Work
 - Run a fresh end-to-end verification on the latest code state.
@@ -117,9 +120,13 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Decide whether `starsWorth = 10` in `AssignTaskToChildActivity` is acceptable for submission or should become user-controlled later.
 - If submission prep is still pending, write a short oral-defense explanation focused on:
   - task-first ParentDashboard
-  - keyboard-safe auth forms
+  - keyboard-safer auth shell and forms
   - simpler child-side UI
   - preserved Firebase/data-flow architecture
+- Specifically verify on a narrow phone or emulator:
+  - the compact dashboard child selector in RTL
+  - the auto-sized dashboard/manage-children lists with 1-2 items and with many items
+  - login/register CTA reachability while the keyboard is open
 
 ## Notes For The Next Agent
 - Treat `.ai/raw_claude_cli_full` as the primary historical record.
@@ -127,3 +134,4 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - If you document more history later, explicitly separate:
   - "explicitly confirmed in raw logs"
   - "inferred from current source after an interrupted session"
+- The 2026-04-17 work was verified with both build and lint, but not yet with a fresh emulator/device run.

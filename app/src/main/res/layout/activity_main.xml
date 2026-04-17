@@ -11,7 +11,7 @@
     <View
         android:id="@+id/topGlow"
         android:layout_width="0dp"
-        android:layout_height="136dp"
+        android:layout_height="118dp"
         android:alpha="0.9"
         android:background="@color/primary_light"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="20dp"
         android:gravity="start"
         android:text="@string/home_title"
@@ -51,10 +51,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="22dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,25 +67,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="16dp"
-            android:paddingTop="16dp"
+            android:paddingTop="14dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="16dp">
+            android:paddingBottom="14dp">
 
             <TextView
+                style="@style/Widget.Family.Eyebrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_parent_section_title"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="@string/home_question" />
 
             <TextView
-                style="@style/Widget.Family.ScreenSubtitle"
+                style="@style/Widget.Family.HelperText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@string/home_parent_section_subtitle"
-                android:textSize="12sp" />
+                android:text="@string/home_description" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -93,6 +90,13 @@
                 android:layout_marginTop="10dp"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Widget.Family.Eyebrow"
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/home_parent_section_title" />
 
                 <Button
                     android:id="@+id/btnLogin"
@@ -101,47 +105,39 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
-                    android:text="@string/parents_login" />
+                    android:text="@string/parents_login"
+                    android:textSize="13sp" />
 
                 <Button
                     android:id="@+id/btnRegister"
-                    style="@style/Widget.Family.SecondaryButton"
+                    style="@style/Widget.Family.CompactSecondaryButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:text="@string/register_parents" />
+                    android:text="@string/register_parents"
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:background="@color/divider" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/home_child_section_title"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                style="@style/Widget.Family.ScreenSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/home_child_section_subtitle"
-                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Widget.Family.Eyebrow"
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/home_child_section_title" />
 
                 <Button
                     android:id="@+id/btnChildQR"
@@ -150,16 +146,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:layout_weight="1"
-                    android:text="@string/child_login_qr" />
+                    android:text="@string/child_login_qr"
+                    android:textSize="13sp" />
 
                 <Button
                     android:id="@+id/btnChild"
-                    style="@style/Widget.Family.SecondaryButton"
+                    style="@style/Widget.Family.CompactSecondaryButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:text="@string/child_direct_login" />
+                    android:text="@string/child_direct_login"
+                    android:textSize="13sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -170,9 +168,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="14dp"
         app:cardBackgroundColor="@color/bg_card"
         app:cardCornerRadius="22dp"
         app:cardElevation="0dp"
@@ -187,10 +185,10 @@
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingTop="14dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="14dp" />
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp" />
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

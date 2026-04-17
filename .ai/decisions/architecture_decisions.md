@@ -105,3 +105,12 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The project's main remaining weakness was presentation quality and scanability, not missing business logic.
   - This keeps the redesign explainable in an oral exam and avoids risky late-stage architecture churn.
+
+## AD-013: On parent scroll screens, selectors should stay compact and embedded lists should size to content
+- Status: active
+- Decision:
+  - Keep the selected-child control lightweight and summary-light so the task list remains the dominant content.
+  - Avoid fixed-height `ListView` blocks inside parent `ScrollView` screens when the content is short; size them to their current items instead.
+- Why:
+  - The remaining parent-side UX problems were caused more by layout mechanics and competing section weight than by missing features.
+  - Compact selectors plus content-sized lists keep the UI calmer, more believable, and easier to explain in a school presentation.

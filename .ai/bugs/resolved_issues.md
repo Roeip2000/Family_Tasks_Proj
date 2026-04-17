@@ -109,3 +109,29 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Top-aligned the auth forms, increased keyboard-safe bottom padding, kept scrolling natural, and added keyboard `Done` submission on password fields.
   - Verified the redesign pass with `./gradlew.bat assembleDebug`.
 - Confidence: explicit current-session verification
+
+## RI-011: ParentDashboard still gave too much weight to child cards and left empty task space on short lists
+- First clear evidence: 2026-04-17 parent-side UX review of the current repository state
+- Problem:
+  - The selected-child area still carried too much visual detail, so it competed with the actual task list.
+  - The task area still used a fixed-height `ListView`, which left large empty blocks when only a few tasks existed.
+- Resolution:
+  - Rebuilt the child selector into a lighter compact format with only the child name and current open/urgent state.
+  - Simplified task rows and removed redundant single-tab section headers.
+  - Added content-height measurement for the dashboard task list so the screen grows only as much as the current task data requires.
+  - Verified with `./gradlew.bat assembleDebug` and `./gradlew.bat lintDebug`.
+- Confidence: explicit current-session verification
+
+## RI-012: Parent management screens still had unfinished default rows and bulky vertical form structure
+- First clear evidence: 2026-04-17 review of `ManageChildrenActivity`, `ParentTaskTemplateActivity`, `MainActivity`, `AssignTaskToChildActivity`, and `GenerateQRActivity`
+- Problem:
+  - Manage-children still used a large vertical photo block plus a fixed-height child list.
+  - Task templates still used the plain Android `simple_list_item_1`, which made the screen feel older than the rest of the app.
+  - The parent entry shell still gave too much room to navigation chrome instead of the active login/register form.
+- Resolution:
+  - Compressed the parent entry action panel for better keyboard space.
+  - Rebuilt the manage-children form into a clearer title + compact photo row and made its child list content-sized.
+  - Replaced the template default list row with a custom row that includes preview image and edit/delete guidance.
+  - Added small helper labels to assign-task and QR screens so the flows look intentional without adding new logic.
+  - Verified with `./gradlew.bat assembleDebug` and `./gradlew.bat lintDebug`.
+- Confidence: explicit current-session verification

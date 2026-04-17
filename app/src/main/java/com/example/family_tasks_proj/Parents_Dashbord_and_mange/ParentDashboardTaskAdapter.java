@@ -1,13 +1,11 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,15 +14,13 @@ import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTa
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListItem;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.DateUtils;
-import com.example.family_tasks_proj.util.ImageHelper;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * אדפטר לרשימת המשימות בדשבורד ההורה.
  * תומך בשני סוגי שורות: כותרת קבוצה (header) ושורת משימה רגילה.
- * כל משימה מציגה כותרת, תאריך יעד, סטטוס (בוצע/דחוף/ממתין) ותמונת ילד.
+ * כל משימה מציגה כותרת, תאריך יעד וסטטוס ברור בצד.
  */
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
@@ -32,14 +28,11 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     private static final int VIEW_TYPE_TASK = 1;
 
     private final LayoutInflater inflater;
-    private final Map<String, Bitmap> childPhotoCache;
 
     ParentDashboardTaskAdapter(@NonNull Context context,
-                               @NonNull List<TaskListItem> items,
-                               @NonNull Map<String, Bitmap> childPhotoCache) {
+                               @NonNull List<TaskListItem> items) {
         super(context, 0, items);
         this.inflater = LayoutInflater.from(context);
-        this.childPhotoCache = childPhotoCache;
     }
 
     @Override
@@ -93,36 +86,38 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
             return convertView;
         }
 
-        ImageView ivChildPhoto = convertView.findViewById(R.id.ivChildPhoto);
         TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
-        TextView tvChildNameCard = convertView.findViewById(R.id.tvChildNameCard);
         TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
+        View viewTaskDot = convertView.findViewById(R.id.viewTaskDot);
 
-        ivChildPhoto.setVisibility(View.GONE);
         tvTaskTitleCard.setText(task.title == null || task.title.isEmpty()
                 ? getContext().getString(R.string.default_task_name)
                 : task.title);
-        tvChildNameCard.setVisibility(View.GONE);
         tvDueDateCard.setText(getDueLine(task));
         tvDueDateCard.setTextColor(getDueLineColor(task));
 
         String statusText = getTaskStatusLabel(task);
         int chipBgColor;
         int chipTextColor;
+        int dotColor;
 
         if (task.isDone) {
             chipBgColor = getContext().getColor(R.color.accent_light);
             chipTextColor = getContext().getColor(R.color.success_dark);
+            dotColor = chipTextColor;
         } else if (DateUtils.daysLeft(task.dueAt) < 0) {
             chipBgColor = getContext().getColor(R.color.danger_light);
             chipTextColor = getContext().getColor(R.color.danger);
+            dotColor = chipTextColor;
         } else if (isUrgentTask(task)) {
             chipBgColor = getContext().getColor(R.color.urgent_light);
             chipTextColor = getContext().getColor(R.color.warning_dark);
+            dotColor = chipTextColor;
         } else {
             chipBgColor = getContext().getColor(R.color.surface_muted);
             chipTextColor = getContext().getColor(R.color.text_secondary);
+            dotColor = getContext().getColor(R.color.primary);
         }
 
         tvStatusChip.setText(statusText);
@@ -133,30 +128,11 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         chipBg.setCornerRadius(dpToPx(14));
         tvStatusChip.setBackground(chipBg);
 
-        bindChildPhoto(ivChildPhoto, task.childId, task.childProfileBase64);
+        GradientDrawable dotBg = new GradientDrawable();
+        dotBg.setShape(GradientDrawable.OVAL);
+        dotBg.setColor(dotColor);
+        viewTaskDot.setBackground(dotBg);
         return convertView;
-    }
-
-    private void bindChildPhoto(ImageView imageView, String childId, String base64) {
-        imageView.setImageDrawable(null);
-
-        if (base64 == null || base64.trim().isEmpty()) {
-            return;
-        }
-
-        if (childPhotoCache.containsKey(childId)) {
-            imageView.setImageBitmap(childPhotoCache.get(childId));
-            return;
-        }
-
-        Bitmap raw = ImageHelper.base64ToBitmap(base64);
-        if (raw == null) {
-            return;
-        }
-
-        Bitmap circular = ImageHelper.getCircularBitmap(raw);
-        childPhotoCache.put(childId, circular);
-        imageView.setImageBitmap(circular);
     }
 
     private String getTaskStatusLabel(AssignedTask task) {

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,6 +60,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // רשימת התבניות שנטענו מ-Firebase
     private final List<TaskTemplate> templateList = new ArrayList<>();
+    private TemplateListAdapter templateListAdapter;
 
     private final ActivityResultLauncher<String> imagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -85,6 +87,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         tvFormTitle = findViewById(R.id.tvFormTitle);
         tvNoTemplates = findViewById(R.id.tvNoTemplates);
         lvTemplates = findViewById(R.id.lvTemplates);
+        templateListAdapter = new TemplateListAdapter();
 
         Button btnPickImage = findViewById(R.id.btnPickImage);
 
@@ -95,6 +98,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         // לחיצה על תבנית ברשימה — פותחת תפריט עריכה/מחיקה
         lvTemplates.setOnItemClickListener((parent, view, position, id) ->
                 showTemplateOptionsDialog(position));
+        lvTemplates.setAdapter(templateListAdapter);
 
         // חזרה לדשבורד ההורה
         findViewById(R.id.btnBackToDashboard).setOnClickListener(v -> finish());
@@ -120,11 +124,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
                             templateList.add(template);
                         }
-
-                        lvTemplates.setAdapter(new ArrayAdapter<>(
-                                ParentTaskTemplateActivity.this,
-                                android.R.layout.simple_list_item_1,
-                                templateList));
+                        templateListAdapter.notifyDataSetChanged();
 
                         // הצגת/הסתרת הודעה אם אין תבניות
                         boolean empty = templateList.isEmpty();
@@ -233,6 +233,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
 
         tvFormTitle.setText(R.string.template_form_title_edit);
+        btnSave.setText(R.string.template_save_changes);
         btnCancelEdit.setVisibility(View.VISIBLE);
     }
 
@@ -272,6 +273,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         etTitle.setText("");
         imgTask.setImageResource(android.R.drawable.ic_menu_gallery);
         tvFormTitle.setText(R.string.template_form_title_new);
+        btnSave.setText(R.string.btn_save_template);
         btnCancelEdit.setVisibility(View.GONE);
     }
 
@@ -281,5 +283,44 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .getReference("parents")
                 .child(uid)
                 .child("task_templates");
+    }
+
+    private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
+
+        TemplateListAdapter() {
+            super(ParentTaskTemplateActivity.this, 0, templateList);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_task_template, parent, false);
+            }
+
+            TaskTemplate template = getItem(position);
+            if (template == null) {
+                return convertView;
+            }
+
+            ImageView ivTemplateThumb = convertView.findViewById(R.id.ivTemplateThumb);
+            TextView tvTemplateTitle = convertView.findViewById(R.id.tvTemplateTitle);
+
+            tvTemplateTitle.setText(template.toDisplayTitle());
+
+            if (template.imageBase64 == null || template.imageBase64.isEmpty()) {
+                ivTemplateThumb.setImageResource(android.R.drawable.ic_menu_gallery);
+                return convertView;
+            }
+
+            Bitmap bitmap = ImageHelper.base64ToBitmap(template.imageBase64);
+            if (bitmap == null) {
+                ivTemplateThumb.setImageResource(android.R.drawable.ic_menu_gallery);
+                return convertView;
+            }
+
+            ivTemplateThumb.setImageBitmap(bitmap);
+            return convertView;
+        }
     }
 }

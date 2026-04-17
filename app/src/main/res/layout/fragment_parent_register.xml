@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="4dp"
-        android:paddingBottom="52dp">
+        android:paddingTop="2dp"
+        android:paddingBottom="40dp">
 
         <TextView
             style="@style/Widget.Family.ScreenTitle"
@@ -34,7 +34,7 @@
             style="@style/Widget.Family.FieldLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:text="@string/first_name" />
 
         <EditText
@@ -59,7 +59,7 @@
             style="@style/Widget.Family.FieldLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:text="@string/last_name" />
 
         <EditText
@@ -84,7 +84,7 @@
             style="@style/Widget.Family.FieldLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:text="@string/label_email" />
 
         <EditText
@@ -109,7 +109,7 @@
             style="@style/Widget.Family.FieldLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:text="@string/label_password" />
 
         <EditText
@@ -134,7 +134,7 @@
             style="@style/Widget.Family.PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="18dp"
             android:text="@string/btn_create_account" />
 
         <ProgressBar

@@ -47,26 +47,56 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <ImageView
-                    android:id="@+id/imgChildPhoto"
-                    android:layout_width="84dp"
-                    android:layout_height="84dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/bg_avatar_placeholder"
-                    android:clipToOutline="true"
-                    android:contentDescription="@string/cd_child_photo"
-                    android:scaleType="centerCrop" />
-
-                <Button
-                    android:id="@+id/btnPickChildPhoto"
-                    style="@style/Widget.Family.SecondaryButton"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvFormTitle"
+                    style="@style/Widget.Family.SectionTitle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/btn_pick_child_photo" />
+                    android:text="@string/manage_children_form_title_new"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgChildPhoto"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_avatar_placeholder"
+                        android:clipToOutline="true"
+                        android:contentDescription="@string/cd_child_photo"
+                        android:scaleType="centerCrop" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.Family.HelperText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/manage_children_photo_hint" />
+
+                        <Button
+                            android:id="@+id/btnPickChildPhoto"
+                            style="@style/Widget.Family.CompactSecondaryButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/btn_pick_child_photo" />
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <TextView
                     style="@style/Widget.Family.FieldLabel"
@@ -149,14 +179,14 @@
         <ListView
             android:id="@+id/lvChildren"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:divider="@color/divider"
             android:dividerHeight="1dp" />
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.SecondaryButton"
+            style="@style/Widget.Family.CompactSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

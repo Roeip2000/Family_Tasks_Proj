@@ -171,3 +171,21 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
 - Verification in this session:
   - `./gradlew.bat assembleDebug` completed successfully after the redesign pass.
 - Confidence: explicitly verified in the current session
+
+## 2026-04-17: Parent-side refinement pass focused on hierarchy and explainability
+- A follow-up redesign pass focused specifically on the remaining parent-side UX issues that were still visible in the current source after the broader 2026-04-16 redesign.
+- Concrete changes completed in this session:
+  - `ParentDashboard` child selection was reduced from stat-heavy mini cards into a lighter compact selector so the task area reads as the main focus.
+  - `ParentDashboard` task tabs now show the filtered tasks directly without repeating a redundant section header for each visible state.
+  - `ParentDashboard` task rows were simplified into a cleaner list pattern with one title, one due line, one status chip, and a small status dot instead of hidden child-image scaffolding.
+  - `ParentDashboard` and `ManageChildrenActivity` no longer rely on fixed `320dp` list regions; both screens now measure list height to their current content so the screens do not leave large empty blocks on short lists.
+  - `MainActivity` was compacted into a smaller entry shell so the login/register fragment gets more room when the keyboard opens.
+  - parent login/register spacing was tightened further to keep the submit button closer while typing on smaller phones.
+  - `ManageChildrenActivity` gained a clearer form title plus a smaller horizontal photo row to reduce vertical bulk.
+  - `ParentTaskTemplateActivity` stopped using the default Android text row and now uses a custom template row with preview image and edit/delete hint.
+  - assign-task and QR parent screens gained smaller secondary back buttons and clearer helper labels so they feel like part of the same product.
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully.
+  - `./gradlew.bat lintDebug` completed successfully and produced an HTML lint report in `app/build/reports/lint-results-debug.html`.
+  - `./gradlew.bat testDebugUnitTest` completed successfully.
+- Confidence: explicitly verified in the current session

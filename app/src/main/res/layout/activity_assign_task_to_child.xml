@@ -35,14 +35,24 @@
             android:text="@string/subtitle_assign_task"
             android:textSize="13sp" />
 
+        <TextView
+            style="@style/Widget.Family.Eyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/assign_task_preview_label" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cvImagePreview"
             android:layout_width="84dp"
             android:layout_height="84dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/surface_muted"
             app:cardCornerRadius="42dp"
-            app:cardElevation="1dp">
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false">
 
             <ImageView
                 android:id="@+id/imgTaskPreview"
@@ -153,7 +163,7 @@
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.SecondaryButton"
+            style="@style/Widget.Family.CompactSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

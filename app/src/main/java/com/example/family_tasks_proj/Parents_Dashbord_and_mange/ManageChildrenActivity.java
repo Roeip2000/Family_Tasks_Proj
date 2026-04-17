@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private Button btnCancelEdit;
     private ListView lvChildren;
     private TextView tvNoChildren;
+    private TextView tvFormTitle;
     private ImageView imgChildPhoto;
 
     private final List<ChildItem> childItems = new ArrayList<>();
@@ -114,6 +116,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         btnCancelEdit = findViewById(R.id.btnCancelEdit);
         lvChildren = findViewById(R.id.lvChildren);
         tvNoChildren = findViewById(R.id.tvNoChildren);
+        tvFormTitle = findViewById(R.id.tvFormTitle);
 
         Button btnPickChildPhoto = findViewById(R.id.btnPickChildPhoto);
         btnPickChildPhoto.setOnClickListener(v -> childImagePicker.launch("image/*"));
@@ -246,6 +249,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         }
 
                         childListAdapter.notifyDataSetChanged();
+                        updateListViewHeight(lvChildren);
 
                         boolean hasChildren = !childItems.isEmpty();
                         tvNoChildren.setVisibility(hasChildren ? View.GONE : View.VISIBLE);
@@ -284,6 +288,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         btnAddChild.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(this, R.color.primary)));
         btnCancelEdit.setVisibility(View.VISIBLE);
+        tvFormTitle.setText(R.string.manage_children_form_title_edit);
         etFirstName.requestFocus();
     }
 
@@ -300,6 +305,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         btnAddChild.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(this, R.color.accent)));
         btnCancelEdit.setVisibility(View.GONE);
+        tvFormTitle.setText(R.string.manage_children_form_title_new);
     }
 
     private void showChildOptionsDialog(int position) {
@@ -367,6 +373,35 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private String safeText(String value) {
         return value == null ? "" : value;
+    }
+
+    // מתאים את גובה רשימת הילדים לכמות הפריטים, כדי שהמסך יישאר קצר וברור.
+    private void updateListViewHeight(ListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+        if (adapter == null) {
+            return;
+        }
+
+        int listWidth = listView.getWidth();
+        if (listWidth <= 0) {
+            listWidth = getResources().getDisplayMetrics().widthPixels - Math.round(
+                    getResources().getDisplayMetrics().density * 32
+            );
+        }
+
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+        int totalHeight = 0;
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View item = adapter.getView(i, null, listView);
+            item.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += item.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * Math.max(adapter.getCount() - 1, 0));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
