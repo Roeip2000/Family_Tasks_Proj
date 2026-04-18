@@ -144,6 +144,16 @@
         <item name="android:minWidth">0dp</item>
     </style>
 
+    <style name="Widget.Family.DangerOutlineButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_button_danger_outline</item>
+        <item name="android:textColor">@color/danger</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
     <style name="Widget.Family.BackButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/bg_button_back</item>
         <item name="android:textColor">@color/primary_dark</item>

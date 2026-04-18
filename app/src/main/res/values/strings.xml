@@ -5,6 +5,7 @@
     <string name="parents_login">כניסת הורה</string>
     <string name="child_login_qr">כניסת ילד (QR)</string>
     <string name="child_direct_login">בחירת ילד מהירה</string>
+    <string name="btn_quick_select_tester">בחירת ילד מהירה (לבוחן להצגה)</string>
     <string name="home_title">משימות משפחתיות</string>
     <string name="home_subtitle">ניהול ביתי פשוט להורים, עם כניסה מהירה וברורה לילדים.</string>
     <string name="home_question">איך ממשיכים?</string>
@@ -42,7 +43,7 @@
     <string name="btn_assign_task">שלח משימה לילד</string>
     <string name="btn_back_to_dashboard">חזרה לדשבורד</string>
     <string name="btn_enter">כניסה</string>
-    <string name="btn_logout">התנתק</string>
+    <string name="btn_logout">התנתק </string>
     <string name="btn_done">בוצע</string>
     <string name="btn_change_parent_photo">עריכת תמונה</string>
     <string name="btn_manage_templates">מאגר תבניות</string>
@@ -105,9 +106,9 @@
     <string name="child_mark_task_later">עוד לא</string>
     <string name="child_mark_task_success">כל הכבוד!</string>
     <string name="child_error_updating_task">שגיאה בעדכון: %1$s</string>
-    <string name="child_logout_title">יציאה</string>
-    <string name="child_logout_message">האם אתה בטוח שברצונך לצאת?</string>
-    <string name="child_logout_confirm">כן, צא</string>
+            <string name="child_logout_title"> יציאה</string>
+    <string name="child_logout_message">האם לצאת מהחשבון הנוכחי? בפעם הבאה תצטרכו לסרוק QR או לבחור שם מחדש.</string>
+    <string name="child_logout_confirm">כן, התנתק</string>
     <string name="child_due_done">בוצע</string>
     <string name="child_due_no_date">ללא תאריך</string>
     <string name="child_due_late">איחור (%1$d ימים)</string>

@@ -196,7 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="בחירת ילד מהירה (לבוחן להצגה)" />
+                android:text="@string/btn_quick_select_tester" />
         </LinearLayout>
 
         <FrameLayout

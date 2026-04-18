@@ -369,35 +369,39 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/btnManageChildren"
-                        style="@style/Widget.Family.SecondaryButton"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/btn_manage_children_short" />
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/btnManageTemplates"
-                        style="@style/Widget.Family.SecondaryButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/btn_manage_templates_short" />
+                        <Button
+                            android:id="@+id/btnManageChildren"
+                            style="@style/Widget.Family.SecondaryButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:text="@string/btn_manage_children_short" />
+
+                        <Button
+                            android:id="@+id/btnManageTemplates"
+                            style="@style/Widget.Family.SecondaryButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:text="@string/btn_manage_templates_short" />
+                    </LinearLayout>
 
                     <Button
                         android:id="@+id/btnShowQR"
-                        style="@style/Widget.Family.BackButton"
-                        android:layout_width="0dp"
+                        style="@style/Widget.Family.SecondaryButton"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
+                        android:layout_marginTop="8dp"
                         android:text="@string/btn_show_children_qr_short" />
                 </LinearLayout>
 

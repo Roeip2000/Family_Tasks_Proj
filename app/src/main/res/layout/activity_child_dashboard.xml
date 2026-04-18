@@ -106,123 +106,108 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_tab_bar"
+                    android:layout_marginTop="16dp"
                     android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/filterUrgent"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:background="@drawable/bg_child_metric_urgent"
                         android:clickable="true"
                         android:contentDescription="@string/cd_filter_urgent"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="62dp"
+                        android:minHeight="72dp"
                         android:orientation="vertical"
-                        android:paddingStart="6dp"
-                        android:paddingTop="8dp"
-                        android:paddingEnd="6dp"
-                        android:paddingBottom="8dp">
+                        android:padding="12dp">
 
                         <TextView
+                            style="@style/Widget.Family.MetricLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/filter_urgent"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:text="@string/filter_urgent" />
 
                         <TextView
                             android:id="@+id/tvDueSoon"
+                            style="@style/Widget.Family.MetricValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:tag="count"
                             android:text="@string/default_zero"
-                            android:textColor="@color/text_primary"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/urgent" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/filterNotCompleted"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
                         android:layout_weight="1"
+                        android:background="@drawable/bg_child_metric_open"
                         android:clickable="true"
                         android:contentDescription="@string/cd_filter_not_completed"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="62dp"
+                        android:minHeight="72dp"
                         android:orientation="vertical"
-                        android:paddingStart="6dp"
-                        android:paddingTop="8dp"
-                        android:paddingEnd="6dp"
-                        android:paddingBottom="8dp">
+                        android:padding="12dp">
 
                         <TextView
+                            style="@style/Widget.Family.MetricLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/filter_open_tasks"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:text="@string/filter_open_tasks" />
 
                         <TextView
                             android:id="@+id/tvTotalTasks"
+                            style="@style/Widget.Family.MetricValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:tag="count"
                             android:text="@string/default_zero"
-                            android:textColor="@color/text_primary"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/primary_dark" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/filterCompleted"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
                         android:layout_weight="1"
+                        android:background="@drawable/bg_child_metric_completed"
                         android:clickable="true"
                         android:contentDescription="@string/cd_filter_completed"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="62dp"
+                        android:minHeight="72dp"
                         android:orientation="vertical"
-                        android:paddingStart="6dp"
-                        android:paddingTop="8dp"
-                        android:paddingEnd="6dp"
-                        android:paddingBottom="8dp">
+                        android:padding="12dp">
 
                         <TextView
+                            style="@style/Widget.Family.MetricLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/filter_completed"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:text="@string/filter_completed" />
 
                         <TextView
                             android:id="@+id/tvCompleted"
+                            style="@style/Widget.Family.MetricValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:tag="count"
                             android:text="@string/default_zero"
-                            android:textColor="@color/text_primary"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/success_dark" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -252,7 +237,7 @@
 
         <Button
             android:id="@+id/btnLogout"
-            style="@style/Widget.Family.QuietButton"
+            style="@style/Widget.Family.DangerOutlineButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
