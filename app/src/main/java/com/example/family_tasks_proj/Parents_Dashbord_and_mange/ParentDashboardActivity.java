@@ -224,13 +224,18 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show());
     }
 
-    // טוען את הילדים והמשימות מ-Firebase ומרענן את הדשבורד
+    /**
+     * תחנה 1: טעינת נתונים מ-Firebase.
+     * אנחנו מושכים את כל הילדים והמשימות שלהם בקריאה אחת כדי לייעל ביצועים.
+     */
     private void loadDashboardData(@NonNull FirebaseUser user) {
         parentRef(user.getUid()).child("children")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // ברגע שהנתונים הגיעו, אנחנו מעבירים אותם לפיענוח (Parsing)
                         parseDashboardData(snapshot);
+                        // ואז מעדכנים את המסך (UI)
                         refreshDashboardUi();
                     }
                     @Override
@@ -242,7 +247,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    // מפענח את כל הילדים והמשימות, ובמקביל מעדכן ספירות לכל ילד וגם לכל הבית
+    /**
+     * תחנה 2: פיענוח הנתונים (Parsing).
+     * הבוחן ישאל: "איך אתה עובר על המשימות?"
+     * תשובה: יש לנו לולאה כפולה - עוברים על כל ילד, ובתוך כל ילד עוברים על רשימת המשימות שלו.
+     */
     private void parseDashboardData(DataSnapshot snapshot) {
         allAssignedTasks.clear();
         childSummaries.clear();
@@ -253,6 +262,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             String childId = childSnap.getKey();
             if (childId == null || childId.trim().isEmpty()) continue;
 
+            // יצירת אובייקט סיכום לילד (מכיל שם, תמונה וסטטיסטיקה)
             ChildSummary summary = new ChildSummary();
             summary.childId = childId;
             summary.displayName = NameUtils.fullNameOrDefault(
@@ -260,10 +270,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     childSnap.child("lastName").getValue(String.class), "ילד");
             summary.childProfileBase64 = childSnap.child("profileImageBase64").getValue(String.class);
 
+            // לולאה פנימית: מעבר על כל המשימות של הילד הנוכחי
             for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
                 AssignedTask task = parseTask(taskSnap, summary);
                 if (task == null) continue;
                 allAssignedTasks.add(task);
+                // עדכון המונים (כמה בוצעו, כמה דחופים וכו')
                 countTaskInto(task, summary);
             }
             childSummaries.add(summary);
@@ -271,7 +283,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         houseTotal = allAssignedTasks.size();
 
-        // מזריקים צ'יפ סינתטי "כל הילדים" בראש הרשימה כדי שיהיה ברירת מחדל ברורה
+        // הוספת אפשרות "כל הילדים" לתפריט הבחירה
         if (!childSummaries.isEmpty()) {
             ChildSummary all = new ChildSummary();
             all.childId = ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID;

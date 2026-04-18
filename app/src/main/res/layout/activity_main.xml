@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/bg_screen"
     android:fillViewport="true"
+    android:overScrollMode="never"
     tools:context=".auth.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingTop="18dp"
@@ -61,6 +63,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginStart="12dp"
+                    android:alpha="0.85"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/ic_home_family" />
             </LinearLayout>
