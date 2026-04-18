@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- צ'יפ ילד דק בלבד — אווטאר + שם, כדי שהבחירה בילד לא תתחרה עם רשימת המשימות.
- מצב נבחר מתקבל על-ידי החלפת רקע ב-Adapter.
--->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardChildSummary"
@@ -19,12 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:minHeight="48dp"
+        android:minHeight="50dp"
         android:orientation="horizontal"
-        android:paddingStart="6dp"
-        android:paddingTop="6dp"
+        android:paddingStart="8dp"
+        android:paddingTop="7dp"
         android:paddingEnd="14dp"
-        android:paddingBottom="6dp">
+        android:paddingBottom="7dp">
 
         <ImageView
             android:id="@+id/ivChildSummaryPhoto"
@@ -51,7 +47,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- ספירת משימות קומפקטית — עוזרת להורה לזהות מהר איפה יש יותר עומס -->
             <TextView
                 android:id="@+id/tvChildSummaryAssigned"
                 android:layout_width="wrap_content"

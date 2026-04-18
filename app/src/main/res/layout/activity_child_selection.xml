@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -53,10 +53,23 @@
                 android:padding="16dp">
 
                 <TextView
+                    style="@style/Widget.Family.HelperText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_info_band"
+                    android:paddingStart="12dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/child_qr_helper_card"
+                    android:textColor="@color/surface_text_soft" />
+
+                <TextView
                     android:id="@+id/tvParentLabel"
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:text="@string/label_choose_parent"
                     android:visibility="gone" />
 
@@ -74,7 +87,7 @@
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/label_choose_child" />
 
                 <Spinner
@@ -112,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="18dp"
             android:visibility="gone" />
 
     </LinearLayout>

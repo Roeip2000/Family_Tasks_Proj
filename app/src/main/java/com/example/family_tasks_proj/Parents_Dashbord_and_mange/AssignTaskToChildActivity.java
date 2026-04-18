@@ -144,7 +144,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                         }
 
                         setSpinnerItems(spTemplates, titles);
-                        if (!templates.isEmpty()) displayBase64Image(templates.get(0).imageBase64);
+                        if (!templates.isEmpty()) {
+                            displayBase64Image(templates.get(0).imageBase64);
+                        } else {
+                            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+                        }
                     }
 
                     @Override
@@ -314,11 +318,17 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     {
         if (base64 == null || base64.isEmpty())
         {
-            imgTaskPreview.setImageDrawable(null);
+            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
             return;
         }
 
-        imgTaskPreview.setImageBitmap(ImageHelper.base64ToBitmap(base64));
+        android.graphics.Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
+        if (bitmap == null) {
+            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+            return;
+        }
+
+        imgTaskPreview.setImageBitmap(bitmap);
     }
 
     private void showDatePicker()

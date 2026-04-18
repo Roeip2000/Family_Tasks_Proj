@@ -128,11 +128,13 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
             if (bmp != null) {
+                holder.imgTaskImageShell.setVisibility(View.VISIBLE);
                 holder.imgTaskImage.setImageBitmap(bmp);
                 holder.imgTaskImage.setVisibility(View.VISIBLE);
                 return;
             }
         }
+        holder.imgTaskImageShell.setVisibility(View.GONE);
         holder.imgTaskImage.setImageDrawable(null);
         holder.imgTaskImage.setVisibility(View.GONE);
     }
@@ -191,6 +193,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         View viewStatusDot;
+        View imgTaskImageShell;
         ImageView imgTaskImage;
         TextView tvTaskTitle;
         TextView tvDueDate;
@@ -200,6 +203,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             viewStatusDot = itemView.findViewById(R.id.viewStatusDot);
+            imgTaskImageShell = itemView.findViewById(R.id.imgTaskImageShell);
             imgTaskImage = itemView.findViewById(R.id.imgTaskImage);
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
             tvDueDate = itemView.findViewById(R.id.tvDueDate);

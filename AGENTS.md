@@ -56,6 +56,28 @@
 - Parent dashboard summaries should be derived from task state, not from new backend counters.
 - Child session persistence uses `SharedPreferences` under `child_session`.
 
+## Practical Visual Rules
+- These rules were derived from the Figma MCP design-system workflow and adapted to this Android XML project.
+- Keep visual tokens in `app/src/main/res/values/colors.xml`. Do not hardcode hex colors inside layouts when a semantic color already exists.
+- Keep shared text and button behavior in `app/src/main/res/values/styles.xml`. Prefer improving a shared style or drawable before styling one screen locally.
+- Treat each screen as one clear story:
+  - header
+  - short context or summary
+  - one main workspace card
+  - secondary actions last
+- Use simple XML building blocks only:
+  - `MaterialCardView`
+  - rounded shape drawables
+  - `LinearLayout` / `ConstraintLayout`
+  - existing `ImageView`, `TextView`, `Button`, `Spinner`
+- Prefer 18dp-22dp corner radii for main cards and 12dp-16dp for smaller pills and buttons.
+- Keep parent and child flows visually distinct with soft tinted surfaces, not with new logic or extra screens.
+- Use project-owned placeholders like `@drawable/ic_image_placeholder` and the shared avatar placeholder. Do not fall back to old default Android gallery/calendar icons in polished UI.
+- For design-only polish, Java changes should stay minimal and only support the visual system:
+  - swapping old placeholders
+  - keeping selected-state styling readable
+  - preserving layout behavior already in place
+
 ## Recovered Open Work
 - Verify the latest parent/child flows end-to-end on device or emulator; the latest raw sessions hit rate limits before a full final verification record.
 - Review `AssignTaskToChildActivity` hardcoded `starsWorth = 10` and decide whether that is acceptable for submission.

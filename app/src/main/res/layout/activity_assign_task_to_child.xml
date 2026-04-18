@@ -35,40 +35,59 @@
             android:text="@string/subtitle_assign_task"
             android:textSize="13sp" />
 
-        <TextView
-            style="@style/Widget.Family.Eyebrow"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/assign_task_preview_label" />
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_repository_list"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvImagePreview"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            app:cardBackgroundColor="@color/surface_muted"
-            app:cardCornerRadius="42dp"
-            app:cardElevation="0dp"
-            app:cardUseCompatPadding="false">
+            <FrameLayout
+                android:id="@+id/cvImagePreview"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:background="@drawable/bg_preview_shell"
+                android:padding="8dp">
 
-            <ImageView
-                android:id="@+id/imgTaskPreview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/cd_task_preview"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery" />
-        </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/imgTaskPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/cd_task_preview"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_image_placeholder" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Widget.Family.PanelTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/assign_task_preview_label" />
+
+                <TextView
+                    style="@style/Widget.Family.PanelSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/subtitle_assign_task" />
+            </LinearLayout>
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -163,7 +182,7 @@
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.CompactSecondaryButton"
+            style="@style/Widget.Family.SecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

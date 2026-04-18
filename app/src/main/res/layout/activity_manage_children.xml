@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -62,13 +62,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_repository_list"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="12dp">
 
                     <ImageView
                         android:id="@+id/imgChildPhoto"
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
                         android:background="@drawable/bg_avatar_placeholder"
                         android:clipToOutline="true"
                         android:contentDescription="@string/cd_child_photo"
@@ -82,14 +84,21 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/Widget.Family.HelperText"
+                            style="@style/Widget.Family.PanelTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/btn_pick_child_photo" />
+
+                        <TextView
+                            style="@style/Widget.Family.PanelSubtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
                             android:text="@string/manage_children_photo_hint" />
 
                         <Button
                             android:id="@+id/btnPickChildPhoto"
-                            style="@style/Widget.Family.CompactSecondaryButton"
+                            style="@style/Widget.Family.SecondaryButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -158,14 +167,12 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- כרטיס רשימת הילדים הרשומים — מעוצב בדומה לכרטיס ההוספה למעלה,
-             כדי שההבחנה בין "הוספה" לבין "רשימה" תהיה ברורה ויזואלית. -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -174,10 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingTop="14dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="14dp">
+                android:padding="16dp">
 
                 <TextView
                     style="@style/Widget.Family.SectionTitle"
@@ -185,6 +189,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_registered_children"
                     android:textSize="16sp" />
+
+                <TextView
+                    style="@style/Widget.Family.HelperText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/manage_children_item_hint" />
 
                 <TextView
                     android:id="@+id/tvNoChildren"
@@ -197,20 +208,28 @@
                     android:textSize="13sp"
                     android:visibility="gone" />
 
-                <ListView
-                    android:id="@+id/lvChildren"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:divider="@color/divider"
-                    android:dividerHeight="1dp" />
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_repository_list"
+                    android:padding="8dp">
+
+                    <ListView
+                        android:id="@+id/lvChildren"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="0dp"
+                        android:listSelector="@android:color/transparent" />
+                </FrameLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.CompactSecondaryButton"
+            style="@style/Widget.Family.SecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- מסך פתיחה — מטרה אחת: לתת למשתמש להתחיל בלי לחפש.
- 1) הוסר ה־topGlow בגובה 118dp שתפס שטח מיותר.
- 2) ScrollView סביב התוכן, כדי שכשהמקלדת עולה בטופס ההתחברות אפשר לגלול.
- 3) שני בלוקי פעולה שקופים-יחסית במקום כרטיס אחד גדול.
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,15 +16,13 @@
         android:paddingStart="16dp"
         android:paddingTop="18dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="18dp">
+        android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/tvHomeTitle"
             style="@style/Widget.Family.ScreenTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
             android:gravity="start"
             android:text="@string/home_title" />
 
@@ -39,9 +31,7 @@
             style="@style/Widget.Family.ScreenSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
             android:gravity="start"
             android:text="@string/home_subtitle" />
 
@@ -49,9 +39,9 @@
             android:id="@+id/actionPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -60,10 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="14dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="14dp"
-                android:paddingBottom="12dp">
+                android:padding="16dp">
 
                 <TextView
                     style="@style/Widget.Family.Eyebrow"
@@ -71,93 +58,123 @@
                     android:layout_height="wrap_content"
                     android:text="@string/home_question" />
 
+                <TextView
+                    style="@style/Widget.Family.ScreenSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/home_description"
+                    android:textSize="13sp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_panel_parent"
+                    android:orientation="vertical"
+                    android:padding="14dp">
 
                     <TextView
-                        style="@style/Widget.Family.Eyebrow"
-                        android:layout_width="52dp"
+                        style="@style/Widget.Family.PanelTitle"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:text="@string/home_parent_section_title" />
 
-                    <Button
-                        android:id="@+id/btnLogin"
-                        style="@style/Widget.Family.PrimaryButton"
-                        android:layout_width="0dp"
+                    <TextView
+                        style="@style/Widget.Family.PanelSubtitle"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        android:text="@string/parents_login"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="4dp"
+                        android:text="@string/home_parent_section_subtitle" />
 
-                    <Button
-                        android:id="@+id/btnRegister"
-                        style="@style/Widget.Family.CompactSecondaryButton"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
-                        android:text="@string/register_parents"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="12dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnLogin"
+                            style="@style/Widget.Family.PrimaryButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:text="@string/parents_login"
+                            android:textSize="13sp" />
+
+                        <Button
+                            android:id="@+id/btnRegister"
+                            style="@style/Widget.Family.SecondaryButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:text="@string/register_parents"
+                            android:textSize="13sp" />
+                    </LinearLayout>
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/divider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_panel_child"
+                    android:orientation="vertical"
+                    android:padding="14dp">
 
                     <TextView
-                        style="@style/Widget.Family.Eyebrow"
-                        android:layout_width="52dp"
+                        style="@style/Widget.Family.PanelTitle"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:text="@string/home_child_section_title" />
 
-                    <Button
-                        android:id="@+id/btnChildQR"
-                        style="@style/Widget.Family.AccentButton"
-                        android:layout_width="0dp"
+                    <TextView
+                        style="@style/Widget.Family.PanelSubtitle"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        android:text="@string/child_login_qr"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="4dp"
+                        android:text="@string/home_child_section_subtitle" />
 
-                    <Button
-                        android:id="@+id/btnChild"
-                        style="@style/Widget.Family.CompactSecondaryButton"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
-                        android:text="@string/child_direct_login"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="12dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnChildQR"
+                            style="@style/Widget.Family.AccentButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:text="@string/child_login_qr"
+                            android:textSize="13sp" />
+
+                        <Button
+                            android:id="@+id/btnChild"
+                            style="@style/Widget.Family.SecondaryButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:text="@string/child_direct_login"
+                            android:textSize="13sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- מיכל הפרגמנט לא כרטיס מעוצב — רק אזור תוכן.
-             כך שכשהפרגמנט משרטט טופס עם שדות + כפתור, זה לא מצטלב עם מסגרת חיצונית. -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:minHeight="280dp"
+            android:layout_marginTop="14dp"
+            android:minHeight="300dp"
             android:paddingBottom="8dp" />
 
     </LinearLayout>

@@ -257,7 +257,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             Bitmap bmp = ImageHelper.base64ToBitmap(template.imageBase64);
             if (bmp != null) {
                 imgTask.setImageBitmap(bmp);
+            } else {
+                imgTask.setImageResource(R.drawable.ic_image_placeholder);
             }
+        } else {
+            imgTask.setImageResource(R.drawable.ic_image_placeholder);
         }
 
         tvFormTitle.setText(R.string.template_form_title_edit);
@@ -300,7 +304,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         correctedBitmap = null;
         etTitle.setText("");
         etStarsWorth.setText("");
-        imgTask.setImageResource(android.R.drawable.ic_menu_gallery);
+        imgTask.setImageResource(R.drawable.ic_image_placeholder);
         tvFormTitle.setText(R.string.template_form_title_new);
         btnSave.setText(R.string.btn_save_template);
         btnCancelEdit.setVisibility(View.GONE);
@@ -340,13 +344,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             tvTemplateStars.setText(getString(R.string.template_item_stars, template.safeStarsWorth()));
 
             if (template.imageBase64 == null || template.imageBase64.isEmpty()) {
-                ivTemplateThumb.setImageResource(android.R.drawable.ic_menu_gallery);
+                ivTemplateThumb.setImageResource(R.drawable.ic_image_placeholder);
                 return convertView;
             }
 
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.imageBase64);
             if (bitmap == null) {
-                ivTemplateThumb.setImageResource(android.R.drawable.ic_menu_gallery);
+                ivTemplateThumb.setImageResource(R.drawable.ic_image_placeholder);
                 return convertView;
             }
 

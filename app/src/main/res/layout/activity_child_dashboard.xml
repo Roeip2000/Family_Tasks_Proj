@@ -25,19 +25,18 @@
 
             <ImageView
                 android:id="@+id/imgChildAvatar"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:background="@drawable/bg_avatar_placeholder"
                 android:clipToOutline="true"
                 android:contentDescription="@string/cd_child_avatar"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_my_calendar" />
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -56,13 +55,6 @@
                     android:textColor="@color/text_primary"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    style="@style/Widget.Family.HelperText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/child_dashboard_header_note" />
             </LinearLayout>
 
             <TextView
@@ -80,12 +72,25 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <TextView
+            style="@style/Widget.Family.HelperText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_info_band"
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:text="@string/child_dashboard_header_note"
+            android:textColor="@color/surface_text_soft" />
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="22dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -259,10 +264,9 @@
         <Button
             android:id="@+id/btnLogout"
             style="@style/Widget.Family.QuietButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             android:text="@string/btn_logout" />
 
     </LinearLayout>

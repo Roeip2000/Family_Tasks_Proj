@@ -3,41 +3,39 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- כחול-אינדיגו עמוק וחם יותר מאשר הטורקיז הישן — נקי, בוגר, אמין -->
-    <color name="primary">#2F4A7A</color>
-    <color name="primary_light">#E7EDF7</color>
-    <color name="primary_dark">#1E345A</color>
+    <color name="primary">#355A88</color>
+    <color name="primary_light">#E8EEF8</color>
+    <color name="primary_dark">#233F63</color>
 
-    <!-- ירוק ברור לפעולות "בוצע/הצלחה" — רווי יותר כדי להרגיש אמיתי -->
-    <color name="accent">#2F7A53</color>
-    <color name="accent_light">#E7F1EA</color>
+    <color name="accent">#2F7D5C</color>
+    <color name="accent_light">#E7F3EC</color>
 
-    <!-- כתום-טרקוטה חם — חזק יותר מהענבר המעומעם הקודם -->
-    <color name="urgent">#C2552D</color>
-    <color name="urgent_light">#FBEAE0</color>
+    <color name="urgent">#C75B2C</color>
+    <color name="urgent_light">#FDEDE4</color>
 
-    <!-- רקעי מסך וכרטיס — חום-נייר חם במקום בז' קריר -->
-    <color name="bg_screen">#F5EFE4</color>
-    <color name="bg_card">#FFFFFF</color>
-    <color name="surface_muted">#EFE8DB</color>
-    <color name="surface_soft_blue">#E9EEF7</color>
-    <color name="surface_soft_green">#E7F1EA</color>
-    <color name="surface_soft_orange">#FBEAE0</color>
+    <color name="bg_screen">#F7F2E8</color>
+    <color name="bg_card">#FFFEFB</color>
+    <color name="surface_muted">#F1E9DB</color>
+    <color name="surface_soft_blue">#EAF0FA</color>
+    <color name="surface_soft_green">#E8F3EC</color>
+    <color name="surface_soft_orange">#FDEDE4</color>
+    <color name="surface_soft_gold">#F8E9C8</color>
 
-    <!-- צבעי טקסט — דירוג ברור בין ראשי, משני, רמז -->
-    <color name="text_primary">#1C2435</color>
-    <color name="text_secondary">#5D6875</color>
-    <color name="text_hint">#8A94A1</color>
+    <color name="text_primary">#1D2738</color>
+    <color name="text_secondary">#5B6775</color>
+    <color name="text_hint">#8893A1</color>
+    <color name="text_inverse">#FFFEFB</color>
 
-    <color name="border_light">#E0D8C8</color>
-    <color name="divider">#E8E0CF</color>
-    <color name="surface_text_soft">#3B5563</color>
+    <color name="border_light">#DDD4C4</color>
+    <color name="border_strong">#B9C7DE</color>
+    <color name="divider">#E7DDCD</color>
+    <color name="surface_text_soft">#41596A</color>
 
-    <color name="success_dark">#24614A</color>
-    <color name="warning_dark">#8A4315</color>
-    <color name="danger">#B04740</color>
-    <color name="danger_light">#FBEDEB</color>
-    <color name="gold">#B98312</color>
+    <color name="success_dark">#225F49</color>
+    <color name="warning_dark">#8C4519</color>
+    <color name="danger">#AF443B</color>
+    <color name="danger_light">#FCEDEB</color>
+    <color name="gold">#B88419</color>
 
     <color name="logout_bg">@color/danger_light</color>
     <color name="logout_text">@color/danger</color>
