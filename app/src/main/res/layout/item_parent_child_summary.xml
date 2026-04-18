@@ -35,24 +35,33 @@
             android:contentDescription="@string/cd_child_avatar"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/tvChildSummaryName"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <!-- שדה משני שמור ב-layout למרות שהעיצוב החדש לא מציג אותו —
-             כדי לא לשבור את ה-Adapter שעדיין כותב אליו טקסט סטטיסטי. -->
-        <TextView
-            android:id="@+id/tvChildSummaryAssigned"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/tvChildSummaryName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- ספירת משימות קומפקטית — עוזרת להורה לזהות מהר איפה יש יותר עומס -->
+            <TextView
+                android:id="@+id/tvChildSummaryAssigned"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

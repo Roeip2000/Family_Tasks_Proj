@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -13,6 +14,7 @@ import com.example.family_tasks_proj.Child_Login.ChildSelectionActivity;
 import com.example.family_tasks_proj.Parents.ParentLoginFragment;
 import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.child.ChildDashboardActivity;
 
 /**
  * מסך כניסה ראשי — Launcher Activity.
@@ -53,20 +55,47 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> showFragment(new ParentLoginFragment(), true));
         btnChildQR.setOnClickListener(v -> showFragment(new ChildQRLoginFragment(), true));
 
-        // כניסה ישירה ללא QR — פותח מסך בחירת הורה+ילד.
-        // אם יש סשן שמור (parentId) — ChildSelectionActivity ידלג ישר ל-Spinner ילדים.
-        // אם אין סשן — ChildSelectionActivity יציג Spinner הורים קודם ואז ילדים.
-        btnChild.setOnClickListener(v ->
-        {
-            Intent intent = new Intent(MainActivity.this, ChildSelectionActivity.class);
-            // אם יש סשן שמור — מעביר כ-extra כדי לדלג על בחירת הורה
-            SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-            String savedParent = sp.getString("parentId", null);
-            if (savedParent != null) {
-                intent.putExtra("parentId", savedParent);
-            }
+        // כניסה מהירה לילד:
+        // 1) יש סשן מלא (הורה + ילד) — הולכים ישר לדשבורד הילד.
+        // 2) יש רק parentId שמור — ממשיכים למסך בחירת הילד של אותו הורה.
+        // 3) אין כלום — מסבירים לילד קצר שצריך QR, ונותנים גם דרך ידנית כגיבוי.
+        btnChild.setOnClickListener(v -> openChildQuickLogin());
+    }
+
+    private void openChildQuickLogin() {
+        SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
+        String savedParent = sp.getString("parentId", null);
+        String savedChild = sp.getString("childId", null);
+
+        if (savedParent != null && savedChild != null) {
+            Intent intent = new Intent(this, ChildDashboardActivity.class);
+            intent.putExtra("parentId", savedParent);
+            intent.putExtra("childId", savedChild);
             startActivity(intent);
-        });
+            return;
+        }
+
+        if (savedParent != null) {
+            Intent intent = new Intent(this, ChildSelectionActivity.class);
+            intent.putExtra("parentId", savedParent);
+            startActivity(intent);
+            return;
+        }
+
+        showFirstTimeChildDialog();
+    }
+
+    // כניסה ראשונה של ילד — עדיף QR; בחירה ידנית מוצגת כגיבוי ולא כברירת מחדל
+    private void showFirstTimeChildDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.child_first_time_title)
+                .setMessage(R.string.child_first_time_message)
+                .setPositiveButton(R.string.child_first_time_scan, (d, w) ->
+                        showFragment(new ChildQRLoginFragment(), true))
+                .setNegativeButton(R.string.child_first_time_manual, (d, w) ->
+                        startActivity(new Intent(this, ChildSelectionActivity.class)))
+                .setNeutralButton(R.string.action_cancel, null)
+                .show();
     }
 
     /**

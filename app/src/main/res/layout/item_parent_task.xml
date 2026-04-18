@@ -41,6 +41,19 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <!-- שם הילד — מוצג רק בתצוגת "כל הילדים" כדי להבהיר לאיזה ילד המשימה שייכת -->
+            <TextView
+                android:id="@+id/tvTaskOwner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/primary_dark"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/tvDueDateCard"
                 android:layout_width="wrap_content"

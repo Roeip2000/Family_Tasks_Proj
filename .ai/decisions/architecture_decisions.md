@@ -124,3 +124,24 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The whole-app review showed that the child flow was still drifting back toward the older "separate classroom screens" feel.
   - A shared visual grammar with a simpler child hierarchy improves cohesion without making the child side too dense or hard to explain.
+
+## AD-015: Child entry should honor the strongest signal it has, not ask again
+- Status: active
+- Decision:
+  - A child-specific QR (`parent:X|child:Y`) is a complete login and skips `ChildSelectionActivity`; the child lands on `ChildDashboardActivity` directly.
+  - A parent-only QR (`parent:X`) still routes through `ChildSelectionActivity` so the child can pick their name.
+  - The quick-child button prefers a saved full session, falls back to saved parent-only, and only as a last resort shows a short "כניסה ראשונה" dialog with scan-QR as the positive action and manual selection as a fallback.
+- Why:
+  - Treating every entry as "choose parent → choose child" made repeat usage feel slow and made first-time usage confusing.
+  - Using the strongest available signal (full QR > full session > parent-only session > nothing) keeps the UI simple without removing the manual safety net.
+
+## AD-016: ParentDashboard injects a synthetic "כל הילדים" chip instead of a separate mode
+- Status: active
+- Decision:
+  - The child row on ParentDashboard always starts with a synthetic `ChildSummary` whose id is `ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID`.
+  - Selecting it iterates tasks across every child and tells the task adapter to reveal a `ל-<שם הילד>` owner line on each row.
+  - Empty-state text switches to household-level strings (`parent_dashboard_all_no_tasks_*`) so the message reads naturally without a child name.
+  - Per-child chips keep their own compact stat line so the parent can still spot overloaded children at a glance.
+- Why:
+  - "כל הילדים" needs to be a real control-center view, not a separate screen, but the existing dashboard pipeline already handled a single selected child well.
+  - Reusing the same child-selection mechanism with one synthetic id keeps the parse/build/update flow unchanged and explainable, and avoids introducing a second mode toggle.

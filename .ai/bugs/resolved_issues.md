@@ -136,6 +136,22 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Verified with `./gradlew.bat assembleDebug` and `./gradlew.bat lintDebug`.
 - Confidence: explicit current-session verification
 
+## RI-014: Child QR, quick-child button, and parent "all children" flow were still fragmented
+- First clear evidence: 2026-04-18 integrated product pass review of `ChildQRLoginFragment`, `MainActivity`, and `ParentDashboardActivity`
+- Problem:
+  - Scanning a child-specific QR (`parent:X|child:Y`) still routed the child through `ChildSelectionActivity`, forcing a redundant name pick even though the QR already identified the child.
+  - The non-QR quick-child button always opened a parent spinner — even when a full child session was already saved — and it also did not explain the first-time experience.
+  - ParentDashboard had no real "all children" mode: the parent could see one child at a time but not a household-wide view, so they could not answer "what's open in the house right now?" from a single screen.
+  - Tasks in a hypothetical all-children view had no child-name affordance, and per-child chips did not show compact counts.
+- Resolution:
+  - `ChildQRLoginFragment` now jumps straight to `ChildDashboardActivity` when the QR carries both ids; parent-only QR still opens `ChildSelectionActivity`.
+  - `MainActivity.openChildQuickLogin()` prefers a saved full session, falls back to saved parent-only, and otherwise shows a short first-time dialog (scan QR positive / manual negative / cancel neutral) instead of the old spinner shortcut.
+  - `ParentDashboardActivity` injects a synthetic `ALL_CHILDREN_ID` chip at the head of the child row, defaults the selection to it, aggregates tasks across all children, and toggles `tvTaskOwner` on each row so ownership is explicit; empty-state text switches to household strings.
+  - Per-child chips now show `N פתוחות · M דחופות` via `item_parent_child_summary.xml` and strings already present in the project.
+  - Completed-task read-only behavior and end-to-end star flow were re-verified in the current source; no code change was needed for those two.
+  - Verified with `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew assembleDebug`.
+- Confidence: explicit current-session verification
+
 ## RI-013: Child-side screens still looked like an older mini-dashboard and did not match the refined parent flow
 - First clear evidence: 2026-04-17 whole-app redesign review of `ChildDashboard`, `ChildQRLoginFragment`, and `ChildSelectionActivity`
 - Problem:

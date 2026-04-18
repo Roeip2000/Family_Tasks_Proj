@@ -27,6 +27,9 @@ import java.util.Map;
 class ParentDashboardChildSummaryAdapter
         extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 
+    /** מזהה מיוחד לצ'יפ "כל הילדים" שבראש הרשימה — לא ילד אמיתי ב-Firebase. */
+    static final String ALL_CHILDREN_ID = "__ALL__";
+
     interface OnChildSelectedListener {
         void onChildSelected(String childId);
     }
@@ -64,6 +67,7 @@ class ParentDashboardChildSummaryAdapter
     public void onBindViewHolder(@NonNull ChildSummaryViewHolder holder, int position) {
         ChildSummary childSummary = childSummaries.get(position);
         boolean isSelected = childSummary.childId.equals(selectedChildId);
+        boolean isAll = ALL_CHILDREN_ID.equals(childSummary.childId);
 
         holder.tvChildSummaryName.setText(childSummary.displayName);
         holder.tvChildSummaryAssigned.setText(getCompactStats(childSummary));
@@ -75,9 +79,14 @@ class ParentDashboardChildSummaryAdapter
         holder.itemView.setContentDescription(
                 context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
 
-        bindChildPhoto(holder.ivChildSummaryPhoto,
-                childSummary.childId,
-                childSummary.childProfileBase64);
+        if (isAll) {
+            // לצ'יפ "כל הילדים" אין תמונה — משאירים placeholder נקי
+            holder.ivChildSummaryPhoto.setImageDrawable(null);
+        } else {
+            bindChildPhoto(holder.ivChildSummaryPhoto,
+                    childSummary.childId,
+                    childSummary.childProfileBase64);
+        }
 
         holder.itemView.setOnClickListener(v -> onChildSelectedListener.onChildSelected(childSummary.childId));
     }

@@ -29,10 +29,17 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
     private final LayoutInflater inflater;
 
+    // כשיש יותר מילד אחד בתצוגה (מצב "כל הילדים") — מציגים את שם הילד בכל שורה
+    private boolean showChildName;
+
     ParentDashboardTaskAdapter(@NonNull Context context,
                                @NonNull List<TaskListItem> items) {
         super(context, 0, items);
         this.inflater = LayoutInflater.from(context);
+    }
+
+    void setShowChildName(boolean showChildName) {
+        this.showChildName = showChildName;
     }
 
     @Override
@@ -89,6 +96,7 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
         TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
+        TextView tvTaskOwner = convertView.findViewById(R.id.tvTaskOwner);
         View viewTaskDot = convertView.findViewById(R.id.viewTaskDot);
 
         tvTaskTitleCard.setText(task.title == null || task.title.isEmpty()
@@ -96,6 +104,15 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
                 : task.title);
         tvDueDateCard.setText(getDueLine(task));
         tvDueDateCard.setTextColor(getDueLineColor(task));
+
+        // בתצוגת "כל הילדים" מציגים שייכות כדי שהורה יבין לאיזה ילד המשימה
+        if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
+            tvTaskOwner.setText(getContext().getString(
+                    R.string.parent_dashboard_task_owner_label, task.childName));
+            tvTaskOwner.setVisibility(View.VISIBLE);
+        } else {
+            tvTaskOwner.setVisibility(View.GONE);
+        }
 
         String statusText = getTaskStatusLabel(task);
         int chipBgColor;

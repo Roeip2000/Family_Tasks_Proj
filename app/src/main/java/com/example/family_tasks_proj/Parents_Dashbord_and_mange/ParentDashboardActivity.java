@@ -63,7 +63,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private final Map<String, Bitmap> childPhotoCache = new HashMap<>();
 
     // ספירות סיכום הבית — מעודכנות בזמן parseDashboardData
-    private int houseAssigned, houseDone, houseUrgent;
+    private int houseAssigned, houseDone, houseUrgent, houseTotal;
 
     private ParentDashboardTaskAdapter taskAdapter;
     private ParentDashboardChildSummaryAdapter childSummaryAdapter;
@@ -247,7 +247,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         allAssignedTasks.clear();
         childSummaries.clear();
         childPhotoCache.clear();
-        houseAssigned = houseDone = houseUrgent = 0;
+        houseAssigned = houseDone = houseUrgent = houseTotal = 0;
 
         for (DataSnapshot childSnap : snapshot.getChildren()) {
             String childId = childSnap.getKey();
@@ -267,6 +267,20 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 countTaskInto(task, summary);
             }
             childSummaries.add(summary);
+        }
+
+        houseTotal = allAssignedTasks.size();
+
+        // מזריקים צ'יפ סינתטי "כל הילדים" בראש הרשימה כדי שיהיה ברירת מחדל ברורה
+        if (!childSummaries.isEmpty()) {
+            ChildSummary all = new ChildSummary();
+            all.childId = ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID;
+            all.displayName = getString(R.string.parent_dashboard_all_children);
+            all.totalCount = houseTotal;
+            all.assignedCount = houseAssigned;
+            all.completedCount = houseDone;
+            all.urgentCount = houseUrgent;
+            childSummaries.add(0, all);
         }
     }
 
@@ -353,8 +367,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
             tvTaskSectionSubtitle.setText(R.string.parent_dashboard_selected_child_empty_subtitle);
             return;
         }
-        tvTaskSectionTitle.setText(
-                getString(R.string.parent_dashboard_selected_child_title, s.displayName));
+        // בתצוגת "כל הילדים" הכותרת קבועה, אחרת מציגים את שם הילד הנבחר
+        if (ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(s.childId)) {
+            tvTaskSectionTitle.setText(R.string.parent_dashboard_all_children_title);
+        } else {
+            tvTaskSectionTitle.setText(
+                    getString(R.string.parent_dashboard_selected_child_title, s.displayName));
+        }
         tvTaskSectionSubtitle.setText(
                 getString(R.string.parent_dashboard_selected_child_stats,
                         s.assignedCount, s.completedCount, s.urgentCount));
@@ -370,19 +389,28 @@ public class ParentDashboardActivity extends AppCompatActivity {
             return;
         }
 
+        boolean isAll = ParentDashboardChildSummaryAdapter
+                .ALL_CHILDREN_ID.equals(selectedChild.childId);
+        // במצב "כל הילדים" כל שורת משימה מציגה לאיזה ילד היא שייכת
+        taskAdapter.setShowChildName(isAll);
+
         // חלוקה לשלוש קבוצות פשוטות: דחופה, פתוחה, הושלמה
         List<AssignedTask> urgent = new ArrayList<>();
         List<AssignedTask> open = new ArrayList<>();
         List<AssignedTask> completed = new ArrayList<>();
         for (AssignedTask task : allAssignedTasks) {
-            if (task == null || !selectedChild.childId.equals(task.childId)) continue;
+            if (task == null) continue;
+            if (!isAll && !selectedChild.childId.equals(task.childId)) continue;
             if (task.isDone) completed.add(task);
             else if (isUrgentTask(task)) urgent.add(task);
             else open.add(task);
         }
 
-        int emptyTextRes = populateByActiveFilter(urgent, open, completed);
-        tvNoTasks.setText(getString(emptyTextRes, selectedChild.displayName));
+        int emptyTextRes = populateByActiveFilter(urgent, open, completed, isAll);
+        // ההודעה הריקה בתצוגת "כל הילדים" גנרית, ובתצוגת ילד יחיד עם שמו
+        tvNoTasks.setText(isAll
+                ? getString(emptyTextRes)
+                : getString(emptyTextRes, selectedChild.displayName));
         taskAdapter.notifyDataSetChanged();
         updateListViewHeight(lvTasks);
         showTaskListVisibility(!visibleTaskItems.isEmpty());
@@ -391,23 +419,28 @@ public class ParentDashboardActivity extends AppCompatActivity {
     // ממלא את visibleTaskItems לפי הפילטר, ומחזיר את מזהה הטקסט במקרה שהתוצאה ריקה
     private int populateByActiveFilter(List<AssignedTask> urgent,
                                        List<AssignedTask> open,
-                                       List<AssignedTask> completed) {
+                                       List<AssignedTask> completed,
+                                       boolean isAll) {
         switch (activeFilter) {
             case ASSIGNED:
                 addTasksWithHeader(null, open);
-                return R.string.parent_dashboard_no_tasks_open;
+                return isAll ? R.string.parent_dashboard_all_no_tasks_open
+                             : R.string.parent_dashboard_no_tasks_open;
             case COMPLETED:
                 addTasksWithHeader(null, completed);
-                return R.string.parent_dashboard_no_tasks_completed;
+                return isAll ? R.string.parent_dashboard_all_no_tasks_completed
+                             : R.string.parent_dashboard_no_tasks_completed;
             case URGENT:
                 addTasksWithHeader(null, urgent);
-                return R.string.parent_dashboard_no_tasks_urgent;
+                return isAll ? R.string.parent_dashboard_all_no_tasks_urgent
+                             : R.string.parent_dashboard_no_tasks_urgent;
             case ALL:
             default:
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_urgent), urgent);
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_assigned), open);
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_completed), completed);
-                return R.string.parent_dashboard_no_tasks_all;
+                return isAll ? R.string.parent_dashboard_all_no_tasks_all
+                             : R.string.parent_dashboard_no_tasks_all;
         }
     }
 

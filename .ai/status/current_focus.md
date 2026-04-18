@@ -138,3 +138,20 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - "explicitly confirmed in raw logs"
   - "inferred from current source after an interrupted session"
 - The 2026-04-17 work was verified with both build and lint, but not yet with a fresh emulator/device run.
+
+## Integrated Product Pass (2026-04-18)
+- Completed an integrated pass that unifies the parent/child flows into one cohesive app:
+  - child QR with full payload (`parent:X|child:Y`) now goes straight to `ChildDashboardActivity`, skipping `ChildSelectionActivity`.
+  - quick-child button uses saved session first, falls back to a short first-time dialog (scan QR / manual / cancel) instead of a raw parent spinner.
+  - parent dashboard gained a synthetic "כל הילדים" chip at the head of the child row — this is the default view on load.
+  - when "כל הילדים" is active, each task row shows `ל-<שם הילד>` so ownership is never ambiguous.
+  - per-child chips now show compact stats (`N פתוחות · M דחופות`).
+  - empty states split into household-wide and per-child variants so the text reads naturally in both modes.
+  - completed tasks are already read-only in the task options dialog (verified, not re-implemented).
+  - dynamic stars already flow end-to-end: template uses `safeStarsWorth()`, assign screen passes real value, child dashboard totals via `task.starsWorth`.
+- Build status:
+  - `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew assembleDebug` passed on 2026-04-18.
+- Open items (documented for the oral defense):
+  - `starsWorth = 10` hardcode in `AssignTaskToChildActivity` — still waiting on a deliberate decision whether it should become user-controlled.
+  - no logout button on ChildDashboard — intentionally deferred to stay within the "delta-only" constraint for this pass.
+  - no fresh emulator/device run yet for the 2026-04-18 integrated pass.

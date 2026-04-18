@@ -190,6 +190,22 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat testDebugUnitTest` completed successfully.
 - Confidence: explicitly verified in the current session
 
+## 2026-04-18: Integrated product pass — unifying parent and child flows
+- A cohesion pass turned the previously separate parent/child flows into one clearly connected app.
+- Concrete changes completed in this session:
+  - `ChildQRLoginFragment` now recognizes the full `parent:X|child:Y` payload and skips `ChildSelectionActivity`, going straight to `ChildDashboardActivity`. Parent-only QR keeps the old selection step as a fallback.
+  - `MainActivity` quick-child button was rewired: saved full session goes directly to the child dashboard; saved parent-only goes to child selection; no saved data opens a short first-time dialog (scan QR / manual / cancel) instead of showing the full parent spinner.
+  - Four new dialog strings added in `strings.xml` for the first-time child experience (`child_first_time_title/message/scan/manual`).
+  - `ParentDashboardChildSummaryAdapter` gained `ALL_CHILDREN_ID` constant and skips avatar binding for the synthetic "כל הילדים" chip.
+  - `item_parent_child_summary.xml` reactivated the compact task count line so each child chip shows `N פתוחות · M דחופות`.
+  - `item_parent_task.xml` added a small `tvTaskOwner` line (default `gone`) so task rows can reveal which child a task belongs to.
+  - `ParentDashboardTaskAdapter` got a `setShowChildName(boolean)` toggle that reveals the owner line with `parent_dashboard_task_owner_label` (`ל-%1$s`) when active.
+  - `ParentDashboardActivity` computes household totals, injects the synthetic "כל הילדים" chip at the head of the child row on every refresh, defaults the selection to it, iterates all tasks when it is active, and routes empty-state text through dedicated household strings. The selected-child header switches to the shared "משימות של כל הילדים" title in this mode.
+  - Verified in source (no code rewrite required): completed tasks are already read-only in `showTaskOptionsDialog` (only the close button is shown), and stars flow end-to-end via `TaskTemplate.safeStarsWorth()` → `AssignTaskToChildActivity` → `ChildTask.starsWorth` → child dashboard totals.
+- Verification in this session:
+  - `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew assembleDebug` completed successfully.
+- Confidence: explicitly verified in the current session.
+
 ## 2026-04-17: Whole-app second pass for child-side consistency and auth feedback
 - A second follow-up pass extended the redesign beyond the parent flow so the child-side no longer felt like an older leftover screen set next to the newer parent UI.
 - Concrete changes completed in this session:

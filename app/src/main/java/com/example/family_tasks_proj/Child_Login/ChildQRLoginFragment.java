@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -171,8 +172,9 @@ public class ChildQRLoginFragment extends Fragment {
                             return;
                         }
 
+                        // QR מלא עם שני המזהים — הילד קופץ ישר לדשבורד בלי עוד בחירה
                         saveSession(parentId, childId);
-                        openChildSelection(parentId, childId);
+                        openChildDashboard(parentId, childId);
                     }
 
                     @Override
@@ -188,6 +190,14 @@ public class ChildQRLoginFragment extends Fragment {
                         ).show();
                     }
                 });
+    }
+
+    private void openChildDashboard(String parentId, String childId) {
+        Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
+        intent.putExtra(KEY_PARENT, parentId);
+        intent.putExtra(KEY_CHILD, childId);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     private void openChildSelection(String parentId, String childId) {

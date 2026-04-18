@@ -273,4 +273,18 @@
     <string name="child_qr_helper_card">סורקים את הקוד, בוחרים את השם שלך וממשיכים ישר למשימות.</string>
     <string name="child_selection_subtitle_parent_unknown">אם לא נסרק QR, בוחרים קודם הורה ואז את השם.</string>
     <string name="child_selection_subtitle_parent_known">כבר זיהינו את המשפחה. נשאר רק לבחור שם ולהיכנס.</string>
+
+    <string name="child_first_time_title">כניסה ראשונה</string>
+    <string name="child_first_time_message">הדרך המהירה היא לסרוק את קוד ה-QR של ההורה. אפשר גם לבחור הורה ידנית בתור גיבוי.</string>
+    <string name="child_first_time_scan">סרוק QR</string>
+    <string name="child_first_time_manual">בחירה ידנית</string>
+
+    <string name="parent_dashboard_all_children">כל הילדים</string>
+    <string name="parent_dashboard_all_children_title">משימות של כל הילדים</string>
+    <string name="parent_dashboard_all_children_empty">אין כרגע משימות פתוחות בבית.</string>
+    <string name="parent_dashboard_all_no_tasks_all">אין כרגע משימות לאף ילד.</string>
+    <string name="parent_dashboard_all_no_tasks_open">אין משימות פתוחות באף ילד כרגע.</string>
+    <string name="parent_dashboard_all_no_tasks_completed">אין משימות שהושלמו באף ילד.</string>
+    <string name="parent_dashboard_all_no_tasks_urgent">אין משימות דחופות באף ילד.</string>
+    <string name="parent_dashboard_task_owner_label">ל-%1$s</string>
 </resources>
