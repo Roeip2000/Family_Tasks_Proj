@@ -9,10 +9,14 @@
     <string name="home_subtitle">ניהול ביתי פשוט להורים, עם כניסה מהירה וברורה לילדים.</string>
     <string name="home_question">איך ממשיכים?</string>
     <string name="home_description">להורה יש כניסה והרשמה במקום אחד, ולילד יש סריקת QR או כניסה מהירה עם בחירת שם.</string>
-    <string name="home_parent_section_title">להורים</string>
-    <string name="home_parent_section_subtitle">כניסה והרשמה לניהול הילדים והמשימות.</string>
-    <string name="home_child_section_title">לילדים</string>
-    <string name="home_child_section_subtitle">סריקת QR או כניסה מהירה עם בחירת ילד.</string>
+    <string name="home_welcome_eyebrow">משפחה מסודרת, יום רגוע יותר</string>
+    <string name="home_parent_section_title">אני הורה</string>
+    <string name="home_parent_section_subtitle">מנהל ילדים, תבניות ומשימות שוטפות לבית.</string>
+    <string name="home_child_section_title">אני ילד</string>
+    <string name="home_child_section_subtitle">נכנס עם QR או ממשיך ישר למשימות מהפעם הקודמת.</string>
+    <string name="home_hero_note">הורה מנהל את הבית, וילד נכנס מהר ורואה רק מה שחשוב לו עכשיו.</string>
+    <string name="home_parent_card_note">מתאים לכניסה קיימת או לפתיחת חשבון חדש של ההורה.</string>
+    <string name="home_child_card_note">הדרך המומלצת היא QR, אבל אפשר גם לבחור שם ולהמשיך ידנית.</string>
 
     <string name="first_name">שם פרטי</string>
     <string name="last_name">שם משפחה</string>
@@ -112,13 +116,17 @@
     <string name="child_due_days_left">עוד %1$d ימים</string>
     <string name="child_due_urgent_prefix">דחוף! %1$s</string>
     <string name="child_stars_worth">%1$d כוכבים</string>
+    <string name="assign_task_form_title">שולחים משימה בשלושה צעדים</string>
+    <string name="assign_task_form_note">בוחרים תבנית, מתקנים כותרת אם צריך, ומגדירים ילד ותאריך יעד ברור.</string>
 
     <string name="parent_dashboard_header_title">מרכז ההורה</string>
     <string name="parent_dashboard_header_subtitle">תמונת ההורה, סיכום הבית וכלי הניהול במקום אחד.</string>
     <string name="parent_dashboard_header_note">בוחרים ילד אחד ורואים מיד מה פתוח, מה דחוף ומה כבר הושלם.</string>
+    <string name="parent_dashboard_summary_note">זהו מסך השליטה הראשי של הבית: מה פתוח, מה דחוף ומה כבר נסגר.</string>
     <string name="parent_dashboard_household_title">סיכום הבית</string>
     <string name="parent_dashboard_children_title">ילדים בבית</string>
     <string name="parent_dashboard_children_subtitle">בוחרים ילד אחד ורואים מיד רק את מה שרלוונטי עכשיו.</string>
+    <string name="parent_dashboard_tasks_note">בוחרים ילד, מסננים מהר, ורואים אילו משימות דורשות תשומת לב עכשיו.</string>
     <string name="parent_dashboard_child_compact_none">אין פתוחות</string>
     <string name="parent_dashboard_child_compact_open">%1$d פתוחות</string>
     <string name="parent_dashboard_child_compact_urgent">%1$d פתוחות · %2$d דחופות</string>
@@ -163,12 +171,15 @@
     <string name="parent_dashboard_group_urgent">דחופות</string>
     <string name="parent_dashboard_group_assigned">נשלחו</string>
     <string name="parent_dashboard_group_completed">הושלמו</string>
+    <string name="parent_dashboard_actions_note">מכאן שולחים משימות, מנהלים ילדים, מעדכנים תבניות ופותחים את ה־QR המשפחתי.</string>
 
     <string name="manage_children_not_logged_in">אינך מחובר</string>
     <string name="manage_children_error_create_child_id">שגיאה ביצירת מזהה לילד</string>
     <string name="manage_children_save_changes">שמור שינויים</string>
     <string name="manage_children_form_title_new">הוספת ילד חדש</string>
     <string name="manage_children_form_title_edit">עריכת פרטי ילד</string>
+    <string name="manage_children_form_note">תמונה ושם מלא יעזרו לזהות כל ילד מהר גם במסך ההורה וגם במסך הילד.</string>
+    <string name="manage_children_list_title">ילדי הבית</string>
     <string name="manage_children_photo_hint">תמונה קטנה עוזרת לזהות מהר את הילד הנכון.</string>
     <string name="manage_children_item_hint">לחצו לעריכה או למחיקה</string>
     <string name="manage_children_added_success">%1$s %2$s נוסף בהצלחה!</string>
@@ -195,6 +206,7 @@
     <string name="child_selection_error_loading_children">שגיאה בטעינת ילדים: %1$s</string>
     <string name="child_selection_pick_parent">בחר הורה מהרשימה</string>
     <string name="child_selection_pick_child">בחר ילד מהרשימה</string>
+    <string name="child_selection_step_title">בוחרים הורה אם צריך, בוחרים שם, ונכנסים ישר למשימות.</string>
 
     <string name="assign_task_parent_not_logged_in">ההורה אינו מחובר</string>
     <string name="assign_task_error_loading_templates">שגיאה בטעינת תבניות: %1$s</string>
@@ -217,6 +229,7 @@
     <string name="template_screen_subtitle">שומרים משימות קבועות כדי לשלוח אותן מהר.</string>
     <string name="template_form_title_new">יצירת תבנית חדשה</string>
     <string name="template_form_title_edit">עריכת תבנית</string>
+    <string name="template_form_note">יוצרים תבנית פעם אחת ומשתמשים בה שוב כדי לחסוך זמן בכל שליחת משימה.</string>
     <string name="template_save_changes">שמור שינויים</string>
     <string name="template_existing_title">תבניות קיימות</string>
     <string name="template_list_hint">לחצו על תבנית כדי לערוך או למחוק.</string>
@@ -253,10 +266,13 @@
     <string name="assign_task_preview_label">תצוגה מקדימה של התבנית</string>
     <string name="cd_qr_code">קוד QR לכניסת ילד</string>
     <string name="qr_share_hint">מראים לילדים את הקוד, והם בוחרים את השם שלהם במסך הבא.</string>
+    <string name="qr_card_title">הקוד של המשפחה</string>
+    <string name="qr_card_note">מציגים את הקוד על המסך, והילדים בוחרים את השם שלהם ונכנסים.</string>
     <string name="cd_filter_urgent">סינון משימות דחופות</string>
     <string name="cd_filter_completed">סינון משימות שהושלמו</string>
     <string name="cd_filter_not_completed">סינון משימות שלא הושלמו</string>
     <string name="child_dashboard_header_note">הכוכבים למעלה, והמשימות של היום ממש מתחת.</string>
+    <string name="child_dashboard_tasks_note">בוחרים תצוגה, מסמנים משימה שסיימת, ומתקדמים צעד אחד בכל פעם.</string>
 
     <string name="default_task_name">שם המשימה</string>
     <string name="default_parent_name">הורה</string>

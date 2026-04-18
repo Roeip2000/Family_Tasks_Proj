@@ -20,6 +20,12 @@
     <color name="surface_soft_green">#E8F3EC</color>
     <color name="surface_soft_orange">#FDEDE4</color>
     <color name="surface_soft_gold">#F8E9C8</color>
+    <color name="surface_soft_peach">#F8E4D8</color>
+    <color name="surface_soft_rose">#F7E9E8</color>
+    <color name="hero_top">#FFF9F0</color>
+    <color name="hero_bottom">#EDF3FA</color>
+    <color name="secondary_fill">#F8FBFF</color>
+    <color name="secondary_border">#AFC3DE</color>
 
     <color name="text_primary">#1D2738</color>
     <color name="text_secondary">#5B6775</color>

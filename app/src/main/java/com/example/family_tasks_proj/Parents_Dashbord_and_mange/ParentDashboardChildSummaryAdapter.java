@@ -76,12 +76,15 @@ class ParentDashboardChildSummaryAdapter
         holder.cardChildSummary.setStrokeColor(context.getColor(
                 isSelected ? R.color.primary : R.color.border_light));
         holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
+        holder.tvChildSummaryName.setTextColor(context.getColor(
+                isSelected ? R.color.primary_dark : R.color.text_primary));
+        holder.tvChildSummaryAssigned.setTextColor(context.getColor(R.color.primary_dark));
         holder.itemView.setContentDescription(
                 context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
 
         if (isAll) {
             // לצ'יפ "כל הילדים" אין תמונה — משאירים placeholder נקי
-            holder.ivChildSummaryPhoto.setImageDrawable(null);
+            holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_family_cluster);
         } else {
             bindChildPhoto(holder.ivChildSummaryPhoto,
                     childSummary.childId,
@@ -98,7 +101,7 @@ class ParentDashboardChildSummaryAdapter
 
     // טוען תמונת ילד מ-Base64, עם cache כדי לא לפענח שוב ושוב
     private void bindChildPhoto(ImageView imageView, String childId, String base64) {
-        imageView.setImageDrawable(null);
+        imageView.setImageResource(R.drawable.ic_avatar_placeholder);
 
         if (base64 == null || base64.trim().isEmpty()) {
             return;

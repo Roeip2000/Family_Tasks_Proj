@@ -18,22 +18,41 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/title_assign_task"
-            android:textSize="22sp" />
+            android:background="@drawable/bg_home_hero"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="start"
-            android:text="@string/subtitle_assign_task"
-            android:textSize="13sp" />
+            <TextView
+                style="@style/Widget.Family.ScreenTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_assign_task"
+                android:textSize="22sp" />
+
+            <TextView
+                style="@style/Widget.Family.ScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/subtitle_assign_task"
+                android:textSize="13sp" />
+
+            <TextView
+                style="@style/Widget.Family.HelperText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_info_band"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="10dp"
+                android:text="@string/assign_task_form_note"
+                android:textColor="@color/surface_text_soft" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,8 +65,8 @@
 
             <FrameLayout
                 android:id="@+id/cvImagePreview"
-                android:layout_width="88dp"
-                android:layout_height="88dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:background="@drawable/bg_preview_shell"
                 android:padding="8dp">
 
@@ -99,9 +118,24 @@
                 android:padding="16dp">
 
                 <TextView
+                    style="@style/Widget.Family.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/assign_task_form_title"
+                    android:textSize="16sp" />
+
+                <TextView
+                    style="@style/Widget.Family.HelperText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/assign_task_form_note" />
+
+                <TextView
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
                     android:text="@string/label_choose_template" />
 
                 <Spinner
@@ -160,7 +194,7 @@
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input_field"
                     android:clickable="true"
-                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:drawableEnd="@drawable/ic_due_calendar"
                     android:focusable="false"
                     android:hint="@string/hint_due_date"
                     android:paddingStart="14dp"
@@ -182,7 +216,7 @@
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.SecondaryButton"
+            style="@style/Widget.Family.BackButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

@@ -11,13 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.model.ChildTask;
 import com.example.family_tasks_proj.util.DateUtils;
 import com.example.family_tasks_proj.util.ImageHelper;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         ChildTask task = tasks.get(position);
         long daysLeft = DateUtils.daysLeft(task.dueAt);
 
-        bindCardBackground(holder, task);
+        bindCardBackground(holder, task, daysLeft);
         bindTitle(holder, task);
         bindDueDate(holder, task, daysLeft);
         bindStatusDot(holder, task, daysLeft);
@@ -62,11 +62,29 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         bindDoneButton(holder, task);
     }
 
-    private void bindCardBackground(TaskViewHolder holder, ChildTask task) {
-        if (holder.itemView instanceof CardView) {
-            int bgColor = holder.itemView.getContext().getColor(
-                    task.isDone ? R.color.surface_soft_green : R.color.bg_card);
-            ((CardView) holder.itemView).setCardBackgroundColor(bgColor);
+    private void bindCardBackground(TaskViewHolder holder, ChildTask task, long daysLeft) {
+        if (holder.itemView instanceof MaterialCardView) {
+            MaterialCardView card = (MaterialCardView) holder.itemView;
+            int bgColor;
+            int strokeColor;
+
+            if (task.isDone) {
+                bgColor = holder.itemView.getContext().getColor(R.color.surface_soft_green);
+                strokeColor = holder.itemView.getContext().getColor(R.color.accent_light);
+            } else if (daysLeft < 0) {
+                bgColor = holder.itemView.getContext().getColor(R.color.danger_light);
+                strokeColor = holder.itemView.getContext().getColor(R.color.urgent);
+            } else if (daysLeft <= 2) {
+                bgColor = holder.itemView.getContext().getColor(R.color.surface_soft_orange);
+                strokeColor = holder.itemView.getContext().getColor(R.color.urgent_light);
+            } else {
+                bgColor = holder.itemView.getContext().getColor(R.color.bg_card);
+                strokeColor = holder.itemView.getContext().getColor(R.color.border_light);
+            }
+
+            card.setCardBackgroundColor(bgColor);
+            card.setStrokeColor(strokeColor);
+            card.setStrokeWidth(1);
         }
     }
 

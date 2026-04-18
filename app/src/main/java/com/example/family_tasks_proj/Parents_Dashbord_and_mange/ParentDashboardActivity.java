@@ -202,7 +202,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void showParentProfile(Bitmap bitmap) {
         if (bitmap == null) {
-            ivParentProfile.setImageDrawable(null);
+            ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
             return;
         }
         ivParentProfile.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));

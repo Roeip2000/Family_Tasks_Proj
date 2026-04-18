@@ -166,3 +166,19 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Added loading-state CTA text and field disabling in parent login/register.
   - Verified with `./gradlew.bat assembleDebug`, `./gradlew.bat lintDebug`, and `./gradlew.bat testDebugUnitTest`.
 - Confidence: explicit current-session verification
+
+## RI-015: The app still looked like separate school screens instead of one polished final-project product
+- First clear evidence: 2026-04-18 design audit of the current working tree before the presentation-level UI pass
+- Problem:
+  - Home still felt like a technical form with one shared action area instead of two clear user roles.
+  - Parent dashboard was functional but not impressive enough as a presentation screen.
+  - Child task cards looked repetitive, template management still felt cramped, and some secondary/back buttons looked too dark or inactive.
+  - Old generic placeholders made the project look unfinished.
+- Resolution:
+  - Rebuilt the home screen around a warm hero and two explicit role cards for parent and child.
+  - Reworked ParentDashboard into a clearer control-center hierarchy and simplified the child/task/action sections.
+  - Refined ChildDashboard, template repository, assign-task, manage-children, child-selection, and QR screens into one shared visual language.
+  - Replaced generic placeholder visuals with project-owned vector placeholders and small family/task icons.
+  - Expanded shared colors, styles, and drawable resources so contrast and button hierarchy stay consistent across screens.
+  - Verified with `./gradlew.bat assembleDebug`.
+- Confidence: explicit current-session verification

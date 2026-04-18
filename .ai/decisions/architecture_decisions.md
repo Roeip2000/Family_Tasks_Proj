@@ -145,3 +145,16 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - "כל הילדים" needs to be a real control-center view, not a separate screen, but the existing dashboard pipeline already handled a single selected child well.
   - Reusing the same child-selection mechanism with one synthetic id keeps the parse/build/update flow unchanged and explainable, and avoids introducing a second mode toggle.
+
+## AD-017: Final presentation polish should come from one resource-driven product language
+- Status: active
+- Decision:
+  - Keep final-stage UI polish centered in `colors.xml`, `styles.xml`, layout XML, and drawable XML.
+  - The home screen should present two explicit role cards (`parent` / `child`) instead of one mixed action panel.
+  - ParentDashboard should feel like a control center: hero summary, child selector, task workspace, then quick actions.
+  - ChildDashboard should stay simpler than ParentDashboard but reuse the same visual grammar.
+  - Prefer project-owned placeholder vectors and simple icons over generic old Android placeholders.
+  - Java changes for design passes must stay UI-only: placeholder fallback, selected-state readability, and mild state-based card polish.
+- Why:
+  - The main remaining problem was no longer missing logic but a fragmented product feel.
+  - A resource-driven visual system is safer late in the project, easier for a student to explain, and matches the Figma MCP rule-generation workflow used in this session.

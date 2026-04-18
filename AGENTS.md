@@ -60,11 +60,24 @@
 - These rules were derived from the Figma MCP design-system workflow and adapted to this Android XML project.
 - Keep visual tokens in `app/src/main/res/values/colors.xml`. Do not hardcode hex colors inside layouts when a semantic color already exists.
 - Keep shared text and button behavior in `app/src/main/res/values/styles.xml`. Prefer improving a shared style or drawable before styling one screen locally.
+- Keep the product feeling warm and family-related with soft cream backgrounds, gentle blue/green support colors, rounded cards, and simple home/family/task/star iconography.
 - Treat each screen as one clear story:
   - header
   - short context or summary
   - one main workspace card
   - secondary actions last
+- The home screen must use two separate role cards instead of one mixed action panel:
+  - parent card with login/register
+  - child card with QR/manual continue
+- ParentDashboard should read like a small control center:
+  - hero summary first
+  - child selector second
+  - task workspace third
+  - quick actions last
+- ChildDashboard should stay simpler than ParentDashboard:
+  - friendly hero
+  - compact stats/filter area
+  - one calm task workspace
 - Use simple XML building blocks only:
   - `MaterialCardView`
   - rounded shape drawables
@@ -73,6 +86,7 @@
 - Prefer 18dp-22dp corner radii for main cards and 12dp-16dp for smaller pills and buttons.
 - Keep parent and child flows visually distinct with soft tinted surfaces, not with new logic or extra screens.
 - Use project-owned placeholders like `@drawable/ic_image_placeholder` and the shared avatar placeholder. Do not fall back to old default Android gallery/calendar icons in polished UI.
+- Secondary and back buttons must always look active and readable. They should never look like disabled dark blocks.
 - For design-only polish, Java changes should stay minimal and only support the visual system:
   - swapping old placeholders
   - keeping selected-state styling readable

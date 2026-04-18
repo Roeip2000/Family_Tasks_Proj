@@ -17,22 +17,41 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/title_manage_children"
-            android:textSize="22sp" />
+            android:background="@drawable/bg_home_hero"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="start"
-            android:text="@string/subtitle_manage_children"
-            android:textSize="13sp" />
+            <TextView
+                style="@style/Widget.Family.ScreenTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_manage_children"
+                android:textSize="22sp" />
+
+            <TextView
+                style="@style/Widget.Family.ScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/subtitle_manage_children"
+                android:textSize="13sp" />
+
+            <TextView
+                style="@style/Widget.Family.HelperText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_info_band"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="10dp"
+                android:text="@string/manage_children_form_note"
+                android:textColor="@color/surface_text_soft" />
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -69,12 +88,13 @@
 
                     <ImageView
                         android:id="@+id/imgChildPhoto"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="78dp"
+                        android:layout_height="78dp"
                         android:background="@drawable/bg_avatar_placeholder"
                         android:clipToOutline="true"
                         android:contentDescription="@string/cd_child_photo"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_avatar_placeholder" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -101,7 +121,7 @@
                             style="@style/Widget.Family.SecondaryButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="10dp"
                             android:text="@string/btn_pick_child_photo" />
                     </LinearLayout>
 
@@ -184,11 +204,10 @@
                 android:padding="16dp">
 
                 <TextView
-                    style="@style/Widget.Family.SectionTitle"
+                    style="@style/Widget.Family.Eyebrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_registered_children"
-                    android:textSize="16sp" />
+                    android:text="@string/manage_children_list_title" />
 
                 <TextView
                     style="@style/Widget.Family.HelperText"
@@ -202,7 +221,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_empty_state"
                     android:gravity="center"
+                    android:padding="14dp"
                     android:text="@string/empty_no_children"
                     android:textColor="@color/text_hint"
                     android:textSize="13sp"
@@ -229,7 +250,7 @@
 
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Family.SecondaryButton"
+            style="@style/Widget.Family.BackButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

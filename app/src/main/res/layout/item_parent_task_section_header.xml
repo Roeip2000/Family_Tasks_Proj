@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingTop="4dp"
-    android:paddingBottom="6dp">
+    android:paddingTop="6dp"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/tvTaskSectionGroupTitle"
@@ -20,7 +20,7 @@
         android:id="@+id/tvTaskSectionGroupCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_tab_bar"
+        android:background="@drawable/bg_button_ghost"
         android:gravity="center"
         android:minWidth="34dp"
         android:paddingStart="9dp"

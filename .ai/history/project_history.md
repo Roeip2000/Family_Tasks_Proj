@@ -220,3 +220,24 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat lintDebug` completed successfully and rewrote the HTML lint report in `app/build/reports/lint-results-debug.html`.
   - `./gradlew.bat testDebugUnitTest` completed successfully.
 - Confidence: explicitly verified in the current session
+
+## 2026-04-18: Presentation-level UI pass guided by Figma MCP
+- A stronger visual pass pushed the app closer to a polished final-project presentation state without changing Firebase, QR, session, stars, package structure, or architecture.
+- Figma usage in this session:
+  - ran the Figma MCP `create_design_system_rules` flow with `clientLanguages = "Java, XML"` and `clientFrameworks = "Android"`
+  - used that guidance to tighten project rules around tokens, card hierarchy, role separation, and resource-driven polish
+- Concrete design work completed in this session:
+  - `activity_main.xml` was redesigned around a warm hero plus two clear role cards (`אני הורה` / `אני ילד`) instead of one mixed technical action area
+  - `activity_parent_dashboard.xml` was rebuilt into a clearer control-center hierarchy with hero summary, child-selection card, focused task workspace, and separate quick actions
+  - `activity_child_dashboard.xml` was simplified into a friendlier hero plus calmer task workspace, with task-card surfaces varying by state instead of repeating the same visual block
+  - `activity_parent_task_template.xml` became a guided repository screen with a cleaner create-template form and better template scanability
+  - `activity_assign_task_to_child.xml`, `activity_manage_children.xml`, `activity_child_selection.xml`, and `activity_generate_qr.xml` were brought into the same product language
+  - old generic placeholders were replaced with project-owned placeholder vectors such as `ic_avatar_placeholder`, `ic_image_placeholder`, `ic_family_cluster`, and a simple due-date icon
+  - shared `colors.xml`, `styles.xml`, and drawable resources were expanded so secondary/back buttons stay readable and the app no longer feels like disconnected XML drafts
+- Minimal Java-only support work completed in this session:
+  - avatar fallback handling was updated in parent/child management and dashboard code
+  - parent child-summary rows and child task rows received UI-only state and placeholder improvements
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully
+  - `adb devices -l` returned no connected device or emulator, so no live emulator verification was possible in this session
+- Confidence: explicitly verified in the current session

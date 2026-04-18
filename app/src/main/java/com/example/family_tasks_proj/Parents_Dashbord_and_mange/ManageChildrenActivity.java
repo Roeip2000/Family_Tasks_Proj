@@ -148,6 +148,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         etLastName.setText(item.lastName);
         if (item.profileImageBase64 != null) {
             imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(ImageHelper.base64ToBitmap(item.profileImageBase64)));
+        } else {
+            imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
         }
         toggleUI(true);
     }
@@ -158,7 +160,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         selectedChildPhoto = null;
         etFirstName.setText("");
         etLastName.setText("");
-        imgChildPhoto.setImageDrawable(null);
+        imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
         toggleUI(false);
     }
 
@@ -221,7 +223,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
             ImageView iv = v.findViewById(R.id.ivChildThumb);
             if (item.profileImageBase64 != null) {
                 iv.setImageBitmap(ImageHelper.getCircularBitmap(ImageHelper.base64ToBitmap(item.profileImageBase64)));
-            } else iv.setImageDrawable(null);
+            } else {
+                iv.setImageResource(R.drawable.ic_avatar_placeholder);
+            }
             return v;
         }
     }

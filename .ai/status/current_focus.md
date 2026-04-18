@@ -155,3 +155,26 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - `starsWorth = 10` hardcode in `AssignTaskToChildActivity` — still waiting on a deliberate decision whether it should become user-controlled.
   - no logout button on ChildDashboard — intentionally deferred to stay within the "delta-only" constraint for this pass.
   - no fresh emulator/device run yet for the 2026-04-18 integrated pass.
+
+## Presentation-Level UI Pass (2026-04-18)
+- Latest verified state:
+  - a stronger Figma-guided UI pass was completed in the current working tree
+  - `./gradlew.bat assembleDebug` passed after the redesign
+- Highest-value visual changes now in source:
+  - home screen split into separate parent/child role cards with warmer product framing
+  - ParentDashboard now reads more clearly as a control center
+  - ChildDashboard, template repository, assign-task, manage-children, QR, and child-selection screens now share one calmer visual system
+  - project-owned placeholder vectors replace older generic placeholder visuals
+- Highest-value remaining work:
+  - run a real emulator/device pass because `adb devices -l` currently shows no connected emulator or device
+  - verify narrow-screen RTL readability for home, ParentDashboard, and template repository
+  - verify image placeholders, empty states, and task-card states with real seeded data
+  - decide whether `AssignTaskToChildActivity` should keep the current `starsWorth = 10` default for submission or expose it later
+
+## Notes For The Next Agent
+- Do not spend the next pass inventing new architecture or backend rules; the most valuable remaining work is verification, not another structural redesign.
+- If another UI pass is needed, judge it against this bar:
+  - home should feel like a product entry screen, not a form shell
+  - ParentDashboard should feel presentation-ready
+  - template repository should feel intentionally designed, not raw CRUD
+- Report emulator status explicitly. At the end of this session there was still no connected emulator or device.

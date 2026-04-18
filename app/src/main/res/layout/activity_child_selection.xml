@@ -16,24 +16,64 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/Widget.Family.ScreenTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/title_child_login"
-            android:textSize="22sp" />
+            android:background="@drawable/bg_home_hero"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tvSubtitle"
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="start"
-            android:text="@string/subtitle_child_login"
-            android:textSize="13sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        style="@style/Widget.Family.ScreenTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_child_login"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        style="@style/Widget.Family.ScreenSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/subtitle_child_login"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="@string/title_child_login"
+                    android:src="@drawable/ic_role_child" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Widget.Family.HelperText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_info_band"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="10dp"
+                android:text="@string/child_selection_step_title"
+                android:textColor="@color/surface_text_soft" />
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/selectionCard"
@@ -56,13 +96,13 @@
                     style="@style/Widget.Family.HelperText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_info_band"
+                    android:background="@drawable/bg_button_ghost"
                     android:paddingStart="12dp"
-                    android:paddingTop="10dp"
+                    android:paddingTop="8dp"
                     android:paddingEnd="12dp"
-                    android:paddingBottom="10dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/child_qr_helper_card"
-                    android:textColor="@color/surface_text_soft" />
+                    android:textColor="@color/primary_dark" />
 
                 <TextView
                     android:id="@+id/tvParentLabel"
@@ -103,7 +143,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_empty_state"
                     android:gravity="center"
+                    android:padding="14dp"
                     android:text="@string/empty_no_children_selection"
                     android:textColor="@color/text_hint"
                     android:textSize="13sp"

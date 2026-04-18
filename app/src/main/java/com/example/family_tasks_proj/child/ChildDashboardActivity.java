@@ -152,13 +152,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
                 String base64 = snapshot.child("profileImageBase64").getValue(String.class);
                 if (isBlank(base64)) {
-                    imgChildAvatar.setImageDrawable(null);
+                    imgChildAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
                     return;
                 }
 
                 android.graphics.Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
                 if (bitmap == null) {
-                    imgChildAvatar.setImageDrawable(null);
+                    imgChildAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
                     return;
                 }
 
