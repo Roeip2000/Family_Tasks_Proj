@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/cd_task_image"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:src="@drawable/ic_image_placeholder" />
     </FrameLayout>
 
     <LinearLayout
