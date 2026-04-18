@@ -34,23 +34,23 @@
             android:textSize="13sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutForm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="14dp"
-        android:background="@drawable/bg_form_card"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/tvFormTitle"
-            style="@style/Widget.Family.SectionTitle"
+        <LinearLayout
+            android:id="@+id/layoutForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/template_form_title_new"
-            android:textSize="16sp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_form_card"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvFormTitle"
+                style="@style/Widget.Family.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/template_form_title_new"
+                android:textSize="17sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -188,7 +188,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <TextView
                 style="@style/Widget.Family.Eyebrow"
@@ -197,19 +197,11 @@
                 android:text="@string/template_existing_title" />
 
             <TextView
-                style="@style/Widget.Family.SectionTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/template_screen_title"
-                android:textSize="16sp" />
-
-            <TextView
                 android:id="@+id/tvTemplateListHint"
                 style="@style/Widget.Family.HelperText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:text="@string/template_list_hint" />
 
             <TextView

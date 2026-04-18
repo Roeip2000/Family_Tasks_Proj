@@ -109,13 +109,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/assign_task_form_title"
-                    android:textSize="16sp" />
+                    android:textSize="17sp" />
+
+                <TextView
+                    style="@style/Widget.Family.Eyebrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="מה המשימה?" />
 
                 <TextView
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/label_choose_template" />
 
 
@@ -147,11 +154,24 @@
                     android:textColorHint="@color/text_hint"
                     android:textSize="15sp" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/divider" />
+
+                <TextView
+                    style="@style/Widget.Family.Eyebrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="למי ומתי?" />
+
                 <TextView
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/label_assign_to_child" />
 
                 <Spinner

@@ -303,4 +303,6 @@
     <string name="parent_dashboard_all_no_tasks_completed">אין משימות שהושלמו באף ילד.</string>
     <string name="parent_dashboard_all_no_tasks_urgent">אין משימות דחופות באף ילד.</string>
     <string name="parent_dashboard_task_owner_label">ל-%1$s</string>
+    <string name="assign_task_form_section_what">מה המשימה?</string>
+    <string name="assign_task_form_section_who">למי ומתי?</string>
 </resources>

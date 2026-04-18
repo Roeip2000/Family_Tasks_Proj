@@ -62,7 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/manage_children_form_title_new"
-                    android:textSize="16sp" />
+                    android:textSize="17sp" />
 
 
                 <LinearLayout
@@ -223,7 +223,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:divider="@android:color/transparent"
-                        android:dividerHeight="0dp"
+                        android:dividerHeight="12dp"
                         android:listSelector="@android:color/transparent" />
                 </FrameLayout>
 
