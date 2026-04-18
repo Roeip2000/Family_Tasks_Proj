@@ -60,19 +60,6 @@
                     android:contentDescription="@string/title_child_login"
                     android:src="@drawable/ic_role_child" />
             </LinearLayout>
-
-            <TextView
-                style="@style/Widget.Family.HelperText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_info_band"
-                android:paddingStart="12dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="10dp"
-                android:text="@string/child_selection_step_title"
-                android:textColor="@color/surface_text_soft" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -90,26 +77,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    style="@style/Widget.Family.HelperText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_button_ghost"
-                    android:paddingStart="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="8dp"
-                    android:text="@string/child_qr_helper_card"
-                    android:textColor="@color/primary_dark" />
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tvParentLabel"
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:text="@string/label_choose_parent"
                     android:visibility="gone" />
 
@@ -117,7 +91,7 @@
                     android:id="@+id/spinnerParents"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/bg_spinner"
                     android:spinnerMode="dropdown"
                     android:visibility="gone" />
@@ -129,6 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/label_choose_child" />
+
 
                 <Spinner
                     android:id="@+id/spinnerChildren"

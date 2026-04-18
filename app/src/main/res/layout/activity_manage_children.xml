@@ -38,19 +38,6 @@
                 android:layout_marginTop="6dp"
                 android:text="@string/subtitle_manage_children"
                 android:textSize="13sp" />
-
-            <TextView
-                style="@style/Widget.Family.HelperText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_info_band"
-                android:paddingStart="12dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="10dp"
-                android:text="@string/manage_children_form_note"
-                android:textColor="@color/surface_text_soft" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -67,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tvFormTitle"
@@ -76,6 +63,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/manage_children_form_title_new"
                     android:textSize="16sp" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -201,7 +189,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     style="@style/Widget.Family.Eyebrow"
@@ -209,12 +197,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/manage_children_list_title" />
 
-                <TextView
-                    style="@style/Widget.Family.HelperText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/manage_children_item_hint" />
 
                 <TextView
                     android:id="@+id/tvNoChildren"
