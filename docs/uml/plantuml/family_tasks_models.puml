@@ -1,0 +1,96 @@
+@startuml
+' Auto-generated from Java source by docs/uml/tools/GenerateFamilyTasksUml.java
+!pragma layout smetana
+skinparam dpi 240
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam classFontSize 15
+skinparam packageFontSize 18
+skinparam ArrowFontSize 12
+skinparam classBackgroundColor<<screen>> #DCEEFF
+skinparam classBorderColor<<screen>> #2F6FA3
+skinparam classBackgroundColor<<model>> #E2F5E6
+skinparam classBorderColor<<model>> #3B8B4F
+skinparam classBackgroundColor<<adapter>> #FFF3BF
+skinparam classBorderColor<<adapter>> #B68A00
+skinparam classBackgroundColor<<util>> #EFEFEF
+skinparam classBorderColor<<util>> #777777
+skinparam classBackgroundColor<<inner>> #FFFFFF
+skinparam classBorderColor<<inner>> #666666
+hide empty methods
+title Family Tasks - Model Classes
+caption Generated from app/src/main/java with JavaParser; rendered by PlantUML.
+
+package "Models" #E2F5E6 {
+class "AssignedTask" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask <<model>> {
+  + childId : String
+  + childName : String
+  + childProfileBase64 : String
+  + taskId : String
+  + title : String
+  + dueAt : String
+  + isDone : boolean
+}
+class "TaskListItem" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem <<model>> {
+  + isHeader : boolean
+  + headerTitle : String
+  + headerCount : int
+  + task : AssignedTask
+}
+}
+
+package "Unconnected in this diagram" #FFFFFF {
+class "Child" as com_example_family_tasks_proj_child_model_Child <<model>> {
+  + firstName : String
+  + lastName : String
+  + profileImageBase64 : String
+}
+class "ChildSummary" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary <<model>> {
+  + childId : String
+  + displayName : String
+  + childProfileBase64 : String
+  + totalCount : int
+  + assignedCount : int
+  + completedCount : int
+  + urgentCount : int
+}
+class "ChildTask" as com_example_family_tasks_proj_child_model_ChildTask <<model>> {
+  + id : String
+  + title : String
+  + dueAt : String
+  + isDone : boolean
+  + starsWorth : long
+  + imageBase64 : String
+  + createdAt : long
+}
+class "ParentInFb" as com_example_family_tasks_proj_FireBase_ParentInFb <<model>> {
+  - uid : String
+  - firstName : String
+  - lastName : String
+  - email : String
+  - role : String
+  - children : Map<String,Object>
+  - profileImageBase64 : String
+}
+class "TaskTemplate" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate <<model>> {
+  + DEFAULT_STARS_WORTH : int
+  + id : String
+  + title : String
+  + imageBase64 : String
+  + starsWorth : int
+}
+}
+
+com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
+
+legend right
+|=Color|=Role|
+|<#DCEEFF>|Screens / Activities / Fragments|
+|<#E2F5E6>|Models|
+|<#FFF3BF>|Adapters|
+|<#EFEFEF>|Utils / Firebase|
+|<#FFFFFF>|Inner or unconnected support|
+endlegend
+@enduml
