@@ -255,3 +255,30 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat assembleDebug` completed successfully
   - no Firebase paths, QR format strings, package declarations, or layout ids were intentionally changed
 - Confidence: explicitly verified in the current session
+
+## 2026-04-22: Family Tasks class diagram created
+- Created a UX/FigJam class-style diagram for the current Android Java source tree.
+- Verified the included top-level app classes from `app/src/main/java` and included the requested important inner classes:
+  - `ParsedQr`, `ChildSelectionActivity.ParentItem`, `ChildSelectionActivity.ChildItem`
+  - `ChildTaskAdapter.TaskViewHolder`, `ParentTaskTemplateActivity.TemplateListAdapter`
+  - `ManageChildrenActivity.ChildItem`
+- The diagram groups classes as screens/fragments, models, adapters, utils/Firebase, and marked external Android/Firebase/library APIs separately.
+- No Android app source code, Firebase paths, dependencies, or generated Gradle files were changed.
+- Confidence: explicitly verified from the current source tree in this session
+
+## 2026-04-22: Code-generated PlantUML class diagrams created
+- Replaced the previous visual-only class-diagram approach with code-generated UML artifacts for the project book.
+- Added a documentation-only generator at `docs/uml/tools/GenerateFamilyTasksUml.java`.
+- The generator scans `app/src/main/java` with JavaParser from the local Gradle distribution cache and writes PlantUML files under `docs/uml/plantuml/`.
+- Rendered the diagrams with the standalone PlantUML jar under `docs/uml/tools/plantuml.jar`.
+- Generated separate readable diagrams for:
+  - full overview
+  - screen classes
+  - model classes
+  - adapter classes
+  - utils/Firebase classes
+- Exported SVG and high-resolution PNG images under `docs/uml/images/`.
+- Created a PDF readability proof at `docs/uml/pdf/family_tasks_class_diagrams_pdf_check.pdf`.
+- `ParentInFb` was the only unconnected project class in the full generated overview and was placed in the diagram's unconnected area.
+- No Android app source code, Firebase paths, package declarations, or app behavior were changed.
+- Confidence: explicitly generated and verified from current source in this session

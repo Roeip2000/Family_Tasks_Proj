@@ -190,3 +190,21 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - Highest-value remaining work:
   - run an emulator/device demo pass using the presentation guide as the script
   - verify parent login/register, manage children, template create/edit/delete, assign task, QR flow, child selection/session, child dashboard filters, and completed-task read-only behavior with real data
+
+## Class Diagram Artifact (2026-04-22)
+- A UX/FigJam class-style diagram was created from the current Java source tree.
+- Included all verified top-level app logic classes plus the requested important inner classes.
+- External APIs such as FirebaseAuth, FirebaseDatabase, SharedPreferences, and ZXing BarcodeEncoder are shown as external dependencies, not project-owned classes.
+- No app source files were changed for this diagram task.
+
+## Code-Generated UML Diagrams (2026-04-22)
+- Current class-diagram artifacts now live under `docs/uml/`.
+- The authoritative generated outputs are PlantUML-based, not Figma/UX:
+  - source diagrams: `docs/uml/plantuml/*.puml`
+  - SVG/PNG exports: `docs/uml/images/`
+  - PDF readability proof: `docs/uml/pdf/family_tasks_class_diagrams_pdf_check.pdf`
+  - project-book section text: `docs/uml/CLASS_DIAGRAM_SECTION.md`
+  - generation/export reports: `docs/uml/UML_GENERATION_REPORT.md` and `docs/uml/UML_EXPORT_VALIDATION.md`
+- The generator discovered 37 project classes and 65 project relationships from `app/src/main/java`.
+- `ParentInFb` is currently unconnected in the generated full overview and is placed in the unconnected area.
+- No app source files were changed for the UML generation task.
