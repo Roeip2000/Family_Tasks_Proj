@@ -17,6 +17,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
+        <!-- אזור ברכה לילד, תמונה וכוכבים שנצברו -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,6 +80,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- אזור המשימות והפילטרים של הילד -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -212,6 +214,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- הודעת מצב ריק לפי הפילטר הנבחר -->
                 <TextView
                     android:id="@+id/tvNoTasks"
                     android:layout_width="match_parent"
@@ -227,6 +230,7 @@
                     android:textSize="15sp"
                     android:visibility="gone" />
 
+                <!-- רשימת המשימות של הילד -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTasks"
                     android:layout_width="match_parent"

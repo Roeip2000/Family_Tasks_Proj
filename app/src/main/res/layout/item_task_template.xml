@@ -10,6 +10,7 @@
     app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
 
+    <!-- שורת תבנית: תמונה, שם וכמות כוכבים -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

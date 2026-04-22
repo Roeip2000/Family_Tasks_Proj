@@ -124,6 +124,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private void loadParents() {
         progressBar.setVisibility(View.VISIBLE);
 
+        // בחירה ידנית מתחילה מרשימת ההורים תחת /parents
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -211,6 +212,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnEnter.setEnabled(false);
 
+        // אחרי שיש parentId, נטען רק את הילדים של אותו הורה
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(selectedParentId)

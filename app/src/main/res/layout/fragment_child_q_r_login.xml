@@ -16,6 +16,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
+        <!-- פתיח סריקת QR לילד -->
         <TextView
             android:id="@+id/tvQrTitle"
             style="@style/Widget.Family.ScreenTitle"
@@ -35,6 +36,7 @@
             android:text="@string/child_qr_scan_prompt"
             android:textSize="13sp" />
 
+        <!-- כרטיס הסבר קצר לפני פתיחת הסורק -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/qrCallout"
             android:layout_width="match_parent"

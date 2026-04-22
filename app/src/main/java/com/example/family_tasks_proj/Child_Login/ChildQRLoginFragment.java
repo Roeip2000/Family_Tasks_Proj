@@ -88,6 +88,7 @@ public class ChildQRLoginFragment extends Fragment {
             return parsedQr;
         }
 
+        // מפענחים את אותו פורמט שההורה מייצר, וגם פורמטים ישנים שנשארו לתאימות
         if (raw.contains("|")) {
             String[] parts = raw.split("\\|");
             for (String part : parts) {
@@ -120,6 +121,7 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     private void checkParentExists(String parentId) {
+        // בודקים שהמשפחה קיימת בנתיב /parents/{parentId}
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
@@ -155,6 +157,7 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     private void checkChildExists(String parentId, String childId) {
+        // QR מלא נבדק מול /parents/{parentId}/children/{childId}
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)

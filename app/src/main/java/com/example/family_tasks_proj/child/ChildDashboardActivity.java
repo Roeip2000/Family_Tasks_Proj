@@ -133,6 +133,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private DatabaseReference childRef() {
+        // כל נתוני הילד במסך הזה מגיעים מאותו ענף Firebase
         return FirebaseDatabase.getInstance()
                 .getReference(ROOT_PARENTS)
                 .child(parentId)
@@ -180,6 +181,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         childRef().child(NODE_TASKS).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // כאן בונים מחדש את הרשימה והסיכומים מכל המשימות של הילד
                 allTasks.clear();
 
                 int completedCount = 0;
@@ -199,6 +201,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
                     if (task.isDone) {
                         completedCount++;
+                        // כוכבים נספרים רק ממשימות שהילד כבר השלים
                         stars += task.starsWorth;
                     } else {
                         openCount++;
@@ -236,6 +239,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             return;
         }
 
+        // הילד יכול רק לסמן ביצוע; עריכה ומחיקה נשארות בצד ההורה
         new AlertDialog.Builder(this)
                 .setTitle(R.string.child_mark_task_title)
                 .setMessage(getString(R.string.child_mark_task_message, safeText(task.title)))

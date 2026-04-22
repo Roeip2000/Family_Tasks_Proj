@@ -83,6 +83,7 @@ public class ParentLoginFragment extends Fragment {
         }
 
         setLoading(true);
+        // FirebaseAuth מאמת את חשבון ההורה; רק בהצלחה עוברים לדשבורד
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (!isAdded()) return;
 

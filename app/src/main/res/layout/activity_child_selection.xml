@@ -16,6 +16,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
+        <!-- כותרת בחירת ילד אחרי QR או session שמור -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,6 +63,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- בחירת הורה כשצריך, ואז בחירת הילד מתוך המשפחה -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/selectionCard"
             android:layout_width="match_parent"

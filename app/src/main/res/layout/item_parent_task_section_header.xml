@@ -7,6 +7,7 @@
     android:paddingTop="6dp"
     android:paddingBottom="8dp">
 
+    <!-- כותרת קבוצת משימות במצב "הכול" -->
     <TextView
         android:id="@+id/tvTaskSectionGroupTitle"
         android:layout_width="0dp"

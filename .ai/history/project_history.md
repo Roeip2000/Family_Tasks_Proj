@@ -241,3 +241,17 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat assembleDebug` completed successfully
   - `adb devices -l` returned no connected device or emulator, so no live emulator verification was possible in this session
 - Confidence: explicitly verified in the current session
+
+## 2026-04-22: Code explainability and presentation-readiness pass
+- Completed a non-feature, non-design pass focused on making the current code easier to explain in an oral exam.
+- Concrete work completed:
+  - added short Hebrew comments near QR parsing, child session handling, Firebase path usage, task loading, dynamic stars, all-children filtering, and completed-task read-only context
+  - added XML comments before major layout sections such as hero/header, role cards, selectors, task lists, forms, QR card, and quick actions
+  - reformatted `ManageChildrenActivity` and `AssignTaskToChildActivity` for readability without changing Firebase paths or runtime behavior
+  - created `PROJECT_PRESENTATION_GUIDE.md` with Hebrew project summary, flows, Firebase/QR/session explanations, rubric mapping, oral-exam questions, and a code navigation map
+  - created `CODE_EXPLAINABILITY_REPORT.md` summarizing inspected files, changed files, intentional non-changes, and build status
+  - removed the visible internal wording "(לבוחן להצגה)" from the quick child-select label while keeping the same string resource id
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully
+  - no Firebase paths, QR format strings, package declarations, or layout ids were intentionally changed
+- Confidence: explicitly verified in the current session

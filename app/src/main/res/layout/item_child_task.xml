@@ -16,6 +16,7 @@
         android:orientation="vertical"
         android:padding="14dp">
 
+        <!-- פרטי המשימה, דחיפות וכוכבים -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,6 +99,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <!-- כפתור סימון ביצוע מופיע רק למשימות פתוחות -->
         <Button
             android:id="@+id/btnDone"
             style="@style/Widget.Family.SmallAccentButton"

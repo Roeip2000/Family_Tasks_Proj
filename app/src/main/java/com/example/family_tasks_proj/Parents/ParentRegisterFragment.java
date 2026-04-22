@@ -95,6 +95,7 @@ public class ParentRegisterFragment extends Fragment {
         }
 
         setLoading(true);
+        // קודם יוצרים משתמש ב-FirebaseAuth, ורק אחר כך שומרים פרופיל הורה ב-Database
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), task -> {
             if (!isAdded()) return;
 

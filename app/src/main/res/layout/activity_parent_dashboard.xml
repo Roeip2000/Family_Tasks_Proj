@@ -16,6 +16,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="28dp">
 
+        <!-- אזור עליון: פרופיל ההורה וסיכום מצב הבית -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -161,6 +162,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- בחירת ילד או מצב כל הילדים -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -216,6 +218,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- רשימת המשימות לפי הילד והפילטר הנבחר -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -337,6 +340,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- פעולות מהירות של ההורה -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

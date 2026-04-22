@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openChildQuickLogin() {
+        // session מקומי מאפשר לילד לחזור מהר בלי לסרוק QR בכל פעם
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
         String savedParent = sp.getString("parentId", null);
         String savedChild = sp.getString("childId", null);

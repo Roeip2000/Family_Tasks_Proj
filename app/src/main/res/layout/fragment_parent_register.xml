@@ -13,6 +13,7 @@
         android:paddingTop="2dp"
         android:paddingBottom="40dp">
 
+        <!-- כותרת וטופס הרשמת הורה חדש -->
         <TextView
             style="@style/Widget.Family.ScreenTitle"
             android:layout_width="match_parent"

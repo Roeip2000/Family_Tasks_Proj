@@ -406,6 +406,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // במצב "כל הילדים" כל שורת משימה מציגה לאיזה ילד היא שייכת
         taskAdapter.setShowChildName(isAll);
 
+        // מצב כל הילדים לא משנה Firebase; הוא רק מסנן את הרשימה שכבר נטענה
         // חלוקה לשלוש קבוצות פשוטות: דחופה, פתוחה, הושלמה
         List<AssignedTask> urgent = new ArrayList<>();
         List<AssignedTask> open = new ArrayList<>();
@@ -556,10 +557,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private DatabaseReference parentRef(String uid) {
+        // שורש הנתונים של הורה אחד: /parents/{uid}
         return FirebaseDatabase.getInstance().getReference("parents").child(uid);
     }
 
     private DatabaseReference taskRef(AssignedTask task) {
+        // עריכת תאריך/מחיקה נוגעת רק במשימה הספציפית של הילד
         return parentRef(FirebaseAuth.getInstance().getUid())
                 .child("children").child(task.childId)
                 .child("tasks").child(task.taskId);

@@ -19,6 +19,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="24dp">
 
+        <!-- פתיח האפליקציה והסבר קצר על שני סוגי המשתמשים -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,6 +71,7 @@
 
         </LinearLayout>
 
+        <!-- כרטיס הורה: כניסה או הרשמה -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,6 +138,7 @@
                 android:text="@string/register_parents" />
         </LinearLayout>
 
+        <!-- כרטיס ילד: סריקת QR או המשך מסשן שמור -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -202,6 +205,7 @@
                 android:text="@string/btn_quick_select_tester" />
         </LinearLayout>
 
+        <!-- כאן נטענים מסכי login/register/QR כ-Fragments -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"

@@ -11,6 +11,7 @@
     android:paddingBottom="20dp"
     tools:context=".Parents_Dashbord_and_mange.GenerateQRActivity">
 
+    <!-- כותרת והסבר על QR משפחתי -->
     <LinearLayout
         android:id="@+id/headerCard"
         android:layout_width="0dp"
@@ -40,6 +41,7 @@
             android:textSize="13sp" />
     </LinearLayout>
 
+    <!-- כרטיס ה-QR שהילדים סורקים -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/qrCard"
         android:layout_width="0dp"

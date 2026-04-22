@@ -178,3 +178,15 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - ParentDashboard should feel presentation-ready
   - template repository should feel intentionally designed, not raw CRUD
 - Report emulator status explicitly. At the end of this session there was still no connected emulator or device.
+
+## Code Explainability Pass (2026-04-22)
+- Latest verified state:
+  - Java and XML received short Hebrew comments for oral-exam navigation
+  - `PROJECT_PRESENTATION_GUIDE.md` now contains Hebrew flows, Firebase/QR/session explanations, rubric mapping, oral-exam Q&A, and a code navigation table
+  - `CODE_EXPLAINABILITY_REPORT.md` records inspected files, changed files, intentional non-changes, and build status
+  - `./gradlew.bat assembleDebug` passed after the explainability pass
+- Important constraint preserved:
+  - no intentional Firebase path, QR format, session behavior, package, dependency, layout id, or UI redesign change
+- Highest-value remaining work:
+  - run an emulator/device demo pass using the presentation guide as the script
+  - verify parent login/register, manage children, template create/edit/delete, assign task, QR flow, child selection/session, child dashboard filters, and completed-task read-only behavior with real data
