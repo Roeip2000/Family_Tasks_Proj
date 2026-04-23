@@ -208,3 +208,15 @@ Recovered current status as of the raw-history scan on 2026-04-07.
 - The generator discovered 37 project classes and 65 project relationships from `app/src/main/java`.
 - `ParentInFb` is currently unconnected in the generated full overview and is placed in the unconnected area.
 - No app source files were changed for the UML generation task.
+
+## User-Authored UML Draft Files (2026-04-23)
+- Latest documentation-only UML draft files:
+  - `docs/uml/class_inventory.md`
+  - `docs/uml/class_relations.md`
+  - `docs/uml/project-uml-draft.puml`
+- These files intentionally include only user-authored project classes, interfaces, and enums.
+- Generated/framework/library classes are excluded as UML nodes.
+- Verification:
+  - generated-name scan found no excluded generated class names in the new files
+  - PlantUML `-checkonly` passed for `docs/uml/project-uml-draft.puml`
+- No app source code, Firebase paths, or rendered UML images were changed.

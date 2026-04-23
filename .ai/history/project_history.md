@@ -282,3 +282,17 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
 - `ParentInFb` was the only unconnected project class in the full generated overview and was placed in the diagram's unconnected area.
 - No Android app source code, Firebase paths, package declarations, or app behavior were changed.
 - Confidence: explicitly generated and verified from current source in this session
+
+## 2026-04-23: User-authored UML draft files created
+- Created documentation-only UML draft artifacts requested by the user:
+  - `docs/uml/class_inventory.md`
+  - `docs/uml/class_relations.md`
+  - `docs/uml/project-uml-draft.puml`
+- The draft uses only user-authored classes, interfaces, and enums from `app/src/main/java`.
+- Generated, framework, Android SDK, Jetpack, Firebase, ZXing, and other library classes are excluded as UML nodes.
+- The PlantUML draft groups classes by the current package/layer structure and keeps `ParentInFb` as an unconnected project model because no direct project-owned relation was found in current source.
+- Verification in this session:
+  - generated-name scan found no excluded generated class names in the new UML draft files
+  - `java -jar docs/uml/tools/plantuml.jar -checkonly docs/uml/project-uml-draft.puml` completed successfully
+- No Android app source code, Firebase paths, package declarations, generated files, or rendered UML images were changed.
+- Confidence: explicitly verified from the current source tree in this session
