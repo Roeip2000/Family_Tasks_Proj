@@ -100,7 +100,7 @@
                         android:text="@string/default_zero"
                         android:textColor="@color/primary_dark" />
 
-                    <TextView
+                                                                                        <TextView
                         style="@style/Widget.Family.MetricLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
