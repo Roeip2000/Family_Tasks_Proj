@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         String savedParent = sp.getString("parentId", null);
         String savedChild = sp.getString("childId", null);
 
+        // מקרה 1: יש סשן מלא — הולכים ישר לדשבורד
         if (savedParent != null && savedChild != null) {
             Intent intent = new Intent(this, ChildDashboardActivity.class);
             intent.putExtra("parentId", savedParent);
@@ -144,14 +145,12 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        // מקרה 2+3: אין סשן מלא — הולכים למסך בחירת ילד (עם או בלי הורה מוגדר מראש)
+        Intent intent = new Intent(this, ChildSelectionActivity.class);
         if (savedParent != null) {
-            Intent intent = new Intent(this, ChildSelectionActivity.class);
             intent.putExtra("parentId", savedParent);
-            startActivity(intent);
-            return;
         }
-
-        showFragment(new ChildQRLoginFragment(), true);
+        startActivity(intent);
     }
 
     /**

@@ -288,7 +288,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
 
         counts.openCount++;
-        if (DateUtils.isDueSoon(task.getDueAt())) {
+        // משימה נחשבת דחופה אם היא קרובה למועד (Due Soon) או שכבר עבר המועד (Overdue)
+        if (DateUtils.isDueSoon(task.getDueAt()) || DateUtils.isOverdue(task.getDueAt())) {
             counts.urgentCount++;
         }
     }
@@ -417,7 +418,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
             case COMPLETED:
                 return task.getIsDone();
             case URGENT:
-                return !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt());
+                // משימה דחופה היא כזו שלא בוצעה והיא או קרובה למועד או שכבר עבר המועד
+                return !task.getIsDone() && (DateUtils.isDueSoon(task.getDueAt()) || DateUtils.isOverdue(task.getDueAt()));
             default:
                 return !task.getIsDone();
         }

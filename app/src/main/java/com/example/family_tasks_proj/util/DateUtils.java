@@ -56,4 +56,15 @@ public final class DateUtils {
         long days = daysLeft(dueAt);
         return days >= 0 && days <= 2;
     }
+
+    /**
+     * האם תאריך היעד של המשימה עבר?
+     *
+     * @param dueAt תאריך בפורמט "d/M/yyyy"
+     * @return true אם מספר הימים שנותרו הוא שלילי
+     */
+    public static boolean isOverdue(String dueAt) {
+        long days = daysLeft(dueAt);
+        return days < 0;
+    }
 }
