@@ -15,7 +15,7 @@
         android:paddingStart="@dimen/screen_padding"
         android:paddingTop="4dp"
         android:paddingEnd="@dimen/screen_padding"
-        android:paddingBottom="40dp">
+        android:paddingBottom="56dp">
 
         <TextView
             style="@style/Widget.Family.ScreenTitle"
@@ -34,19 +34,12 @@
             android:gravity="start"
             android:text="@string/desc_parent_register" />
 
-        <TextView
-            style="@style/Widget.Family.FieldLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/first_name" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false"
+            android:layout_marginTop="20dp"
+            android:hint="@string/first_name"
             app:startIconDrawable="@drawable/ic_person">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -61,19 +54,12 @@
                 android:nextFocusDown="@id/etLastName" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            style="@style/Widget.Family.FieldLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="@string/last_name" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false"
+            android:layout_marginTop="16dp"
+            android:hint="@string/last_name"
             app:startIconDrawable="@drawable/ic_person">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -88,19 +74,12 @@
                 android:nextFocusDown="@id/etEmail" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            style="@style/Widget.Family.FieldLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="@string/label_email" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_email"
             app:startIconDrawable="@drawable/ic_email">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -116,19 +95,12 @@
                 android:textDirection="ltr" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            style="@style/Widget.Family.FieldLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="@string/label_password" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false"
+            android:layout_marginTop="16dp"
+            android:hint="@string/label_password"
             app:endIconMode="password_toggle"
             app:startIconDrawable="@drawable/ic_lock">
 

@@ -15,7 +15,7 @@
         android:paddingStart="@dimen/screen_padding_compact"
         android:paddingTop="@dimen/screen_padding_top"
         android:paddingEnd="@dimen/screen_padding_compact"
-        android:paddingBottom="@dimen/screen_padding_bottom">
+        android:paddingBottom="48dp">
 
         <LinearLayout
             android:layout_width="match_parent"

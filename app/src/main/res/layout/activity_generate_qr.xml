@@ -1,127 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen"
+    android:fillViewport="true"
     android:layoutDirection="rtl"
-    android:paddingStart="16dp"
-    android:paddingTop="18dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="20dp"
     tools:context=".Parents_Dashbord_and_mange.GenerateQRActivity">
 
-    <!-- כותרת והסבר על QR משפחתי -->
-    <LinearLayout
-        android:id="@+id/headerCard"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_home_hero"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingStart="16dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/Widget.Family.ScreenTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title_qr_family"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/tvExplanation"
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/subtitle_qr_family" />
-    </LinearLayout>
-
-    <!-- כרטיס ה-QR שהילדים סורקים -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/qrCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="@dimen/card_corner_radius_large"
-        app:cardElevation="@dimen/card_elevation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerCard"
-        app:strokeColor="@color/border_light"
-        app:strokeWidth="1dp">
-
+        <!-- כותרת והסבר על QR משפחתי -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/headerCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:background="@drawable/bg_home_hero"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="18dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="20dp">
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                style="@style/Widget.Family.Eyebrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/qr_card_title" />
-
-            <FrameLayout
-                android:layout_width="272dp"
-                android:layout_height="272dp"
-                android:layout_marginTop="14dp"
-                android:background="@android:color/white"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/imageViewQrCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/cd_qr_code"
-                    android:scaleType="fitCenter"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <TextView
-                style="@style/Widget.Family.HelperText"
+                android:id="@+id/tvTitle"
+                style="@style/Widget.Family.ScreenTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:gravity="center"
-                android:text="@string/qr_share_hint" />
+                android:text="@string/title_qr_family"
+                android:textSize="22sp" />
 
             <TextView
-                android:id="@+id/tvError"
+                android:id="@+id/tvExplanation"
+                style="@style/Widget.Family.ScreenSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_empty_state"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="@string/error_qr_creation"
-                android:textColor="@color/logout_text"
-                android:textSize="15sp"
-                android:visibility="gone" />
-
+                android:layout_marginTop="6dp"
+                android:text="@string/subtitle_qr_family" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/btnBackToDashboard"
-        style="@style/Widget.Family.BackButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:text="@string/btn_back_to_dashboard"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/qrCard" />
+        <!-- כרטיס ה-QR שהילדים סורקים -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/qrCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="@dimen/card_corner_radius_large"
+            app:cardElevation="@dimen/card_elevation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerCard"
+            app:strokeColor="@color/border_light"
+            app:strokeWidth="1dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    style="@style/Widget.Family.Eyebrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_card_title" />
+
+                <FrameLayout
+                    android:layout_width="272dp"
+                    android:layout_height="272dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@android:color/white"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/imageViewQrCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/cd_qr_code"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <TextView
+                    style="@style/Widget.Family.HelperText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center"
+                    android:text="@string/qr_share_hint" />
+
+                <TextView
+                    android:id="@+id/tvError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_empty_state"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/error_qr_creation"
+                    android:textColor="@color/logout_text"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/btnBackToDashboard"
+            style="@style/Widget.Family.BackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/btn_back_to_dashboard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/qrCard" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_gradient"
     android:fillViewport="true"
+    android:layoutDirection="rtl"
     android:overScrollMode="never">
 
     <LinearLayout
@@ -17,7 +18,7 @@
         android:paddingStart="@dimen/screen_padding_compact"
         android:paddingTop="@dimen/screen_padding_top"
         android:paddingEnd="@dimen/screen_padding_compact"
-        android:paddingBottom="@dimen/screen_padding_bottom">
+        android:paddingBottom="56dp">
 
         <LinearLayout
             android:layout_width="match_parent"
