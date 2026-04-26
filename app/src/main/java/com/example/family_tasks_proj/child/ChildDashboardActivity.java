@@ -288,8 +288,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
 
         counts.openCount++;
-        // משימה נחשבת דחופה אם היא קרובה למועד (Due Soon) או שכבר עבר המועד (Overdue)
-        if (DateUtils.isDueSoon(task.getDueAt()) || DateUtils.isOverdue(task.getDueAt())) {
+        
+        // משימה באיחור (Overdue) - תאריך היעד עבר
+        if (DateUtils.isOverdue(task.getDueAt())) {
+            counts.overdueCount++;
+            counts.urgentCount++; // נספר גם כדחוף לצורך התצוגה הכללית
+        } 
+        // משימה דחופה (Due Soon) - נותרו 0-2 ימים
+        else if (DateUtils.isDueSoon(task.getDueAt())) {
             counts.urgentCount++;
         }
     }
@@ -298,6 +304,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void bindTaskCounts(TaskCounts counts) {
         tvTotalTasks.setText(String.valueOf(counts.openCount));
         tvCompleted.setText(String.valueOf(counts.completedCount));
+        // תיבת "דחוף" מציגה את סך המשימות הדחופות והמשימות באיחור ביחד
         tvDueSoon.setText(String.valueOf(counts.urgentCount));
         tvStars.setText(getString(R.string.child_stars_count, counts.stars));
     }
@@ -517,6 +524,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         int completedCount;
         int urgentCount;
         int openCount;
+        int overdueCount;
         long stars;
     }
 
