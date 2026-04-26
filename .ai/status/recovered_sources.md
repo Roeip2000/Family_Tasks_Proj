@@ -135,6 +135,17 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
 - `GEMINI.md` was requested by the startup checklist but is not present in the current repository.
 - No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
 
+## 2026-04-26 Student-Exam Comment/Style Cleanup Source Use
+- No new raw Claude archive files were scanned in this session.
+- This cleanup used:
+  - existing project instructions in `AGENTS.md`, `CLAUDE.md`, and `.ai/*`
+  - current active Java source under `app/src/main/java/com/example/family_tasks_proj`
+  - current app string resources under `app/src/main/res/values/strings.xml`
+  - local verification with `.\gradlew.bat assembleDebug` and `.\gradlew.bat lintDebug`
+- `cleaned_code/` was checked again and is not present in the current repository.
+- `GEMINI.md` is still absent from the repository even though the startup checklist names it.
+- No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
+
 ## Local Preservation Rule
 - Keep `.ai/raw_claude_cli_full/` and `.ai/snapshots/` locally as permanent source material.
 - These archives should stay ignored by Git unless the user explicitly asks to version them.

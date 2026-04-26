@@ -1,10 +1,8 @@
 package com.example.family_tasks_proj.child.model;
 
 /**
- * מודל ילד — נשמר ב-Firebase תחת /parents/{uid}/children/{childId}.
- *
- * שדות: firstName, lastName, profileImageBase64.
- * פעולה בונה ריקה חובה ל-DataSnapshot.getValue(Child.class).
+ * מודל ילד כפי שהוא נשמר תחת ההורה ב-Firebase.
+ * כולל שם פרטי, שם משפחה ותמונת פרופיל.
  */
 public class Child {
     private String firstName;

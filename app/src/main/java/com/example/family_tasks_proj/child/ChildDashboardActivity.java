@@ -289,12 +289,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         counts.openCount++;
         
-        // משימה באיחור (Overdue) - תאריך היעד עבר
+        // משימה באיחור - תאריך היעד עבר
         if (DateUtils.isOverdue(task.getDueAt())) {
             counts.overdueCount++;
             counts.urgentCount++; // נספר גם כדחוף לצורך התצוגה הכללית
         } 
-        // משימה דחופה (Due Soon) - נותרו 0-2 ימים
+        // משימה דחופה - נותרו 0-2 ימים
         else if (DateUtils.isDueSoon(task.getDueAt())) {
             counts.urgentCount++;
         }

@@ -21,25 +21,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 /**
  * מסך הכניסה הראשי של האפליקציה.
- *
- * זהו המסך הראשון שנפתח כשמריצים את האפליקציה.
- * מציג כפתורים לניווט בין:
- * - התחברות הורה (ParentLoginFragment)
- * - הרשמת הורה (ParentRegisterFragment)
- * - סריקת QR לילד (ChildQRLoginFragment)
- * - כניסה ישירה לדשבורד ילד — משתמש בסשן שמור (SharedPreferences)
- *
- * כל Fragment נטען לתוך אזור התוכן של מסך הבית.
+ * מכאן ההורה מתחבר או נרשם, והילד נכנס דרך QR או בחירה מהירה.
  */
-
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
 
     private Button btnRegister, btnLogin, btnChildQR, btnChild;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (openSavedParentSession()) {
@@ -59,8 +48,7 @@ public class MainActivity extends AppCompatActivity
         btnChild = findViewById(R.id.btnChild);
 
         // טעינת מסך ברירת מחדל — התחברות הורה
-        if (savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             showFragment(new ParentLoginFragment(), false);
         }
 
@@ -87,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         // כניסה מהירה לילד:
         // 1) יש סשן מלא (הורה + ילד) — הולכים ישר לדשבורד הילד.
         // 2) יש רק parentId שמור — ממשיכים למסך בחירת הילד של אותו הורה.
-        // 3) אין כלום — פותחים סריקת QR.
+        // 3) אין כלום — פותחים בחירת ילד ידנית.
         btnChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,7 +133,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        // מקרה 2+3: אין סשן מלא — הולכים למסך בחירת ילד (עם או בלי הורה מוגדר מראש)
+        // מקרה 2+3: אין סשן מלא — הולכים למסך בחירת ילד
         Intent intent = new Intent(this, ChildSelectionActivity.class);
         if (savedParent != null) {
             intent.putExtra("parentId", savedParent);
@@ -157,8 +145,7 @@ public class MainActivity extends AppCompatActivity
      * מחליף את המסך הפנימי המוצג ושומר אפשרות לחזור אחורה.
      * addToBackStack מאפשר לחזור למסך הקודם עם כפתור "חזרה".
      */
-    private void showFragment(Fragment fragment, boolean addToBackStack)
-    {
+    private void showFragment(Fragment fragment, boolean addToBackStack) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (currentFragment != null
                 && currentFragment.getClass().equals(fragment.getClass())) {

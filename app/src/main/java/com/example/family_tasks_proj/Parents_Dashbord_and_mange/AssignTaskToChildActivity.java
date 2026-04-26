@@ -264,7 +264,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .show();
     }
 
-    // יוצר Map של משימה ושומר אותו תחת הילד שנבחר ב-Firebase
+    // יוצר מפת נתונים של משימה ושומר אותה תחת הילד שנבחר ב-Firebase
     private void assignTask() {
         String title = etTitle.getText().toString().trim();
         String dueDate = etDueDate.getText().toString().trim();

@@ -1,8 +1,7 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
 /** סיכום ילד — ספירות משימות לכל ילד בדשבורד ההורה. */
-public class ChildSummary
-{
+public class ChildSummary {
     public String childId;
     public String displayName;
     public String childProfileBase64;

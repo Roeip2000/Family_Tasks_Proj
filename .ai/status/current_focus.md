@@ -376,3 +376,18 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - `adb devices -l` returned no connected devices, so emulator/device UI verification was not performed.
 - Remaining useful verification:
   - run the redesigned app on a phone/emulator and check narrow-screen RTL layout, keyboard behavior in auth forms, ParentDashboard action-card tap targets, child task cards with and without images, and QR centering.
+
+## Student-Exam Comment/Style Cleanup (2026-04-26)
+- Latest verified state:
+  - Long class Javadocs in the active Java source were shortened to simple Hebrew explanations suitable for a 12th-grade oral defense.
+  - Remaining nonessential English wording in comments was replaced with Hebrew while preserving code/API names such as `Firebase`, `SharedPreferences`, `parentId`, `childId`, and method names.
+  - `Child`, `ChildTask`, and `TaskTemplate` remain private-field JavaBean models with one-line getters/setters.
+  - `ParentInFb` now also uses compact one-line getters/setters.
+  - Remaining Allman-style Java brace placements found by the source scan were reformatted to K&R style.
+- Verification:
+  - `.\gradlew.bat assembleDebug` passed.
+  - `.\gradlew.bat lintDebug` passed.
+  - targeted scans passed for old English Toast literals, direct field access on `ChildTask`/`TaskTemplate`, public fields in the requested models, logs/prints, and excessive blank lines.
+- Current source note:
+  - `cleaned_code/` is still not present in the repository; the cleanup was applied to the active Android source tree.
+  - Current `MainActivity.openChildQuickLogin()` opens `ChildSelectionActivity` when there is no full child session; this was documented in comments to match current source behavior and no navigation logic was changed.

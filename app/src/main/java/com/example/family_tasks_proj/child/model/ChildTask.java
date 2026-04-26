@@ -1,19 +1,8 @@
 package com.example.family_tasks_proj.child.model;
 
 /**
- * מודל משימה מצד הילד — נקרא מ-Firebase ב-ChildDashboardActivity.
- *
- * נתיב במסד הנתונים: /parents/{uid}/children/{childId}/tasks/{taskId}
- * שדות: id, title, dueAt, isDone, starsWorth, imageBase64, createdAt.
- *
- * פעולה בונה ריקה חובה ל-DataSnapshot.getValue(ChildTask.class).
- *
- * ===== הערות =====
- * - dueAt בפורמט "d/M/yyyy" (למשל "15/3/2026"). נקבע ע"י DatePicker ב-AssignTaskToChildActivity.
- * - starsWorth: כמות כוכבים שהילד מקבל כשמשלים את המשימה.
- * - isDone: סטטוס — true אם הילד סיים.
- * - imageBase64: תמונת המשימה מקודדת — מגיעה מתבנית שנבחרה ע"י ההורה.
- * - createdAt: חותמת זמן במילישניות של יצירת המשימה.
+ * מודל משימה של ילד כפי שהיא נקראת מ-Firebase.
+ * כולל כותרת, תאריך יעד, סטטוס, כוכבים ותמונה.
  */
 public class ChildTask {
     private String id;

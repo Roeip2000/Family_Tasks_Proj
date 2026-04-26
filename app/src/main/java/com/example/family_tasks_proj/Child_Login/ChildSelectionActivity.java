@@ -89,7 +89,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // קודם קורא IDs מה-Intent, ואם אין parentId אז משלים מהסשן המקומי האחרון
+    // קודם קורא מזהים מה-Intent, ואם אין parentId אז משלים מהסשן המקומי האחרון
     private void resolveIds() {
         Intent intent = getIntent();
         if (intent != null) {

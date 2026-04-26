@@ -502,3 +502,23 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `./gradlew.bat lintDebug` completed successfully after fixing the AppCompat `app:tint` lint errors
   - `adb devices -l` showed no connected device or emulator, so no live UI/device pass was performed
 - Confidence: build and lint verified; runtime visual verification still needs a device/emulator
+
+## 2026-04-26: Student-exam comment/style cleanup pass
+- Completed a source-only cleanup pass focused on readability for an oral exam.
+- Scope preserved:
+  - no Firebase paths, package names, class names, method signatures, navigation targets, or product logic were intentionally changed
+  - `cleaned_code/` was checked again and is still not present, so the active Android source under `app/src/main/java/com/example/family_tasks_proj` was used
+- Concrete work completed:
+  - shortened long class Javadocs into simpler 1-3 line Hebrew explanations
+  - removed leftover English wording from comments where it was not an API/class/field name, such as `IDs`, `Map`, `Overdue`, `Due Soon`, and `stream`
+  - kept the `Child`, `ChildTask`, and `TaskTemplate` JavaBean-style private fields/getters/setters already present in current source
+  - reformatted remaining Allman-style Java braces found in the active source to K&R style, including the already-requested `AssignTaskToChildActivity.assignTask()` check
+  - converted `ParentInFb` getters/setters to simple one-line style for consistency with the student model style
+- Verification in this session:
+  - targeted scans found no old English Toast string literals from the cleanup request
+  - targeted scans found no direct access to the changed `ChildTask`/`TaskTemplate` fields in the affected child/template/assign files
+  - targeted scans found no public primitive/string fields left in `Child`, `ChildTask`, or `TaskTemplate`
+  - targeted scans found no `Log.d(...)` or `System.out.println(...)` calls and no triple blank-line blocks in app Java source
+  - `.\gradlew.bat assembleDebug` completed successfully
+  - `.\gradlew.bat lintDebug` completed successfully after allowing Gradle to write its wrapper cache outside the workspace
+- Confidence: build, lint, and targeted source scans verified in this session

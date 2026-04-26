@@ -10,17 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * מחלקת יחיד לגישה מרכזית ל-FirebaseAuth ול-Realtime Database.
- *
- * אחריות:
- * - שומר את פרטי ההורה המחובר בזיכרון (uid, שם, אימייל).
- * - כותב/מעדכן את פרופיל ההורה ב-Firebase בלי למחוק נתוני ילדים קיימים.
- *
- * ===== הערות חשובות =====
- * - ה-getInstance() נעול כדי למנוע יצירת שני מופעים במקביל.
- * - saveParentToFirebase() משתמש ב-updateChildren() ולא ב-setValue() —
- *   זה קריטי כדי לא לדרוס את /children ו-/task_templates שכבר קיימים תחת ההורה.
- * - saveParentToFirebase(listener) מאפשר לקבל תשובה אחרי הכתיבה — שימושי בבדיקות הרשמה.
+ * מחלקת יחיד לגישה ל-FirebaseAuth ול-Realtime Database.
+ * שומרת את פרטי ההורה וכותבת אותם בלי למחוק ילדים או תבניות.
  */
 public class FBsingleton {
 
@@ -45,10 +36,8 @@ public class FBsingleton {
     /**
      * מחזיר את המופע היחיד של המחלקה; יוצר אותו בפעם הראשונה.
      */
-    public static synchronized FBsingleton getInstance()
-    {
-        if (instance == null)
-        {
+    public static synchronized FBsingleton getInstance() {
+        if (instance == null) {
             instance = new FBsingleton();
         }
         return instance;
@@ -62,8 +51,7 @@ public class FBsingleton {
      * @param lastName  שם משפחה
      * @param email     אימייל
      */
-    public void setUserData(String firstName, String lastName, String email)
-    {
+    public void setUserData(String firstName, String lastName, String email) {
         this.uid = auth.getUid();
         this.firstName = firstName;
         this.lastName = lastName;

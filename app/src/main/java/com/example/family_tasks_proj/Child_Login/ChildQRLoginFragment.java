@@ -28,9 +28,8 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
  * מסך סריקת QR לילד.
- * תומך ב-QR של הורה בלבד: parent:{parentId},
- * וגם ב-QR מלא: parent:{parentId}|child:{childId}.
- * כל בדיקה מול Firebase נשארת תחת /parents/{parentId}.
+ * תומך בקוד של הורה בלבד וגם בקוד מלא עם ילד.
+ * כל הבדיקות נשארות תחת /parents/{parentId}.
  */
 public class ChildQRLoginFragment extends Fragment {
 

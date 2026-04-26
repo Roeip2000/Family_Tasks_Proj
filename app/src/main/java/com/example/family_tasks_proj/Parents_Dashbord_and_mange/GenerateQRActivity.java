@@ -18,21 +18,8 @@ import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 /**
- * מסך QR קבוע להורה.
- *
- * אחריות:
- * - מציג QR אחד קבוע עבור ההורה המחובר.
- * - כל ילדי ההורה סורקים את אותו QR.
- * - אחרי הסריקה הילד מגיע למסך בחירת שם (ChildSelectionActivity).
- *
- * פורמט ה-QR: "parent:{parentId}"
- * פורמט זהה לזה ש-ChildQRLoginFragment מפענח.
- *
- * קובץ המסך: activity_generate_qr.xml
- *
- * הערה להמשך:
- * אם ירצו בעתיד, אפשר להוסיף שיתוף של תמונת ה-QR
- * ואפשר גם לשמור את ה-Bitmap כדי לשרוד סיבוב מסך.
+ * מסך שמציג QR קבוע של ההורה.
+ * הילדים סורקים אותו ואז בוחרים את השם שלהם במסך הבא.
  */
 public class GenerateQRActivity extends AppCompatActivity {
 

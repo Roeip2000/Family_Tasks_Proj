@@ -18,14 +18,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 /**
- * עזר לטיפול בתמונות — פותר שלוש בעיות מרכזיות:
- *
- * 1. EXIF: תמונות מהמצלמה מגיעות עם תגית סיבוב שלא נקראת ע"י BitmapFactory.
- *    בלי תיקון — התמונה נראית מסובבת/הפוכה.
- * 2. יחס גובה-רוחב: הקטנה ל-400×400 מעוותת. במקום זה — מקטינים
- *    לפי הצלע הגדולה (MAX_DIMENSION) ושומרים על היחס.
- * 3. עקביות: אותו Bitmap משמש לתצוגה מקדימה וגם לשמירה כ-Base64,
- *    כך שמה שרואים = מה שנשמר = מה שמוצג אחר כך.
+ * מחלקת עזר לטיפול בתמונות.
+ * מתקנת סיבוב, מקטינה תמונות ושומרת אותן כ-Base64.
  */
 public class ImageHelper {
 
@@ -42,7 +36,7 @@ public class ImageHelper {
      */
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
         try {
-            // שלב 1: פענוח ה-Bitmap מה-stream
+            // שלב 1: פענוח ה-Bitmap מזרם הנתונים
             Bitmap bitmap;
             try (InputStream is = resolver.openInputStream(uri)) {
                 bitmap = BitmapFactory.decodeStream(is);
@@ -51,7 +45,7 @@ public class ImageHelper {
                 return null;
             }
 
-            // שלב 2: קריאת זווית EXIF — חייבים stream חדש כי הראשון נצרך
+            // שלב 2: קריאת זווית EXIF — חייבים לפתוח זרם חדש כי הראשון כבר נקרא
             int rotation = getExifRotation(resolver, uri);
 
             // שלב 3: הפעלת סיבוב אם צריך

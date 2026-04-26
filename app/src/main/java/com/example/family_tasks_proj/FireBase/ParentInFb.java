@@ -4,13 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * מודל נתונים של הורה כפי שנשמר ב-Firebase Realtime Database.
- *
- * נתיב במסד הנתונים: /parents/{uid}
- * שדות: uid, firstName, lastName, email, role, children.
- *
- * הערה: חובה לשמור על פעולה בונה ריקה ועל פעולות קבלה ועדכון,
- * כדי ש-Firebase DataSnapshot.getValue() יעבוד.
+ * מודל נתונים של הורה כפי שנשמר ב-Firebase.
+ * כולל פרטי חשבון, תפקיד, ילדים ותמונת פרופיל.
  */
 public class ParentInFb {
 
@@ -24,9 +19,7 @@ public class ParentInFb {
     private String profileImageBase64;
 
     /** פעולה בונה ריקה — חובה כדי ש-Firebase יוכל לקרוא את האובייקט. */
-    public ParentInFb()
-    {
-    }
+    public ParentInFb() {}
 
     /**
      * יוצר פרופיל הורה חדש עם role = "parent" ורשימת ילדים ריקה.
@@ -36,8 +29,7 @@ public class ParentInFb {
      * @param lastName  שם משפחה
      * @param email     אימייל
      */
-    public ParentInFb(String uid, String firstName, String lastName, String email)
-    {
+    public ParentInFb(String uid, String firstName, String lastName, String email) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,79 +38,24 @@ public class ParentInFb {
         this.children = new HashMap<>();
     }
 
-    public String getUid()
-    {
-        return uid;
-    }
-
-    public void setUid(String uid)
-    {
-        this.uid = uid;
-    }
-
-    public String getFirstName()
-    {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName)
-    {
-        this.firstName = firstName;
-    }
-
-    public String getLastName()
-    {
-        return lastName;
-    }
-
-    public void setLastName(String lastName)
-    {
-        this.lastName = lastName;
-    }
-
-    public String getEmail()
-    {
-        return email;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
-
-    public String getRole()
-    {
-        return role;
-    }
-
-    public void setRole(String role)
-    {
-        this.role = role;
-    }
+    public String getUid() { return uid; }
+    public void setUid(String uid) { this.uid = uid; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ParentInFb{" + "uid='" + uid + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", role='" + role + '\'' + '}';
     }
-    public Map<String, Object> getChildren()
-    {
-        return children;
-    }
 
-
-    public void setChildren(Map<String, Object> children)
-    {
-        this.children = children;
-    }
-
-    public String getProfileImageBase64()
-    {
-        return profileImageBase64;
-    }
-
-    public void setProfileImageBase64(String profileImageBase64)
-    {
-        this.profileImageBase64 = profileImageBase64;
-    }
+    public Map<String, Object> getChildren() { return children; }
+    public void setChildren(Map<String, Object> children) { this.children = children; }
+    public String getProfileImageBase64() { return profileImageBase64; }
+    public void setProfileImageBase64(String profileImageBase64) { this.profileImageBase64 = profileImageBase64; }
 }

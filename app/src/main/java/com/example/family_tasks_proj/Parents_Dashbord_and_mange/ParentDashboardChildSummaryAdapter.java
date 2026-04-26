@@ -187,8 +187,7 @@ class ParentDashboardChildSummaryAdapter
         private final TextView tvChildSummaryCompleted;
         private final TextView tvChildSummaryUrgent;
 
-        ChildSummaryViewHolder(@NonNull View itemView)
-        {
+        ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
             cardChildSummary = itemView.findViewById(R.id.cardChildSummary);
             ivChildSummaryPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
