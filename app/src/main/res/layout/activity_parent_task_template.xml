@@ -127,7 +127,6 @@
                     style="@style/Widget.Family.TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_task_title"
                     android:imeOptions="actionNext"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -145,7 +144,6 @@
                     style="@style/Widget.Family.TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_template_stars"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLength="3" />

@@ -48,7 +48,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="givenName"
-                android:hint="@string/hint_first_name"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@id/etLastName" />
@@ -68,7 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="familyName"
-                android:hint="@string/hint_last_name"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@id/etEmail" />
@@ -88,7 +86,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="emailAddress"
-                android:hint="@string/hint_email"
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:nextFocusDown="@id/etPassword"
@@ -110,7 +107,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="newPassword"
-                android:hint="@string/hint_create_password"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
