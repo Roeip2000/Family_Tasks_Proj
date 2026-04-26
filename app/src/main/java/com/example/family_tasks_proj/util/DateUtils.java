@@ -17,9 +17,13 @@ public final class DateUtils {
      * @return מספר ימים (שלילי = עבר, 0 = היום), או Long.MAX_VALUE אם הפורמט לא תקין
      */
     public static long daysLeft(String dueAt) {
-        if (dueAt == null || dueAt.trim().isEmpty()) return Long.MAX_VALUE;
+        if (dueAt == null || dueAt.trim().isEmpty()) {
+            return Long.MAX_VALUE;
+        }
         String[] parts = dueAt.trim().split("/");
-        if (parts.length != 3) return Long.MAX_VALUE;
+        if (parts.length != 3) {
+            return Long.MAX_VALUE;
+        }
 
         try {
             int d = Integer.parseInt(parts[0]);
@@ -37,7 +41,7 @@ public final class DateUtils {
             now.set(Calendar.MILLISECOND, 0);
 
             return (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             return Long.MAX_VALUE;
         }
     }

@@ -90,7 +90,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כותרת המשימה — עם קו חוצה אם בוצעה
     private void bindTitle(TaskViewHolder holder, ChildTask task) {
-        holder.tvTaskTitle.setText(task.title != null ? task.title : "");
+        if (task.title != null) {
+            holder.tvTaskTitle.setText(task.title);
+        } else {
+            holder.tvTaskTitle.setText("");
+        }
 
         if (task.isDone) {
             holder.tvTaskTitle.setPaintFlags(
@@ -178,9 +182,12 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
 
         holder.btnDone.setVisibility(View.VISIBLE);
-        holder.btnDone.setOnClickListener(v -> {
-            if (doneListener != null) {
-                doneListener.onTaskDone(task);
+        holder.btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (doneListener != null) {
+                    doneListener.onTaskDone(task);
+                }
             }
         });
     }

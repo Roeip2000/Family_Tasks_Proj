@@ -158,3 +158,13 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The main remaining problem was no longer missing logic but a fragmented product feel.
   - A resource-driven visual system is safer late in the project, easier for a student to explain, and matches the Figma MCP rule-generation workflow used in this session.
+
+## AD-018: Keep app Java in basic anonymous-listener style for oral defense
+- Status: active
+- Decision:
+  - Avoid lambdas and method references in the student-facing Android Java code.
+  - Prefer anonymous listener classes plus small named handler methods for click, dialog, ActivityResult, and Firebase callbacks.
+  - Keep Firebase paths and existing screen boundaries unchanged while simplifying syntax.
+- Why:
+  - The project is a 12th-grade oral-defense asset, and the student must be able to explain listener flow line by line.
+  - Anonymous classes are more verbose but make callback type, method name, and control flow explicit for exam explanation.

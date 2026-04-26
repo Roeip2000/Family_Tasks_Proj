@@ -80,6 +80,14 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
   - Figma connector availability check via `whoami` only (no project file key was available in the repo to inspect actual frames)
   - focused web benchmarking against official Todoist, Google Tasks, Microsoft To Do, Cozi, and Android documentation pages
 
+## 2026-04-26 Source Use
+- No new raw Claude archive files were scanned in this session.
+- The simple-Java/session-fix pass used:
+  - current source under `app/src/main/java/com/example/family_tasks_proj`
+  - current layout IDs where needed for compile repair (`item_parent_task.xml`)
+  - existing project memory files listed in `AGENTS.md`
+- No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
+
 ## Local Preservation Rule
 - Keep `.ai/raw_claude_cli_full/` and `.ai/snapshots/` locally as permanent source material.
 - These archives should stay ignored by Git unless the user explicitly asks to version them.

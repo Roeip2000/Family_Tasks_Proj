@@ -34,12 +34,18 @@ public class TaskTemplate
     }
 
     public String toDisplayTitle() {
-        return title == null ? "" : title.trim();
+        if (title == null) {
+            return "";
+        }
+        return title.trim();
     }
 
     /** מחזיר ערך כוכבים שמובטח חוקי (תיקון דאטה ישן בלי שדה או עם ערך לא חוקי). */
     public int safeStarsWorth() {
-        return starsWorth > 0 ? starsWorth : DEFAULT_STARS_WORTH;
+        if (starsWorth > 0) {
+            return starsWorth;
+        }
+        return DEFAULT_STARS_WORTH;
     }
 
     @Override

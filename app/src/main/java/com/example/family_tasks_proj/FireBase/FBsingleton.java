@@ -1,6 +1,7 @@
 package com.example.family_tasks_proj.FireBase;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -96,7 +97,8 @@ public class FBsingleton {
 
         // updateChildren ולא setValue — שומר על נתונים קיימים!
         if (listener != null) {
-            ref.updateChildren(profileData).addOnCompleteListener(listener);
+            Task<Void> updateTask = ref.updateChildren(profileData);
+            updateTask.addOnCompleteListener(listener);
         } else {
             ref.updateChildren(profileData);
         }

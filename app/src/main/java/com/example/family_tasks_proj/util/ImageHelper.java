@@ -47,7 +47,9 @@ public class ImageHelper {
             try (InputStream is = resolver.openInputStream(uri)) {
                 bitmap = BitmapFactory.decodeStream(is);
             }
-            if (bitmap == null) return null;
+            if (bitmap == null) {
+                return null;
+            }
 
             // שלב 2: קריאת זווית EXIF — חייבים stream חדש כי הראשון נצרך
             int rotation = getExifRotation(resolver, uri);
@@ -61,8 +63,8 @@ public class ImageHelper {
             bitmap = scaleDown(bitmap, MAX_DIMENSION);
 
             return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return null;
         }
     }
@@ -74,14 +76,16 @@ public class ImageHelper {
      * @return מחרוזת Base64, או null בכישלון
      */
     public static String bitmapToBase64(Bitmap bitmap) {
-        if (bitmap == null) return null;
+        if (bitmap == null) {
+            return null;
+        }
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, baos);
             byte[] bytes = baos.toByteArray();
             return Base64.encodeToString(bytes, Base64.NO_WRAP);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return null;
         }
     }
@@ -94,12 +98,14 @@ public class ImageHelper {
      * @return Bitmap, או null אם הקלט ריק/פגום
      */
     public static Bitmap base64ToBitmap(String base64) {
-        if (base64 == null || base64.isEmpty()) return null;
+        if (base64 == null || base64.isEmpty()) {
+            return null;
+        }
         try {
             byte[] decoded = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return null;
         }
     }
@@ -113,7 +119,9 @@ public class ImageHelper {
      * @return Bitmap מרובע עם פינות חתוכות לעיגול, או null אם src=null
      */
     public static Bitmap getCircularBitmap(Bitmap src) {
-        if (src == null) return null;
+        if (src == null) {
+            return null;
+        }
         int size = Math.min(src.getWidth(), src.getHeight());
         Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
@@ -140,7 +148,9 @@ public class ImageHelper {
      */
     private static int getExifRotation(ContentResolver resolver, Uri uri) {
         try (InputStream is = resolver.openInputStream(uri)) {
-            if (is == null) return 0;
+            if (is == null) {
+                return 0;
+            }
             ExifInterface exif = new ExifInterface(is);
             int orientation = exif.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -151,7 +161,7 @@ public class ImageHelper {
                 case ExifInterface.ORIENTATION_ROTATE_270: return 270;
                 default: return 0;
             }
-        } catch (Exception e) {
+        } catch (Exception exception) {
             // אם אין EXIF (למשל PNG) — פשוט לא מסובבים
             return 0;
         }

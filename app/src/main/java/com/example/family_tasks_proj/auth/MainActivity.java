@@ -3,9 +3,9 @@ package com.example.family_tasks_proj.auth;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -13,8 +13,11 @@ import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
 import com.example.family_tasks_proj.Child_Login.ChildSelectionActivity;
 import com.example.family_tasks_proj.Parents.ParentLoginFragment;
 import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
+import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * מסך כניסה ראשי — Launcher Activity.
@@ -38,6 +41,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        if (openSavedParentSession()) {
+            return;
+        }
+
+        if (openSavedChildSession()) {
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         // חיבור כפתורים מה-layout
@@ -53,17 +65,71 @@ public class MainActivity extends AppCompatActivity
         }
 
         // ניווט בין מסכים — כל לחיצה מחליפה את ה-Fragment
-        btnRegister.setOnClickListener(v -> showFragment(new ParentRegisterFragment(), true));
-        btnLogin.setOnClickListener(v -> showFragment(new ParentLoginFragment(), true));
-        btnChildQR.setOnClickListener(v -> showFragment(new ChildQRLoginFragment(), true));
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentRegisterFragment(), true);
+            }
+        });
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentLoginFragment(), true);
+            }
+        });
+        btnChildQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ChildQRLoginFragment(), true);
+            }
+        });
 
         // כניסה מהירה לילד:
         // 1) יש סשן מלא (הורה + ילד) — הולכים ישר לדשבורד הילד.
         // 2) יש רק parentId שמור — ממשיכים למסך בחירת הילד של אותו הורה.
         // 3) אין כלום — מסבירים לילד קצר שצריך QR, ונותנים גם דרך ידנית כגיבוי.
-        btnChild.setOnClickListener(v -> openChildQuickLogin());
+        btnChild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openChildQuickLogin();
+            }
+        });
     }
 
+    // בודק אם הורה עדיין מחובר ב-FirebaseAuth ופותח ישר את דשבורד ההורה
+    private boolean openSavedParentSession() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            return false;
+        }
+
+        Intent intent = new Intent(this, ParentDashboardActivity.class);
+        startActivity(intent);
+        finish();
+        return true;
+    }
+
+    // בודק אם יש סשן ילד מלא ב-SharedPreferences ופותח ישר את דשבורד הילד
+    private boolean openSavedChildSession() {
+        SharedPreferences sharedPreferences = getSharedPreferences("child_session", MODE_PRIVATE);
+        String savedParent = sharedPreferences.getString("parentId", null);
+        String savedChild = sharedPreferences.getString("childId", null);
+
+        if (savedParent == null || savedChild == null) {
+            return false;
+        }
+
+        Intent intent = new Intent(this, ChildDashboardActivity.class);
+        // parentId אומר לדשבורד מאיזה ענף /parents לקרוא את הילד
+        intent.putExtra("parentId", savedParent);
+        // childId אומר לדשבורד איזה ילד לפתוח תחת אותו הורה
+        intent.putExtra("childId", savedChild);
+        startActivity(intent);
+        finish();
+        return true;
+    }
+
+    // כניסה מהירה לילד מתוך מסך הבית לפי הסשן המקומי האחרון
     private void openChildQuickLogin() {
         // session מקומי מאפשר לילד לחזור מהר בלי לסרוק QR בכל פעם
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
@@ -85,22 +151,10 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        showFirstTimeChildDialog();
+        showFragment(new ChildQRLoginFragment(), true);
     }
 
     // כניסה ראשונה של ילד — עדיף QR; בחירה ידנית מוצגת כגיבוי ולא כברירת מחדל
-    private void showFirstTimeChildDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.child_first_time_title)
-                .setMessage(R.string.child_first_time_message)
-                .setPositiveButton(R.string.child_first_time_scan, (d, w) ->
-                        showFragment(new ChildQRLoginFragment(), true))
-                .setNegativeButton(R.string.child_first_time_manual, (d, w) ->
-                        startActivity(new Intent(this, ChildSelectionActivity.class)))
-                .setNeutralButton(R.string.action_cancel, null)
-                .show();
-    }
-
     /**
      * מחליף את ה-Fragment המוצג ב-fragmentContainer ושומר ב-back stack.
      * ה-addToBackStack מאפשר לחזור ל-Fragment הקודם עם כפתור "חזרה".

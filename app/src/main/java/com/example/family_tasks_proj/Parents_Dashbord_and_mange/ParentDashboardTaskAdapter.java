@@ -56,7 +56,10 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     @Override
     public int getItemViewType(int position) {
         TaskListItem item = getItem(position);
-        return item != null && item.isHeader ? VIEW_TYPE_HEADER : VIEW_TYPE_TASK;
+        if (item != null && item.isHeader) {
+            return VIEW_TYPE_HEADER;
+        }
+        return VIEW_TYPE_TASK;
     }
 
     @Override
@@ -69,7 +72,10 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         TaskListItem item = getItem(position);
         if (item == null) {
-            return convertView == null ? new View(getContext()) : convertView;
+            if (convertView == null) {
+                return new View(getContext());
+            }
+            return convertView;
         }
 
         if (getItemViewType(position) == VIEW_TYPE_HEADER) {
@@ -99,18 +105,25 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
             return convertView;
         }
 
-        ImageView ivChildPhoto = convertView.findViewById(R.id.ivChildPhoto);
         TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
-        TextView tvChildNameCard = convertView.findViewById(R.id.tvChildNameCard);
+        TextView tvTaskOwner = convertView.findViewById(R.id.tvTaskOwner);
         TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
+        View viewTaskDot = convertView.findViewById(R.id.viewTaskDot);
 
-        tvTaskTitleCard.setText(task.title == null || task.title.isEmpty()
-                ? getContext().getString(R.string.default_task_name)
-                : task.title);
+        if (task.title == null || task.title.isEmpty()) {
+            tvTaskTitleCard.setText(getContext().getString(R.string.default_task_name));
+        } else {
+            tvTaskTitleCard.setText(task.title);
+        }
         
-        tvChildNameCard.setText(task.childName);
-        tvChildNameCard.setVisibility(showChildName ? View.VISIBLE : View.GONE);
+        if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
+            tvTaskOwner.setText(getContext().getString(
+                    R.string.parent_dashboard_task_owner_label, task.childName));
+            tvTaskOwner.setVisibility(View.VISIBLE);
+        } else {
+            tvTaskOwner.setVisibility(View.GONE);
+        }
         
         tvDueDateCard.setText(getDueLine(task));
         tvDueDateCard.setTextColor(getDueLineColor(task));
@@ -118,19 +131,24 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         String statusText = getTaskStatusLabel(task);
         int chipBgColor;
         int chipTextColor;
+        int dotColor;
 
         if (task.isDone) {
             chipBgColor = Color.parseColor("#E8F5E9");
             chipTextColor = Color.parseColor("#2E7D32");
+            dotColor = chipTextColor;
         } else if (DateUtils.daysLeft(task.dueAt) < 0) {
             chipBgColor = Color.parseColor("#FFEBEE");
             chipTextColor = Color.parseColor("#C62828");
+            dotColor = chipTextColor;
         } else if (isUrgentTask(task)) {
             chipBgColor = Color.parseColor("#FFF3E0");
             chipTextColor = Color.parseColor("#E65100");
+            dotColor = chipTextColor;
         } else {
             chipBgColor = Color.parseColor("#EEF2F7");
             chipTextColor = Color.parseColor("#52606D");
+            dotColor = Color.parseColor("#2F80ED");
         }
 
         tvStatusChip.setText(statusText);
@@ -142,7 +160,10 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         chipBg.setCornerRadius(dpToPx(14));
         tvStatusChip.setBackground(chipBg);
 
-        bindChildPhoto(ivChildPhoto, task.childId, task.childProfileBase64);
+        GradientDrawable dotBg = new GradientDrawable();
+        dotBg.setShape(GradientDrawable.OVAL);
+        dotBg.setColor(dotColor);
+        viewTaskDot.setBackground(dotBg);
         return convertView;
     }
 
@@ -199,11 +220,17 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     private int getDueLineColor(AssignedTask task) {
-        if (task.isDone) return Color.parseColor("#2E7D32");
+        if (task.isDone) {
+            return Color.parseColor("#2E7D32");
+        }
 
         long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) return Color.parseColor("#C62828");
-        if (daysLeft <= 2) return Color.parseColor("#E65100");
+        if (daysLeft < 0) {
+            return Color.parseColor("#C62828");
+        }
+        if (daysLeft <= 2) {
+            return Color.parseColor("#E65100");
+        }
         return Color.parseColor("#6B7280");
     }
 

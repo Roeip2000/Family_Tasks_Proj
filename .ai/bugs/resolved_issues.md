@@ -182,3 +182,26 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - Expanded shared colors, styles, and drawable resources so contrast and button hierarchy stay consistent across screens.
   - Verified with `./gradlew.bat assembleDebug`.
 - Confidence: explicit current-session verification
+
+## RI-016: Reopening the app returned to the main login screen despite saved sessions
+- First clear evidence: 2026-04-26 user report and task request
+- Problem:
+  - `MainActivity` always inflated the login shell first, so a signed-in parent or a saved child session did not return directly to the correct dashboard after app restart.
+- Resolution:
+  - Before `setContentView()`, `MainActivity` now checks `FirebaseAuth.getInstance().getCurrentUser()` and opens `ParentDashboardActivity` for a signed-in parent.
+  - If no parent is signed in, it checks `SharedPreferences("child_session")` for both `parentId` and `childId` and opens `ChildDashboardActivity` with those extras.
+  - Only when both checks fail does the normal login UI load.
+- Verification:
+  - `assembleDebug` passed after the change.
+- Confidence: explicitly verified by source inspection and build
+
+## RI-017: First-time child quick login showed an extra dialog
+- First clear evidence: 2026-04-26 user report and task request
+- Problem:
+  - When no child session was saved, `MainActivity.openChildQuickLogin()` showed a first-time dialog instead of directly opening the QR scan flow.
+- Resolution:
+  - Removed `showFirstTimeChildDialog()` and changed the no-session path to `showFragment(new ChildQRLoginFragment(), true)`.
+- Verification:
+  - source scan confirmed the dialog method is no longer referenced
+  - `assembleDebug` passed after the change.
+- Confidence: explicitly verified in the current session

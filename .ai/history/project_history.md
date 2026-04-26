@@ -296,3 +296,22 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - `java -jar docs/uml/tools/plantuml.jar -checkonly docs/uml/project-uml-draft.puml` completed successfully
 - No Android app source code, Firebase paths, package declarations, generated files, or rendered UML images were changed.
 - Confidence: explicitly verified from the current source tree in this session
+
+## 2026-04-26: Simple-Java listener cleanup and session-return fixes
+- Completed a Java-only simplification pass across the active app source files.
+- Concrete bug fixes completed:
+  - `MainActivity` now checks `FirebaseAuth.getCurrentUser()` before `setContentView()` and opens `ParentDashboardActivity` directly for a signed-in parent.
+  - `MainActivity` now checks `SharedPreferences("child_session")` before showing the login UI and opens `ChildDashboardActivity` directly when both `parentId` and `childId` are saved.
+  - The first-time child dialog was removed from `openChildQuickLogin()`; no saved child session now opens `ChildQRLoginFragment` directly.
+  - `ChildSelectionActivity.resolveIds()` now documents that Intent extras are preferred and `SharedPreferences` is only a fallback.
+- Simple-Java cleanup completed:
+  - replaced lambdas and method references with anonymous listener classes
+  - moved ActivityResult callbacks into named handler methods
+  - broke Firebase task writes/listeners into separate reference/task variables where they were chained
+  - replaced non-trivial ternaries with if/else helpers in the edited code
+  - added Hebrew comments and named helper methods around Firebase, SharedPreferences, Intent extras, validation, adapter binding, and image handling
+- Verification in this session:
+  - source scans found no remaining `->` lambdas or `::` method references under `app/src/main/java/com/example/family_tasks_proj`
+  - source scans found no direct AlertDialog lambda patterns or chained Firebase task listener patterns checked by the session scan
+  - `JAVA_HOME="C:\Program Files\Android\Android Studio\jbr" .\gradlew.bat assembleDebug` completed successfully
+- Confidence: explicitly verified in the current session

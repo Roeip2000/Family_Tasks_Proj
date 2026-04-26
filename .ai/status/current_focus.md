@@ -220,3 +220,18 @@ Recovered current status as of the raw-history scan on 2026-04-07.
   - generated-name scan found no excluded generated class names in the new files
   - PlantUML `-checkonly` passed for `docs/uml/project-uml-draft.puml`
 - No app source code, Firebase paths, or rendered UML images were changed.
+
+## Simple Java And Session Fix Pass (2026-04-26)
+- Latest verified state:
+  - `MainActivity` now performs parent auto-login and child saved-session routing before inflating the login screen.
+  - The old first-time child dialog path was removed; no saved child session opens the QR scan fragment directly.
+  - `ChildSelectionActivity.resolveIds()` now clearly documents its fallback order: Intent extras first, SharedPreferences only if extras are missing.
+  - App Java listeners were converted away from lambdas/method references into anonymous listener classes in the active source tree.
+  - ActivityResult callbacks for QR/profile/template/child images now call named handler methods.
+  - Firebase write callbacks checked in this pass use separate reference/task variables instead of chained task-listener calls.
+- Verification:
+  - source scan found no `->` lambdas or `::` method references under `app/src/main/java/com/example/family_tasks_proj`
+  - source scan found no direct AlertDialog lambda patterns or chained Firebase task listener patterns checked by this pass
+  - `JAVA_HOME="C:\Program Files\Android\Android Studio\jbr" .\gradlew.bat assembleDebug` passed
+- Remaining useful verification:
+  - run a real emulator/device pass for parent auto-login, child saved-session return, QR scan, child selection, and task completion with real Firebase data.

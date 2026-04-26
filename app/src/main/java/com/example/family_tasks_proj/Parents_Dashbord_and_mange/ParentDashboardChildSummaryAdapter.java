@@ -29,6 +29,9 @@ import java.util.Map;
 class ParentDashboardChildSummaryAdapter
         extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 
+    /** מזהה מיוחד לצ'יפ "כל הילדים" שאינו ילד אמיתי ב-Firebase. */
+    static final String ALL_CHILDREN_ID = "__ALL__";
+
     interface OnChildSelectedListener {
         void onChildSelected(String childId);
     }
@@ -80,6 +83,7 @@ class ParentDashboardChildSummaryAdapter
     public void onBindViewHolder(@NonNull ChildSummaryViewHolder holder, int position) {
         ChildSummary childSummary = childSummaries.get(position);
         boolean isSelected = childSummary.childId.equals(selectedChildId);
+        boolean isAllChildren = ALL_CHILDREN_ID.equals(childSummary.childId);
 
         holder.tvChildSummaryName.setText(childSummary.displayName);
         bindMetricChip(holder.tvChildSummaryAssigned, R.string.parent_dashboard_summary_assigned,
@@ -89,19 +93,24 @@ class ParentDashboardChildSummaryAdapter
         bindMetricChip(holder.tvChildSummaryUrgent, R.string.parent_dashboard_summary_urgent,
                 childSummary.urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE);
 
-        holder.cardChildSummary.setCardBackgroundColor(
-                Color.parseColor(isSelected ? CHILD_CARD_SELECTED_BG : CHILD_CARD_DEFAULT_BG));
-        holder.cardChildSummary.setStrokeColor(
-                Color.parseColor(isSelected ? CHILD_CARD_SELECTED_STROKE : CHILD_CARD_DEFAULT_STROKE));
-        holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
+        bindCardSelection(holder, isSelected);
         holder.itemView.setContentDescription(
                 context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
 
-        bindChildPhoto(holder.ivChildSummaryPhoto,
-                childSummary.childId,
-                childSummary.childProfileBase64);
+        if (isAllChildren) {
+            holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_family_cluster);
+        } else {
+            bindChildPhoto(holder.ivChildSummaryPhoto,
+                    childSummary.childId,
+                    childSummary.childProfileBase64);
+        }
 
-        holder.itemView.setOnClickListener(v -> onChildSelectedListener.onChildSelected(childSummary.childId));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onChildSelectedListener.onChildSelected(childSummary.childId);
+            }
+        });
     }
 
     @Override
@@ -120,6 +129,27 @@ class ParentDashboardChildSummaryAdapter
         textView.setTextColor(Color.parseColor(textColor));
         textView.setText(context.getString(R.string.parent_dashboard_metric_with_count,
                 context.getString(labelResId), count));
+    }
+
+    // צובע כרטיס ילד לפי מצב הבחירה שלו ברשימה
+    private void bindCardSelection(ChildSummaryViewHolder holder, boolean isSelected) {
+        String backgroundColor;
+        String strokeColor;
+        int strokeWidth;
+
+        if (isSelected) {
+            backgroundColor = CHILD_CARD_SELECTED_BG;
+            strokeColor = CHILD_CARD_SELECTED_STROKE;
+            strokeWidth = 2;
+        } else {
+            backgroundColor = CHILD_CARD_DEFAULT_BG;
+            strokeColor = CHILD_CARD_DEFAULT_STROKE;
+            strokeWidth = 1;
+        }
+
+        holder.cardChildSummary.setCardBackgroundColor(Color.parseColor(backgroundColor));
+        holder.cardChildSummary.setStrokeColor(Color.parseColor(strokeColor));
+        holder.cardChildSummary.setStrokeWidth(dpToPx(strokeWidth));
     }
 
     // טוען תמונת ילד מ-Base64, עם cache כדי לא לפענח שוב ושוב

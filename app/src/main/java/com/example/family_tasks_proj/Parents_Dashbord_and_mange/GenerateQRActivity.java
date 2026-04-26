@@ -49,7 +49,12 @@ public class GenerateQRActivity extends AppCompatActivity {
         tvError = findViewById(R.id.tvError);
         Button btnBack = findViewById(R.id.btnBackToDashboard);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         // זיהוי ההורה המחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -80,7 +85,7 @@ public class GenerateQRActivity extends AppCompatActivity {
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
             tvError.setVisibility(View.GONE);
-        } catch (WriterException e) {
+        } catch (WriterException exception) {
             imageViewQrCode.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
         }
