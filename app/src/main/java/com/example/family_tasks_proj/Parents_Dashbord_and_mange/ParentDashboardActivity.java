@@ -186,7 +186,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     // פותח מסך פעולה של ההורה בלי לשנות את הדשבורד הנוכחי
     private void openScreen(Class<?> target) {
+        if (target == null) return;
         startActivity(new Intent(this, target));
+        // הערה: לא נועלים כפתורים פה כי המעבר מהיר, 
+        // אבל אפשר להוסיף debouncing אם רואים בעיות באמולטור
     }
 
     // מגדיר RecyclerView אופקי לילדים

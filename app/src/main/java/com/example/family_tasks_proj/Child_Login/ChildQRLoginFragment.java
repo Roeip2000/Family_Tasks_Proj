@@ -39,6 +39,7 @@ public class ChildQRLoginFragment extends Fragment {
     private static final String KEY_CHILD = "childId";
 
     private Button btnScanQR;
+    private android.widget.ProgressBar progressScan;
 
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(
@@ -56,6 +57,7 @@ public class ChildQRLoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
         btnScanQR = view.findViewById(R.id.btnScanQR);
+        progressScan = view.findViewById(R.id.progressScan);
         btnScanQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,8 +96,18 @@ public class ChildQRLoginFragment extends Fragment {
         checkQrTarget(parsed);
     }
 
+    private void setLoading(boolean isLoading) {
+        if (btnScanQR != null) {
+            btnScanQR.setEnabled(!isLoading);
+        }
+        if (progressScan != null) {
+            progressScan.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
+    }
+
     // מחליט אם ה-QR מוביל לבחירת ילד או לדשבורד ילד ישיר
     private void checkQrTarget(ParsedQr parsed) {
+        setLoading(true);
         if (isBlank(parsed.childId)) {
             checkParentExists(parsed.parentId);
         } else {
@@ -172,6 +184,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
 
         if (!snapshot.exists()) {
+            setLoading(false);
             Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -185,6 +198,7 @@ public class ChildQRLoginFragment extends Fragment {
         if (!isAdded()) {
             return;
         }
+        setLoading(false);
 
         Toast.makeText(
                 requireContext(),
@@ -221,6 +235,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
 
         if (!snapshot.exists()) {
+            setLoading(false);
             Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -234,6 +249,7 @@ public class ChildQRLoginFragment extends Fragment {
         if (!isAdded()) {
             return;
         }
+        setLoading(false);
 
         Toast.makeText(
                 requireContext(),

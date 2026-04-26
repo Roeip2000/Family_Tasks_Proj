@@ -366,6 +366,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         }
 
         ChildItem childItem = childItems.get(selectedIndex);
+        btnEnter.setEnabled(false); // מונע לחיצות כפולות בזמן פתיחת המסך
         saveSession(parentId, childItem.id);
         openChildDashboard(childItem.id);
     }

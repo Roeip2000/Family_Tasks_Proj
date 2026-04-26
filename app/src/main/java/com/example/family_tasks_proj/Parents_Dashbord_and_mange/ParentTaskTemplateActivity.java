@@ -236,6 +236,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
+        btnSave.setEnabled(false); // מונע לחיצות כפולות
         boolean isEdit = editingTemplateId != null;
         writeTemplateToFirebase(user.getUid(), templateId, data, isEdit);
     }

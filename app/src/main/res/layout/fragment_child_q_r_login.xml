@@ -75,5 +75,14 @@
             android:drawableStart="@drawable/ic_camera"
             android:text="@string/scan_qr" />
 
+        <ProgressBar
+            android:id="@+id/progressScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:indeterminateTint="@color/md_theme_primary"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

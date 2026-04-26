@@ -38,6 +38,7 @@ public class FBsingleton {
     /** פעולה בונה פרטית — מונעת יצירה ישירה מבחוץ. */
     private FBsingleton() {
         database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         auth = FirebaseAuth.getInstance();
     }
 

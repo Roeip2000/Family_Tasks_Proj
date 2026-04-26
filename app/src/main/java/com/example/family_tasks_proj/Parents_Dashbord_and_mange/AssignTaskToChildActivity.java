@@ -274,6 +274,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
+        btnAssign.setEnabled(false); // מונע לחיצות כפולות
         DatabaseReference tasksRef = tasksRef(childIds.get(childPosition));
         String taskId = tasksRef.push().getKey();
 
