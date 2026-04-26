@@ -32,8 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="@string/template_screen_subtitle"
-            android:textSize="13sp" />
+            android:text="@string/template_screen_subtitle" />
     </LinearLayout>
 
         <!-- טופס יצירה או עריכה של תבנית משימה -->
@@ -52,8 +51,7 @@
                 style="@style/Widget.Family.SectionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/template_form_title_new"
-                android:textSize="17sp" />
+                android:text="@string/template_form_title_new" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -121,8 +119,8 @@
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:hint="@string/hint_task_title"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
             app:startIconDrawable="@drawable/ic_assignment">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -146,8 +144,8 @@
             style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:hint="@string/hint_template_stars"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
             app:startIconDrawable="@drawable/ic_check">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -196,7 +194,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="22dp"
+        app:cardCornerRadius="@dimen/card_corner_radius_large"
         app:cardElevation="0dp"
         app:strokeColor="@color/border_light"
         app:strokeWidth="1dp">

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.family_tasks_proj"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.family_tasks_proj"

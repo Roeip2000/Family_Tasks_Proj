@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="8dp"
     app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="22dp"
+    app:cardCornerRadius="@dimen/card_corner_radius_large"
     app:cardElevation="0dp"
     app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
@@ -71,7 +71,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tvChildSummaryCompleted"
@@ -84,7 +84,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tvChildSummaryUrgent"
@@ -97,7 +97,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 

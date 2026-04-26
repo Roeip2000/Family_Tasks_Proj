@@ -93,7 +93,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="@dimen/card_corner_radius_large"
             app:cardElevation="@dimen/card_elevation"
@@ -110,8 +110,7 @@
                     style="@style/Widget.Family.SectionTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/assign_task_form_title"
-                    android:textSize="17sp" />
+                    android:text="@string/assign_task_form_title" />
 
                 <TextView
                     style="@style/Widget.Family.Eyebrow"
@@ -130,10 +129,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     app:cardBackgroundColor="@color/bg_card"
                     app:cardCornerRadius="@dimen/card_corner_radius"
-                    app:cardElevation="@dimen/card_elevation"
+                    app:cardElevation="0dp"
                     app:strokeColor="@color/divider_light"
                     app:strokeWidth="1dp">
 
@@ -157,8 +156,8 @@
                     style="@style/Widget.Family.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:hint="@string/hint_task_title_assign"
+                    android:layout_marginTop="8dp"
+                    app:hintEnabled="false"
                     app:startIconDrawable="@drawable/ic_assignment">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -194,10 +193,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     app:cardBackgroundColor="@color/bg_card"
                     app:cardCornerRadius="@dimen/card_corner_radius"
-                    app:cardElevation="@dimen/card_elevation"
+                    app:cardElevation="0dp"
                     app:strokeColor="@color/divider_light"
                     app:strokeWidth="1dp">
 
@@ -221,8 +220,8 @@
                     style="@style/Widget.Family.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:hint="@string/hint_due_date"
+                    android:layout_marginTop="8dp"
+                    app:hintEnabled="false"
                     app:startIconDrawable="@drawable/ic_calendar">
 
                     <com.google.android.material.textfield.TextInputEditText

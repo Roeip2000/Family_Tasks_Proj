@@ -139,10 +139,10 @@
                     android:layout_marginTop="14dp"
                     android:background="@drawable/bg_empty_state"
                     android:gravity="center"
-                    android:padding="16dp"
+                    android:padding="20dp"
                     android:text="@string/empty_no_children_selection"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
                 <Button

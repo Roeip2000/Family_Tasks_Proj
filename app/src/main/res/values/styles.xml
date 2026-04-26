@@ -8,7 +8,7 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">26sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.0</item>
     </style>
 
     <style name="Widget.Family.ScreenSubtitle">
@@ -21,7 +21,7 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">30sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.0</item>
     </style>
 
     <style name="Widget.Family.HeroSubtitle">
@@ -40,7 +40,7 @@
         <item name="android:textColor">@color/primary_dark</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.0</item>
     </style>
 
     <style name="Widget.Family.HelperText">
@@ -59,7 +59,7 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.0</item>
     </style>
 
     <style name="Widget.Family.MetricLabel">

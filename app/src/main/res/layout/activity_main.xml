@@ -75,7 +75,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_role_parent_card"
             android:orientation="vertical"
             android:padding="16dp">
@@ -224,7 +224,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
                     android:drawableStart="@drawable/ic_child_care"
-                    android:text="@string/btn_quick_select_tester" />
+                    android:text="@string/child_direct_login" />
             </LinearLayout>
         </LinearLayout>
 

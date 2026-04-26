@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollRootChildDashboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_gradient"
     android:fillViewport="true"
-    android:layoutDirection="rtl"
     android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layoutDirection="rtl"
         android:paddingStart="@dimen/screen_padding_compact"
         android:paddingTop="@dimen/screen_padding_top"
         android:paddingEnd="@dimen/screen_padding_compact"
@@ -116,9 +117,9 @@
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="82dp"
+                        android:minHeight="90dp"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
 
                         <TextView
                             android:id="@+id/tvTotalTasks"
@@ -126,16 +127,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/default_zero"
-                            android:textColor="@color/primary_dark" />
+                            android:textColor="@color/primary_dark"
+                            android:textSize="24sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="4dp"
                             android:gravity="center"
+                            android:maxLines="1"
                             android:text="@string/filter_open_tasks"
                             android:textColor="@color/text_secondary"
-                            android:textSize="@dimen/text_caption"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -151,9 +154,9 @@
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="82dp"
+                        android:minHeight="90dp"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
 
                         <TextView
                             android:id="@+id/tvCompleted"
@@ -161,16 +164,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/default_zero"
-                            android:textColor="@color/success_dark" />
+                            android:textColor="@color/success_dark"
+                            android:textSize="24sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="4dp"
                             android:gravity="center"
+                            android:maxLines="1"
                             android:text="@string/filter_completed"
                             android:textColor="@color/text_secondary"
-                            android:textSize="@dimen/text_caption"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -185,9 +190,9 @@
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
-                        android:minHeight="82dp"
+                        android:minHeight="90dp"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
 
                         <TextView
                             android:id="@+id/tvDueSoon"
@@ -195,16 +200,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/default_zero"
-                            android:textColor="@color/warning_dark" />
+                            android:textColor="@color/warning_dark"
+                            android:textSize="24sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="4dp"
                             android:gravity="center"
+                            android:maxLines="1"
                             android:text="@string/filter_urgent"
                             android:textColor="@color/text_secondary"
-                            android:textSize="@dimen/text_caption"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -231,7 +238,9 @@
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
                     android:paddingTop="12dp"
-                    android:paddingBottom="8dp" />
+                    android:paddingBottom="8dp"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_child_task" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

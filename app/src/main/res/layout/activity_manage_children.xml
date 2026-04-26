@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="22dp"
+            app:cardCornerRadius="@dimen/card_corner_radius_large"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -64,8 +64,7 @@
                     style="@style/Widget.Family.SectionTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/manage_children_form_title_new"
-                    android:textSize="17sp" />
+                    android:text="@string/manage_children_form_title_new" />
 
 
                 <LinearLayout
@@ -197,7 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="22dp"
+            app:cardCornerRadius="@dimen/card_corner_radius_large"
             app:cardElevation="0dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp">
@@ -241,7 +240,8 @@
                         android:layout_height="wrap_content"
                         android:divider="@android:color/transparent"
                         android:dividerHeight="12dp"
-                        android:listSelector="@android:color/transparent" />
+                        android:listSelector="@android:color/transparent"
+                        android:nestedScrollingEnabled="true" />
                 </FrameLayout>
 
             </LinearLayout>

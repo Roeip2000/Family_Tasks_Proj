@@ -38,8 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="@string/subtitle_qr_family"
-            android:textSize="13sp" />
+            android:text="@string/subtitle_qr_family" />
     </LinearLayout>
 
     <!-- כרטיס ה-QR שהילדים סורקים -->
@@ -49,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:cardCornerRadius="24dp"
+        app:cardCornerRadius="@dimen/card_corner_radius_large"
         app:cardElevation="@dimen/card_elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +118,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:drawableStart="@drawable/ic_login"
         android:text="@string/btn_back_to_dashboard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
