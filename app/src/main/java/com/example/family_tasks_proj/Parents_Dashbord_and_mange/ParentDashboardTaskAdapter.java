@@ -1,11 +1,14 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,13 +17,15 @@ import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTa
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListItem;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.util.ImageHelper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * אדפטר לרשימת המשימות בדשבורד ההורה.
  * תומך בשני סוגי שורות: כותרת קבוצה (header) ושורת משימה רגילה.
- * כל משימה מציגה כותרת, תאריך יעד וסטטוס ברור בצד.
+ * כל משימה מציגה כותרת, תאריך יעד, סטטוס (בוצע/דחוף/ממתין) ותמונת ילד.
  */
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
@@ -28,17 +33,18 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     private static final int VIEW_TYPE_TASK = 1;
 
     private final LayoutInflater inflater;
-
-    // כשיש יותר מילד אחד בתצוגה (מצב "כל הילדים") — מציגים את שם הילד בכל שורה
-    private boolean showChildName;
+    private final Map<String, Bitmap> childPhotoCache;
+    private boolean showChildName = false;
 
     ParentDashboardTaskAdapter(@NonNull Context context,
-                               @NonNull List<TaskListItem> items) {
+                               @NonNull List<TaskListItem> items,
+                               @NonNull Map<String, Bitmap> childPhotoCache) {
         super(context, 0, items);
         this.inflater = LayoutInflater.from(context);
+        this.childPhotoCache = childPhotoCache;
     }
 
-    void setShowChildName(boolean showChildName) {
+    public void setShowChildName(boolean showChildName) {
         this.showChildName = showChildName;
     }
 
@@ -93,63 +99,73 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
             return convertView;
         }
 
+        ImageView ivChildPhoto = convertView.findViewById(R.id.ivChildPhoto);
         TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
+        TextView tvChildNameCard = convertView.findViewById(R.id.tvChildNameCard);
         TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
-        TextView tvTaskOwner = convertView.findViewById(R.id.tvTaskOwner);
-        View viewTaskDot = convertView.findViewById(R.id.viewTaskDot);
 
         tvTaskTitleCard.setText(task.title == null || task.title.isEmpty()
                 ? getContext().getString(R.string.default_task_name)
                 : task.title);
+        
+        tvChildNameCard.setText(task.childName);
+        tvChildNameCard.setVisibility(showChildName ? View.VISIBLE : View.GONE);
+        
         tvDueDateCard.setText(getDueLine(task));
         tvDueDateCard.setTextColor(getDueLineColor(task));
-
-        // בתצוגת "כל הילדים" מציגים שייכות כדי שהורה יבין לאיזה ילד המשימה
-        if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
-            tvTaskOwner.setText(getContext().getString(
-                    R.string.parent_dashboard_task_owner_label, task.childName));
-            tvTaskOwner.setVisibility(View.VISIBLE);
-        } else {
-            tvTaskOwner.setVisibility(View.GONE);
-        }
 
         String statusText = getTaskStatusLabel(task);
         int chipBgColor;
         int chipTextColor;
-        int dotColor;
 
         if (task.isDone) {
-            chipBgColor = getContext().getColor(R.color.accent_light);
-            chipTextColor = getContext().getColor(R.color.success_dark);
-            dotColor = chipTextColor;
+            chipBgColor = Color.parseColor("#E8F5E9");
+            chipTextColor = Color.parseColor("#2E7D32");
         } else if (DateUtils.daysLeft(task.dueAt) < 0) {
-            chipBgColor = getContext().getColor(R.color.danger_light);
-            chipTextColor = getContext().getColor(R.color.danger);
-            dotColor = chipTextColor;
+            chipBgColor = Color.parseColor("#FFEBEE");
+            chipTextColor = Color.parseColor("#C62828");
         } else if (isUrgentTask(task)) {
-            chipBgColor = getContext().getColor(R.color.urgent_light);
-            chipTextColor = getContext().getColor(R.color.warning_dark);
-            dotColor = chipTextColor;
+            chipBgColor = Color.parseColor("#FFF3E0");
+            chipTextColor = Color.parseColor("#E65100");
         } else {
-            chipBgColor = getContext().getColor(R.color.surface_muted);
-            chipTextColor = getContext().getColor(R.color.text_secondary);
-            dotColor = getContext().getColor(R.color.primary);
+            chipBgColor = Color.parseColor("#EEF2F7");
+            chipTextColor = Color.parseColor("#52606D");
         }
 
         tvStatusChip.setText(statusText);
         tvStatusChip.setTextColor(chipTextColor);
 
+        @SuppressWarnings("deprecation")
         GradientDrawable chipBg = new GradientDrawable();
         chipBg.setColor(chipBgColor);
         chipBg.setCornerRadius(dpToPx(14));
         tvStatusChip.setBackground(chipBg);
 
-        GradientDrawable dotBg = new GradientDrawable();
-        dotBg.setShape(GradientDrawable.OVAL);
-        dotBg.setColor(dotColor);
-        viewTaskDot.setBackground(dotBg);
+        bindChildPhoto(ivChildPhoto, task.childId, task.childProfileBase64);
         return convertView;
+    }
+
+    private void bindChildPhoto(ImageView imageView, String childId, String base64) {
+        imageView.setImageDrawable(null);
+
+        if (base64 == null || base64.trim().isEmpty()) {
+            return;
+        }
+
+        if (childPhotoCache.containsKey(childId)) {
+            imageView.setImageBitmap(childPhotoCache.get(childId));
+            return;
+        }
+
+        Bitmap raw = ImageHelper.base64ToBitmap(base64);
+        if (raw == null) {
+            return;
+        }
+
+        Bitmap circular = ImageHelper.getCircularBitmap(raw);
+        childPhotoCache.put(childId, circular);
+        imageView.setImageBitmap(circular);
     }
 
     private String getTaskStatusLabel(AssignedTask task) {
@@ -183,12 +199,12 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     private int getDueLineColor(AssignedTask task) {
-        if (task.isDone) return getContext().getColor(R.color.success_dark);
+        if (task.isDone) return Color.parseColor("#2E7D32");
 
         long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) return getContext().getColor(R.color.danger);
-        if (daysLeft <= 2) return getContext().getColor(R.color.warning_dark);
-        return getContext().getColor(R.color.text_secondary);
+        if (daysLeft < 0) return Color.parseColor("#C62828");
+        if (daysLeft <= 2) return Color.parseColor("#E65100");
+        return Color.parseColor("#6B7280");
     }
 
     private boolean isUrgentTask(AssignedTask task) {

@@ -81,7 +81,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             });
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_task_template);
 
@@ -224,14 +225,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     }
 
     // תפריט אפשרויות לתבנית — עריכה או מחיקה
-    private void showTemplateOptionsDialog(int position) {
+    private void showTemplateOptionsDialog(int position)
+    {
         if (position < 0 || position >= templateList.size()) return;
 
         TaskTemplate template = templateList.get(position);
-        String[] options = {
-                getString(R.string.template_option_edit),
-                getString(R.string.template_option_delete)
-        };
+        String[] options = {getString(R.string.template_option_edit), getString(R.string.template_option_delete)};
 
         new AlertDialog.Builder(this)
                 .setTitle(template.title)
@@ -293,13 +292,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     resetForm();
                     loadTemplates();
                 })
-                .addOnFailureListener(e -> Toast.makeText(this,
-                        getString(R.string.error_save_generic, e.getMessage()),
+                .addOnFailureListener(e -> Toast.makeText(this, getString(R.string.error_save_generic, e.getMessage()),
                         Toast.LENGTH_SHORT).show());
     }
 
     // מאפס את הטופס חזרה למצב "יצירת תבנית חדשה"
-    private void resetForm() {
+    private void resetForm()
+    {
         editingTemplateId = null;
         correctedBitmap = null;
         etTitle.setText("");
@@ -311,7 +310,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     }
 
     // מחזיר reference לנתיב תבניות ב-Firebase
-    private DatabaseReference getTemplatesRef(String uid) {
+    private DatabaseReference getTemplatesRef(String uid)
+    {
         return FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(uid)

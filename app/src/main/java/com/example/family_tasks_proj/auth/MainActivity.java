@@ -28,7 +28,9 @@ import com.example.family_tasks_proj.child.ChildDashboardActivity;
  *
  * כל Fragment נטען לתוך fragmentContainer שב-layout.
  */
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity
+{
 
     private Button btnRegister, btnLogin, btnChildQR, btnChild;
 
