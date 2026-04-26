@@ -5,7 +5,7 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
  * התבנית כוללת כותרת, תמונה וכמות כוכבים למשימה שתיווצר ממנה.
  */
 public class TaskTemplate {
-    /** ערך ברירת מחדל היסטורי — תבניות ישנות שנשמרו לפני הוספת השדה יקבלו זאת. */
+    /** ברירת מחדל לכמות כוכבים — תבניות ישנות שנשמרו לפני שהשדה הזה נוסף יקבלו את הערך הזה. */
     public static final int DEFAULT_STARS_WORTH = 10;
 
     private String id;

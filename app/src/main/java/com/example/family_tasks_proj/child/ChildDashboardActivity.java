@@ -504,12 +504,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // בודק null או מחרוזת ריקה אחרי ניקוי רווחים
+    // פעולת עזר מקומית — בודקת null או מחרוזת ריקה
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
-    // מחזיר טקסט בטוח להצגה בדיאלוג
+    // פעולת עזר מקומית — מחזירה טקסט בטוח להצגה
     private String safeText(String value) {
         if (value == null) {
             return "";

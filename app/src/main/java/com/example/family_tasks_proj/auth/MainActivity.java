@@ -120,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
     // כניסה מהירה לילד מתוך מסך הבית לפי הסשן המקומי האחרון
     private void openChildQuickLogin() {
         // סשן מקומי מאפשר לילד לחזור מהר בלי לסרוק QR בכל פעם
-        SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-        String savedParent = sp.getString("parentId", null);
-        String savedChild = sp.getString("childId", null);
+        SharedPreferences childSessionPrefs = getSharedPreferences("child_session", MODE_PRIVATE);
+        String savedParent = childSessionPrefs.getString("parentId", null);
+        String savedChild = childSessionPrefs.getString("childId", null);
 
         // מקרה 1: יש סשן מלא — הולכים ישר לדשבורד
         if (savedParent != null && savedChild != null) {

@@ -65,21 +65,22 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     private void bindCardBackground(TaskViewHolder holder, ChildTask task, long daysLeft) {
         if (holder.itemView instanceof MaterialCardView) {
             MaterialCardView card = (MaterialCardView) holder.itemView;
+            android.content.Context ctx = holder.itemView.getContext();
             int bgColor;
             int strokeColor;
 
             if (task.getIsDone()) {
-                bgColor = holder.itemView.getContext().getColor(R.color.surface_soft_green);
-                strokeColor = holder.itemView.getContext().getColor(R.color.accent_light);
+                bgColor = ctx.getColor(R.color.surface_soft_green);
+                strokeColor = ctx.getColor(R.color.accent_light);
             } else if (daysLeft < 0) {
-                bgColor = holder.itemView.getContext().getColor(R.color.danger_light);
-                strokeColor = holder.itemView.getContext().getColor(R.color.urgent);
+                bgColor = ctx.getColor(R.color.danger_light);
+                strokeColor = ctx.getColor(R.color.urgent);
             } else if (daysLeft <= 2) {
-                bgColor = holder.itemView.getContext().getColor(R.color.surface_soft_orange);
-                strokeColor = holder.itemView.getContext().getColor(R.color.urgent_light);
+                bgColor = ctx.getColor(R.color.surface_soft_orange);
+                strokeColor = ctx.getColor(R.color.urgent_light);
             } else {
-                bgColor = holder.itemView.getContext().getColor(R.color.bg_card);
-                strokeColor = holder.itemView.getContext().getColor(R.color.border_light);
+                bgColor = ctx.getColor(R.color.bg_card);
+                strokeColor = ctx.getColor(R.color.border_light);
             }
 
             card.setCardBackgroundColor(bgColor);
@@ -90,6 +91,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כותרת המשימה — עם קו חוצה אם בוצעה
     private void bindTitle(TaskViewHolder holder, ChildTask task) {
+        android.content.Context ctx = holder.itemView.getContext();
         if (task.getTitle() != null) {
             holder.tvTaskTitle.setText(task.getTitle());
         } else {
@@ -99,29 +101,30 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (task.getIsDone()) {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTaskTitle.setTextColor(holder.itemView.getContext().getColor(R.color.text_hint));
+            holder.tvTaskTitle.setTextColor(ctx.getColor(R.color.text_hint));
         } else {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTaskTitle.setTextColor(holder.itemView.getContext().getColor(R.color.text_primary));
+            holder.tvTaskTitle.setTextColor(ctx.getColor(R.color.text_primary));
         }
     }
 
     // תאריך יעד — צבע משתנה לפי דחיפות
     private void bindDueDate(TaskViewHolder holder, ChildTask task, long daysLeft) {
+        android.content.Context ctx = holder.itemView.getContext();
         String dueText;
         if (task.getIsDone()) {
-            dueText = holder.itemView.getContext().getString(R.string.child_due_done);
-            holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.success_dark));
+            dueText = ctx.getString(R.string.child_due_done);
+            holder.tvDueDate.setTextColor(ctx.getColor(R.color.success_dark));
         } else {
             dueText = formatDueText(holder, task.getDueAt(), daysLeft);
             if (daysLeft < 0) {
-                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.danger));
+                holder.tvDueDate.setTextColor(ctx.getColor(R.color.danger));
             } else if (daysLeft <= 2) {
-                dueText = holder.itemView.getContext().getString(R.string.child_due_urgent_prefix, dueText);
-                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.warning_dark));
+                dueText = ctx.getString(R.string.child_due_urgent_prefix, dueText);
+                holder.tvDueDate.setTextColor(ctx.getColor(R.color.warning_dark));
             } else {
-                holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.text_secondary));
+                holder.tvDueDate.setTextColor(ctx.getColor(R.color.text_secondary));
             }
         }
         holder.tvDueDate.setText(dueText);
@@ -129,18 +132,19 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // נקודת סטטוס צבעונית — ירוק/כתום/אדום/אפור
     private void bindStatusDot(TaskViewHolder holder, ChildTask task, long daysLeft) {
+        android.content.Context ctx = holder.itemView.getContext();
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
 
         if (task.getIsDone()) {
-            dot.setColor(holder.itemView.getContext().getColor(R.color.success_dark));
+            dot.setColor(ctx.getColor(R.color.success_dark));
         } else if (daysLeft >= 0 && daysLeft <= 2) {
-            dot.setColor(holder.itemView.getContext().getColor(R.color.warning_dark));
+            dot.setColor(ctx.getColor(R.color.warning_dark));
         } else if (daysLeft < 0) {
-            dot.setColor(holder.itemView.getContext().getColor(R.color.danger));
+            dot.setColor(ctx.getColor(R.color.danger));
         } else {
-            dot.setColor(holder.itemView.getContext().getColor(R.color.text_hint));
+            dot.setColor(ctx.getColor(R.color.text_hint));
         }
         holder.viewStatusDot.setBackground(dot);
     }
@@ -163,9 +167,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כוכבים — מוצגים רק אם יש ערך חיובי
     private void bindStars(TaskViewHolder holder, ChildTask task) {
+        android.content.Context ctx = holder.itemView.getContext();
         if (task.getStarsWorth() > 0) {
-            holder.tvTaskStars.setText(holder.itemView.getContext()
-                    .getString(R.string.child_stars_worth, task.getStarsWorth()));
+            holder.tvTaskStars.setText(ctx.getString(R.string.child_stars_worth, task.getStarsWorth()));
             holder.tvTaskStars.setVisibility(View.VISIBLE);
         } else {
             holder.tvTaskStars.setText("");
@@ -198,20 +202,21 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     }
 
     private String formatDueText(@NonNull TaskViewHolder holder, String dueAt, long daysLeft) {
+        android.content.Context ctx = holder.itemView.getContext();
         if (daysLeft == Long.MAX_VALUE) {
-            return holder.itemView.getContext().getString(R.string.child_due_no_date);
+            return ctx.getString(R.string.child_due_no_date);
         }
         if (daysLeft < 0) {
-            return holder.itemView.getContext().getString(R.string.child_due_late, Math.abs(daysLeft));
+            return ctx.getString(R.string.child_due_late, Math.abs(daysLeft));
         }
         if (daysLeft == 0) {
-            return holder.itemView.getContext().getString(R.string.child_due_today);
+            return ctx.getString(R.string.child_due_today);
         }
         if (daysLeft == 1) {
-            return holder.itemView.getContext().getString(R.string.child_due_tomorrow);
+            return ctx.getString(R.string.child_due_tomorrow);
         }
         if (daysLeft <= 7) {
-            return holder.itemView.getContext().getString(R.string.child_due_days_left, daysLeft);
+            return ctx.getString(R.string.child_due_days_left, daysLeft);
         }
         return dueAt;
     }

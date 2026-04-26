@@ -116,7 +116,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         loadDashboardData(user);
     }
 
-    // מחבר את כל רכיבי המסך
     private void bindViews() {
         ivParentProfile = findViewById(R.id.ivParentProfile);
         tvParentName = findViewById(R.id.tvParentName);
@@ -150,7 +149,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ivParentProfile.setOnClickListener(profileClick);
     }
 
-    // מחבר כפתורי ניווט ופעולות הורה
     private void bindActions() {
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +190,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // אבל אפשר להוסיף debouncing אם רואים בעיות באמולטור
     }
 
-    // מגדיר RecyclerView אופקי לילדים
     private void setupChildrenList() {
         rvChildren.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -206,7 +203,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         rvChildren.setAdapter(childSummaryAdapter);
     }
 
-    // מגדיר את רשימת המשימות של ההורה
     private void setupTaskList() {
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems, childPhotoCache);
         lvTasks.setAdapter(taskAdapter);
@@ -499,22 +495,22 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void updateSelectedChildSection() {
-        ChildSummary s = getSelectedChildSummary();
-        if (s == null) {
+        ChildSummary summary = getSelectedChildSummary();
+        if (summary == null) {
             tvTaskSectionTitle.setText(R.string.parent_dashboard_selected_child_empty_title);
             tvTaskSectionSubtitle.setText(R.string.parent_dashboard_selected_child_empty_subtitle);
             return;
         }
         // בתצוגת "כל הילדים" הכותרת קבועה, אחרת מציגים את שם הילד הנבחר
-        if (ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(s.childId)) {
+        if (ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(summary.childId)) {
             tvTaskSectionTitle.setText(R.string.parent_dashboard_all_children_title);
         } else {
             tvTaskSectionTitle.setText(
-                    getString(R.string.parent_dashboard_selected_child_title, s.displayName));
+                    getString(R.string.parent_dashboard_selected_child_title, summary.displayName));
         }
         tvTaskSectionSubtitle.setText(
                 getString(R.string.parent_dashboard_selected_child_stats,
-                        s.assignedCount, s.completedCount, s.urgentCount));
+                        summary.assignedCount, summary.completedCount, summary.urgentCount));
     }
 
     // בונה את רשימת המשימות של הילד הנבחר לפי הפילטר הפעיל
@@ -838,7 +834,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         return text.trim();
     }
 
-    // מחשב גובה לרשימה ידנית כדי שהיא לא תהיה גמומה בתוך המסך הנגלל
+    // מתודת עזר — מחשבת גובה ל-ListView בתוך ScrollView
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
         if (adapter == null) {
