@@ -90,6 +90,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         parentUid = FirebaseAuth.getInstance().getUid();
         if (parentUid == null) {
+            Toast.makeText(this, R.string.manage_children_not_logged_in, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -100,7 +101,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    // מחבר views מה-layout
+    // מחבר את רכיבי המסך
     private void bindViews() {
         imgChildPhoto = findViewById(R.id.imgChildPhoto);
         etFirstName = findViewById(R.id.etFirstName);
@@ -112,7 +113,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         tvFormTitle = findViewById(R.id.tvFormTitle);
     }
 
-    // מגדיר את רשימת הילדים וה-click על שורה
+    // מגדיר את רשימת הילדים ואת הלחיצה על שורה
     private void setupChildrenList() {
         childListAdapter = new ChildListAdapter();
         lvChildren.setAdapter(childListAdapter);
@@ -208,7 +209,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (editingChildId != null) {
             return editingChildId;
         }
-        return childrenRef().push().getKey();
+        String childId = childrenRef().push().getKey();
+        if (childId == null) {
+            Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
+        }
+        return childId;
     }
 
     // מחזיר תמונה חדשה ב-Base64 או את התמונה הישנה בזמן עריכה
@@ -254,7 +259,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
                 btnAddChild.setEnabled(true);
                 Toast.makeText(ManageChildrenActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
+                        getString(R.string.error_with_details, exception.getMessage()),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -291,7 +296,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של ילדים לרשימה שמוצגת במסך
+    // ממיר את נתוני הילדים לרשימה שמוצגת במסך
     private void handleChildrenSnapshot(DataSnapshot snapshot) {
         childItems.clear();
 
@@ -314,7 +319,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         ));
     }
 
-    // מציג או מסתיר את empty state של הילדים
+    // מציג או מסתיר את הודעת הריק של הילדים
     private void updateChildrenEmptyState() {
         boolean isEmpty = childItems.isEmpty();
         tvNoChildren.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
@@ -333,7 +338,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         toggleUI(true);
     }
 
-    // מציג תמונת ילד קיימת או placeholder
+    // מציג תמונת ילד קיימת או תמונה חלופית
     private void showChildPhoto(String profileImageBase64) {
         if (profileImageBase64 == null) {
             imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
@@ -451,7 +456,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Toast.makeText(ManageChildrenActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
+                        getString(R.string.error_with_details, exception.getMessage()),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -471,7 +476,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    // מחזיר reference לנתיב הילדים: /parents/{uid}/children
+    // מחזיר הפניה לנתיב הילדים: /parents/{uid}/children
     private DatabaseReference childrenRef() {
         return database.child("parents").child(parentUid).child("children");
     }
@@ -485,7 +490,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         );
     }
 
-    // מחשב גובה ListView ידנית כדי שלא יהיה גוש ריק בתוך ScrollView
+    // מחשב גובה לרשימה ידנית כדי שלא יהיה גוש ריק בתוך המסך הנגלל
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
         if (adapter == null) {
@@ -514,11 +519,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     /**
-     * Adapter פנימי שמציג ילד אחד בכל שורה.
+     * מתאם פנימי שמציג ילד אחד בכל שורה.
      */
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
 
-        // מחבר את ה-adapter לרשימת הילדים של המסך
+        // מחבר את המתאם לרשימת הילדים של המסך
         ChildListAdapter() {
             super(ManageChildrenActivity.this, 0, childItems);
         }
@@ -540,7 +545,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return convertView;
         }
 
-        // מחבר את נתוני הילד ל-row של הרשימה
+        // מחבר את נתוני הילד לשורה של הרשימה
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
             tvChildFullName.setText(getChildDisplayName(item));

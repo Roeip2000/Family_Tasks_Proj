@@ -297,6 +297,144 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
 - No Android app source code, Firebase paths, package declarations, generated files, or rendered UML images were changed.
 - Confidence: explicitly verified from the current source tree in this session
 
+## 2026-04-23: Screen flow diagram draft created
+- Created documentation-only screen-flow artifacts requested by the user:
+  - `docs/uml/screen-flow-draft.puml`
+  - `docs/uml/screen-flow-summary.md`
+- The flow was derived from the current source by scanning:
+  - manifest launcher/activity declarations
+  - user-facing Activity and Fragment classes
+  - actual `Intent` launches, fragment transactions, `finish()` returns, `ScanContract`, and branching dialogs
+- The diagram groups screens into authentication/entry, parent flow, child flow, and external QR scanner UI.
+- In-place CRUD/confirmation dialogs are summarized instead of drawn as separate navigation nodes when they do not open another screen.
+- Verification in this session:
+  - `java -jar docs/uml/tools/plantuml.jar -checkonly docs/uml/screen-flow-draft.puml` completed successfully
+- No Android app source code, Firebase paths, package declarations, generated files, or rendered UML images were changed.
+- Confidence: explicitly verified from the current source tree in this session
+
+## 2026-04-23: Final clean screen flow diagram created
+- Created `docs/uml/screen-flow-final-clean.puml` as a cleaner presentation-ready screen/navigation diagram.
+- The final diagram intentionally avoids class-diagram details, technical notes, legends, helpers, data-layer classes, adapters, models, and Firebase internals.
+- It groups the main user-facing screens into:
+  - Entry / Authentication
+  - Parent Flow
+  - Child Flow
+- Verification in this session:
+  - `java -jar docs/uml/tools/plantuml.jar -checkonly docs/uml/screen-flow-final-clean.puml` completed successfully
+- No Android app source code, Firebase paths, package declarations, generated files, or rendered UML images were changed.
+- Confidence: explicitly verified in this session
+
+## 2026-04-23: Editable Figma screen-flow presentation board created
+- Created a new Figma design file `Family Tasks - Screen Flow Diagram` with file key `HMXc4MYe5utiCzNKtAiaAy`.
+- Built an editable presentation-ready screen-flow board in Figma with:
+  - `MainActivity` at the top center
+  - child-side entry and dashboard screens on the left
+  - parent auth screens on the right
+  - `ParentDashboardActivity` centered under the parent auth row
+  - one horizontal row of the four parent action screens under the dashboard
+  - category color grouping for main/auth/child/dashboard/action nodes
+  - short Hebrew subtitles inside every node
+  - a small logout note instead of long return arrows back to `MainActivity`
+- Source validation for the screen list and navigation came from the current source plus the already-created local screen-flow docs in `docs/uml/`.
+- Verification in this session:
+  - Figma `use_figma` created the board, node cards, legend, logout note, and connector layer
+  - Figma `get_metadata` confirmed the node positions and top-down tree structure
+- Limitation in this session:
+  - a later Figma screenshot call hit the Starter-plan MCP tool-call limit before a final screenshot-based refinement pass could be completed
+- No Android app source code, Firebase paths, package declarations, or local UML files were changed.
+- Confidence: explicitly created and verified in this session
+
+## 2026-04-25: Clean split PlantUML class diagrams created
+- Created a new clean UML set directly under `docs/uml/`:
+  - `01_models.puml`
+  - `02_auth_flow.puml`
+  - `03_parent_side.puml`
+  - `04_child_utils.puml`
+  - `README.md`
+- The diagrams intentionally split models, auth flow, parent-side workflow, and child/utils instead of creating one large project diagram.
+- The diagrams were verified against the current Java source tree and include only requested project classes, with Java/Android/Firebase SDK types, generated classes, tests, getters/setters, ViewHolders, and unrelated inner classes omitted.
+- PlantUML output was generated successfully:
+  - `01_models.png`
+  - `02_auth_flow.png`
+  - `03_parent_side.png`
+  - `04_child_utils.png`
+- Verification in this session:
+  - `java -jar docs/uml/tools/plantuml.jar -checkonly ...` completed successfully for all four new `.puml` files
+  - a scan of the new `.puml` files found no hidden Java/Android/Firebase type names or getter/setter method names
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly verified from the current source tree in this session
+
+## 2026-04-25: Unified clean PlantUML class diagram added
+- Added `docs/uml/00_all_classes.puml` as a single-file version of the clean UML set.
+- The unified diagram keeps the same filtering rules as the split diagrams:
+  - project classes only
+  - meaningful fields and logical operations only
+  - no Java/Android/Firebase SDK nodes
+  - no generated classes, tests, ViewHolders, or getters/setters
+- The file groups the classes inside the diagram by responsibility so the single large diagram remains readable.
+- PlantUML output was generated successfully as `docs/uml/00_all_classes.png`.
+- Verification in this session:
+  - `java -jar docs/uml/tools/plantuml.jar -checkonly docs/uml/00_all_classes.puml` completed successfully
+  - a scan of the unified `.puml` file found no hidden Java/Android/Firebase SDK type names
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly verified from the current source tree in this session
+
+## 2026-04-25: Unified UML diagram simplified after readability review
+- Revised `docs/uml/00_all_classes.puml` because the first unified version had too many relationship arrows and was not readable enough for presentation use.
+- The revised unified diagram still includes the same project classes, but now shows only:
+  - main screen transitions
+  - Activity-to-adapter ownership
+- Removed the dense helper/model dependency arrows from the unified diagram; those details remain better suited to the four split diagrams.
+- Regenerated `docs/uml/00_all_classes.png`.
+- Verification in this session:
+  - PlantUML `-checkonly` passed for the revised unified file
+  - the revised file has 18 relationship arrows and no hidden Java/Android/Firebase SDK type names
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly verified in this session
+
+## 2026-04-25: Unified UML diagram converted to clean class overview
+- Revised `docs/uml/00_all_classes.puml` again after visual review showed the 18-arrow version was still too cluttered.
+- The current unified diagram is now a presentation overview:
+  - all 27 requested project classes are present
+  - classes are grouped by responsibility
+  - no visible relationship arrows are drawn
+  - class boxes show names only, with long names split across lines for readability
+- Regenerated `docs/uml/00_all_classes.png`; the rendered image is now much smaller and cleaner.
+- Verification in this session:
+  - PlantUML `-checkonly` passed
+  - class count is 27
+  - visible relationship-arrow scan returned no matches
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly verified in this session
+
+## 2026-04-25: UML README rewritten as software-engineering documentation
+- Updated `docs/uml/README.md` from a short diagram note into a structured software-engineering documentation file.
+- The README now documents:
+  - generated UML artifacts and PNG outputs
+  - the purpose of each diagram
+  - included classes per diagram
+  - engineering scope and filtering rules
+  - intentionally hidden framework/generated details
+  - why the project uses both one overview diagram and four focused diagrams
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly updated in this session
+
+## 2026-04-25: UML diagrams revised for A4 project booklet readability
+- Revised the UML strategy after visual review showed that one detailed full-project class diagram becomes too dense and does not fit an A4 booklet page cleanly.
+- Updated the focused diagrams `01_models.puml` through `04_child_utils.puml` to use clear titles, project-source-accurate fields/types, and a limited number of meaningful relationships.
+- Corrected model details against current source:
+  - `ChildTask.dueAt` is `String`, not `long`
+  - `ChildTask.starsWorth` is `long`
+  - `TaskTemplate.starsWorth` is `int`
+  - `AssignedTask` does not contain `templateId` or `assignedAt`
+- Updated `docs/uml/README.md` to recommend using the four focused PNG diagrams as the main UML section for the project booklet, with `00_all_classes.png` only as an optional overview.
+- Removed the accidental `docs/uml/Project_UML.png` export created by an earlier named PlantUML block.
+- Verification in this session:
+  - PlantUML `-checkonly` passed for `00_all_classes.puml` and all four focused diagrams
+  - PNG export completed for `01_models.png`, `02_auth_flow.png`, `03_parent_side.png`, and `04_child_utils.png`
+- No Android app source code, Firebase paths, package declarations, or generated Gradle files were changed.
+- Confidence: explicitly verified in this session
+
 ## 2026-04-26: Simple-Java listener cleanup and session-return fixes
 - Completed a Java-only simplification pass across the active app source files.
 - Concrete bug fixes completed:
@@ -315,3 +453,52 @@ Source of truth for this file: `.ai/raw_claude_cli_full`, especially `file_index
   - source scans found no direct AlertDialog lambda patterns or chained Firebase task listener patterns checked by the session scan
   - `JAVA_HOME="C:\Program Files\Android\Android Studio\jbr" .\gradlew.bat assembleDebug` completed successfully
 - Confidence: explicitly verified in the current session
+
+## 2026-04-26: Student-exam code simplification and Hebrew comment pass
+- Completed a source-only cleanup pass focused on oral-defense readability, without changing Firebase paths, package names, class names, method signatures, navigation, or product logic.
+- Concrete work completed:
+  - converted `Child`, `ChildTask`, and `TaskTemplate` model fields from direct public fields to private fields with simple one-line getters and setters
+  - updated child dashboard, child task adapter, task assignment, and task-template management code to use those getters/setters where needed
+  - verified `AssignTaskToChildActivity.assignTask()` uses the project K&R brace style
+  - replaced remaining English/technical wording in comments with simpler Hebrew where it was comment text rather than an actual API/class/field name
+  - verified the old English Toast literals requested by the user are no longer present; current Toasts use Hebrew string resources
+  - verified no `Log.d(...)` or `System.out.println(...)` calls exist in the app Java source
+- Verification in this session:
+  - targeted source scans found no direct access to the changed `ChildTask` and `TaskTemplate` fields in the affected files
+  - targeted source scans found no public primitive/string fields left in `Child`, `ChildTask`, or `TaskTemplate`
+  - `./gradlew.bat assembleDebug` completed successfully after the changes
+- Confidence: explicitly verified in the current session
+
+## 2026-04-26: Student-exam cleanup follow-up and resource build fix
+- Completed a follow-up pass on the active Android source tree because `cleaned_code/` is not present in the current repository.
+- Concrete work completed:
+  - aligned the remaining requested Toast/string wording for parent-not-logged-in, child-id creation failure, template save success, image load/conversion errors, and generic failure messages
+  - added missing user feedback in `ManageChildrenActivity` when the parent is not signed in or Firebase cannot create a child id
+  - wrapped parent login/register Firebase exception text with the existing Hebrew `"שגיאה: ..."` prefix instead of showing raw exception text alone
+  - replaced remaining English words in nearby Java comments such as `click`, `snapshot`, `placeholder`, and `reference`
+  - restored missing style resources `bg_button_outlined.xml`, `bg_button_card_clear.xml`, and color aliases `urgent` / `urgent_light` that were already referenced by the current UI resources
+- Verification in this session:
+  - targeted scans found no old English Toast literals from the cleanup request
+  - targeted scans found no direct access to changed `ChildTask`/`TaskTemplate` fields in the affected files
+  - targeted scans found no `Log.d(...)` or `System.out.println(...)` calls in app Java source
+  - `.\gradlew.bat assembleDebug` completed successfully after restoring the missing resources
+- Confidence: explicitly verified in the current session
+
+## 2026-04-26: XML-only Material UI redesign pass
+- Completed an XML/resource-only redesign pass for the main Family Tasks screens requested by the user.
+- Scope preserved:
+  - no Java files were intentionally edited
+  - existing layout ids used by Java were preserved
+  - Firebase paths, QR/session behavior, adapters, and navigation logic were not changed
+- Concrete UI/resource work completed:
+  - moved the main login fragment area above the role action cards and added icons to parent/child entry buttons
+  - converted parent login/register, manage-children, template, and assign-task fields to Material `TextInputLayout` wrappers while keeping the same `EditText` ids
+  - updated `ParentDashboard` quick actions into a 2x2 card-style grid while keeping the ids on `Button` views because the Java fields are typed as `Button`
+  - rebuilt the child dashboard stats row and child task card layout with clearer metric cards, star badges, status dots, and action icons
+  - added/updated shared Material 3 palette, dimensions, button styles, text-field style, card drawables, outlined/filled/ripple button backgrounds, and placeholder resources
+  - added RTL layout direction to the redesigned roots
+- Verification in this session:
+  - `./gradlew.bat assembleDebug` completed successfully
+  - `./gradlew.bat lintDebug` completed successfully after fixing the AppCompat `app:tint` lint errors
+  - `adb devices -l` showed no connected device or emulator, so no live UI/device pass was performed
+- Confidence: build and lint verified; runtime visual verification still needs a device/emulator

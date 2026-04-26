@@ -6,11 +6,11 @@ import java.util.Map;
 /**
  * מודל נתונים של הורה כפי שנשמר ב-Firebase Realtime Database.
  *
- * נתיב ב-DB: /parents/{uid}
+ * נתיב במסד הנתונים: /parents/{uid}
  * שדות: uid, firstName, lastName, email, role, children.
  *
- * הערה: חובה לשמור על constructor ריק + getters/setters
- *        כדי ש-Firebase DataSnapshot.getValue() יעבוד.
+ * הערה: חובה לשמור על פעולה בונה ריקה ועל פעולות קבלה ועדכון,
+ * כדי ש-Firebase DataSnapshot.getValue() יעבוד.
  */
 public class ParentInFb {
 
@@ -23,7 +23,7 @@ public class ParentInFb {
     /** תמונת הפרופיל של ההורה — מחרוזת Base64 של JPEG */
     private String profileImageBase64;
 
-    /** constructor ריק — חובה ל-Firebase deserialization. */
+    /** פעולה בונה ריקה — חובה כדי ש-Firebase יוכל לקרוא את האובייקט. */
     public ParentInFb()
     {
     }
@@ -45,10 +45,6 @@ public class ParentInFb {
         this.role = "parent";
         this.children = new HashMap<>();
     }
-
-    // Getters & Setters — חובה ל-Firebase serialization
-
-
 
     public String getUid()
     {

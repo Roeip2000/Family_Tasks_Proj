@@ -89,7 +89,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         loadTemplates();
     }
 
-    // מחבר views מה-layout ומכין את adapter התבניות
+    // מחבר את רכיבי המסך ומכין את מתאם התבניות
     private void bindViews() {
         etTitle = findViewById(R.id.etTitle);
         etStarsWorth = findViewById(R.id.etStarsWorth);
@@ -181,7 +181,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של תבניות לרשימה שמוצגת במסך
+    // ממיר את נתוני התבניות לרשימה שמוצגת במסך
     private void handleTemplatesSnapshot(DataSnapshot snapshot) {
         templateList.clear();
 
@@ -199,13 +199,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         if (template == null) {
             return;
         }
-        if (template.id == null) {
-            template.id = snap.getKey();
+        if (template.getId() == null) {
+            template.setId(snap.getKey());
         }
         templateList.add(template);
     }
 
-    // מציג או מסתיר את empty state של רשימת התבניות
+    // מציג או מסתיר את הודעת הריק של רשימת התבניות
     private void updateTemplateListVisibility() {
         boolean empty = templateList.isEmpty();
         tvNoTemplates.setVisibility(empty ? View.VISIBLE : View.GONE);
@@ -263,7 +263,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         return UUID.randomUUID().toString();
     }
 
-    // בונה Map פשוט לשמירה ב-Firebase
+    // בונה מפת נתונים פשוטה לשמירה ב-Firebase
     private Map<String, Object> buildTemplateData(String templateId, String title, int stars) {
         Map<String, Object> data = new HashMap<>();
         data.put("id", templateId);
@@ -347,7 +347,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         };
 
         new AlertDialog.Builder(this)
-                .setTitle(template.title)
+                .setTitle(template.getTitle())
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -368,19 +368,19 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // מכניס את הטופס למצב עריכה ומציג את נתוני התבנית
     private void startEditTemplate(TaskTemplate template) {
-        editingTemplateId = template.id;
-        etTitle.setText(template.title);
+        editingTemplateId = template.getId();
+        etTitle.setText(template.getTitle());
         etStarsWorth.setText(String.valueOf(template.safeStarsWorth()));
         correctedBitmap = null;
 
-        displayTemplateImage(template.imageBase64);
+        displayTemplateImage(template.getImageBase64());
 
         tvFormTitle.setText(R.string.template_form_title_edit);
         btnSave.setText(R.string.template_save_changes);
         btnCancelEdit.setVisibility(View.VISIBLE);
     }
 
-    // מציג תמונת תבנית קיימת או placeholder
+    // מציג תמונת תבנית קיימת או תמונה חלופית
     private void displayTemplateImage(String imageBase64) {
         if (imageBase64 == null || imageBase64.isEmpty()) {
             imgTask.setImageResource(R.drawable.ic_image_placeholder);
@@ -400,7 +400,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private void showDeleteConfirmDialog(final TaskTemplate template) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.template_delete_title)
-                .setMessage(getString(R.string.template_delete_message, template.title))
+                .setMessage(getString(R.string.template_delete_message, template.getTitle()))
                 .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -414,11 +414,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     // מוחק תבנית מ-Firebase: /parents/{uid}/task_templates/{templateId}
     private void deleteTemplate(final TaskTemplate template) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null || template.id == null) {
+        if (user == null || template.getId() == null) {
             return;
         }
 
-        DatabaseReference templateRef = getTemplatesRef(user.getUid()).child(template.id);
+        DatabaseReference templateRef = getTemplatesRef(user.getUid()).child(template.getId());
         Task<Void> deleteTask = templateRef.removeValue();
 
         deleteTask.addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -457,7 +457,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnCancelEdit.setVisibility(View.GONE);
     }
 
-    // מחזיר reference לנתיב התבניות ב-Firebase: /parents/{uid}/task_templates
+    // מחזיר הפניה לנתיב התבניות ב-Firebase: /parents/{uid}/task_templates
     private DatabaseReference getTemplatesRef(String uid) {
         return FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -466,11 +466,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     }
 
     /**
-     * Adapter פנימי שמציג תבניות ברשימה.
+     * מתאם פנימי שמציג תבניות ברשימה.
      */
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
 
-        // מחבר את ה-adapter לרשימת התבניות של המסך
+        // מחבר את המתאם לרשימת התבניות של המסך
         TemplateListAdapter() {
             super(ParentTaskTemplateActivity.this, 0, templateList);
         }
@@ -492,7 +492,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return convertView;
         }
 
-        // מחבר את נתוני התבנית ל-row של הרשימה
+        // מחבר את נתוני התבנית לשורה של הרשימה
         private void bindTemplateRow(View rowView, TaskTemplate template) {
             ImageView ivTemplateThumb = rowView.findViewById(R.id.ivTemplateThumb);
             TextView tvTemplateTitle = rowView.findViewById(R.id.tvTemplateTitle);
@@ -501,12 +501,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             tvTemplateTitle.setText(template.toDisplayTitle());
             tvTemplateStars.setText(getString(R.string.template_item_stars, template.safeStarsWorth()));
 
-            if (template.imageBase64 == null || template.imageBase64.isEmpty()) {
+            if (template.getImageBase64() == null || template.getImageBase64().isEmpty()) {
                 ivTemplateThumb.setImageResource(R.drawable.ic_image_placeholder);
                 return;
             }
 
-            Bitmap bitmap = ImageHelper.base64ToBitmap(template.imageBase64);
+            Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
             if (bitmap == null) {
                 ivTemplateThumb.setImageResource(R.drawable.ic_image_placeholder);
                 return;

@@ -51,7 +51,7 @@ public class ChildQRLoginFragment extends Fragment {
                     }
             );
 
-    // יוצר את ה-layout ומחבר את כפתור הסריקה
+    // יוצר את מסך הסריקה ומחבר את כפתור הסריקה
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
@@ -242,7 +242,7 @@ public class ChildQRLoginFragment extends Fragment {
         ).show();
     }
 
-    // פותח דשבורד ילד עם שני extras: parentId ו-childId
+    // פותח דשבורד ילד עם parentId ו-childId
     private void openChildDashboard(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
         // parentId אומר לדשבורד מאיזה הורה לקרוא את ענף הילדים
@@ -280,7 +280,7 @@ public class ChildQRLoginFragment extends Fragment {
         editor.apply();
     }
 
-    // בודק null או מחרוזת ריקה אחרי trim
+    // בודק null או מחרוזת ריקה אחרי ניקוי רווחים
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }

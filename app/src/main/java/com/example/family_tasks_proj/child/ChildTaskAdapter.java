@@ -51,7 +51,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         ChildTask task = tasks.get(position);
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
+        long daysLeft = DateUtils.daysLeft(task.getDueAt());
 
         bindCardBackground(holder, task, daysLeft);
         bindTitle(holder, task);
@@ -68,7 +68,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             int bgColor;
             int strokeColor;
 
-            if (task.isDone) {
+            if (task.getIsDone()) {
                 bgColor = holder.itemView.getContext().getColor(R.color.surface_soft_green);
                 strokeColor = holder.itemView.getContext().getColor(R.color.accent_light);
             } else if (daysLeft < 0) {
@@ -90,13 +90,13 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כותרת המשימה — עם קו חוצה אם בוצעה
     private void bindTitle(TaskViewHolder holder, ChildTask task) {
-        if (task.title != null) {
-            holder.tvTaskTitle.setText(task.title);
+        if (task.getTitle() != null) {
+            holder.tvTaskTitle.setText(task.getTitle());
         } else {
             holder.tvTaskTitle.setText("");
         }
 
-        if (task.isDone) {
+        if (task.getIsDone()) {
             holder.tvTaskTitle.setPaintFlags(
                     holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTaskTitle.setTextColor(holder.itemView.getContext().getColor(R.color.text_hint));
@@ -110,11 +110,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     // תאריך יעד — צבע משתנה לפי דחיפות
     private void bindDueDate(TaskViewHolder holder, ChildTask task, long daysLeft) {
         String dueText;
-        if (task.isDone) {
+        if (task.getIsDone()) {
             dueText = holder.itemView.getContext().getString(R.string.child_due_done);
             holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.success_dark));
         } else {
-            dueText = formatDueText(holder, task.dueAt, daysLeft);
+            dueText = formatDueText(holder, task.getDueAt(), daysLeft);
             if (daysLeft < 0) {
                 holder.tvDueDate.setTextColor(holder.itemView.getContext().getColor(R.color.danger));
             } else if (daysLeft <= 2) {
@@ -133,7 +133,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
 
-        if (task.isDone) {
+        if (task.getIsDone()) {
             dot.setColor(holder.itemView.getContext().getColor(R.color.success_dark));
         } else if (daysLeft >= 0 && daysLeft <= 2) {
             dot.setColor(holder.itemView.getContext().getColor(R.color.warning_dark));
@@ -147,8 +147,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // תמונת משימה — מוצגת רק אם קיימת
     private void bindTaskImage(TaskViewHolder holder, ChildTask task) {
-        if (task.imageBase64 != null && !task.imageBase64.isEmpty()) {
-            Bitmap bmp = ImageHelper.base64ToBitmap(task.imageBase64);
+        if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {
+            Bitmap bmp = ImageHelper.base64ToBitmap(task.getImageBase64());
             if (bmp != null) {
                 holder.imgTaskImageShell.setVisibility(View.VISIBLE);
                 holder.imgTaskImage.setImageBitmap(bmp);
@@ -163,9 +163,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כוכבים — מוצגים רק אם יש ערך חיובי
     private void bindStars(TaskViewHolder holder, ChildTask task) {
-        if (task.starsWorth > 0) {
+        if (task.getStarsWorth() > 0) {
             holder.tvTaskStars.setText(holder.itemView.getContext()
-                    .getString(R.string.child_stars_worth, task.starsWorth));
+                    .getString(R.string.child_stars_worth, task.getStarsWorth()));
             holder.tvTaskStars.setVisibility(View.VISIBLE);
         } else {
             holder.tvTaskStars.setText("");
@@ -175,7 +175,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     // כפתור "בוצע" — מוצג רק למשימות פתוחות, עם אנימציה בלחיצה
     private void bindDoneButton(TaskViewHolder holder, ChildTask task) {
-        if (task.isDone) {
+        if (task.getIsDone()) {
             holder.btnDone.setVisibility(View.GONE);
             holder.btnDone.setOnClickListener(null);
             return;

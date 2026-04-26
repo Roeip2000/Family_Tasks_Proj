@@ -2,11 +2,11 @@ package com.example.family_tasks_proj.util;
 
 /**
  * עוזר לבניית שם מלא — מרכז לוגיקה שחוזרת ב-4+ מקומות בפרויקט.
- * null-safe — מטפל בכל מצב של null/ריק.
+ * מטפל בצורה בטוחה במצב של null או טקסט ריק.
  */
 public final class NameUtils {
 
-    private NameUtils() {} // לא ליצור instance
+    private NameUtils() {} // לא ליצור מופע של המחלקה
 
     /**
      * בונה שם מלא משם פרטי + שם משפחה.
@@ -29,12 +29,12 @@ public final class NameUtils {
     }
 
     /**
-     * בונה שם מלא עם fallback — אם אין שם, מחזיר את ברירת המחדל.
+     * בונה שם מלא עם ברירת מחדל — אם אין שם, מחזיר את הערך שנשלח.
      *
      * @param first    שם פרטי
      * @param last     שם משפחה
      * @param fallback ערך ברירת מחדל (למשל childId)
-     * @return שם מלא או fallback
+     * @return שם מלא או ערך ברירת המחדל
      */
     public static String fullNameOrDefault(String first, String last, String fallback) {
         String name = fullName(first, last);

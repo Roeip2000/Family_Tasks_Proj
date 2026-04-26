@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:layoutDirection="rtl">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/md_theme_primary" />
                 </LinearLayout>
 
                 <Button
@@ -363,18 +364,10 @@
                     android:layout_height="wrap_content"
                     android:text="@string/parent_dashboard_quick_actions" />
 
-                <Button
-                    android:id="@+id/btnAssignTaskToChild"
-                    style="@style/Widget.Family.PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/btn_assign_task" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="14dp"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -383,32 +376,94 @@
                         android:baselineAligned="false"
                         android:orientation="horizontal">
 
-                        <Button
-                            android:id="@+id/btnManageChildren"
-                            style="@style/Widget.Family.SecondaryButton"
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="118dp"
                             android:layout_marginEnd="4dp"
                             android:layout_weight="1"
-                            android:text="@string/btn_manage_children_short" />
+                            app:cardBackgroundColor="@color/md_theme_primaryContainer"
+                            app:cardCornerRadius="@dimen/card_corner_radius"
+                            app:cardElevation="@dimen/card_elevation"
+                            app:strokeColor="@color/divider_light"
+                            app:strokeWidth="1dp">
 
-                        <Button
-                            android:id="@+id/btnManageTemplates"
-                            style="@style/Widget.Family.SecondaryButton"
+                            <Button
+                                android:id="@+id/btnManageChildren"
+                                style="@style/Widget.Family.DashboardCardButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableTop="@drawable/ic_people"
+                                android:text="@string/btn_manage_children_short" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="118dp"
                             android:layout_marginStart="4dp"
                             android:layout_weight="1"
-                            android:text="@string/btn_manage_templates_short" />
+                            app:cardBackgroundColor="@color/md_theme_secondaryContainer"
+                            app:cardCornerRadius="@dimen/card_corner_radius"
+                            app:cardElevation="@dimen/card_elevation"
+                            app:strokeColor="@color/divider_light"
+                            app:strokeWidth="1dp">
+
+                            <Button
+                                android:id="@+id/btnManageTemplates"
+                                style="@style/Widget.Family.DashboardCardButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableTop="@drawable/ic_list_alt"
+                                android:text="@string/btn_manage_templates_short" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btnShowQR"
-                        style="@style/Widget.Family.SecondaryButton"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/btn_show_children_qr_short" />
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="118dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/md_theme_tertiaryContainer"
+                            app:cardCornerRadius="@dimen/card_corner_radius"
+                            app:cardElevation="@dimen/card_elevation"
+                            app:strokeColor="@color/divider_light"
+                            app:strokeWidth="1dp">
+
+                            <Button
+                                android:id="@+id/btnAssignTaskToChild"
+                                style="@style/Widget.Family.DashboardCardButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableTop="@drawable/ic_assignment"
+                                android:text="@string/btn_assign_task" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="118dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/md_theme_surface"
+                            app:cardCornerRadius="@dimen/card_corner_radius"
+                            app:cardElevation="@dimen/card_elevation"
+                            app:strokeColor="@color/divider_light"
+                            app:strokeWidth="1dp">
+
+                            <Button
+                                android:id="@+id/btnShowQR"
+                                style="@style/Widget.Family.DashboardCardButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableTop="@drawable/ic_qr_code"
+                                android:text="@string/btn_show_children_qr_short" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <Button
@@ -417,6 +472,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:drawableStart="@drawable/ic_logout"
                     android:text="@string/btn_logout" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

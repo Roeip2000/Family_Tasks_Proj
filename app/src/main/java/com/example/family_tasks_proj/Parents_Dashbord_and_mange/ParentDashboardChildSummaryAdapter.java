@@ -152,7 +152,7 @@ class ParentDashboardChildSummaryAdapter
         holder.cardChildSummary.setStrokeWidth(dpToPx(strokeWidth));
     }
 
-    // טוען תמונת ילד מ-Base64, עם cache כדי לא לפענח שוב ושוב
+    // טוען תמונת ילד מ-Base64, עם זיכרון זמני כדי לא לפענח שוב ושוב
     private void bindChildPhoto(ImageView imageView, String childId, String base64) {
         imageView.setImageDrawable(null);
 

@@ -37,11 +37,11 @@ public class ParentLoginFragment extends Fragment {
     private Button btnLogin;
     private ProgressBar progressLogin;
 
-    // constructor ריק חובה ל-Fragment כדי שאנדרואיד יוכל ליצור אותו מחדש
+    // פעולה בונה ריקה שחובה לשמור כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
     public ParentLoginFragment() {
     }
 
-    // יוצר את ה-layout של מסך התחברות ההורה
+    // יוצר את קובץ המסך של התחברות ההורה
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,7 +50,7 @@ public class ParentLoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
-    // מחבר views ומגדיר פעולות לחיצה והקלדה
+    // מחבר רכיבי מסך ומגדיר פעולות לחיצה והקלדה
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -77,7 +77,7 @@ public class ParentLoginFragment extends Fragment {
         });
     }
 
-    // מאפשר להתחבר גם בלחיצה על Done במקלדת
+    // מאפשר להתחבר גם דרך כפתור האישור במקלדת
     private boolean handlePasswordEditorAction(int actionId, KeyEvent event) {
         boolean isEnterKey = event != null
                 && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
@@ -141,7 +141,7 @@ public class ParentLoginFragment extends Fragment {
 
         String errorMsg;
         if (task.getException() != null) {
-            errorMsg = task.getException().getMessage();
+            errorMsg = getString(R.string.error_with_details, task.getException().getMessage());
         } else {
             errorMsg = getString(R.string.error_unknown_login);
         }

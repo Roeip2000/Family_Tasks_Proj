@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
- * מסך כניסה ראשי — Launcher Activity.
+ * מסך הכניסה הראשי של האפליקציה.
  *
  * זהו המסך הראשון שנפתח כשמריצים את האפליקציה.
  * מציג כפתורים לניווט בין:
@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
  * - סריקת QR לילד (ChildQRLoginFragment)
  * - כניסה ישירה לדשבורד ילד — משתמש בסשן שמור (SharedPreferences)
  *
- * כל Fragment נטען לתוך fragmentContainer שב-layout.
+ * כל Fragment נטען לתוך אזור התוכן של מסך הבית.
  */
 
 public class MainActivity extends AppCompatActivity
@@ -52,19 +52,19 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        // חיבור כפתורים מה-layout
+        // חיבור כפתורים מהמסך
         btnRegister = findViewById(R.id.btnRegister);
         btnLogin = findViewById(R.id.btnLogin);
         btnChildQR = findViewById(R.id.btnChildQR);
         btnChild = findViewById(R.id.btnChild);
 
-        // טעינת Fragment ברירת מחדל — מסך לוגין הורה
+        // טעינת מסך ברירת מחדל — התחברות הורה
         if (savedInstanceState == null)
         {
             showFragment(new ParentLoginFragment(), false);
         }
 
-        // ניווט בין מסכים — כל לחיצה מחליפה את ה-Fragment
+        // ניווט בין מסכים — כל לחיצה מחליפה את המסך הפנימי
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         // כניסה מהירה לילד:
         // 1) יש סשן מלא (הורה + ילד) — הולכים ישר לדשבורד הילד.
         // 2) יש רק parentId שמור — ממשיכים למסך בחירת הילד של אותו הורה.
-        // 3) אין כלום — מסבירים לילד קצר שצריך QR, ונותנים גם דרך ידנית כגיבוי.
+        // 3) אין כלום — פותחים סריקת QR.
         btnChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
 
     // כניסה מהירה לילד מתוך מסך הבית לפי הסשן המקומי האחרון
     private void openChildQuickLogin() {
-        // session מקומי מאפשר לילד לחזור מהר בלי לסרוק QR בכל פעם
+        // סשן מקומי מאפשר לילד לחזור מהר בלי לסרוק QR בכל פעם
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
         String savedParent = sp.getString("parentId", null);
         String savedChild = sp.getString("childId", null);
@@ -154,10 +154,9 @@ public class MainActivity extends AppCompatActivity
         showFragment(new ChildQRLoginFragment(), true);
     }
 
-    // כניסה ראשונה של ילד — עדיף QR; בחירה ידנית מוצגת כגיבוי ולא כברירת מחדל
     /**
-     * מחליף את ה-Fragment המוצג ב-fragmentContainer ושומר ב-back stack.
-     * ה-addToBackStack מאפשר לחזור ל-Fragment הקודם עם כפתור "חזרה".
+     * מחליף את המסך הפנימי המוצג ושומר אפשרות לחזור אחורה.
+     * addToBackStack מאפשר לחזור למסך הקודם עם כפתור "חזרה".
      */
     private void showFragment(Fragment fragment, boolean addToBackStack)
     {

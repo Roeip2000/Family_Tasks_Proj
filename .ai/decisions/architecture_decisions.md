@@ -77,6 +77,7 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - This keeps fixes local, preserves the intended screen styling, and avoids unnecessary layout churn in a student-level project.
   - The 2026-04-16 `bg_spinner` fix for the assign-task screen followed this rule and cleared the resource-linking failure without changing screen logic.
+  - The 2026-04-26 follow-up used the same rule for `bg_button_outlined`, `bg_button_card_clear`, `urgent`, and `urgent_light`: restore the referenced shared resources instead of rewriting existing layouts/styles.
 
 ## AD-010: Late UI polish should stay XML-only and inside the current visual system
 - Status: active
@@ -159,6 +160,28 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
   - The main remaining problem was no longer missing logic but a fragmented product feel.
   - A resource-driven visual system is safer late in the project, easier for a student to explain, and matches the Figma MCP rule-generation workflow used in this session.
 
+## AD-018: Presentation screen-flow diagrams should stay source-accurate and uncluttered
+- Status: active
+- Decision:
+  - For presentation diagrams, use a top-down navigation tree with `MainActivity` at the top.
+  - Keep child-side flow on the left and parent-side flow on the right.
+  - Center `ParentDashboardActivity` under the parent auth row and keep the four parent action screens in one horizontal row beneath it.
+  - Show each implemented screen only once and avoid adding future features that are not already in the app.
+  - Do not draw long logout return arrows; use a small note instead when logout needs to be explained.
+- Why:
+  - The diagram is meant for a final school presentation, so readability matters more than technical completeness.
+  - A clean one-direction tree is easier to explain orally and stays aligned with the current source instead of speculative future work.
+
+## AD-019: Class UML for the final project should be split and framework-free
+- Status: active
+- Decision:
+  - Keep presentation class UML split into small diagrams by responsibility: models, auth flow, parent side, and child/utils.
+  - Hide Java types, Android SDK classes, Firebase SDK classes, getters/setters, ViewHolders, generated classes, tests, and generated UML tooling classes.
+  - Use only current-source project class names and meaningful fields, logical operations, adapter ownership, screen transitions, and real project-class usage.
+- Why:
+  - The project is also an oral-exam study asset, so a single full-project class diagram is too dense to explain clearly.
+  - Framework and generated types make the diagram look more complex without improving the student's explanation of the project logic.
+
 ## AD-018: Keep app Java in basic anonymous-listener style for oral defense
 - Status: active
 - Decision:
@@ -168,3 +191,24 @@ Recovered from `.ai/raw_claude_cli_full` and cross-checked against the current s
 - Why:
   - The project is a 12th-grade oral-defense asset, and the student must be able to explain listener flow line by line.
   - Anonymous classes are more verbose but make callback type, method name, and control flow explicit for exam explanation.
+
+## AD-020: Keep Firebase-facing student models as simple JavaBeans
+- Status: active
+- Decision:
+  - Student-facing Firebase models should prefer private fields with simple one-line getters/setters.
+  - Keep the empty constructor required by Firebase.
+  - Avoid changing Firebase field names; getters/setters should preserve the existing data keys such as `isDone`, `imageBase64`, and `starsWorth`.
+- Why:
+  - This keeps model code consistent with `ParentInFb`.
+  - It is easy for a 12th-grade student to explain and still works with Firebase deserialization.
+  - It avoids broader architecture changes while improving encapsulation and readability.
+
+## AD-021: XML-only redesign must preserve Java view types
+- Status: active
+- Decision:
+  - UI redesign passes may wrap existing views in cards or Material containers, but ids used by Java must remain on views whose runtime type still matches the Java field type.
+  - In particular, `ParentDashboardActivity` and `MainActivity` currently store the main actions as `Button`, so those ids should stay on `Button` views unless Java is deliberately updated in the same task.
+  - Prefer Material `TextInputLayout` wrappers around existing editable ids instead of changing screen logic.
+- Why:
+  - This keeps visual polish safe while respecting the user's XML-only constraint.
+  - It avoids class-cast/resource inflation regressions and remains easier for a 12th-grade oral defense.

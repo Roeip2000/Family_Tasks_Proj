@@ -57,7 +57,7 @@ import java.util.Map;
  */
 public class ParentDashboardActivity extends AppCompatActivity {
 
-    // תצוגות — header, סיכום בית, רשימת ילדים, רשימת משימות, פילטרים וכפתורים
+    // תצוגות — כותרת, סיכום בית, רשימת ילדים, רשימת משימות, פילטרים וכפתורים
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
     private TextView tvParentName, tvParentTotalTasks, tvParentCompleted, tvParentDueSoon;
     private TextView tvNoTasks, tvTaskSectionTitle, tvTaskSectionSubtitle, tvNoChildren;
@@ -116,7 +116,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         loadDashboardData(user);
     }
 
-    // מחבר את כל ה-views מה-layout
+    // מחבר את כל רכיבי המסך
     private void bindViews() {
         ivParentProfile = findViewById(R.id.ivParentProfile);
         tvParentName = findViewById(R.id.tvParentName);
@@ -298,7 +298,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         saveProfileImage(bitmap);
     }
 
-    // מציג תמונת פרופיל עגולה או placeholder אם אין תמונה
+    // מציג תמונת פרופיל עגולה או תמונה חלופית אם אין תמונה
     private void showParentProfile(Bitmap bitmap) {
         if (bitmap == null) {
             ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
@@ -345,9 +345,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
         childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // ברגע שהנתונים הגיעו, אנחנו מעבירים אותם לפיענוח (Parsing)
+                        // ברגע שהנתונים הגיעו, מעבירים אותם לפיענוח
                         parseDashboardData(snapshot);
-                        // ואז מעדכנים את המסך (UI)
+                        // ואז מעדכנים את המסך
                         refreshDashboardUi();
                     }
                     @Override
@@ -360,7 +360,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     /**
-     * תחנה 2: פיענוח הנתונים (Parsing).
+     * תחנה 2: פיענוח הנתונים.
      * הבוחן ישאל: "איך אתה עובר על המשימות?"
      * תשובה: יש לנו לולאה כפולה - עוברים על כל ילד, ובתוך כל ילד עוברים על רשימת המשימות שלו.
      */
@@ -835,7 +835,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         return text.trim();
     }
 
-    // מחשב גובה לרשימה ידנית כדי שהיא לא תהיה גמומה בתוך ה-ScrollView
+    // מחשב גובה לרשימה ידנית כדי שהיא לא תהיה גמומה בתוך המסך הנגלל
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
         if (adapter == null) {

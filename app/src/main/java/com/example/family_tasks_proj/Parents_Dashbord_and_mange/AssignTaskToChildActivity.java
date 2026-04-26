@@ -77,7 +77,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    // מחבר את כל ה-views מה-layout
+    // מחבר את כל רכיבי המסך
     private void bindViews() {
         etTitle = findViewById(R.id.etTitle);
         etDueDate = findViewById(R.id.etDueDate);
@@ -130,7 +130,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         TaskTemplate selectedTemplate = templates.get(position);
         etTitle.setText(selectedTemplate.toDisplayTitle());
-        displayBase64Image(selectedTemplate.imageBase64);
+        displayBase64Image(selectedTemplate.getImageBase64());
     }
 
     // טוען תבניות מ-Firebase: /parents/{uid}/task_templates
@@ -155,7 +155,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של תבניות לרשימת titles בספינר
+    // ממיר נתוני תבניות לרשימת כותרות בספינר
     private void handleTemplatesSnapshot(DataSnapshot snapshot) {
         List<String> titles = new ArrayList<>();
 
@@ -173,18 +173,18 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         if (template == null) {
             return;
         }
-        if (template.id == null) {
-            template.id = templateSnapshot.getKey();
+        if (template.getId() == null) {
+            template.setId(templateSnapshot.getKey());
         }
 
         templates.add(template);
         titles.add(template.toDisplayTitle());
     }
 
-    // מציג תמונת תבנית ראשונה או placeholder אם אין תבניות
+    // מציג תמונת תבנית ראשונה או תמונה חלופית אם אין תבניות
     private void showFirstTemplateImageOrPlaceholder() {
         if (!templates.isEmpty()) {
-            displayBase64Image(templates.get(0).imageBase64);
+            displayBase64Image(templates.get(0).getImageBase64());
         } else {
             imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
         }
@@ -212,7 +212,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של ילדים לשמות בספינר
+    // ממיר נתוני ילדים לשמות בספינר
     private void handleChildrenSnapshot(DataSnapshot snapshot) {
         List<String> childNames = new ArrayList<>();
 
@@ -298,7 +298,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         String imageBase64 = null;
         if (selectedTemplate != null) {
-            imageBase64 = selectedTemplate.imageBase64;
+            imageBase64 = selectedTemplate.getImageBase64();
         }
 
         Map<String, Object> task = new HashMap<>();
@@ -336,14 +336,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // מחזיר reference להורה המחובר: /parents/{uid}
+    // מחזיר הפניה להורה המחובר: /parents/{uid}
     private DatabaseReference parentRef() {
         return FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid);
     }
 
-    // מחזיר reference לרשימת המשימות של ילד: /parents/{uid}/children/{childId}/tasks
+    // מחזיר הפניה לרשימת המשימות של ילד: /parents/{uid}/children/{childId}/tasks
     private DatabaseReference tasksRef(String childId) {
         return parentRef()
                 .child("children")
@@ -385,7 +385,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
-    // מציג תמונת משימה מ-Base64 או placeholder אם אין תמונה
+    // מציג תמונת משימה מ-Base64 או תמונה חלופית אם אין תמונה
     private void displayBase64Image(String base64) {
         if (base64 == null || base64.isEmpty()) {
             imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);

@@ -4,11 +4,11 @@ import java.util.Calendar;
 
 /**
  * עוזר לחישובי תאריכים — מרכז לוגיקה שחוזרת ב-ChildDashboardActivity ו-ChildTaskAdapter.
- * כל המתודות סטטיות ו-null-safe.
+ * כל הפעולות סטטיות ומטפלות בבטחה בערכים ריקים.
  */
 public final class DateUtils {
 
-    private DateUtils() {} // לא ליצור instance
+    private DateUtils() {} // לא ליצור מופע של המחלקה
 
     /**
      * מחשב כמה ימים נותרו עד תאריך היעד.

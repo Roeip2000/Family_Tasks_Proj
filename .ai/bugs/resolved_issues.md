@@ -205,3 +205,29 @@ Recovered from `.ai/raw_claude_cli_full` and validated where possible against cu
   - source scan confirmed the dialog method is no longer referenced
   - `assembleDebug` passed after the change.
 - Confidence: explicitly verified in the current session
+
+## RI-018: Current resource set had missing shared button and urgency resources
+- First clear evidence: 2026-04-26 `.\gradlew.bat assembleDebug` during the student-exam cleanup follow-up.
+- Problem:
+  - `styles.xml` referenced `@drawable/bg_button_card_clear` and `@drawable/bg_button_outlined`, but those drawable resources were missing.
+  - Existing urgent metric drawables/layouts referenced `@color/urgent` and `@color/urgent_light`, but those color resources were missing.
+  - Android resource linking failed in `:app:processDebugResources`.
+- Resolution:
+  - Added `app/src/main/res/drawable/bg_button_outlined.xml`.
+  - Added `app/src/main/res/drawable/bg_button_card_clear.xml`.
+  - Added `urgent` and `urgent_light` color aliases to `colors.xml`.
+- Verification:
+  - `.\gradlew.bat assembleDebug` completed successfully after the resource files/colors were restored.
+- Confidence: explicitly verified in the current session
+
+## RI-019: XML redesign introduced AppCompat tint lint errors
+- First clear evidence: 2026-04-26 `./gradlew.bat lintDebug` after the XML-only redesign pass.
+- Problem:
+  - Two `ImageView` resources used `android:tint`, which AppCompat lint flags for this project.
+  - The affected layouts were `activity_child_selection.xml` and `fragment_child_q_r_login.xml`.
+- Resolution:
+  - Replaced those attributes with `app:tint` and ensured the layouts declare the `app` namespace.
+- Verification:
+  - `./gradlew.bat lintDebug` completed successfully after the fix.
+  - `./gradlew.bat assembleDebug` also completed successfully afterward.
+- Confidence: explicitly verified in the current session

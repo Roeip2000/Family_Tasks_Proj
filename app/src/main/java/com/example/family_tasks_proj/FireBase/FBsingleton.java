@@ -10,19 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Singleton — גישה מרכזית ל-FirebaseAuth ול-Realtime Database.
+ * מחלקת יחיד לגישה מרכזית ל-FirebaseAuth ול-Realtime Database.
  *
  * אחריות:
  * - שומר את פרטי ההורה המחובר בזיכרון (uid, שם, אימייל).
  * - כותב/מעדכן את פרופיל ההורה ב-Firebase בלי למחוק נתוני ילדים קיימים.
  *
- * שימוש: FBsingleton.getInstance()
- *
  * ===== הערות חשובות =====
- * - ה-getInstance() הוא synchronized כדי למנוע יצירת שני instances ב-threads שונים.
+ * - ה-getInstance() נעול כדי למנוע יצירת שני מופעים במקביל.
  * - saveParentToFirebase() משתמש ב-updateChildren() ולא ב-setValue() —
  *   זה קריטי כדי לא לדרוס את /children ו-/task_templates שכבר קיימים תחת ההורה.
- * - saveParentToFirebase(listener) מאפשר לקרוא ל-callback אחרי כתיבה — שימושי לוולידציה.
+ * - saveParentToFirebase(listener) מאפשר לקבל תשובה אחרי הכתיבה — שימושי בבדיקות הרשמה.
  */
 public class FBsingleton {
 
@@ -37,15 +35,14 @@ public class FBsingleton {
     private String lastName;
     private String email;
 
-    /** constructor פרטי — מונע יצירה ישירה מבחוץ. */
+    /** פעולה בונה פרטית — מונעת יצירה ישירה מבחוץ. */
     private FBsingleton() {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
     }
 
     /**
-     * מחזיר את ה-instance היחיד; יוצר אותו בפעם הראשונה.
-     * synchronized — מונע race condition ב-multi-threading.
+     * מחזיר את המופע היחיד של המחלקה; יוצר אותו בפעם הראשונה.
      */
     public static synchronized FBsingleton getInstance()
     {
@@ -78,16 +75,16 @@ public class FBsingleton {
     public String getEmail()     { return email; }
 
     /**
-     * שומר פרופיל הורה ב-Firebase עם callback לדיווח הצלחה/כישלון.
+     * שומר פרופיל הורה ב-Firebase עם מאזין שמחזיר הצלחה או כישלון.
      *
-     * @param listener callback — מקבל את תוצאת הכתיבה. null = בלי callback (שקט).
+     * @param listener מאזין שמקבל את תוצאת הכתיבה. null אומר שלא צריך מאזין.
      */
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
         if (uid == null) return;
 
         DatabaseReference ref = database.getReference("parents").child(uid);
 
-        // יוצר Map רק עם שדות הפרופיל — לא נוגע בילדים/תבניות
+        // יוצר מפת נתונים רק עם שדות הפרופיל — לא נוגע בילדים/תבניות
         Map<String, Object> profileData = new HashMap<>();
         profileData.put("uid", uid);
         profileData.put("firstName", firstName);
@@ -104,7 +101,7 @@ public class FBsingleton {
         }
     }
 
-    /** overload לתאימות אחורה — ללא callback */
+    /** גרסה נוספת לתאימות אחורה — ללא מאזין תוצאה. */
     public void saveParentToFirebase() {
         saveParentToFirebase(null);
     }

@@ -79,6 +79,24 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
 - External context used in that session:
   - Figma connector availability check via `whoami` only (no project file key was available in the repo to inspect actual frames)
   - focused web benchmarking against official Todoist, Google Tasks, Microsoft To Do, Cozi, and Android documentation pages
+- The 2026-04-23 editable Figma screen-flow session also used current source inspection only; no new `.ai/raw_claude_cli_full` files were scanned.
+- External context used in that session:
+  - connected Figma MCP tools `whoami`, `create_new_file`, `use_figma`, and `get_metadata`
+  - `get_screenshot` later returned a Starter-plan MCP tool-call limit error before a final screenshot-based refinement pass could be captured
+- The 2026-04-25 clean split UML session used current source inspection only; no new `.ai/raw_claude_cli_full` files were scanned.
+- Verification sources for that session:
+  - `app/src/main/java` class files
+  - `docs/uml/tools/plantuml.jar`
+  - local Git status and PlantUML validation/export output
+- The later 2026-04-25 unified UML session also used current source inspection and the newly created split UML files only; no new `.ai/raw_claude_cli_full` files were scanned.
+- Verification sources for the unified diagram:
+  - `docs/uml/00_all_classes.puml`
+  - `docs/uml/tools/plantuml.jar`
+  - local PlantUML validation/export output
+- The 2026-04-25 unified UML simplification also used only current local UML files and PlantUML validation/export output; no new raw archive files were scanned.
+- The later 2026-04-25 unified UML overview cleanup used only `docs/uml/00_all_classes.puml`, rendered PNG inspection, and PlantUML validation/export output; no new raw archive files were scanned.
+- The 2026-04-25 UML README documentation update used current local UML files and project source context only; no new raw archive files were scanned.
+- The 2026-04-25 A4 UML booklet revision used current Java source files, current local UML files, rendered PNG inspection, and PlantUML validation/export output; no new raw archive files were scanned.
 
 ## 2026-04-26 Source Use
 - No new raw Claude archive files were scanned in this session.
@@ -86,6 +104,35 @@ Purpose: record which raw Claude CLI archive files were scanned, which were trea
   - current source under `app/src/main/java/com/example/family_tasks_proj`
   - current layout IDs where needed for compile repair (`item_parent_task.xml`)
   - existing project memory files listed in `AGENTS.md`
+- No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
+
+## 2026-04-26 Student-Exam Cleanup Source Use
+- No new raw Claude archive files were scanned in this session.
+- This cleanup pass used:
+  - current source under `app/src/main/java/com/example/family_tasks_proj`
+  - current app string resources under `app/src/main/res/values`
+  - existing project memory files listed in `AGENTS.md`
+  - local Gradle verification via `./gradlew.bat assembleDebug`
+- No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
+
+## 2026-04-26 Student-Exam Cleanup Follow-Up Source Use
+- No new raw Claude archive files were scanned in this session.
+- This follow-up used:
+  - current source under `app/src/main/java/com/example/family_tasks_proj`
+  - current resources under `app/src/main/res/values`, `app/src/main/res/drawable`, and referenced layouts/styles
+  - existing project memory files listed in `AGENTS.md`
+  - local Gradle verification via `.\gradlew.bat assembleDebug`
+- `cleaned_code/` was checked and is not present in the current repository.
+- No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
+
+## 2026-04-26 XML-Only UI Redesign Source Use
+- No new raw Claude archive files were scanned in this session.
+- This redesign used:
+  - existing project instructions in `AGENTS.md`, `CLAUDE.md`, and `.ai/*`
+  - current Android resources under `app/src/main/res/layout`, `app/src/main/res/values`, and `app/src/main/res/drawable`
+  - current Java source only for view-type/id compatibility checks; no Java files were edited for this redesign
+  - local verification with `./gradlew.bat assembleDebug`, `./gradlew.bat lintDebug`, and `adb devices -l`
+- `GEMINI.md` was requested by the startup checklist but is not present in the current repository.
 - No `.ai/raw_claude_cli_full` files were modified, deleted, or reorganized.
 
 ## Local Preservation Rule

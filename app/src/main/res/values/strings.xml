@@ -174,8 +174,8 @@
     <string name="parent_dashboard_group_completed">הושלמו</string>
     <string name="parent_dashboard_actions_note">מכאן שולחים משימות, מנהלים ילדים, מעדכנים תבניות ופותחים את ה־QR המשפחתי.</string>
 
-    <string name="manage_children_not_logged_in">אינך מחובר</string>
-    <string name="manage_children_error_create_child_id">שגיאה ביצירת מזהה לילד</string>
+    <string name="manage_children_not_logged_in">לא מחובר למערכת</string>
+    <string name="manage_children_error_create_child_id">שגיאה ביצירת מזהה ילד</string>
     <string name="manage_children_save_changes">שמור שינויים</string>
     <string name="manage_children_form_title_new">הוספת ילד חדש</string>
     <string name="manage_children_form_title_edit">עריכת פרטי ילד</string>
@@ -209,7 +209,7 @@
     <string name="child_selection_pick_child">בחר ילד מהרשימה</string>
     <string name="child_selection_step_title">בוחרים הורה אם צריך, בוחרים שם, ונכנסים ישר למשימות.</string>
 
-    <string name="assign_task_parent_not_logged_in">ההורה אינו מחובר</string>
+    <string name="assign_task_parent_not_logged_in">ההורה לא מחובר</string>
     <string name="assign_task_error_loading_templates">שגיאה בטעינת תבניות: %1$s</string>
     <string name="assign_task_error_loading_children">שגיאה בטעינת ילדים: %1$s</string>
     <string name="assign_task_confirm_title">אישור הקצאת משימה</string>
@@ -223,7 +223,7 @@
     <string name="template_missing_title_or_image">יש למלא כותרת ולבחור תמונה</string>
     <string name="template_missing_title">יש למלא כותרת</string>
     <string name="template_parent_not_logged_in">ההורה לא מחובר</string>
-    <string name="template_saved_success">התבנית נשמרה בהצלחה!</string>
+    <string name="template_saved_success">התבנית נשמרה!</string>
     <string name="template_updated_success">התבנית עודכנה בהצלחה!</string>
     <string name="template_deleted_success">התבנית נמחקה</string>
     <string name="template_screen_title">מאגר תבניות משימה</string>
@@ -248,13 +248,13 @@
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
     <string name="error_invalid_email">פורמט אימייל לא תקין</string>
     <string name="error_short_password">הסיסמה חייבת להכיל לפחות 6 תווים</string>
-    <string name="error_loading_image">שגיאה בטעינת תמונה</string>
-    <string name="error_image_conversion">שגיאה בהמרת תמונה</string>
+    <string name="error_loading_image">שגיאה בטעינת התמונה</string>
+    <string name="error_image_conversion">שגיאה בהמרת התמונה</string>
     <string name="error_save_generic">שגיאה בשמירה: %1$s</string>
     <string name="error_loading_data">שגיאה בטעינת נתונים: %1$s</string>
     <string name="error_unknown_login">שגיאת התחברות לא ידועה</string>
     <string name="error_unknown_register">שגיאת הרשמה לא ידועה</string>
-    <string name="error_parent_session_missing">פג תוקף ההתחברות. התחברו מחדש.</string>
+    <string name="error_parent_session_missing">ההורה לא מחובר</string>
     <string name="error_with_details">שגיאה: %1$s</string>
     <string name="success_parent_register">ההרשמה הצליחה!</string>
     <string name="success_parent_photo_saved">תמונת הפרופיל נשמרה!</string>

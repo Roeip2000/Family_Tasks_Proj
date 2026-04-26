@@ -41,11 +41,11 @@ public class ParentRegisterFragment extends Fragment {
     private Button btnRegister;
     private ProgressBar progressRegister;
 
-    // constructor ריק חובה ל-Fragment כדי שאנדרואיד יוכל ליצור אותו מחדש
+    // פעולה בונה ריקה שחובה לשמור כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
     public ParentRegisterFragment() {
     }
 
-    // יוצר את ה-layout של מסך הרשמת ההורה
+    // יוצר את קובץ המסך של הרשמת ההורה
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -53,7 +53,7 @@ public class ParentRegisterFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_parent_register, container, false);
     }
 
-    // מחבר views ומגדיר פעולות לחיצה והקלדה
+    // מחבר רכיבי מסך ומגדיר פעולות לחיצה והקלדה
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -82,7 +82,7 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
-    // מאפשר הרשמה גם בלחיצה על Done במקלדת
+    // מאפשר הרשמה גם דרך כפתור האישור במקלדת
     private boolean handlePasswordEditorAction(int actionId, KeyEvent event) {
         boolean isEnterKey = event != null
                 && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
@@ -190,11 +190,11 @@ public class ParentRegisterFragment extends Fragment {
         openParentDashboard();
     }
 
-    // מציג שגיאת הרשמה או שמירת פרופיל בצורה בטוחה גם כשאין Exception
+    // מציג שגיאת הרשמה או שמירת פרופיל בצורה בטוחה גם כשאין פירוט שגיאה
     private void showRegisterError(@NonNull Task<?> task) {
         String errorMsg;
         if (task.getException() != null) {
-            errorMsg = task.getException().getMessage();
+            errorMsg = getString(R.string.error_with_details, task.getException().getMessage());
         } else {
             errorMsg = getString(R.string.error_unknown_register);
         }

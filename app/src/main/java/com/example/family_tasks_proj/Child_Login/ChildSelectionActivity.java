@@ -67,7 +67,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         openCorrectPicker();
     }
 
-    // מחבר את כל ה-views מה-layout
+    // מחבר את כל רכיבי המסך
     private void bindViews() {
         tvSubtitle = findViewById(R.id.tvSubtitle);
         tvParentLabel = findViewById(R.id.tvParentLabel);
@@ -101,7 +101,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
             return;
         }
 
-        // fallback: אם המסך נפתח בלי QR/extra, משתמשים בסשן הילד האחרון שנשמר ב-SharedPreferences
+        // אם המסך נפתח בלי QR או נתונים מה-Intent, משתמשים בסשן הילד האחרון שנשמר
         SharedPreferences preferences = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         parentId = preferences.getString(KEY_PARENT, null);
         preselectedChildId = preferences.getString(KEY_CHILD, null);
@@ -156,7 +156,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של /parents לרשימת שמות בספינר
+    // ממיר את נתוני /parents לרשימת שמות בספינר
     private void handleParentsSnapshot(DataSnapshot snapshot) {
         progressBar.setVisibility(View.GONE);
         parentItems.clear();
@@ -270,7 +270,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של /children לרשימת ילדים בספינר
+    // ממיר את נתוני /children לרשימת ילדים בספינר
     private void handleChildrenSnapshot(DataSnapshot snapshot) {
         progressBar.setVisibility(View.GONE);
         childItems.clear();
@@ -370,7 +370,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         openChildDashboard(childItem.id);
     }
 
-    // פותח ChildDashboardActivity עם extras מפורשים של parentId ו-childId
+    // פותח ChildDashboardActivity עם parentId ו-childId מפורשים
     private void openChildDashboard(String selectedChildId) {
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         // parentId אומר לדשבורד באיזה ענף /parents להשתמש
@@ -390,7 +390,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    // בודק null או מחרוזת ריקה אחרי trim
+    // בודק null או מחרוזת ריקה אחרי ניקוי רווחים
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }

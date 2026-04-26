@@ -28,7 +28,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  * פורמט ה-QR: "parent:{parentId}"
  * פורמט זהה לזה ש-ChildQRLoginFragment מפענח.
  *
- * Layout: activity_generate_qr.xml
+ * קובץ המסך: activity_generate_qr.xml
  *
  * הערה להמשך:
  * אם ירצו בעתיד, אפשר להוסיף שיתוף של תמונת ה-QR
@@ -44,7 +44,7 @@ public class GenerateQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_qr);
 
-        // חיבור views מה-layout
+        // חיבור רכיבי המסך
         imageViewQrCode = findViewById(R.id.imageViewQrCode);
         tvError = findViewById(R.id.tvError);
         Button btnBack = findViewById(R.id.btnBackToDashboard);

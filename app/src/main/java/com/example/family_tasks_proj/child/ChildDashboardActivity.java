@@ -96,7 +96,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadTasks();
     }
 
-    // מחבר את כל ה-views מה-layout
+    // מחבר את כל רכיבי המסך
     private void bindViews() {
         tvChildName = findViewById(R.id.tvChildName);
         tvStars = findViewById(R.id.tvStars);
@@ -174,7 +174,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         childId = preferences.getString(EXTRA_CHILD_ID, childId);
     }
 
-    // מחזיר reference לילד הנוכחי: /parents/{parentId}/children/{childId}
+    // מחזיר הפניה לילד הנוכחי: /parents/{parentId}/children/{childId}
     private DatabaseReference childRef() {
         return FirebaseDatabase.getInstance()
                 .getReference(ROOT_PARENTS)
@@ -203,7 +203,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // מציג שם ותמונה מתוך snapshot של הילד
+    // מציג שם ותמונה מתוך נתוני הילד שהגיעו מ-Firebase
     private void bindChildHeader(DataSnapshot snapshot) {
         String firstName = snapshot.child("firstName").getValue(String.class);
         String lastName = snapshot.child("lastName").getValue(String.class);
@@ -215,7 +215,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         showChildAvatar(base64);
     }
 
-    // מציג תמונת ילד עגולה או placeholder
+    // מציג תמונת ילד עגולה או תמונה חלופית
     private void showChildAvatar(String base64) {
         if (isBlank(base64)) {
             imgChildAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
@@ -251,7 +251,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // ממיר snapshot של משימות לרשימה וסיכומים
+    // ממיר את נתוני המשימות לרשימה וסיכומים
     private void handleTasksSnapshot(DataSnapshot snapshot) {
         allTasks.clear();
 
@@ -271,8 +271,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
             return;
         }
 
-        if (isBlank(task.id)) {
-            task.id = taskSnapshot.getKey();
+        if (isBlank(task.getId())) {
+            task.setId(taskSnapshot.getKey());
         }
 
         countTask(task, counts);
@@ -281,14 +281,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // מעדכן מוני פתוחות, בוצעו, דחופות וכוכבים
     private void countTask(ChildTask task, TaskCounts counts) {
-        if (task.isDone) {
+        if (task.getIsDone()) {
             counts.completedCount++;
-            counts.stars += task.starsWorth;
+            counts.stars += task.getStarsWorth();
             return;
         }
 
         counts.openCount++;
-        if (DateUtils.isDueSoon(task.dueAt)) {
+        if (DateUtils.isDueSoon(task.getDueAt())) {
             counts.urgentCount++;
         }
     }
@@ -303,14 +303,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // מבקש אישור לפני סימון משימה כבוצעה
     private void markTaskDone(final ChildTask task) {
-        if (task == null || isBlank(task.id)) {
+        if (task == null || isBlank(task.getId())) {
             Toast.makeText(this, R.string.child_error_missing_task_id, Toast.LENGTH_SHORT).show();
             return;
         }
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.child_mark_task_title)
-                .setMessage(getString(R.string.child_mark_task_message, safeText(task.title)))
+                .setMessage(getString(R.string.child_mark_task_message, safeText(task.getTitle())))
                 .setPositiveButton(R.string.child_mark_task_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -325,7 +325,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void writeTaskDone(final ChildTask task) {
         DatabaseReference doneRef = childRef()
                 .child(NODE_TASKS)
-                .child(task.id)
+                .child(task.getId())
                 .child("isDone");
         Task<Void> updateTask = doneRef.setValue(true);
 
@@ -351,7 +351,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     // מרענן את הרשימה אחרי סימון משימה כבוצעה
     private void handleTaskMarkedDone(ChildTask task) {
         Toast.makeText(this, R.string.child_mark_task_success, Toast.LENGTH_SHORT).show();
-        task.isDone = true;
+        task.setIsDone(true);
         loadTasks();
     }
 
@@ -395,7 +395,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         applyFilter();
     }
 
-    // מסנן את הרשימה שכבר נטענה מ-Firebase בלי query נוסף
+    // מסנן את הרשימה שכבר נטענה מ-Firebase בלי קריאה נוספת
     private void applyFilter() {
         visibleTasks.clear();
 
@@ -415,15 +415,15 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private boolean matchesActiveFilter(ChildTask task) {
         switch (activeFilter) {
             case COMPLETED:
-                return task.isDone;
+                return task.getIsDone();
             case URGENT:
-                return !task.isDone && DateUtils.isDueSoon(task.dueAt);
+                return !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt());
             default:
-                return !task.isDone;
+                return !task.getIsDone();
         }
     }
 
-    // מעדכן כותרת ו-empty state לפי הפילטר
+    // מעדכן כותרת והודעת ריק לפי הפילטר
     private void updateFilterLabels() {
         switch (activeFilter) {
             case COMPLETED:
@@ -495,7 +495,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // בודק null או מחרוזת ריקה אחרי trim
+    // בודק null או מחרוזת ריקה אחרי ניקוי רווחים
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
