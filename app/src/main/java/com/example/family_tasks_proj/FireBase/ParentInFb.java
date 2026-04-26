@@ -3,10 +3,7 @@ package com.example.family_tasks_proj.FireBase;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * מודל נתונים של הורה כפי שנשמר ב-Firebase.
- * כולל פרטי חשבון, תפקיד, ילדים ותמונת פרופיל.
- */
+/** מודל נתונים של הורה כפי שנשמר ב-Firebase. */
 public class ParentInFb {
 
     private String uid;
@@ -21,14 +18,7 @@ public class ParentInFb {
     /** פעולה בונה ריקה — חובה כדי ש-Firebase יוכל לקרוא את האובייקט. */
     public ParentInFb() {}
 
-    /**
-     * יוצר פרופיל הורה חדש עם role = "parent" ורשימת ילדים ריקה.
-     *
-     * @param uid       Firebase Auth UID
-     * @param firstName שם פרטי
-     * @param lastName  שם משפחה
-     * @param email     אימייל
-     */
+    // יוצר פרופיל הורה חדש עם role = "parent" ורשימת ילדים ריקה
     public ParentInFb(String uid, String firstName, String lastName, String email) {
         this.uid = uid;
         this.firstName = firstName;

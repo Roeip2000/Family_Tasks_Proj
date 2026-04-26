@@ -26,11 +26,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-/**
- * מסך סריקת QR לילד.
- * תומך בקוד של הורה בלבד וגם בקוד מלא עם ילד.
- * כל הבדיקות נשארות תחת /parents/{parentId}.
- */
+/** מסך סריקת QR לילד והעברה לבחירת ילד או לדשבורד. */
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String PREFS = "child_session";

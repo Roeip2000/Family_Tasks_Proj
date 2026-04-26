@@ -21,11 +21,7 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 import java.util.Map;
 
-/**
- * אדפטר לרשימת הילדים בדשבורד ההורה.
- * כל כרטיס מציג שם ילד, תמונה, וספירות משימות (נשלחו/בוצעו/דחופות).
- * לחיצה על כרטיס בוחרת את הילד ומציגה רק את המשימות שלו.
- */
+/** אדפטר לכרטיסי הילדים בדשבורד ההורה ולבחירת ילד. */
 class ParentDashboardChildSummaryAdapter
         extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 

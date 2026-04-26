@@ -37,11 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * מסך הקצאת משימה לילד.
- * ההורה בוחר תבנית, ילד ותאריך יעד, ואז נשמרת משימה תחת:
- * /parents/{uid}/children/{childId}/tasks/{taskId}.
- */
+/** מסך הקצאת משימה לילד לפי תבנית, ילד ותאריך יעד. */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTitle;

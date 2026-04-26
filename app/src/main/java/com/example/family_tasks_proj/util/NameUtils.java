@@ -1,20 +1,11 @@
 package com.example.family_tasks_proj.util;
 
-/**
- * עוזר לבניית שם מלא — מרכז לוגיקה שחוזרת ב-4+ מקומות בפרויקט.
- * מטפל בצורה בטוחה במצב של null או טקסט ריק.
- */
+/** עוזר לבניית שם מלא בצורה בטוחה גם כשיש null או טקסט ריק. */
 public final class NameUtils {
 
     private NameUtils() {} // לא ליצור מופע של המחלקה
 
-    /**
-     * בונה שם מלא משם פרטי + שם משפחה.
-     *
-     * @param first שם פרטי (יכול להיות null)
-     * @param last  שם משפחה (יכול להיות null)
-     * @return שם מלא, או null אם שניהם ריקים/null
-     */
+    // בונה שם מלא משם פרטי ושם משפחה
     public static String fullName(String first, String last) {
         StringBuilder sb = new StringBuilder();
         if (first != null && !first.trim().isEmpty()) sb.append(first.trim());
@@ -28,14 +19,7 @@ public final class NameUtils {
         return null;
     }
 
-    /**
-     * בונה שם מלא עם ברירת מחדל — אם אין שם, מחזיר את הערך שנשלח.
-     *
-     * @param first    שם פרטי
-     * @param last     שם משפחה
-     * @param fallback ערך ברירת מחדל (למשל childId)
-     * @return שם מלא או ערך ברירת המחדל
-     */
+    // בונה שם מלא, ואם אין שם מחזיר את ערך ברירת המחדל
     public static String fullNameOrDefault(String first, String last, String fallback) {
         String name = fullName(first, last);
         if (name != null) {

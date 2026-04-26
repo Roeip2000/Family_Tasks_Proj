@@ -19,10 +19,7 @@ import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/**
- * מסך הכניסה הראשי של האפליקציה.
- * מכאן ההורה מתחבר או נרשם, והילד נכנס דרך QR או בחירה מהירה.
- */
+/** מסך הכניסה הראשי להורה ולילד. */
 public class MainActivity extends AppCompatActivity {
 
     private Button btnRegister, btnLogin, btnChildQR, btnChild;
@@ -141,10 +138,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
-     * מחליף את המסך הפנימי המוצג ושומר אפשרות לחזור אחורה.
-     * addToBackStack מאפשר לחזור למסך הקודם עם כפתור "חזרה".
-     */
+    // מחליף את ה-Fragment שמוצג ושומר אפשרות לחזור אחורה
     private void showFragment(Fragment fragment, boolean addToBackStack) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (currentFragment != null

@@ -36,11 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * מסך דשבורד הילד.
- * קורא את הילד והמשימות מתוך /parents/{parentId}/children/{childId},
- * מציג סיכום כוכבים ומשימות, ומאפשר לילד לסמן משימה כבוצעה.
- */
+/** מסך דשבורד הילד להצגת משימות, כוכבים וסימון משימה כבוצעה. */
 public class ChildDashboardActivity extends AppCompatActivity {
 
     private static final String PREFS_SESSION = "child_session";

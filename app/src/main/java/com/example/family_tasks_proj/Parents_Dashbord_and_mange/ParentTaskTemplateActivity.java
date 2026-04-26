@@ -42,11 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * מסך ניהול תבניות משימה.
- * ההורה יוצר, עורך ומוחק תבניות תחת /parents/{uid}/task_templates/{templateId}.
- * כל תבנית כוללת כותרת, תמונה, וכמות כוכבים.
- */
+/** מסך ניהול תבניות משימה של ההורה. */
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private static final int MIN_STARS = 1;

@@ -28,11 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * מסך בחירת ילד.
- * אם parentId הגיע מ-QR או מסשן שמור, הילד בוחר רק את שמו.
- * אם אין parentId, הילד בוחר קודם הורה ואז ילד.
- */
+/** מסך בחירת ילד, עם parentId מוכן או עם בחירת הורה ידנית. */
 public class ChildSelectionActivity extends AppCompatActivity {
 
     private static final String PREFS = "child_session";

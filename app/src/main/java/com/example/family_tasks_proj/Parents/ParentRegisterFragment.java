@@ -26,11 +26,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/**
- * מסך הרשמת הורה חדש בתוך MainActivity.
- * יוצר חשבון ב-FirebaseAuth, שומר פרופיל הורה ב-Realtime Database,
- * ואז פותח את ParentDashboardActivity.
- */
+/** מסך הרשמת הורה חדש ושמירת הפרופיל שלו ב-Firebase. */
 public class ParentRegisterFragment extends Fragment {
 
     private FirebaseAuth mAuth;

@@ -44,11 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * מסך ניהול ילדים של הורה.
- * ההורה מוסיף, עורך ומוחק ילדים תחת /parents/{uid}/children/{childId}.
- * עריכת ילד משנה רק שם ותמונה, ולא משנה את המשימות שלו.
- */
+/** מסך ניהול ילדים של הורה: הוספה, עריכה ומחיקה. */
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName;

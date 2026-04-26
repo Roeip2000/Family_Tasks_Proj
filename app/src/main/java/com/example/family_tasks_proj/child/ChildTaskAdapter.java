@@ -21,11 +21,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
-/**
- * אדפטר למשימות הילד — מציג כרטיס לכל משימה עם כותרת, תאריך, כוכבים וכפתור "בוצע".
- * משימה שהושלמה מקבלת קו חוצה ורקע ירוק.
- * משימה דחופה מודגשת בכתום/אדום לפי ימים שנשארו.
- */
+/** אדפטר שמציג כרטיסי משימות לילד עם סטטוס, תאריך וכפתור "בוצע". */
 public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.TaskViewHolder> {
 
     private final List<ChildTask> tasks;

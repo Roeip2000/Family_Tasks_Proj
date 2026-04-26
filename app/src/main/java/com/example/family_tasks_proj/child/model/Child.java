@@ -1,9 +1,6 @@
 package com.example.family_tasks_proj.child.model;
 
-/**
- * מודל ילד כפי שהוא נשמר תחת ההורה ב-Firebase.
- * כולל שם פרטי, שם משפחה ותמונת פרופיל.
- */
+/** מודל ילד כפי שהוא נשמר תחת ההורה ב-Firebase. */
 public class Child {
     private String firstName;
     private String lastName;

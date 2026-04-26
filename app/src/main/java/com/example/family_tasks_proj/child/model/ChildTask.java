@@ -1,9 +1,6 @@
 package com.example.family_tasks_proj.child.model;
 
-/**
- * מודל משימה של ילד כפי שהיא נקראת מ-Firebase.
- * כולל כותרת, תאריך יעד, סטטוס, כוכבים ותמונה.
- */
+/** מודל משימה של ילד כפי שהיא נקראת מ-Firebase. */
 public class ChildTask {
     private String id;
     private String title;

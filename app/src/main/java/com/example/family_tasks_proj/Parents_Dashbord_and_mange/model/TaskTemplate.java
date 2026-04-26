@@ -1,9 +1,6 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
-/**
- * מודל תבנית משימה כפי שהיא נשמרת ב-Firebase.
- * התבנית כוללת כותרת, תמונה וכמות כוכבים למשימה שתיווצר ממנה.
- */
+/** מודל תבנית משימה כפי שהיא נשמרת ב-Firebase. */
 public class TaskTemplate {
     /** ברירת מחדל לכמות כוכבים — תבניות ישנות שנשמרו לפני שהשדה הזה נוסף יקבלו את הערך הזה. */
     public static final int DEFAULT_STARS_WORTH = 10;

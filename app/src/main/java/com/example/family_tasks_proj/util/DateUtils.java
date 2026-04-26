@@ -2,20 +2,12 @@ package com.example.family_tasks_proj.util;
 
 import java.util.Calendar;
 
-/**
- * עוזר לחישובי תאריכים — מרכז לוגיקה שחוזרת ב-ChildDashboardActivity ו-ChildTaskAdapter.
- * כל הפעולות סטטיות ומטפלות בבטחה בערכים ריקים.
- */
+/** עוזר לחישובי תאריכים שחוזרים במסכי המשימות. */
 public final class DateUtils {
 
     private DateUtils() {} // לא ליצור מופע של המחלקה
 
-    /**
-     * מחשב כמה ימים נותרו עד תאריך היעד.
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return מספר ימים (שלילי = עבר, 0 = היום), או Long.MAX_VALUE אם הפורמט לא תקין
-     */
+    // מחשב כמה ימים נותרו עד תאריך היעד
     public static long daysLeft(String dueAt) {
         if (dueAt == null || dueAt.trim().isEmpty()) {
             return Long.MAX_VALUE;
@@ -26,12 +18,12 @@ public final class DateUtils {
         }
 
         try {
-            int d = Integer.parseInt(parts[0]);
-            int m = Integer.parseInt(parts[1]);
-            int y = Integer.parseInt(parts[2]);
+            int day = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]);
+            int year = Integer.parseInt(parts[2]);
 
             Calendar due = Calendar.getInstance();
-            due.set(y, m - 1, d, 0, 0, 0);
+            due.set(year, month - 1, day, 0, 0, 0);
             due.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
@@ -46,23 +38,13 @@ public final class DateUtils {
         }
     }
 
-    /**
-     * האם המשימה דחופה (0-2 ימים)?
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return true אם נשארו 0-2 ימים
-     */
+    // בודק אם המשימה דחופה, כלומר נשארו לה 0-2 ימים
     public static boolean isDueSoon(String dueAt) {
         long days = daysLeft(dueAt);
         return days >= 0 && days <= 2;
     }
 
-    /**
-     * האם תאריך היעד של המשימה עבר?
-     *
-     * @param dueAt תאריך בפורמט "d/M/yyyy"
-     * @return true אם מספר הימים שנותרו הוא שלילי
-     */
+    // בודק אם תאריך היעד של המשימה כבר עבר
     public static boolean isOverdue(String dueAt) {
         long days = daysLeft(dueAt);
         return days < 0;

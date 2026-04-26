@@ -24,11 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-/**
- * מסך התחברות הורה בתוך MainActivity.
- * בודק אימייל וסיסמה, מתחבר דרך FirebaseAuth,
- * ובכניסה מוצלחת פותח את ParentDashboardActivity.
- */
+/** מסך התחברות הורה דרך FirebaseAuth. */
 public class ParentLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;

@@ -50,11 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * מסך דשבורד ההורה אחרי התחברות.
- * מציג סיכום בית, בחירת ילדים, משימות לפי פילטרים, ותפריט פעולות להורה.
- * כל הנתונים נטענים מ-Firebase תחת /parents/{uid}.
- */
+/** מסך דשבורד ההורה עם סיכום בית, ילדים, משימות ופעולות ניהול. */
 public class ParentDashboardActivity extends AppCompatActivity {
 
     // תצוגות — כותרת, סיכום בית, רשימת ילדים, רשימת משימות, פילטרים וכפתורים
@@ -186,7 +182,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void openScreen(Class<?> target) {
         if (target == null) return;
         startActivity(new Intent(this, target));
-        // הערה: לא נועלים כפתורים פה כי המעבר מהיר, 
+        // הערה: לא נועלים כפתורים פה כי המעבר מהיר,
         // אבל אפשר להוסיף debouncing אם רואים בעיות באמולטור
     }
 
@@ -335,10 +331,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * תחנה 1: טעינת נתונים מ-Firebase.
-     * אנחנו מושכים את כל הילדים והמשימות שלהם בקריאה אחת כדי לייעל ביצועים.
-     */
+    // תחנה 1: טעינת כל הילדים והמשימות מ-Firebase
     private void loadDashboardData(@NonNull FirebaseUser user) {
         DatabaseReference childrenRef = parentRef(user.getUid()).child("children");
         childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -358,11 +351,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * תחנה 2: פיענוח הנתונים.
-     * הבוחן ישאל: "איך אתה עובר על המשימות?"
-     * תשובה: יש לנו לולאה כפולה - עוברים על כל ילד, ובתוך כל ילד עוברים על רשימת המשימות שלו.
-     */
+    // תחנה 2: פיענוח הנתונים בעזרת לולאה על ילדים ולולאה על המשימות שלהם
     private void parseDashboardData(DataSnapshot snapshot) {
         allAssignedTasks.clear();
         childSummaries.clear();

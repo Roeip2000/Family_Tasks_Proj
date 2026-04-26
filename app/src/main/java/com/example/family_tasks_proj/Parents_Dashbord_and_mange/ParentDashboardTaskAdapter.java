@@ -22,11 +22,7 @@ import com.example.family_tasks_proj.util.ImageHelper;
 import java.util.List;
 import java.util.Map;
 
-/**
- * אדפטר לרשימת המשימות בדשבורד ההורה.
- * תומך בשני סוגי שורות: כותרת קבוצה ושורת משימה רגילה.
- * כל משימה מציגה כותרת, תאריך יעד, סטטוס (בוצע/דחוף/ממתין) ותמונת ילד.
- */
+/** אדפטר לרשימת המשימות בדשבורד ההורה, כולל כותרות קבוצה ומשימות. */
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
     private static final int VIEW_TYPE_HEADER = 0;
@@ -116,7 +112,7 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         } else {
             tvTaskTitleCard.setText(task.title);
         }
-        
+
         if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
             tvTaskOwner.setText(getContext().getString(
                     R.string.parent_dashboard_task_owner_label, task.childName));
@@ -124,37 +120,19 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         } else {
             tvTaskOwner.setVisibility(View.GONE);
         }
-        
+
         tvDueDateCard.setText(getDueLine(task));
         tvDueDateCard.setTextColor(getDueLineColor(task));
 
         String statusText = getTaskStatusLabel(task);
-        int chipBgColor;
-        int chipTextColor;
-        int dotColor;
-
-        if (task.isDone) {
-            chipBgColor = Color.parseColor("#E8F5E9");
-            chipTextColor = Color.parseColor("#2E7D32");
-            dotColor = chipTextColor;
-        } else if (DateUtils.daysLeft(task.dueAt) < 0) {
-            chipBgColor = Color.parseColor("#FFEBEE");
-            chipTextColor = Color.parseColor("#C62828");
-            dotColor = chipTextColor;
-        } else if (isUrgentTask(task)) {
-            chipBgColor = Color.parseColor("#FFF3E0");
-            chipTextColor = Color.parseColor("#E65100");
-            dotColor = chipTextColor;
-        } else {
-            chipBgColor = Color.parseColor("#EEF2F7");
-            chipTextColor = Color.parseColor("#52606D");
-            dotColor = Color.parseColor("#2F80ED");
-        }
+        int[] colors = getStatusColors(task);
+        int chipBgColor = colors[0];
+        int chipTextColor = colors[1];
+        int dotColor = colors[2];
 
         tvStatusChip.setText(statusText);
         tvStatusChip.setTextColor(chipTextColor);
 
-        @SuppressWarnings("deprecation")
         GradientDrawable chipBg = new GradientDrawable();
         chipBg.setColor(chipBgColor);
         chipBg.setCornerRadius(dpToPx(14));
@@ -165,6 +143,21 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         dotBg.setColor(dotColor);
         viewTaskDot.setBackground(dotBg);
         return convertView;
+    }
+
+    // מחזיר מערך צבעים: [רקע צ'יפ, טקסט צ'יפ, נקודה]
+    private int[] getStatusColors(AssignedTask task) {
+        if (task.isDone) {
+            return new int[]{Color.parseColor("#E8F5E9"), Color.parseColor("#2E7D32"), Color.parseColor("#2E7D32")};
+        }
+        long daysLeft = DateUtils.daysLeft(task.dueAt);
+        if (daysLeft < 0) {
+            return new int[]{Color.parseColor("#FFEBEE"), Color.parseColor("#C62828"), Color.parseColor("#C62828")};
+        }
+        if (isUrgentTask(task)) {
+            return new int[]{Color.parseColor("#FFF3E0"), Color.parseColor("#E65100"), Color.parseColor("#E65100")};
+        }
+        return new int[]{Color.parseColor("#EEF2F7"), Color.parseColor("#52606D"), Color.parseColor("#2F80ED")};
     }
 
     private void bindChildPhoto(ImageView imageView, String childId, String base64) {

@@ -17,23 +17,14 @@ import androidx.exifinterface.media.ExifInterface;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-/**
- * מחלקת עזר לטיפול בתמונות.
- * מתקנת סיבוב, מקטינה תמונות ושומרת אותן כ-Base64.
- */
+/** מחלקת עזר לתיקון, הקטנה ושמירת תמונות כ-Base64. */
 public class ImageHelper {
 
     /** גודל מקסימלי (פיקסלים) לצלע הגדולה — שומר על איכות סבירה בלי לפוצץ את Firebase */
     private static final int MAX_DIMENSION = 800;
     private static final int JPEG_QUALITY = 75;
 
-    /**
-     * טוען תמונה מ-Uri, מתקן סיבוב EXIF, ומקטין תוך שמירה על יחס גובה-רוחב.
-     *
-     * @param resolver ContentResolver לגישה ל-Uri
-     * @param uri      ה-Uri של התמונה שנבחרה מהגלריה/מצלמה
-     * @return Bitmap מתוקן ומוקטן, או null בכישלון
-     */
+    // טוען תמונה מ-Uri, מתקן סיבוב EXIF ומקטין אותה
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
         try {
             // שלב 1: פענוח ה-Bitmap מזרם הנתונים
@@ -63,12 +54,7 @@ public class ImageHelper {
         }
     }
 
-    /**
-     * ממיר Bitmap למחרוזת Base64 (JPEG).
-     *
-     * @param bitmap ה-Bitmap שכבר עבר תיקון EXIF + הקטנה
-     * @return מחרוזת Base64, או null בכישלון
-     */
+    // ממיר Bitmap למחרוזת Base64 בפורמט JPEG
     public static String bitmapToBase64(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
@@ -84,13 +70,7 @@ public class ImageHelper {
         }
     }
 
-    /**
-     * מפענח מחרוזת Base64 ל-Bitmap.
-     * משמש להצגת תמונות שנשמרו ב-Firebase.
-     *
-     * @param base64 מחרוזת Base64 של תמונת JPEG
-     * @return Bitmap, או null אם הקלט ריק/פגום
-     */
+    // מפענח מחרוזת Base64 ל-Bitmap להצגת תמונות מ-Firebase
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.isEmpty()) {
             return null;
@@ -104,14 +84,7 @@ public class ImageHelper {
         }
     }
 
-    /**
-     * חותך Bitmap לצורת עיגול — לתצוגת אווטאר.
-     * לוקח את הצלע הקטנה יותר כדי לא לעוות את התמונה.
-     * משמש גם בדשבורד הילד וגם בכרטיסי המשימות של ההורה.
-     *
-     * @param src התמונה המקורית (יכולה להיות מלבנית)
-     * @return Bitmap מרובע עם פינות חתוכות לעיגול, או null אם src=null
-     */
+    // חותך Bitmap לעיגול לתצוגת אווטאר בלי לעוות את התמונה
     public static Bitmap getCircularBitmap(Bitmap src) {
         if (src == null) {
             return null;
@@ -134,12 +107,7 @@ public class ImageHelper {
 
     // ========== מתודות פנימיות ==========
 
-    /**
-     * קורא את תגית הסיבוב מנתוני EXIF של התמונה.
-     * חובה לפתוח InputStream חדש — ExifInterface צורך את כולו.
-     *
-     * @return זווית סיבוב במעלות (0, 90, 180, 270)
-     */
+    // קורא את זווית הסיבוב מנתוני EXIF של התמונה
     private static int getExifRotation(ContentResolver resolver, Uri uri) {
         try (InputStream is = resolver.openInputStream(uri)) {
             if (is == null) {
@@ -173,24 +141,20 @@ public class ImageHelper {
         return rotated;
     }
 
-    /**
-     * מקטין Bitmap כך שהצלע הגדולה לא תעלה על maxDim.
-     * שומר על יחס גובה-רוחב — לא חותך, לא מעוות.
-     * אם התמונה כבר קטנה מספיק — מחזיר אותה כמות שהיא.
-     */
+    // מקטין Bitmap בלי לחתוך או לעוות, אם הוא גדול מדי
     private static Bitmap scaleDown(Bitmap source, int maxDim) {
-        int w = source.getWidth();
-        int h = source.getHeight();
+        int width = source.getWidth();
+        int height = source.getHeight();
 
-        if (w <= maxDim && h <= maxDim) {
+        if (width <= maxDim && height <= maxDim) {
             return source;
         }
 
-        float ratio = Math.min((float) maxDim / w, (float) maxDim / h);
-        int newW = Math.round(w * ratio);
-        int newH = Math.round(h * ratio);
+        float ratio = Math.min((float) maxDim / width, (float) maxDim / height);
+        int newWidth = Math.round(width * ratio);
+        int newHeight = Math.round(height * ratio);
 
-        Bitmap scaled = Bitmap.createScaledBitmap(source, newW, newH, true);
+        Bitmap scaled = Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
         if (scaled != source) {
             source.recycle();
         }

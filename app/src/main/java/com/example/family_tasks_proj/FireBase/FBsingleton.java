@@ -9,10 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * מחלקת יחיד לגישה ל-FirebaseAuth ול-Realtime Database.
- * שומרת את פרטי ההורה וכותבת אותם בלי למחוק ילדים או תבניות.
- */
+/** מחלקת יחיד לגישה ל-Firebase ולשמירת פרטי ההורה. */
 public class FBsingleton {
 
     private static FBsingleton instance;
@@ -33,9 +30,7 @@ public class FBsingleton {
         auth = FirebaseAuth.getInstance();
     }
 
-    /**
-     * מחזיר את המופע היחיד של המחלקה; יוצר אותו בפעם הראשונה.
-     */
+    /** מחזיר את המופע היחיד של המחלקה. */
     public static synchronized FBsingleton getInstance() {
         if (instance == null) {
             instance = new FBsingleton();
@@ -43,14 +38,7 @@ public class FBsingleton {
         return instance;
     }
 
-    /**
-     * שומר את פרטי ההורה בזיכרון לשימוש מאוחר.
-     * שולף uid אוטומטית מ-FirebaseAuth.
-     *
-     * @param firstName שם פרטי
-     * @param lastName  שם משפחה
-     * @param email     אימייל
-     */
+    // שומר פרטי הורה בזיכרון ושולף uid מ-FirebaseAuth
     public void setUserData(String firstName, String lastName, String email) {
         this.uid = auth.getUid();
         this.firstName = firstName;
@@ -63,11 +51,7 @@ public class FBsingleton {
     public String getLastName()  { return lastName; }
     public String getEmail()     { return email; }
 
-    /**
-     * שומר פרופיל הורה ב-Firebase עם מאזין שמחזיר הצלחה או כישלון.
-     *
-     * @param listener מאזין שמקבל את תוצאת הכתיבה. null אומר שלא צריך מאזין.
-     */
+    // שומר פרופיל הורה ב-Firebase עם מאזין תוצאה אופציונלי
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
         if (uid == null) return;
 
