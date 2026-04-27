@@ -51,6 +51,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private TextView tvTotalTasks;
     private TextView tvCompleted;
     private TextView tvDueSoon;
+    private TextView tvOverdue;
     private TextView tvNoTasks;
     private TextView tvTaskSectionTitle;
     private RecyclerView rvTasks;
@@ -58,6 +59,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private LinearLayout filterNotCompleted;
     private LinearLayout filterCompleted;
     private LinearLayout filterUrgent;
+    private LinearLayout filterOverdue;
     private ImageView imgChildAvatar;
 
     private final List<ChildTask> allTasks = new ArrayList<>();
@@ -99,6 +101,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvCompleted = findViewById(R.id.tvCompleted);
         tvDueSoon = findViewById(R.id.tvDueSoon);
+        tvOverdue = findViewById(R.id.tvOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasks);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvTasks);
@@ -107,6 +110,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         filterNotCompleted = findViewById(R.id.filterNotCompleted);
         filterCompleted = findViewById(R.id.filterCompleted);
         filterUrgent = findViewById(R.id.filterUrgent);
+        filterOverdue = findViewById(R.id.filterOverdue);
     }
 
     // מגדיר RecyclerView למשימות הילד
@@ -139,6 +143,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setActiveFilter(FilterMode.URGENT);
+            }
+        });
+        filterOverdue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setActiveFilter(FilterMode.OVERDUE);
             }
         });
     }
@@ -284,14 +294,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
 
         counts.openCount++;
-        
+
         // משימה באיחור - תאריך היעד עבר
         if (DateUtils.isOverdue(task.getDueAt())) {
             counts.overdueCount++;
-            counts.urgentCount++; // נספר גם כדחוף לצורך התצוגה הכללית
-        } 
-        // משימה דחופה - נותרו 0-2 ימים
-        else if (DateUtils.isDueSoon(task.getDueAt())) {
+        } else if (DateUtils.isDueSoon(task.getDueAt())) {
             counts.urgentCount++;
         }
     }
@@ -300,8 +307,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void bindTaskCounts(TaskCounts counts) {
         tvTotalTasks.setText(String.valueOf(counts.openCount));
         tvCompleted.setText(String.valueOf(counts.completedCount));
-        // תיבת "דחוף" מציגה את סך המשימות הדחופות והמשימות באיחור ביחד
         tvDueSoon.setText(String.valueOf(counts.urgentCount));
+        tvOverdue.setText(String.valueOf(counts.overdueCount));
         tvStars.setText(getString(R.string.child_stars_count, counts.stars));
     }
 
@@ -421,8 +428,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
             case COMPLETED:
                 return task.getIsDone();
             case URGENT:
-                // משימה דחופה היא כזו שלא בוצעה והיא או קרובה למועד או שכבר עבר המועד
-                return !task.getIsDone() && (DateUtils.isDueSoon(task.getDueAt()) || DateUtils.isOverdue(task.getDueAt()));
+                return !task.getIsDone()
+                        && !DateUtils.isOverdue(task.getDueAt())
+                        && DateUtils.isDueSoon(task.getDueAt());
+            case OVERDUE:
+                // הצג רק משימות באיחור
+                return !task.getIsDone() && DateUtils.isOverdue(task.getDueAt());
             default:
                 return !task.getIsDone();
         }
@@ -439,6 +450,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 tvTaskSectionTitle.setText(R.string.child_task_section_urgent);
                 tvNoTasks.setText(R.string.child_no_tasks_urgent);
                 break;
+            case OVERDUE:
+                tvTaskSectionTitle.setText(R.string.child_dashboard_filter_overdue);
+                tvNoTasks.setText(R.string.child_no_tasks_overdue);
+                break;
             default:
                 tvTaskSectionTitle.setText(R.string.child_task_section_open);
                 tvNoTasks.setText(R.string.child_no_tasks_open);
@@ -449,6 +464,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     // מעדכן את העיצוב של שלושת כפתורי הפילטר
     private void updateFilterSelectionUi() {
         updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, R.color.surface_soft_orange);
+        updateFilterBlock(filterOverdue, activeFilter == FilterMode.OVERDUE, R.color.surface_soft_rose);
         updateFilterBlock(filterCompleted, activeFilter == FilterMode.COMPLETED, R.color.surface_soft_green);
         updateFilterBlock(filterNotCompleted, activeFilter == FilterMode.NOT_COMPLETED, R.color.surface_soft_blue);
     }
@@ -530,6 +546,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private enum FilterMode {
         NOT_COMPLETED,
         COMPLETED,
-        URGENT
+        URGENT,
+        OVERDUE
     }
 }

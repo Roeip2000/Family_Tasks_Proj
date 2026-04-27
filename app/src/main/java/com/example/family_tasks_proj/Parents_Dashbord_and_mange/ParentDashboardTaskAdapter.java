@@ -228,7 +228,9 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     private boolean isUrgentTask(AssignedTask task) {
-        return task != null && !task.isDone && DateUtils.isDueSoon(task.dueAt);
+        return task != null && !task.isDone
+                && !DateUtils.isOverdue(task.dueAt)
+                && DateUtils.isDueSoon(task.dueAt);
     }
 
     private int dpToPx(int value) {

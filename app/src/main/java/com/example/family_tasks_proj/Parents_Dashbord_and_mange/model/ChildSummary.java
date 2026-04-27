@@ -9,4 +9,5 @@ public class ChildSummary {
     public int assignedCount;
     public int completedCount;
     public int urgentCount;
+    public int overdueCount;
 }

@@ -57,7 +57,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
     private TextView tvParentName, tvParentTotalTasks, tvParentCompleted, tvParentDueSoon;
     private TextView tvNoTasks, tvTaskSectionTitle, tvTaskSectionSubtitle, tvNoChildren;
-    private TextView filterAllTasks, filterOpenTasks, filterCompletedTasks, filterUrgentTasks;
+    private TextView filterAllTasks, filterOpenTasks, filterCompletedTasks, filterUrgentTasks, filterOverdueTasks;
     private ImageView ivParentProfile;
     private ListView lvTasks;
     private RecyclerView rvChildren;
@@ -69,14 +69,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private final Map<String, Bitmap> childPhotoCache = new HashMap<>();
 
     // ספירות סיכום הבית — מעודכנות בזמן parseDashboardData
-    private int houseAssigned, houseDone, houseUrgent, houseTotal;
+    private int houseAssigned, houseDone, houseUrgent, houseOverdue, houseTotal;
 
     private ParentDashboardTaskAdapter taskAdapter;
     private ParentDashboardChildSummaryAdapter childSummaryAdapter;
     private String selectedChildId;
     private FilterMode activeFilter = FilterMode.ASSIGNED;
 
-    private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT }
+    private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
 
     private final ActivityResultLauncher<String> profileImagePicker =
             registerForActivityResult(
@@ -128,6 +128,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         filterOpenTasks = findViewById(R.id.filterOpenTasks);
         filterCompletedTasks = findViewById(R.id.filterCompletedTasks);
         filterUrgentTasks = findViewById(R.id.filterUrgentTasks);
+        filterOverdueTasks = findViewById(R.id.filterOverdueTasks);
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
         btnAssignTaskToChild = findViewById(R.id.btnAssignTaskToChild);
@@ -234,6 +235,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setActiveFilter(FilterMode.URGENT);
+            }
+        });
+        filterOverdueTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setActiveFilter(FilterMode.OVERDUE);
             }
         });
         updateTaskFilterSelectionUi();
@@ -356,7 +363,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         allAssignedTasks.clear();
         childSummaries.clear();
         childPhotoCache.clear();
-        houseAssigned = houseDone = houseUrgent = houseTotal = 0;
+        houseAssigned = houseDone = houseUrgent = houseOverdue = houseTotal = 0;
 
         for (DataSnapshot childSnap : snapshot.getChildren()) {
             String childId = childSnap.getKey();
@@ -396,6 +403,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             all.assignedCount = houseAssigned;
             all.completedCount = houseDone;
             all.urgentCount = houseUrgent;
+            all.overdueCount = houseOverdue;
             childSummaries.add(0, all);
         }
     }
@@ -427,7 +435,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
         summary.assignedCount++;
         houseAssigned++;
-        if (isUrgentTask(task)) {
+        if (DateUtils.isOverdue(task.dueAt)) {
+            summary.overdueCount++;
+            houseOverdue++;
+        } else if (DateUtils.isDueSoon(task.dueAt)) {
             summary.urgentCount++;
             houseUrgent++;
         }
@@ -470,6 +481,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         bindTaskTab(filterOpenTasks, activeFilter == FilterMode.ASSIGNED, enabled);
         bindTaskTab(filterCompletedTasks, activeFilter == FilterMode.COMPLETED, enabled);
         bindTaskTab(filterUrgentTasks, activeFilter == FilterMode.URGENT, enabled);
+        bindTaskTab(filterOverdueTasks, activeFilter == FilterMode.OVERDUE, enabled);
     }
 
     // הטאב הפעיל נצבע במלא כדי שיהיה ברור מה נבחר; הלא-נבחר שקוף
@@ -499,7 +511,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
         tvTaskSectionSubtitle.setText(
                 getString(R.string.parent_dashboard_selected_child_stats,
-                        summary.assignedCount, summary.completedCount, summary.urgentCount));
+                        summary.assignedCount, summary.completedCount,
+                        summary.urgentCount, summary.overdueCount));
     }
 
     // בונה את רשימת המשימות של הילד הנבחר לפי הפילטר הפעיל
@@ -519,6 +532,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         // מצב כל הילדים לא משנה Firebase; הוא רק מסנן את הרשימה שכבר נטענה
         // חלוקה לשלוש קבוצות פשוטות: דחופה, פתוחה, הושלמה
+        List<AssignedTask> overdue = new ArrayList<>();
         List<AssignedTask> urgent = new ArrayList<>();
         List<AssignedTask> open = new ArrayList<>();
         List<AssignedTask> completed = new ArrayList<>();
@@ -529,10 +543,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
             if (!isAll && !selectedChild.childId.equals(task.childId)) {
                 continue;
             }
-            addTaskToCorrectGroup(task, urgent, open, completed);
+            addTaskToCorrectGroup(task, overdue, urgent, open, completed);
         }
 
-        int emptyTextRes = populateByActiveFilter(urgent, open, completed, isAll);
+        int emptyTextRes = populateByActiveFilter(overdue, urgent, open, completed, isAll);
         // ההודעה הריקה בתצוגת "כל הילדים" גנרית, ובתצוגת ילד יחיד עם שמו
         if (isAll) {
             tvNoTasks.setText(getString(emptyTextRes));
@@ -546,12 +560,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     // מכניס משימה לאחת משלוש הקבוצות: דחופה, פתוחה או הושלמה
     private void addTaskToCorrectGroup(AssignedTask task,
+                                       List<AssignedTask> overdue,
                                        List<AssignedTask> urgent,
                                        List<AssignedTask> open,
                                        List<AssignedTask> completed) {
         if (task.isDone) {
             completed.add(task);
-        } else if (isUrgentTask(task)) {
+        } else if (DateUtils.isOverdue(task.dueAt)) {
+            overdue.add(task);
+        } else if (DateUtils.isDueSoon(task.dueAt)) {
             urgent.add(task);
         } else {
             open.add(task);
@@ -559,7 +576,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     // ממלא את visibleTaskItems לפי הפילטר, ומחזיר את מזהה הטקסט במקרה שהתוצאה ריקה
-    private int populateByActiveFilter(List<AssignedTask> urgent,
+    private int populateByActiveFilter(List<AssignedTask> overdue,
+                                       List<AssignedTask> urgent,
                                        List<AssignedTask> open,
                                        List<AssignedTask> completed,
                                        boolean isAll) {
@@ -582,8 +600,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     return R.string.parent_dashboard_all_no_tasks_urgent;
                 }
                 return R.string.parent_dashboard_no_tasks_urgent;
+            case OVERDUE:
+                addTasksWithHeader(null, overdue);
+                if (isAll) {
+                    return R.string.parent_dashboard_all_no_tasks_overdue;
+                }
+                return R.string.parent_dashboard_no_tasks_overdue;
             case ALL:
             default:
+                addTasksWithHeader(getString(R.string.parent_dashboard_group_overdue), overdue);
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_urgent), urgent);
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_assigned), open);
                 addTasksWithHeader(getString(R.string.parent_dashboard_group_completed), completed);
@@ -613,7 +638,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private boolean isUrgentTask(AssignedTask task) {
-        return task != null && !task.isDone && DateUtils.isDueSoon(task.dueAt);
+        return task != null && !task.isDone
+                && !DateUtils.isOverdue(task.dueAt)
+                && DateUtils.isDueSoon(task.dueAt);
     }
 
     private ChildSummary getSelectedChildSummary() {

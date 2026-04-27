@@ -79,6 +79,7 @@
     <string name="child_no_tasks_open">אין משימות פתוחות כרגע.</string>
     <string name="child_no_tasks_completed">אין משימות שהושלמו כרגע.</string>
     <string name="child_no_tasks_urgent">אין משימות דחופות כרגע.</string>
+    <string name="child_no_tasks_overdue">אין משימות באיחור כרגע.</string>
     <string name="error_qr_creation">שגיאה ביצירת QR</string>
 
     <string name="filter_urgent">דחופות</string>
@@ -96,6 +97,7 @@
     <string name="child_task_section_completed">הושלמו</string>
     <string name="child_task_section_urgent">דחופות</string>
     <string name="child_task_section_open">לא הושלמו</string>
+    <string name="child_dashboard_filter_overdue">באיחור</string>
     <string name="child_missing_session">חסר סשן. חזרו למסך בחירת ילד.</string>
     <string name="child_error_loading_name">שגיאה בטעינת שם: %1$s</string>
     <string name="child_error_loading_tasks">שגיאה בטעינת משימות: %1$s</string>
@@ -137,11 +139,12 @@
     <string name="parent_dashboard_selected_child_empty_title">משימות הילדים</string>
     <string name="parent_dashboard_selected_child_empty_subtitle">בחרו ילד כדי לראות את המשימות שלו.</string>
     <string name="parent_dashboard_selected_child_title">המשימות של %1$s</string>
-    <string name="parent_dashboard_selected_child_stats">פתוחות %1$d · הושלמו %2$d · דחופות %3$d</string>
+    <string name="parent_dashboard_selected_child_stats">פתוחות %1$d · הושלמו %2$d · דחופות %3$d · באיחור %4$d</string>
     <string name="parent_dashboard_no_tasks_all">אין כרגע משימות ל-%1$s.</string>
     <string name="parent_dashboard_no_tasks_open">אין ל-%1$s משימות פתוחות כרגע.</string>
     <string name="parent_dashboard_no_tasks_completed">אין ל-%1$s משימות שהושלמו כרגע.</string>
     <string name="parent_dashboard_no_tasks_urgent">אין ל-%1$s משימות דחופות כרגע.</string>
+    <string name="parent_dashboard_no_tasks_overdue">אין ל-%1$s משימות באיחור כרגע.</string>
     <string name="parent_dashboard_task_details_title">פרטי משימה</string>
     <string name="parent_dashboard_task_details">משימה: %1$s\nילד: %2$s\nתאריך יעד: %3$s\nסטטוס: %4$s</string>
     <string name="parent_dashboard_task_due_done">בוצע | %1$s</string>
@@ -170,6 +173,7 @@
     <string name="parent_dashboard_summary_completed">בוצע</string>
     <string name="parent_dashboard_summary_urgent">דחוף</string>
     <string name="parent_dashboard_group_urgent">דחופות</string>
+    <string name="parent_dashboard_group_overdue">באיחור</string>
     <string name="parent_dashboard_group_assigned">נשלחו</string>
     <string name="parent_dashboard_group_completed">הושלמו</string>
     <string name="parent_dashboard_actions_note">מכאן שולחים משימות, מנהלים ילדים, מעדכנים תבניות ופותחים את ה־QR המשפחתי.</string>
@@ -303,6 +307,7 @@
     <string name="parent_dashboard_all_no_tasks_open">אין משימות פתוחות באף ילד כרגע.</string>
     <string name="parent_dashboard_all_no_tasks_completed">אין משימות שהושלמו באף ילד.</string>
     <string name="parent_dashboard_all_no_tasks_urgent">אין משימות דחופות באף ילד.</string>
+    <string name="parent_dashboard_all_no_tasks_overdue">אין משימות באיחור באף ילד.</string>
     <string name="parent_dashboard_task_owner_label">ל-%1$s</string>
     <string name="assign_task_form_section_what">מה המשימה?</string>
     <string name="assign_task_form_section_who">למי ומתי?</string>

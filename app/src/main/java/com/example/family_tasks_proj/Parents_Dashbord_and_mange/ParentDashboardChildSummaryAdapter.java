@@ -41,6 +41,9 @@ class ParentDashboardChildSummaryAdapter
     private static final String METRIC_ORANGE_BG = "#FFF4E5";
     private static final String METRIC_ORANGE_TEXT = "#9C5A00";
     private static final String METRIC_ORANGE_STROKE = "#FFD199";
+    private static final String METRIC_RED_BG = "#FFEBEE";
+    private static final String METRIC_RED_TEXT = "#C62828";
+    private static final String METRIC_RED_STROKE = "#FFCDD2";
     private static final String CHILD_CARD_DEFAULT_BG = "#FFFFFF";
     private static final String CHILD_CARD_SELECTED_BG = "#F3F8FF";
     private static final String CHILD_CARD_DEFAULT_STROKE = "#D9E2EC";
@@ -88,6 +91,13 @@ class ParentDashboardChildSummaryAdapter
                 childSummary.completedCount, METRIC_GREEN_BG, METRIC_GREEN_TEXT, METRIC_GREEN_STROKE);
         bindMetricChip(holder.tvChildSummaryUrgent, R.string.parent_dashboard_summary_urgent,
                 childSummary.urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE);
+        if (childSummary.overdueCount > 0) {
+            holder.tvChildSummaryOverdue.setVisibility(View.VISIBLE);
+            bindMetricChip(holder.tvChildSummaryOverdue, R.string.parent_dashboard_group_overdue,
+                    childSummary.overdueCount, METRIC_RED_BG, METRIC_RED_TEXT, METRIC_RED_STROKE);
+        } else {
+            holder.tvChildSummaryOverdue.setVisibility(View.GONE);
+        }
 
         bindCardSelection(holder, isSelected);
         holder.itemView.setContentDescription(
@@ -182,6 +192,7 @@ class ParentDashboardChildSummaryAdapter
         private final TextView tvChildSummaryAssigned;
         private final TextView tvChildSummaryCompleted;
         private final TextView tvChildSummaryUrgent;
+        private final TextView tvChildSummaryOverdue;
 
         ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -191,6 +202,7 @@ class ParentDashboardChildSummaryAdapter
             tvChildSummaryAssigned = itemView.findViewById(R.id.tvChildSummaryAssigned);
             tvChildSummaryCompleted = itemView.findViewById(R.id.tvChildSummaryCompleted);
             tvChildSummaryUrgent = itemView.findViewById(R.id.tvChildSummaryUrgent);
+            tvChildSummaryOverdue = itemView.findViewById(R.id.tvChildSummaryOverdue);
         }
     }
 }
