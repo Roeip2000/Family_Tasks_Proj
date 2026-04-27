@@ -242,7 +242,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String dueDate = etDueDate.getText().toString().trim();
         int childPosition = spAssignee.getSelectedItemPosition();
 
-        if (!validateAssignment(title, dueDate, childPosition)) {
+        if (title.isEmpty()) {
+            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
+            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -266,12 +272,19 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String dueDate = etDueDate.getText().toString().trim();
         int childPosition = spAssignee.getSelectedItemPosition();
 
-        if (!validateAssignment(title, dueDate, childPosition)) {
+        if (title.isEmpty()) {
+            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
+            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
             return;
         }
 
         btnAssign.setEnabled(false); // מונע לחיצות כפולות
-        DatabaseReference tasksRef = tasksRef(childIds.get(childPosition));
+        
+        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("parents").child(parentUid).child("children").child(childIds.get(childPosition)).child("tasks");
         String taskId = tasksRef.push().getKey();
 
         if (taskId == null) {
@@ -279,56 +292,30 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
-        TaskTemplate selectedTemplate = getSelectedTemplate();
-        Map<String, Object> taskData = buildTaskData(title, dueDate, selectedTemplate);
-        saveTaskToFirebase(tasksRef, taskId, taskData);
-    }
-
-    // בונה את נתוני המשימה לפני שמירה ב-Firebase
-    private Map<String, Object> buildTaskData(String title, String dueDate, TaskTemplate selectedTemplate) {
-        int starsWorth;
-        if (selectedTemplate != null) {
-            starsWorth = selectedTemplate.safeStarsWorth();
-        } else {
-            starsWorth = TaskTemplate.DEFAULT_STARS_WORTH;
-        }
-
-        String imageBase64 = null;
-        if (selectedTemplate != null) {
-            imageBase64 = selectedTemplate.getImageBase64();
+        TaskTemplate selectedTemplate = null;
+        int templatePosition = spTemplates.getSelectedItemPosition();
+        if (templatePosition >= 0 && templatePosition < templates.size()) {
+            selectedTemplate = templates.get(templatePosition);
         }
 
         Map<String, Object> task = new HashMap<>();
         task.put("title", title);
         task.put("dueAt", dueDate);
         task.put("isDone", false);
-        task.put("starsWorth", starsWorth);
-        task.put("imageBase64", imageBase64);
+        task.put("starsWorth", (selectedTemplate != null) ? selectedTemplate.safeStarsWorth() : TaskTemplate.DEFAULT_STARS_WORTH);
+        task.put("imageBase64", (selectedTemplate != null) ? selectedTemplate.getImageBase64() : null);
         task.put("createdAt", System.currentTimeMillis());
-        return task;
-    }
 
-    // כותב את המשימה ל-Firebase: /parents/{uid}/children/{childId}/tasks/{taskId}
-    private void saveTaskToFirebase(DatabaseReference tasksRef, String taskId, Map<String, Object> taskData) {
-        DatabaseReference newTaskRef = tasksRef.child(taskId);
-        Task<Void> saveTask = newTaskRef.setValue(taskData);
-
-        saveTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+        tasksRef.child(taskId).setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(AssignTaskToChildActivity.this, R.string.assign_task_success, Toast.LENGTH_SHORT).show();
                 finish();
             }
-        });
-
-        saveTask.addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(
-                        AssignTaskToChildActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -338,38 +325,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         return FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentUid);
-    }
-
-    // מחזיר הפניה לרשימת המשימות של ילד: /parents/{uid}/children/{childId}/tasks
-    private DatabaseReference tasksRef(String childId) {
-        return parentRef()
-                .child("children")
-                .child(childId)
-                .child("tasks");
-    }
-
-    // בודק כותרת, תאריך וילד לפני יצירת משימה
-    private boolean validateAssignment(String title, String dueDate, int childPosition) {
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
-            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-
-    // מחזיר את התבנית שנבחרה בספינר, או null אם אין בחירה
-    private TaskTemplate getSelectedTemplate() {
-        int templatePosition = spTemplates.getSelectedItemPosition();
-        if (templatePosition >= 0 && templatePosition < templates.size()) {
-            return templates.get(templatePosition);
-        }
-        return null;
     }
 
     // מכניס רשימת טקסטים לתוך Spinner פשוט

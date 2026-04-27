@@ -124,28 +124,27 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         }
 
         if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
-            tvTaskOwner.setText(getContext().getString(
-                    R.string.parent_dashboard_task_owner_label, task.childName));
+            tvTaskOwner.setText(getContext().getString(R.string.parent_dashboard_task_owner_label, task.childName));
             tvTaskOwner.setVisibility(View.VISIBLE);
         } else {
             tvTaskOwner.setVisibility(View.GONE);
         }
 
-        tvDueDateCard.setText(getDueLine(task));
-        tvDueDateCard.setTextColor(getDueLineColor(task));
+        long daysLeft = DateUtils.daysLeft(task.dueAt);
 
-        String statusText = getTaskStatusLabel(task);
-        int[] colors = getStatusColors(task);
-        int chipBgColor = colors[0];
-        int chipTextColor = colors[1];
-        int dotColor = colors[2];
+        tvDueDateCard.setText(getContext().getString(task.isDone ? R.string.parent_dashboard_task_due_done : (daysLeft < 0 ? R.string.parent_dashboard_task_due_late : (daysLeft <= 2 ? R.string.parent_dashboard_task_due_urgent : R.string.parent_dashboard_task_due_regular)), task.dueAt));
+        tvDueDateCard.setTextColor(task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_DUE)));
 
-        tvStatusChip.setText(statusText);
+        int chipBgColor = task.isDone ? COLOR_DONE_BG : (daysLeft < 0 ? COLOR_OVERDUE_BG : (daysLeft <= 2 ? COLOR_URGENT_BG : COLOR_REGULAR_BG));
+        int chipTextColor = task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_TEXT));
+        int dotColor = task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_DOT));
+
+        tvStatusChip.setText(getContext().getString(task.isDone ? R.string.parent_dashboard_task_status_done : (daysLeft < 0 ? R.string.parent_dashboard_task_status_late : (daysLeft <= 2 ? R.string.parent_dashboard_task_status_urgent : R.string.parent_dashboard_task_status_waiting))));
         tvStatusChip.setTextColor(chipTextColor);
 
         GradientDrawable chipBg = new GradientDrawable();
         chipBg.setColor(chipBgColor);
-        chipBg.setCornerRadius(dpToPx(14));
+        chipBg.setCornerRadius(Math.round(getContext().getResources().getDisplayMetrics().density * 14));
         tvStatusChip.setBackground(chipBg);
 
         GradientDrawable dotBg = new GradientDrawable();
@@ -153,68 +152,5 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         dotBg.setColor(dotColor);
         viewTaskDot.setBackground(dotBg);
         return convertView;
-    }
-
-    // [רקע צ'יפ, טקסט צ'יפ, צבע נקודה]
-    private int[] getStatusColors(AssignedTask task) {
-        if (task.isDone) {
-            return new int[]{COLOR_DONE_BG, COLOR_DONE, COLOR_DONE};
-        }
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) {
-            return new int[]{COLOR_OVERDUE_BG, COLOR_OVERDUE, COLOR_OVERDUE};
-        }
-        if (isUrgentTask(task)) {
-            return new int[]{COLOR_URGENT_BG, COLOR_URGENT, COLOR_URGENT};
-        }
-        return new int[]{COLOR_REGULAR_BG, COLOR_REGULAR_TEXT, COLOR_REGULAR_DOT};
-    }
-
-    private String getTaskStatusLabel(AssignedTask task) {
-        if (task.isDone) {
-            return getContext().getString(R.string.parent_dashboard_task_status_done);
-        }
-
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) {
-            return getContext().getString(R.string.parent_dashboard_task_status_late);
-        }
-        if (daysLeft <= 2) {
-            return getContext().getString(R.string.parent_dashboard_task_status_urgent);
-        }
-        return getContext().getString(R.string.parent_dashboard_task_status_waiting);
-    }
-
-    private String getDueLine(AssignedTask task) {
-        if (task.isDone) {
-            return getContext().getString(R.string.parent_dashboard_task_due_done, task.dueAt);
-        }
-
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) {
-            return getContext().getString(R.string.parent_dashboard_task_due_late, task.dueAt);
-        }
-        if (daysLeft <= 2) {
-            return getContext().getString(R.string.parent_dashboard_task_due_urgent, task.dueAt);
-        }
-        return getContext().getString(R.string.parent_dashboard_task_due_regular, task.dueAt);
-    }
-
-    private int getDueLineColor(AssignedTask task) {
-        if (task.isDone) return COLOR_DONE;
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) return COLOR_OVERDUE;
-        if (daysLeft <= 2) return COLOR_URGENT;
-        return COLOR_REGULAR_DUE;
-    }
-
-    private boolean isUrgentTask(AssignedTask task) {
-        return task != null && !task.isDone
-                && !DateUtils.isOverdue(task.dueAt)
-                && DateUtils.isDueSoon(task.dueAt);
-    }
-
-    private int dpToPx(int value) {
-        return Math.round(getContext().getResources().getDisplayMetrics().density * value);
     }
 }

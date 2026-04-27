@@ -96,103 +96,50 @@ public class ParentRegisterFragment extends Fragment {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (!validateRegisterFields(firstName, lastName, email, password)) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
 
-        Task<AuthResult> registerTask = mAuth.createUserWithEmailAndPassword(email, password);
-        registerTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                handleRegisterResult(task, firstName, lastName, email);
+                if (!isAdded()) return;
+                if (!task.isSuccessful() || mAuth.getCurrentUser() == null) {
+                    setLoading(false);
+                    Toast.makeText(requireContext(), task.getException() != null ? getString(R.string.error_with_details, task.getException().getMessage()) : getString(R.string.error_unknown_register), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                FBsingleton.getInstance().setUserData(firstName, lastName, email);
+                FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> saveTask) {
+                        if (!isAdded()) return;
+                        setLoading(false);
+                        if (!saveTask.isSuccessful()) {
+                            Toast.makeText(requireContext(), saveTask.getException() != null ? getString(R.string.error_with_details, saveTask.getException().getMessage()) : getString(R.string.error_unknown_register), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
+                        requireActivity().finish();
+                    }
+                });
             }
         });
-    }
-
-    private boolean validateRegisterFields(String firstName, String lastName, String email, String password) {
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (password.length() < 6) {
-            Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-
-    private void handleRegisterResult(@NonNull Task<AuthResult> task,
-                                      String firstName,
-                                      String lastName,
-                                      String email) {
-        if (!isAdded()) {
-            return;
-        }
-
-        if (!task.isSuccessful()) {
-            setLoading(false);
-            showRegisterError(task);
-            return;
-        }
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            setLoading(false);
-            return;
-        }
-
-        saveParentProfile(firstName, lastName, email);
-    }
-
-    // שומר פרופיל הורה ב-Firebase תחת /parents/{uid}
-    private void saveParentProfile(String firstName, String lastName, String email) {
-        FBsingleton.getInstance().setUserData(firstName, lastName, email);
-        FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> saveTask) {
-                handleParentProfileSaved(saveTask);
-            }
-        });
-    }
-
-    private void handleParentProfileSaved(@NonNull Task<Void> saveTask) {
-        if (!isAdded()) {
-            return;
-        }
-
-        setLoading(false);
-        if (!saveTask.isSuccessful()) {
-            showRegisterError(saveTask);
-            return;
-        }
-
-        Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
-        openParentDashboard();
-    }
-
-    private void showRegisterError(@NonNull Task<?> task) {
-        String errorMsg;
-        if (task.getException() != null) {
-            errorMsg = getString(R.string.error_with_details, task.getException().getMessage());
-        } else {
-            errorMsg = getString(R.string.error_unknown_register);
-        }
-        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
-    }
-
-    private void openParentDashboard() {
-        Intent intent = new Intent(requireActivity(), ParentDashboardActivity.class);
-        startActivity(intent);
-        requireActivity().finish();
     }
 
     // מונע לחיצות כפולות בזמן הרשמה

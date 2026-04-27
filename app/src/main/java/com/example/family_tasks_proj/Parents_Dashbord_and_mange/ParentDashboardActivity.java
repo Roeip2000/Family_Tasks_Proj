@@ -78,17 +78,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
 
-    private final ActivityResultLauncher<String> profileImagePicker =
-            registerForActivityResult(
-                    new ActivityResultContracts.GetContent(),
-                    new ActivityResultCallback<Uri>() {
-                        @Override
-                        public void onActivityResult(Uri uri) {
-                            handleProfileImageResult(uri);
-                        }
-                    }
-            );
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,49 +123,41 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnAssignTaskToChild = findViewById(R.id.btnAssignTaskToChild);
         btnShowQR = findViewById(R.id.btnShowQR);
         btnLogout = findViewById(R.id.btnLogout);
-
-        // גם האווטאר וגם הכפתור ליד השם פותחים את בורר התמונה
-        View.OnClickListener profileClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                profileImagePicker.launch("image/*");
-            }
-        };
-        findViewById(R.id.btnChangeProfilePic).setOnClickListener(profileClick);
-        ivParentProfile.setOnClickListener(profileClick);
     }
 
     private void bindActions() {
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(ManageChildrenActivity.class);
-            }
+            @Override public void onClick(View view) { openScreen(ManageChildrenActivity.class); }
         });
         btnManageTemplates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(ParentTaskTemplateActivity.class);
-            }
+            @Override public void onClick(View view) { openScreen(ParentTaskTemplateActivity.class); }
         });
         btnAssignTaskToChild.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(AssignTaskToChildActivity.class);
-            }
+            @Override public void onClick(View view) { openScreen(AssignTaskToChildActivity.class); }
         });
         btnShowQR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(GenerateQRActivity.class);
-            }
+            @Override public void onClick(View view) { openScreen(GenerateQRActivity.class); }
         });
         btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) { showLogoutDialog(); }
+        });
+        
+        View.OnClickListener filterListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLogoutDialog();
+                int id = view.getId();
+                if (id == R.id.filterAllTasks) setActiveFilter(FilterMode.ALL);
+                else if (id == R.id.filterOpenTasks) setActiveFilter(FilterMode.ASSIGNED);
+                else if (id == R.id.filterCompletedTasks) setActiveFilter(FilterMode.COMPLETED);
+                else if (id == R.id.filterUrgentTasks) setActiveFilter(FilterMode.URGENT);
+                else if (id == R.id.filterOverdueTasks) setActiveFilter(FilterMode.OVERDUE);
             }
-        });
+        };
+        filterAllTasks.setOnClickListener(filterListener);
+        filterOpenTasks.setOnClickListener(filterListener);
+        filterCompletedTasks.setOnClickListener(filterListener);
+        filterUrgentTasks.setOnClickListener(filterListener);
+        filterOverdueTasks.setOnClickListener(filterListener);
     }
 
     // פותח מסך פעולה של ההורה בלי לשנות את הדשבורד הנוכחי
@@ -278,63 +259,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 String lastName = snapshot.child("lastName").getValue(String.class);
                 tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה"));
                 String base64 = snapshot.child("profileImageBase64").getValue(String.class);
-                showParentProfile(ImageHelper.base64ToBitmap(base64));
+                
+                Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
+                if (bitmap == null) {
+                    ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
+                } else {
+                    ivParentProfile.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
+                }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) { }
-        });
-    }
-
-    // מטפל בתמונה שנבחרה מהגלריה עבור פרופיל ההורה
-    private void handleProfileImageResult(Uri uri) {
-        if (uri == null) {
-            return;
-        }
-
-        Bitmap bitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
-        if (bitmap == null) {
-            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        showParentProfile(bitmap);
-        saveProfileImage(bitmap);
-    }
-
-    // מציג תמונת פרופיל עגולה או תמונה חלופית אם אין תמונה
-    private void showParentProfile(Bitmap bitmap) {
-        if (bitmap == null) {
-            ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
-            return;
-        }
-        ivParentProfile.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
-    }
-
-    private void saveProfileImage(Bitmap bitmap) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            return;
-        }
-        String base64 = ImageHelper.bitmapToBase64(bitmap);
-        if (base64 == null) {
-            Toast.makeText(this, R.string.error_image_conversion, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        DatabaseReference imageRef = parentRef(user.getUid()).child("profileImageBase64");
-        Task<Void> saveTask = imageRef.setValue(base64);
-        saveTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ParentDashboardActivity.this,
-                        R.string.success_parent_photo_saved, Toast.LENGTH_SHORT).show();
-            }
-        });
-        saveTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentDashboardActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
-                        Toast.LENGTH_SHORT).show();
-            }
         });
     }
 
@@ -698,13 +631,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     .setNegativeButton(R.string.parent_dashboard_close, null);
         } else {
             builder.setMessage(details)
-                    .setPositiveButton(R.string.parent_dashboard_change_date,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    showChangeDateDialog(task);
-                                }
-                            })
                     .setNeutralButton(R.string.parent_dashboard_delete_task,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -715,28 +641,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     .setNegativeButton(R.string.parent_dashboard_close, null);
         }
         builder.show();
-    }
-
-    private void showChangeDateDialog(AssignedTask task) {
-        if (task == null || task.isDone) {
-            return;
-        }
-        Calendar cal = Calendar.getInstance();
-        DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
-                updateTaskDueDate(task, year, month, day);
-            }
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
-    }
-
-    // כותב תאריך יעד חדש ל-Firebase: /parents/{uid}/children/{childId}/tasks/{taskId}/dueAt
-    private void updateTaskDueDate(AssignedTask task, int year, int month, int day) {
-        String newDate = day + "/" + (month + 1) + "/" + year;
-        DatabaseReference dueAtRef = taskRef(task).child("dueAt");
-        Task<Void> updateTask = dueAtRef.setValue(newDate);
-        writeAndReload(updateTask, R.string.parent_dashboard_date_updated);
     }
 
     private void showDeleteTaskDialog(AssignedTask task) {

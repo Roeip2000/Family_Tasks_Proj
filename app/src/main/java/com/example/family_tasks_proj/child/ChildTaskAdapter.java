@@ -48,71 +48,31 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         ChildTask task = tasks.get(position);
         long daysLeft = DateUtils.daysLeft(task.getDueAt());
+        android.content.Context ctx = holder.itemView.getContext();
 
-        bindCardBackground(holder, task, daysLeft);
-        bindTitle(holder, task);
-        bindDueDate(holder, task, daysLeft);
-        bindStatusDot(holder, task, daysLeft);
-        bindTaskImage(holder, task);
-        bindStars(holder, task);
-        bindDoneButton(holder, task);
-    }
-
-    private void bindCardBackground(TaskViewHolder holder, ChildTask task, long daysLeft) {
         if (holder.itemView instanceof MaterialCardView) {
             MaterialCardView card = (MaterialCardView) holder.itemView;
-            android.content.Context ctx = holder.itemView.getContext();
-            int bgColor;
-            int strokeColor;
-
-            if (task.getIsDone()) {
-                bgColor = ctx.getColor(R.color.surface_soft_green);
-                strokeColor = ctx.getColor(R.color.accent_light);
-            } else if (daysLeft < 0) {
-                bgColor = ctx.getColor(R.color.danger_light);
-                strokeColor = ctx.getColor(R.color.urgent);
-            } else if (daysLeft <= 2) {
-                bgColor = ctx.getColor(R.color.surface_soft_orange);
-                strokeColor = ctx.getColor(R.color.urgent_light);
-            } else {
-                bgColor = ctx.getColor(R.color.bg_card);
-                strokeColor = ctx.getColor(R.color.border_light);
-            }
-
+            int bgColor = ctx.getColor(task.getIsDone() ? R.color.surface_soft_green : (daysLeft < 0 ? R.color.danger_light : (daysLeft <= 2 ? R.color.surface_soft_orange : R.color.bg_card)));
+            int strokeColor = ctx.getColor(task.getIsDone() ? R.color.accent_light : (daysLeft < 0 ? R.color.urgent : (daysLeft <= 2 ? R.color.urgent_light : R.color.border_light)));
             card.setCardBackgroundColor(bgColor);
             card.setStrokeColor(strokeColor);
             card.setStrokeWidth(1);
         }
-    }
 
-    // קו חוצה לטקסט אם המשימה בוצעה
-    private void bindTitle(TaskViewHolder holder, ChildTask task) {
-        android.content.Context ctx = holder.itemView.getContext();
-        if (task.getTitle() != null) {
-            holder.tvTaskTitle.setText(task.getTitle());
-        } else {
-            holder.tvTaskTitle.setText("");
-        }
-
+        holder.tvTaskTitle.setText(task.getTitle() != null ? task.getTitle() : "");
         if (task.getIsDone()) {
-            holder.tvTaskTitle.setPaintFlags(
-                    holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.tvTaskTitle.setPaintFlags(holder.tvTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTaskTitle.setTextColor(ctx.getColor(R.color.text_hint));
         } else {
-            holder.tvTaskTitle.setPaintFlags(
-                    holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.tvTaskTitle.setPaintFlags(holder.tvTaskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTaskTitle.setTextColor(ctx.getColor(R.color.text_primary));
         }
-    }
 
-    private void bindDueDate(TaskViewHolder holder, ChildTask task, long daysLeft) {
-        android.content.Context ctx = holder.itemView.getContext();
-        String dueText;
         if (task.getIsDone()) {
-            dueText = ctx.getString(R.string.child_due_done);
+            holder.tvDueDate.setText(ctx.getString(R.string.child_due_done));
             holder.tvDueDate.setTextColor(ctx.getColor(R.color.success_dark));
         } else {
-            dueText = formatDueText(holder, task.getDueAt(), daysLeft);
+            String dueText = formatDueText(holder, task.getDueAt(), daysLeft);
             if (daysLeft < 0) {
                 holder.tvDueDate.setTextColor(ctx.getColor(R.color.danger));
             } else if (daysLeft <= 2) {
@@ -121,71 +81,49 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             } else {
                 holder.tvDueDate.setTextColor(ctx.getColor(R.color.text_secondary));
             }
+            holder.tvDueDate.setText(dueText);
         }
-        holder.tvDueDate.setText(dueText);
-    }
 
-    private void bindStatusDot(TaskViewHolder holder, ChildTask task, long daysLeft) {
-        android.content.Context ctx = holder.itemView.getContext();
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
-
-        if (task.getIsDone()) {
-            dot.setColor(ctx.getColor(R.color.success_dark));
-        } else if (daysLeft >= 0 && daysLeft <= 2) {
-            dot.setColor(ctx.getColor(R.color.warning_dark));
-        } else if (daysLeft < 0) {
-            dot.setColor(ctx.getColor(R.color.danger));
-        } else {
-            dot.setColor(ctx.getColor(R.color.text_hint));
-        }
+        dot.setColor(ctx.getColor(task.getIsDone() ? R.color.success_dark : (daysLeft < 0 ? R.color.danger : (daysLeft <= 2 ? R.color.warning_dark : R.color.text_hint))));
         holder.viewStatusDot.setBackground(dot);
-    }
 
-    private void bindTaskImage(TaskViewHolder holder, ChildTask task) {
         if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.getImageBase64());
             if (bmp != null) {
                 holder.imgTaskImageShell.setVisibility(View.VISIBLE);
                 holder.imgTaskImage.setImageBitmap(bmp);
                 holder.imgTaskImage.setVisibility(View.VISIBLE);
-                return;
+            } else {
+                holder.imgTaskImageShell.setVisibility(View.GONE);
+                holder.imgTaskImage.setVisibility(View.GONE);
             }
+        } else {
+            holder.imgTaskImageShell.setVisibility(View.GONE);
+            holder.imgTaskImage.setVisibility(View.GONE);
         }
-        holder.imgTaskImageShell.setVisibility(View.GONE);
-        holder.imgTaskImage.setImageDrawable(null);
-        holder.imgTaskImage.setVisibility(View.GONE);
-    }
 
-    private void bindStars(TaskViewHolder holder, ChildTask task) {
-        android.content.Context ctx = holder.itemView.getContext();
         if (task.getStarsWorth() > 0) {
             holder.tvTaskStars.setText(ctx.getString(R.string.child_stars_worth, task.getStarsWorth()));
             holder.tvTaskStars.setVisibility(View.VISIBLE);
         } else {
-            holder.tvTaskStars.setText("");
             holder.tvTaskStars.setVisibility(View.GONE);
         }
-    }
 
-    // הכפתור מוסתר כשהמשימה כבר בוצעה
-    private void bindDoneButton(TaskViewHolder holder, ChildTask task) {
         if (task.getIsDone()) {
             holder.btnDone.setVisibility(View.GONE);
             holder.btnDone.setOnClickListener(null);
-            return;
-        }
-
-        holder.btnDone.setVisibility(View.VISIBLE);
-        holder.btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (doneListener != null) {
-                    doneListener.onTaskDone(task);
+        } else {
+            holder.btnDone.setVisibility(View.VISIBLE);
+            holder.btnDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (doneListener != null) doneListener.onTaskDone(task);
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override

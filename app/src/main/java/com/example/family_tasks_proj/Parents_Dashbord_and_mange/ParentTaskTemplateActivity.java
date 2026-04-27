@@ -211,12 +211,17 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     // שומר תבנית חדשה או מעדכן תבנית קיימת
     private void saveOrUpdateTemplate() {
         String title = etTitle.getText().toString().trim();
-        if (!validateTemplateBeforeSave(title)) {
+        if (title.isEmpty() || (editingTemplateId == null && correctedBitmap == null)) {
+            Toast.makeText(this, title.isEmpty() ? R.string.template_missing_title : R.string.template_missing_title_or_image, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int stars = parseStarsOrNotify();
-        if (stars <= 0) {
+        int stars;
+        try {
+            stars = Integer.parseInt(etStarsWorth.getText().toString().trim());
+            if (stars < MIN_STARS || stars > MAX_STARS) throw new NumberFormatException();
+        } catch (NumberFormatException exception) {
+            Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -226,42 +231,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
-        String templateId = getTemplateIdForSave();
-        Map<String, Object> data = buildTemplateData(templateId, title, stars);
-        if (data == null) {
-            return;
-        }
-
-        btnSave.setEnabled(false); // מונע לחיצות כפולות
-        boolean isEdit = editingTemplateId != null;
-        writeTemplateToFirebase(user.getUid(), templateId, data, isEdit);
-    }
-
-    // בודק שהטופס תקין לפני שמירת תבנית
-    private boolean validateTemplateBeforeSave(String title) {
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.template_missing_title, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (editingTemplateId == null && correctedBitmap == null) {
-            Toast.makeText(this, R.string.template_missing_title_or_image, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-
-    // מחזיר id קיים בעריכה או id חדש ביצירה
-    private String getTemplateIdForSave() {
-        if (editingTemplateId != null) {
-            return editingTemplateId;
-        }
-        return UUID.randomUUID().toString();
-    }
-
-    // בונה מפת נתונים פשוטה לשמירה ב-Firebase
-    private Map<String, Object> buildTemplateData(String templateId, String title, int stars) {
+        String templateId = (editingTemplateId != null) ? editingTemplateId : UUID.randomUUID().toString();
         Map<String, Object> data = new HashMap<>();
         data.put("id", templateId);
         data.put("title", title);
@@ -271,96 +241,74 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             String imageBase64 = ImageHelper.bitmapToBase64(correctedBitmap);
             if (imageBase64 == null) {
                 Toast.makeText(this, R.string.error_image_conversion, Toast.LENGTH_SHORT).show();
-                return null;
+                return;
             }
             data.put("imageBase64", imageBase64);
         }
 
-        return data;
-    }
+        btnSave.setEnabled(false); // מונע לחיצות כפולות
+        final boolean isEdit = editingTemplateId != null;
 
-    // כותב תבנית ל-Firebase תחת /parents/{uid}/task_templates/{templateId}
-    private void writeTemplateToFirebase(String uid,
-                                         String templateId,
-                                         Map<String, Object> data,
-                                         final boolean isEdit) {
-        DatabaseReference templateRef = getTemplatesRef(uid).child(templateId);
-        Task<Void> saveTask = templateRef.updateChildren(data);
-
-        saveTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+        getTemplatesRef(user.getUid()).child(templateId).updateChildren(data).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                handleTemplateSaved(isEdit);
+                Toast.makeText(ParentTaskTemplateActivity.this, isEdit ? R.string.template_updated_success : R.string.template_saved_success, Toast.LENGTH_SHORT).show();
+                resetForm();
+                loadTemplates();
             }
-        });
-
-        saveTask.addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentTaskTemplateActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    // מטפל בשמירה מוצלחת של תבנית ומרענן את הרשימה
-    private void handleTemplateSaved(boolean isEdit) {
-        if (isEdit) {
-            Toast.makeText(this, R.string.template_updated_success, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, R.string.template_saved_success, Toast.LENGTH_SHORT).show();
-        }
-        resetForm();
-        loadTemplates();
-    }
-
-    // מנסה לקרוא מספר כוכבים חוקי מהטופס
-    private int parseStarsOrNotify() {
-        String raw = etStarsWorth.getText().toString().trim();
-        try {
-            int value = Integer.parseInt(raw);
-            if (value < MIN_STARS || value > MAX_STARS) {
-                Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
-                return -1;
-            }
-            return value;
-        } catch (NumberFormatException exception) {
-            Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
-            return -1;
-        }
     }
 
     // פותח תפריט עריכה/מחיקה לתבנית שנבחרה
     private void showTemplateOptionsDialog(int position) {
-        if (position < 0 || position >= templateList.size()) {
-            return;
-        }
+        if (position < 0 || position >= templateList.size()) return;
 
         final TaskTemplate template = templateList.get(position);
-        String[] options = {
-                getString(R.string.template_option_edit),
-                getString(R.string.template_option_delete)
-        };
+        String[] options = {getString(R.string.template_option_edit), getString(R.string.template_option_delete)};
 
         new AlertDialog.Builder(this)
                 .setTitle(template.getTitle())
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        handleTemplateOption(template, which);
+                        if (which == 0) {
+                            startEditTemplate(template);
+                        } else {
+                            new AlertDialog.Builder(ParentTaskTemplateActivity.this)
+                                    .setTitle(R.string.template_delete_title)
+                                    .setMessage(getString(R.string.template_delete_message, template.getTitle()))
+                                    .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface confirmDialog, int confirmWhich) {
+                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                            if (user == null || template.getId() == null) return;
+                                            
+                                            getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Toast.makeText(ParentTaskTemplateActivity.this, R.string.template_deleted_success, Toast.LENGTH_SHORT).show();
+                                                    resetForm();
+                                                    loadTemplates();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.action_cancel, null)
+                                    .show();
+                        }
                     }
                 })
                 .show();
-    }
-
-    // מפעיל עריכה או מחיקה לפי הבחירה בדיאלוג
-    private void handleTemplateOption(TaskTemplate template, int which) {
-        if (which == 0) {
-            startEditTemplate(template);
-        } else {
-            showDeleteConfirmDialog(template);
-        }
     }
 
     // מכניס את הטופס למצב עריכה ומציג את נתוני התבנית

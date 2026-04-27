@@ -325,45 +325,24 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.child_mark_task_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        writeTaskDone(task);
+                        childRef().child(NODE_TASKS).child(task.getId()).child("isDone").setValue(true)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(ChildDashboardActivity.this, R.string.child_mark_task_success, Toast.LENGTH_SHORT).show();
+                                        task.setIsDone(true);
+                                        loadTasks();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.child_error_updating_task, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton(R.string.child_mark_task_later, null)
                 .show();
-    }
-
-    // כותב isDone=true ב-Firebase עבור המשימה שנבחרה
-    private void writeTaskDone(final ChildTask task) {
-        DatabaseReference doneRef = childRef()
-                .child(NODE_TASKS)
-                .child(task.getId())
-                .child("isDone");
-        Task<Void> updateTask = doneRef.setValue(true);
-
-        updateTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                handleTaskMarkedDone(task);
-            }
-        });
-
-        updateTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(
-                        ChildDashboardActivity.this,
-                        getString(R.string.child_error_updating_task, exception.getMessage()),
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-        });
-    }
-
-    // מרענן את הרשימה אחרי סימון משימה כבוצעה
-    private void handleTaskMarkedDone(ChildTask task) {
-        Toast.makeText(this, R.string.child_mark_task_success, Toast.LENGTH_SHORT).show();
-        task.setIsDone(true);
-        loadTasks();
     }
 
     // מציג דיאלוג אישור להתנתקות ילד
@@ -471,22 +450,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // צובע פילטר אחד לפי מצב הבחירה
     private void updateFilterBlock(LinearLayout layout, boolean selected, int fillColorRes) {
-        int fillColor;
-        int strokeWidth;
-        int strokeColor;
-        int textColor;
-
-        if (selected) {
-            fillColor = getColor(fillColorRes);
-            strokeWidth = 2;
-            strokeColor = getColor(R.color.primary);
-            textColor = getColor(R.color.text_primary);
-        } else {
-            fillColor = getColor(android.R.color.transparent);
-            strokeWidth = 0;
-            strokeColor = getColor(android.R.color.transparent);
-            textColor = getColor(R.color.text_secondary);
-        }
+        int fillColor = selected ? getColor(fillColorRes) : getColor(android.R.color.transparent);
+        int strokeWidth = selected ? 2 : 0;
+        int strokeColor = selected ? getColor(R.color.primary) : getColor(android.R.color.transparent);
+        int textColor = selected ? getColor(R.color.text_primary) : getColor(R.color.text_secondary);
 
         GradientDrawable background = new GradientDrawable();
         background.setCornerRadius(24f);
@@ -498,20 +465,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
         layout.setAlpha(1f);
         layout.setElevation(0f);
 
-        updateFilterTextColors(layout, selected, textColor);
-    }
-
-    // צובע את הטקסטים שנמצאים בתוך כפתור פילטר
-    private void updateFilterTextColors(LinearLayout layout, boolean selected, int textColor) {
         for (int index = 0; index < layout.getChildCount(); index++) {
             View child = layout.getChildAt(index);
             if (child instanceof TextView) {
                 ((TextView) child).setTextColor(textColor);
-                if (selected) {
-                    child.setAlpha(1f);
-                } else {
-                    child.setAlpha(0.9f);
-                }
+                child.setAlpha(selected ? 1f : 0.9f);
             }
         }
     }

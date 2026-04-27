@@ -89,59 +89,32 @@ public class ParentLoginFragment extends Fragment {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (!validateLoginFields(email, password)) {
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
 
-        Task<AuthResult> loginTask = mAuth.signInWithEmailAndPassword(email, password);
-        loginTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                handleLoginResult(task);
+                if (!isAdded()) return;
+                setLoading(false);
+                if (task.isSuccessful()) {
+                    startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
+                    requireActivity().finish();
+                } else {
+                    String errorMsg = task.getException() != null ? getString(R.string.error_with_details, task.getException().getMessage()) : getString(R.string.error_unknown_login);
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
+                }
             }
         });
-    }
-
-    private boolean validateLoginFields(String email, String password) {
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-
-    private void handleLoginResult(@NonNull Task<AuthResult> task) {
-        if (!isAdded()) {
-            return;
-        }
-
-        setLoading(false);
-        if (task.isSuccessful()) {
-            openParentDashboard();
-            return;
-        }
-
-        String errorMsg;
-        if (task.getException() != null) {
-            errorMsg = getString(R.string.error_with_details, task.getException().getMessage());
-        } else {
-            errorMsg = getString(R.string.error_unknown_login);
-        }
-        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
-    }
-
-    private void openParentDashboard() {
-        Intent intent = new Intent(requireActivity(), ParentDashboardActivity.class);
-        startActivity(intent);
-        requireActivity().finish();
     }
 
     // מונע לחיצות כפולות בזמן התחברות

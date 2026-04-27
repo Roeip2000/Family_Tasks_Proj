@@ -169,112 +169,52 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // שומר ילד חדש או מעדכן ילד קיים ב-Firebase
     private void saveChild() {
-        String firstName = etFirstName.getText().toString().trim();
-        String lastName = etLastName.getText().toString().trim();
+        final String firstName = etFirstName.getText().toString().trim();
+        final String lastName = etLastName.getText().toString().trim();
 
-        if (!validateChildForm(firstName, lastName)) {
-            return;
-        }
-
-        String childId = getChildIdForSave();
-        if (childId == null) {
-            return;
-        }
-
-        String imageBase64 = getImageBase64ForSave();
-        btnAddChild.setEnabled(false);
-
-        if (editingChildId == null) {
-            saveNewChild(childId, firstName, lastName, imageBase64);
-        } else {
-            updateExistingChild(childId, firstName, lastName, imageBase64);
-        }
-    }
-
-    // בודק שהשם הפרטי ושם המשפחה מולאו
-    private boolean validateChildForm(String firstName, String lastName) {
         if (firstName.isEmpty() || lastName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
-        return true;
-    }
 
-    // מחזיר id קיים בעריכה או id חדש ביצירת ילד
-    private String getChildIdForSave() {
-        if (editingChildId != null) {
-            return editingChildId;
-        }
-        String childId = childrenRef().push().getKey();
+        final String childId = (editingChildId != null) ? editingChildId : childrenRef().push().getKey();
         if (childId == null) {
             Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
-        }
-        return childId;
-    }
-
-    // מחזיר תמונה חדשה ב-Base64 או את התמונה הישנה בזמן עריכה
-    private String getImageBase64ForSave() {
-        if (selectedChildPhoto != null) {
-            return ImageHelper.bitmapToBase64(selectedChildPhoto);
-        }
-        return editingChildOldImageBase64;
-    }
-
-    // שומר ילד חדש תחת /parents/{uid}/children/{childId}
-    private void saveNewChild(String childId, String firstName, String lastName, String imageBase64) {
-        DatabaseReference childRef = childrenRef().child(childId);
-        Task<Void> saveTask = childRef.setValue(new Child(firstName, lastName, imageBase64));
-        attachSaveChildListeners(saveTask, firstName, lastName);
-    }
-
-    // מעדכן פרטי ילד קיים בלי לגעת בענף tasks שלו
-    private void updateExistingChild(String childId, String firstName, String lastName, String imageBase64) {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("firstName", firstName);
-        updates.put("lastName", lastName);
-        if (imageBase64 != null) {
-            updates.put("profileImageBase64", imageBase64);
+            return;
         }
 
-        DatabaseReference childRef = childrenRef().child(childId);
-        Task<Void> updateTask = childRef.updateChildren(updates);
-        attachSaveChildListeners(updateTask, firstName, lastName);
-    }
+        String imageBase64 = (selectedChildPhoto != null) ? ImageHelper.bitmapToBase64(selectedChildPhoto) : editingChildOldImageBase64;
+        btnAddChild.setEnabled(false);
 
-    // מחבר מאזיני הצלחה וכישלון לשמירת ילד
-    private void attachSaveChildListeners(Task<Void> saveTask, final String firstName, final String lastName) {
+        Task<Void> saveTask;
+        if (editingChildId == null) {
+            saveTask = childrenRef().child(childId).setValue(new Child(firstName, lastName, imageBase64));
+        } else {
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("firstName", firstName);
+            updates.put("lastName", lastName);
+            if (imageBase64 != null) {
+                updates.put("profileImageBase64", imageBase64);
+            }
+            saveTask = childrenRef().child(childId).updateChildren(updates);
+        }
+
         saveTask.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                handleChildSaved(firstName, lastName);
+                btnAddChild.setEnabled(true);
+                int messageRes = (editingChildId == null) ? R.string.manage_children_added_success : R.string.manage_children_updated_success;
+                Toast.makeText(ManageChildrenActivity.this, getString(messageRes, firstName, lastName), Toast.LENGTH_SHORT).show();
+                resetForm();
+                loadChildren();
             }
-        });
-
-        saveTask.addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 btnAddChild.setEnabled(true);
-                Toast.makeText(ManageChildrenActivity.this,
-                        getString(R.string.error_with_details, exception.getMessage()),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    // מציג הודעת הצלחה, מאפס טופס, וטוען ילדים מחדש
-    private void handleChildSaved(String firstName, String lastName) {
-        btnAddChild.setEnabled(true);
-
-        int messageRes;
-        if (editingChildId == null) {
-            messageRes = R.string.manage_children_added_success;
-        } else {
-            messageRes = R.string.manage_children_updated_success;
-        }
-
-        Toast.makeText(this, getString(messageRes, firstName, lastName), Toast.LENGTH_SHORT).show();
-        resetForm();
-        loadChildren();
     }
 
     // טוען את הילדים מ-Firebase: /parents/{uid}/children
@@ -403,20 +343,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        handleChildOption(position, which);
+                        if (which == 0) {
+                            enterEditMode(position);
+                        } else {
+                            showDeleteChildDialog(position);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
-    }
-
-    // מפעיל עריכה או מחיקה לפי הבחירה בדיאלוג
-    private void handleChildOption(int position, int which) {
-        if (which == 0) {
-            enterEditMode(position);
-        } else {
-            showDeleteChildDialog(position);
-        }
     }
 
     // פותח דיאלוג אישור לפני מחיקת ילד
@@ -429,47 +364,23 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.manage_children_option_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteChild(item);
+                        childrenRef().child(item.id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, getChildDisplayName(item)), Toast.LENGTH_SHORT).show();
+                                if (item.id.equals(editingChildId)) resetForm();
+                                loadChildren();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
-    }
-
-    // מוחק ילד מ-Firebase: /parents/{uid}/children/{childId}
-    private void deleteChild(final ChildItem item) {
-        DatabaseReference childRef = childrenRef().child(item.id);
-        Task<Void> deleteTask = childRef.removeValue();
-
-        deleteTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                handleChildDeleted(item);
-            }
-        });
-
-        deleteTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this,
-                        getString(R.string.error_with_details, exception.getMessage()),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // מטפל במחיקה מוצלחת של ילד ומרענן את הרשימה
-    private void handleChildDeleted(ChildItem item) {
-        Toast.makeText(
-                this,
-                getString(R.string.manage_children_deleted_success, getChildDisplayName(item)),
-                Toast.LENGTH_SHORT
-        ).show();
-
-        if (item.id.equals(editingChildId)) {
-            resetForm();
-        }
-        loadChildren();
     }
 
     // מחזיר הפניה לנתיב הילדים: /parents/{uid}/children

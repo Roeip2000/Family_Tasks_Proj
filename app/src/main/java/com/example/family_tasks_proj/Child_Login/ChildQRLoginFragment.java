@@ -152,98 +152,50 @@ public class ChildQRLoginFragment extends Fragment {
 
     // בודק שענף ההורה קיים: /parents/{parentId}
     private void checkParentExists(final String parentId) {
-        DatabaseReference parentRef = FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentId);
-
-        parentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleParentSnapshot(parentId, snapshot);
+                if (!isAdded()) return;
+                if (!snapshot.exists()) {
+                    setLoading(false);
+                    Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveSession(parentId, null);
+                openChildSelection(parentId, null);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                showParentCheckError(error);
+                if (!isAdded()) return;
+                setLoading(false);
+                Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void handleParentSnapshot(String parentId, DataSnapshot snapshot) {
-        if (!isAdded()) {
-            return;
-        }
-
-        if (!snapshot.exists()) {
-            setLoading(false);
-            Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        saveSession(parentId, null);
-        openChildSelection(parentId, null);
-    }
-
-    private void showParentCheckError(DatabaseError error) {
-        if (!isAdded()) {
-            return;
-        }
-        setLoading(false);
-
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.child_qr_db_error, error.getMessage()),
-                Toast.LENGTH_LONG
-        ).show();
     }
 
     // בודק שילד ספציפי קיים: /parents/{parentId}/children/{childId}
     private void checkChildExists(final String parentId, final String childId) {
-        DatabaseReference childRef = FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentId)
-                .child("children")
-                .child(childId);
-
-        childRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleChildSnapshot(parentId, childId, snapshot);
+                if (!isAdded()) return;
+                if (!snapshot.exists()) {
+                    setLoading(false);
+                    Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveSession(parentId, childId);
+                openChildDashboard(parentId, childId);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                showChildCheckError(error);
+                if (!isAdded()) return;
+                setLoading(false);
+                Toast.makeText(requireContext(), getString(R.string.child_qr_connection_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void handleChildSnapshot(String parentId, String childId, DataSnapshot snapshot) {
-        if (!isAdded()) {
-            return;
-        }
-
-        if (!snapshot.exists()) {
-            setLoading(false);
-            Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        saveSession(parentId, childId);
-        openChildDashboard(parentId, childId);
-    }
-
-    private void showChildCheckError(DatabaseError error) {
-        if (!isAdded()) {
-            return;
-        }
-        setLoading(false);
-
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.child_qr_connection_error, error.getMessage()),
-                Toast.LENGTH_LONG
-        ).show();
     }
 
     private void openChildDashboard(String parentId, String childId) {

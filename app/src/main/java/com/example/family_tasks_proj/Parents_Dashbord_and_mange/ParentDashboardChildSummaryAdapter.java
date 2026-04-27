@@ -99,16 +99,28 @@ class ParentDashboardChildSummaryAdapter
             holder.tvChildSummaryOverdue.setVisibility(View.GONE);
         }
 
-        bindCardSelection(holder, isSelected);
-        holder.itemView.setContentDescription(
-                context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
+        holder.cardChildSummary.setCardBackgroundColor(Color.parseColor(isSelected ? CHILD_CARD_SELECTED_BG : CHILD_CARD_DEFAULT_BG));
+        holder.cardChildSummary.setStrokeColor(Color.parseColor(isSelected ? CHILD_CARD_SELECTED_STROKE : CHILD_CARD_DEFAULT_STROKE));
+        holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
+
+        holder.itemView.setContentDescription(context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
 
         if (isAllChildren) {
             holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_family_cluster);
         } else {
-            bindChildPhoto(holder.ivChildSummaryPhoto,
-                    childSummary.childId,
-                    childSummary.childProfileBase64);
+            holder.ivChildSummaryPhoto.setImageDrawable(null);
+            if (childSummary.childProfileBase64 != null && !childSummary.childProfileBase64.trim().isEmpty()) {
+                if (childPhotoCache.containsKey(childSummary.childId)) {
+                    holder.ivChildSummaryPhoto.setImageBitmap(childPhotoCache.get(childSummary.childId));
+                } else {
+                    Bitmap raw = ImageHelper.base64ToBitmap(childSummary.childProfileBase64);
+                    if (raw != null) {
+                        Bitmap circular = ImageHelper.getCircularBitmap(raw);
+                        childPhotoCache.put(childSummary.childId, circular);
+                        holder.ivChildSummaryPhoto.setImageBitmap(circular);
+                    }
+                }
+            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -135,49 +147,6 @@ class ParentDashboardChildSummaryAdapter
         textView.setTextColor(Color.parseColor(textColor));
         textView.setText(context.getString(R.string.parent_dashboard_metric_with_count,
                 context.getString(labelResId), count));
-    }
-
-    private void bindCardSelection(ChildSummaryViewHolder holder, boolean isSelected) {
-        String backgroundColor;
-        String strokeColor;
-        int strokeWidth;
-
-        if (isSelected) {
-            backgroundColor = CHILD_CARD_SELECTED_BG;
-            strokeColor = CHILD_CARD_SELECTED_STROKE;
-            strokeWidth = 2;
-        } else {
-            backgroundColor = CHILD_CARD_DEFAULT_BG;
-            strokeColor = CHILD_CARD_DEFAULT_STROKE;
-            strokeWidth = 1;
-        }
-
-        holder.cardChildSummary.setCardBackgroundColor(Color.parseColor(backgroundColor));
-        holder.cardChildSummary.setStrokeColor(Color.parseColor(strokeColor));
-        holder.cardChildSummary.setStrokeWidth(dpToPx(strokeWidth));
-    }
-
-    // טוען תמונת ילד מ-Base64, עם זיכרון זמני כדי לא לפענח שוב ושוב
-    private void bindChildPhoto(ImageView imageView, String childId, String base64) {
-        imageView.setImageDrawable(null);
-
-        if (base64 == null || base64.trim().isEmpty()) {
-            return;
-        }
-
-        if (childPhotoCache.containsKey(childId)) {
-            imageView.setImageBitmap(childPhotoCache.get(childId));
-            return;
-        }
-
-        Bitmap raw = ImageHelper.base64ToBitmap(base64);
-        if (raw == null) {
-            return;
-        }
-
-        Bitmap circular = ImageHelper.getCircularBitmap(raw);
-        childPhotoCache.put(childId, circular);
-        imageView.setImageBitmap(circular);
     }
 
     private int dpToPx(int value) {

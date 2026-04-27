@@ -142,81 +142,58 @@ public class ChildSelectionActivity extends AppCompatActivity {
         parentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleParentsSnapshot(snapshot);
+                progressBar.setVisibility(View.GONE);
+                parentItems.clear();
+
+                for (DataSnapshot parentSnapshot : snapshot.getChildren()) {
+                    String uid = parentSnapshot.getKey();
+                    if (isBlank(uid)) continue;
+
+                    String firstName = parentSnapshot.child("firstName").getValue(String.class);
+                    String lastName = parentSnapshot.child("lastName").getValue(String.class);
+                    String shortUid = uid.substring(0, Math.min(uid.length(), 6));
+                    String fallback = getString(R.string.default_parent_name) + " (" + shortUid + ")";
+                    parentItems.add(new ParentItem(uid, NameUtils.fullNameOrDefault(firstName, lastName, fallback)));
+                }
+
+                if (parentItems.isEmpty()) {
+                    Toast.makeText(ChildSelectionActivity.this, R.string.child_selection_no_parents, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                List<String> names = new ArrayList<>();
+                for (ParentItem item : parentItems) {
+                    names.add(item.name);
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        ChildSelectionActivity.this,
+                        android.R.layout.simple_spinner_item,
+                        names
+                );
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerParents.setAdapter(adapter);
+                spinnerParents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                        handleParentSelected(position);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                        clearParentSelection();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                showParentsLoadError(error);
-            }
-        });
-    }
-
-    // ממיר את נתוני /parents לרשימת שמות בספינר
-    private void handleParentsSnapshot(DataSnapshot snapshot) {
-        progressBar.setVisibility(View.GONE);
-        parentItems.clear();
-
-        for (DataSnapshot parentSnapshot : snapshot.getChildren()) {
-            addParentFromSnapshot(parentSnapshot);
-        }
-
-        if (parentItems.isEmpty()) {
-            Toast.makeText(this, R.string.child_selection_no_parents, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        populateParentSpinner();
-    }
-
-    // מוסיף הורה אחד מהרשומה שלו ב-Firebase
-    private void addParentFromSnapshot(DataSnapshot parentSnapshot) {
-        String uid = parentSnapshot.getKey();
-        if (isBlank(uid)) {
-            return;
-        }
-
-        String firstName = parentSnapshot.child("firstName").getValue(String.class);
-        String lastName = parentSnapshot.child("lastName").getValue(String.class);
-        String shortUid = uid.substring(0, Math.min(uid.length(), 6));
-        String fallback = getString(R.string.default_parent_name) + " (" + shortUid + ")";
-        String fullName = NameUtils.fullNameOrDefault(firstName, lastName, fallback);
-        parentItems.add(new ParentItem(uid, fullName));
-    }
-
-    // מציג שגיאה אם טעינת /parents נכשלה
-    private void showParentsLoadError(DatabaseError error) {
-        progressBar.setVisibility(View.GONE);
-        Toast.makeText(
-                this,
-                getString(R.string.child_selection_error_loading_parents, error.getMessage()),
-                Toast.LENGTH_LONG
-        ).show();
-    }
-
-    // ממלא את ספינר ההורים ומחבר מאזין לבחירה
-    private void populateParentSpinner() {
-        List<String> names = new ArrayList<>();
-        for (ParentItem item : parentItems) {
-            names.add(item.name);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                names
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerParents.setAdapter(adapter);
-        spinnerParents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                handleParentSelected(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                clearParentSelection();
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(
+                        ChildSelectionActivity.this,
+                        getString(R.string.child_selection_error_loading_parents, error.getMessage()),
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
     }
@@ -248,104 +225,56 @@ public class ChildSelectionActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnEnter.setEnabled(false);
 
-        DatabaseReference childrenRef = FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(selectedParentId)
-                .child("children");
-
-        childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleChildrenSnapshot(snapshot);
+                progressBar.setVisibility(View.GONE);
+                childItems.clear();
+
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String currentChildId = childSnapshot.getKey();
+                    if (isBlank(currentChildId)) continue;
+
+                    String firstName = childSnapshot.child("firstName").getValue(String.class);
+                    String lastName = childSnapshot.child("lastName").getValue(String.class);
+                    String fallback = getString(R.string.default_child_name) + " (" + currentChildId + ")";
+                    childItems.add(new ChildItem(currentChildId, NameUtils.fullNameOrDefault(firstName, lastName, fallback)));
+                }
+
+                if (childItems.isEmpty()) {
+                    tvNoChildren.setVisibility(View.VISIBLE);
+                    spinnerChildren.setVisibility(View.GONE);
+                    btnEnter.setEnabled(false);
+                    return;
+                }
+
+                tvNoChildren.setVisibility(View.GONE);
+                spinnerChildren.setVisibility(View.VISIBLE);
+                btnEnter.setEnabled(true);
+
+                List<String> names = new ArrayList<>();
+                for (ChildItem item : childItems) names.add(item.name);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_item, names);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerChildren.setAdapter(adapter);
+
+                if (!isBlank(preselectedChildId)) {
+                    for (int index = 0; index < childItems.size(); index++) {
+                        if (preselectedChildId.equals(childItems.get(index).id)) {
+                            spinnerChildren.setSelection(index);
+                            break;
+                        }
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                showChildrenLoadError(error);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(ChildSelectionActivity.this, getString(R.string.child_selection_error_loading_children, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    // ממיר את נתוני /children לרשימת ילדים בספינר
-    private void handleChildrenSnapshot(DataSnapshot snapshot) {
-        progressBar.setVisibility(View.GONE);
-        childItems.clear();
-
-        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-            addChildFromSnapshot(childSnapshot);
-        }
-
-        updateChildrenPickerVisibility();
-    }
-
-    // מוסיף ילד אחד מהרשומה שלו ב-Firebase
-    private void addChildFromSnapshot(DataSnapshot childSnapshot) {
-        String currentChildId = childSnapshot.getKey();
-        if (isBlank(currentChildId)) {
-            return;
-        }
-
-        String firstName = childSnapshot.child("firstName").getValue(String.class);
-        String lastName = childSnapshot.child("lastName").getValue(String.class);
-        String fallback = getString(R.string.default_child_name) + " (" + currentChildId + ")";
-        String fullName = NameUtils.fullNameOrDefault(firstName, lastName, fallback);
-        childItems.add(new ChildItem(currentChildId, fullName));
-    }
-
-    // מציג או מסתיר את ספינר הילדים לפי תוצאות הטעינה
-    private void updateChildrenPickerVisibility() {
-        if (childItems.isEmpty()) {
-            tvNoChildren.setVisibility(View.VISIBLE);
-            spinnerChildren.setVisibility(View.GONE);
-            btnEnter.setEnabled(false);
-            return;
-        }
-
-        tvNoChildren.setVisibility(View.GONE);
-        spinnerChildren.setVisibility(View.VISIBLE);
-        btnEnter.setEnabled(true);
-        populateChildSpinner();
-    }
-
-    // מציג שגיאה אם טעינת הילדים נכשלה
-    private void showChildrenLoadError(DatabaseError error) {
-        progressBar.setVisibility(View.GONE);
-        Toast.makeText(
-                this,
-                getString(R.string.child_selection_error_loading_children, error.getMessage()),
-                Toast.LENGTH_LONG
-        ).show();
-    }
-
-    // ממלא את ספינר הילדים ובוחר ילד מראש אם childId הגיע מהסשן
-    private void populateChildSpinner() {
-        List<String> names = new ArrayList<>();
-        for (ChildItem item : childItems) {
-            names.add(item.name);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                names
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerChildren.setAdapter(adapter);
-        selectSavedChildIfPossible();
-    }
-
-    // בוחר בספינר את הילד שנשמר מראש, אם הוא עדיין קיים ברשימה
-    private void selectSavedChildIfPossible() {
-        if (isBlank(preselectedChildId)) {
-            return;
-        }
-
-        for (int index = 0; index < childItems.size(); index++) {
-            if (preselectedChildId.equals(childItems.get(index).id)) {
-                spinnerChildren.setSelection(index);
-                break;
-            }
-        }
     }
 
     // בודק בחירה, שומר סשן, ופותח את דשבורד הילד
