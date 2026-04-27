@@ -21,11 +21,11 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 import java.util.Map;
 
-/** אדפטר לכרטיסי הילדים בדשבורד ההורה ולבחירת ילד. */
+// כרטיסי הילדים בדשבורד ההורה ובחירת ילד
 class ParentDashboardChildSummaryAdapter
         extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 
-    /** מזהה מיוחד לצ'יפ "כל הילדים" שאינו ילד אמיתי ב-Firebase. */
+    // מזהה מיוחד לצ'יפ "כל הילדים" שאינו ילד אמיתי ב-Firebase
     static final String ALL_CHILDREN_ID = "__ALL__";
 
     interface OnChildSelectedListener {
@@ -137,7 +137,6 @@ class ParentDashboardChildSummaryAdapter
                 context.getString(labelResId), count));
     }
 
-    // צובע כרטיס ילד לפי מצב הבחירה שלו ברשימה
     private void bindCardSelection(ChildSummaryViewHolder holder, boolean isSelected) {
         String backgroundColor;
         String strokeColor;

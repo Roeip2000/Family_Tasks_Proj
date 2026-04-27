@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-/** מסך התחברות הורה דרך FirebaseAuth. */
+// מסך התחברות הורה דרך FirebaseAuth
 public class ParentLoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -33,11 +33,10 @@ public class ParentLoginFragment extends Fragment {
     private Button btnLogin;
     private ProgressBar progressLogin;
 
-    // פעולה בונה ריקה שחובה לשמור כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
+    // חובה לשמור פעולה בונה ריקה כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
     public ParentLoginFragment() {
     }
 
-    // יוצר את קובץ המסך של התחברות ההורה
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -46,7 +45,6 @@ public class ParentLoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
-    // מחבר רכיבי מסך ומגדיר פעולות לחיצה והקלדה
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -73,7 +71,7 @@ public class ParentLoginFragment extends Fragment {
         });
     }
 
-    // מאפשר להתחבר גם דרך כפתור האישור במקלדת
+    // מאפשר התחברות גם דרך כפתור Enter במקלדת
     private boolean handlePasswordEditorAction(int actionId, KeyEvent event) {
         boolean isEnterKey = event != null
                 && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
@@ -87,7 +85,6 @@ public class ParentLoginFragment extends Fragment {
         return false;
     }
 
-    // בודק שדות התחברות ואז שולח את האימייל והסיסמה ל-FirebaseAuth
     private void loginUser() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -98,7 +95,6 @@ public class ParentLoginFragment extends Fragment {
 
         setLoading(true);
 
-        // קריאה ל-FirebaseAuth: אימות ההורה לפי אימייל וסיסמה
         Task<AuthResult> loginTask = mAuth.signInWithEmailAndPassword(email, password);
         loginTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
@@ -108,7 +104,6 @@ public class ParentLoginFragment extends Fragment {
         });
     }
 
-    // בודק שדות ריקים ואימייל לא תקין לפני פנייה ל-Firebase
     private boolean validateLoginFields(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
@@ -123,7 +118,6 @@ public class ParentLoginFragment extends Fragment {
         return true;
     }
 
-    // מטפל בתוצאה שחזרה מ-FirebaseAuth אחרי ניסיון התחברות
     private void handleLoginResult(@NonNull Task<AuthResult> task) {
         if (!isAdded()) {
             return;
@@ -144,14 +138,13 @@ public class ParentLoginFragment extends Fragment {
         Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
     }
 
-    // פותח את דשבורד ההורה רק אחרי התחברות מוצלחת
     private void openParentDashboard() {
         Intent intent = new Intent(requireActivity(), ParentDashboardActivity.class);
         startActivity(intent);
         requireActivity().finish();
     }
 
-    // מציג טעינה קצרה ומונע לחיצות כפולות בזמן התחברות
+    // מונע לחיצות כפולות בזמן התחברות
     private void setLoading(boolean isLoading) {
         btnLogin.setEnabled(!isLoading);
         etEmail.setEnabled(!isLoading);

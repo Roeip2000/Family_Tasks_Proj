@@ -1,16 +1,14 @@
 package com.example.family_tasks_proj.child.model;
 
-/** מודל ילד כפי שהוא נשמר תחת ההורה ב-Firebase. */
+// מודל ילד כפי שנשמר תחת ההורה ב-Firebase
 public class Child {
     private String firstName;
     private String lastName;
-    /** תמונת פרופיל מקודדת ב-Base64 (JPEG), או null אם לא נבחרה */
     private String profileImageBase64;
 
-    /** פעולה בונה ריקה — חובה ל-Firebase. */
+    // חובה ל-Firebase
     public Child() {}
 
-    /** פעולה בונה מלאה — משמשת ב-ManageChildrenActivity בעת הוספת ילד חדש. */
     public Child(String firstName, String lastName, String profileImageBase64) {
         this.firstName = firstName;
         this.lastName = lastName;

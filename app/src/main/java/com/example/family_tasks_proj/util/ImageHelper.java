@@ -17,17 +17,16 @@ import androidx.exifinterface.media.ExifInterface;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-/** מחלקת עזר לתיקון, הקטנה ושמירת תמונות כ-Base64. */
+// תיקון, הקטנה ושמירת תמונות כ-Base64
 public class ImageHelper {
 
-    /** גודל מקסימלי (פיקסלים) לצלע הגדולה — שומר על איכות סבירה בלי לפוצץ את Firebase */
+    // צלע מקסימלית בפיקסלים — מאזן בין איכות לבין גודל ב-Firebase
     private static final int MAX_DIMENSION = 800;
     private static final int JPEG_QUALITY = 75;
 
-    // טוען תמונה מ-Uri, מתקן סיבוב EXIF ומקטין אותה
+    // טוען תמונה מ-Uri, מתקן סיבוב EXIF ומקטין
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
         try {
-            // שלב 1: פענוח ה-Bitmap מזרם הנתונים
             Bitmap bitmap;
             try (InputStream is = resolver.openInputStream(uri)) {
                 bitmap = BitmapFactory.decodeStream(is);
@@ -36,15 +35,13 @@ public class ImageHelper {
                 return null;
             }
 
-            // שלב 2: קריאת זווית EXIF — חייבים לפתוח זרם חדש כי הראשון כבר נקרא
+            // פותחים זרם חדש כי הראשון כבר נקרא
             int rotation = getExifRotation(resolver, uri);
 
-            // שלב 3: הפעלת סיבוב אם צריך
             if (rotation != 0) {
                 bitmap = rotateBitmap(bitmap, rotation);
             }
 
-            // שלב 4: הקטנה לפי הצלע הגדולה תוך שמירה על יחס
             bitmap = scaleDown(bitmap, MAX_DIMENSION);
 
             return bitmap;
@@ -70,7 +67,7 @@ public class ImageHelper {
         }
     }
 
-    // מפענח מחרוזת Base64 ל-Bitmap להצגת תמונות מ-Firebase
+    // מפענח Base64 ל-Bitmap להצגת תמונות מ-Firebase
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.isEmpty()) {
             return null;
@@ -84,7 +81,7 @@ public class ImageHelper {
         }
     }
 
-    // חותך Bitmap לעיגול לתצוגת אווטאר בלי לעוות את התמונה
+    // חותך Bitmap לעיגול לתצוגת אווטאר בלי לעוות
     public static Bitmap getCircularBitmap(Bitmap src) {
         if (src == null) {
             return null;
@@ -99,7 +96,7 @@ public class ImageHelper {
         Rect dstRect = new Rect(0, 0, size, size);
         // שלב 1: מציירים עיגול כמסכה
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
-        // שלב 2: מציגים את התמונה רק בתוך המסכה
+        // שלב 2: מציירים את התמונה רק בתוך המסכה
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(src, srcRect, dstRect, paint);
         return output;
@@ -107,7 +104,7 @@ public class ImageHelper {
 
     // ========== מתודות פנימיות ==========
 
-    // קורא את זווית הסיבוב מנתוני EXIF של התמונה
+    // קורא זווית סיבוב מנתוני EXIF של תמונה מהמצלמה
     private static int getExifRotation(ContentResolver resolver, Uri uri) {
         try (InputStream is = resolver.openInputStream(uri)) {
             if (is == null) {
@@ -124,12 +121,12 @@ public class ImageHelper {
                 default: return 0;
             }
         } catch (Exception exception) {
-            // אם אין EXIF (למשל PNG) — פשוט לא מסובבים
+            // אם אין EXIF (למשל PNG) — לא מסובבים
             return 0;
         }
     }
 
-    /** מסובב Bitmap בזווית נתונה. */
+    // מסובב Bitmap בזווית נתונה
     private static Bitmap rotateBitmap(Bitmap source, int degrees) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degrees);
@@ -141,7 +138,7 @@ public class ImageHelper {
         return rotated;
     }
 
-    // מקטין Bitmap בלי לחתוך או לעוות, אם הוא גדול מדי
+    // מקטין Bitmap לפי הצלע הגדולה תוך שמירה על יחס
     private static Bitmap scaleDown(Bitmap source, int maxDim) {
         int width = source.getWidth();
         int height = source.getHeight();

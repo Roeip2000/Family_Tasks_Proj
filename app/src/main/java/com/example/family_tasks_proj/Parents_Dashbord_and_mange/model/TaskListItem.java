@@ -1,6 +1,6 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
-/** שורה ברשימת המשימות — יכולה להיות כותרת קבוצה או משימה רגילה. */
+// שורה ברשימת המשימות — כותרת קבוצה או משימה רגילה
 public class TaskListItem {
     public boolean isHeader;
     public String headerTitle;

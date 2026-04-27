@@ -2,7 +2,7 @@ package com.example.family_tasks_proj.util;
 
 import java.util.Calendar;
 
-/** עוזר לחישובי תאריכים שחוזרים במסכי המשימות. */
+// עוזר לחישובי תאריכים במסכי המשימות
 public final class DateUtils {
 
     private DateUtils() {} // לא ליצור מופע של המחלקה
@@ -38,13 +38,13 @@ public final class DateUtils {
         }
     }
 
-    // בודק אם המשימה דחופה, כלומר נשארו לה 0-2 ימים
+    // משימה דחופה: 0-2 ימים
     public static boolean isDueSoon(String dueAt) {
         long days = daysLeft(dueAt);
         return days >= 0 && days <= 2;
     }
 
-    // בודק אם תאריך היעד של המשימה כבר עבר
+    // משימה באיחור: עברה את תאריך היעד
     public static boolean isOverdue(String dueAt) {
         long days = daysLeft(dueAt);
         return days < 0;

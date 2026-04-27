@@ -3,7 +3,7 @@ package com.example.family_tasks_proj.FireBase;
 import java.util.HashMap;
 import java.util.Map;
 
-/** מודל נתונים של הורה כפי שנשמר ב-Firebase. */
+// מודל הורה כפי שנשמר ב-Firebase
 public class ParentInFb {
 
     private String uid;
@@ -12,10 +12,9 @@ public class ParentInFb {
     private String email;
     private String role;
     private Map<String, Object> children;
-    /** תמונת הפרופיל של ההורה — מחרוזת Base64 של JPEG */
     private String profileImageBase64;
 
-    /** פעולה בונה ריקה — חובה כדי ש-Firebase יוכל לקרוא את האובייקט. */
+    // חובה ל-Firebase
     public ParentInFb() {}
 
     // יוצר פרופיל הורה חדש עם role = "parent" ורשימת ילדים ריקה
@@ -38,12 +37,6 @@ public class ParentInFb {
     public void setEmail(String email) { this.email = email; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-
-    @Override
-    public String toString() {
-        return "ParentInFb{" + "uid='" + uid + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", role='" + role + '\'' + '}';
-    }
-
     public Map<String, Object> getChildren() { return children; }
     public void setChildren(Map<String, Object> children) { this.children = children; }
     public String getProfileImageBase64() { return profileImageBase64; }

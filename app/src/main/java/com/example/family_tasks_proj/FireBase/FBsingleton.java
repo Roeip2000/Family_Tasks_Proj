@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-/** מחלקת יחיד לגישה ל-Firebase ולשמירת פרטי ההורה. */
+// מחלקת יחיד לגישה ל-Firebase ושמירת פרטי ההורה
 public class FBsingleton {
 
     private static FBsingleton instance;
@@ -23,14 +23,14 @@ public class FBsingleton {
     private String lastName;
     private String email;
 
-    /** פעולה בונה פרטית — מונעת יצירה ישירה מבחוץ. */
+    // פעולה בונה פרטית — מונעת יצירה ישירה מבחוץ
     private FBsingleton() {
         database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
         auth = FirebaseAuth.getInstance();
     }
 
-    /** מחזיר את המופע היחיד של המחלקה. */
+    // מחזיר את המופע היחיד של המחלקה
     public static synchronized FBsingleton getInstance() {
         if (instance == null) {
             instance = new FBsingleton();
@@ -57,7 +57,7 @@ public class FBsingleton {
 
         DatabaseReference ref = database.getReference("parents").child(uid);
 
-        // יוצר מפת נתונים רק עם שדות הפרופיל — לא נוגע בילדים/תבניות
+        // רק שדות הפרופיל — לא נוגעים בילדים/תבניות
         Map<String, Object> profileData = new HashMap<>();
         profileData.put("uid", uid);
         profileData.put("firstName", firstName);
@@ -74,7 +74,7 @@ public class FBsingleton {
         }
     }
 
-    /** גרסה נוספת לתאימות אחורה — ללא מאזין תוצאה. */
+    // גרסה ללא מאזין תוצאה
     public void saveParentToFirebase() {
         saveParentToFirebase(null);
     }

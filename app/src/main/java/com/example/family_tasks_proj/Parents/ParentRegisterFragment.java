@@ -26,7 +26,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/** מסך הרשמת הורה חדש ושמירת הפרופיל שלו ב-Firebase. */
+// מסך הרשמת הורה חדש ושמירת פרופיל ב-Firebase
 public class ParentRegisterFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -37,11 +37,10 @@ public class ParentRegisterFragment extends Fragment {
     private Button btnRegister;
     private ProgressBar progressRegister;
 
-    // פעולה בונה ריקה שחובה לשמור כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
+    // חובה לשמור פעולה בונה ריקה כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
     public ParentRegisterFragment() {
     }
 
-    // יוצר את קובץ המסך של הרשמת ההורה
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -49,7 +48,6 @@ public class ParentRegisterFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_parent_register, container, false);
     }
 
-    // מחבר רכיבי מסך ומגדיר פעולות לחיצה והקלדה
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -78,7 +76,7 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
-    // מאפשר הרשמה גם דרך כפתור האישור במקלדת
+    // מאפשר הרשמה גם דרך כפתור Enter במקלדת
     private boolean handlePasswordEditorAction(int actionId, KeyEvent event) {
         boolean isEnterKey = event != null
                 && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
@@ -92,7 +90,6 @@ public class ParentRegisterFragment extends Fragment {
         return false;
     }
 
-    // בודק את הטופס ואז יוצר חשבון הורה ב-FirebaseAuth
     private void registerParent() {
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
@@ -105,7 +102,6 @@ public class ParentRegisterFragment extends Fragment {
 
         setLoading(true);
 
-        // קריאה ל-FirebaseAuth: יצירת משתמש הורה חדש לפי אימייל וסיסמה
         Task<AuthResult> registerTask = mAuth.createUserWithEmailAndPassword(email, password);
         registerTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
@@ -115,7 +111,6 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
-    // בודק שדות ריקים, אימייל לא תקין וסיסמה קצרה לפני פנייה ל-Firebase
     private boolean validateRegisterFields(String firstName, String lastName, String email, String password) {
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
@@ -135,7 +130,6 @@ public class ParentRegisterFragment extends Fragment {
         return true;
     }
 
-    // מטפל בתוצאה של יצירת המשתמש ב-FirebaseAuth
     private void handleRegisterResult(@NonNull Task<AuthResult> task,
                                       String firstName,
                                       String lastName,
@@ -159,7 +153,7 @@ public class ParentRegisterFragment extends Fragment {
         saveParentProfile(firstName, lastName, email);
     }
 
-    // שומר את פרופיל ההורה ב-Firebase תחת /parents/{uid}
+    // שומר פרופיל הורה ב-Firebase תחת /parents/{uid}
     private void saveParentProfile(String firstName, String lastName, String email) {
         FBsingleton.getInstance().setUserData(firstName, lastName, email);
         FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
@@ -170,7 +164,6 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
-    // מחכה לסיום שמירת הפרופיל לפני פתיחת הדשבורד
     private void handleParentProfileSaved(@NonNull Task<Void> saveTask) {
         if (!isAdded()) {
             return;
@@ -186,7 +179,6 @@ public class ParentRegisterFragment extends Fragment {
         openParentDashboard();
     }
 
-    // מציג שגיאת הרשמה או שמירת פרופיל בצורה בטוחה גם כשאין פירוט שגיאה
     private void showRegisterError(@NonNull Task<?> task) {
         String errorMsg;
         if (task.getException() != null) {
@@ -197,14 +189,13 @@ public class ParentRegisterFragment extends Fragment {
         Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
     }
 
-    // פותח את דשבורד ההורה אחרי הרשמה ושמירת פרופיל מוצלחות
     private void openParentDashboard() {
         Intent intent = new Intent(requireActivity(), ParentDashboardActivity.class);
         startActivity(intent);
         requireActivity().finish();
     }
 
-    // מציג טעינה קצרה ומונע לחיצות כפולות בזמן הרשמה
+    // מונע לחיצות כפולות בזמן הרשמה
     private void setLoading(boolean isLoading) {
         btnRegister.setEnabled(!isLoading);
         etFirstName.setEnabled(!isLoading);

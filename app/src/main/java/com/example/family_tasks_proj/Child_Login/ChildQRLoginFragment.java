@@ -26,7 +26,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-/** מסך סריקת QR לילד והעברה לבחירת ילד או לדשבורד. */
+// סריקת QR לילד והעברה לבחירת ילד או לדשבורד
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String PREFS = "child_session";
@@ -47,7 +47,6 @@ public class ChildQRLoginFragment extends Fragment {
                     }
             );
 
-    // יוצר את מסך הסריקה ומחבר את כפתור הסריקה
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
@@ -62,7 +61,6 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
-    // מפעיל את סורק ה-QR של ZXing
     private void startQrScan() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
@@ -70,7 +68,6 @@ public class ChildQRLoginFragment extends Fragment {
         barcodeLauncher.launch(options);
     }
 
-    // מטפל בתוצאה שחזרה מהסורק
     private void handleQrScanResult(ScanIntentResult result) {
         if (!isAdded()) {
             return;
@@ -100,7 +97,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // מחליט אם ה-QR מוביל לבחירת ילד או לדשבורד ילד ישיר
+    // אם ה-QR מכיל רק parentId — בחירת ילד; אם גם childId — דשבורד
     private void checkQrTarget(ParsedQr parsed) {
         setLoading(true);
         if (isBlank(parsed.childId)) {
@@ -110,7 +107,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // מפענח את הטקסט מה-QR למזהה הורה ומזהה ילד אם קיים
+    // מפענח טקסט QR למזהה הורה ומזהה ילד אם קיים
     private ParsedQr parseQr(String raw) {
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {
@@ -136,7 +133,7 @@ public class ChildQRLoginFragment extends Fragment {
         return parsedQr;
     }
 
-    // מפענח פורמט מלא: parent:{id}|child:{id}
+    // פורמט מלא: parent:{id}|child:{id}
     private void fillParsedQrFromParts(ParsedQr parsedQr, String raw) {
         String[] parts = raw.split("\\|");
         for (String part : parts) {
@@ -153,7 +150,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // בודק שענף ההורה קיים ב-Firebase: /parents/{parentId}
+    // בודק שענף ההורה קיים: /parents/{parentId}
     private void checkParentExists(final String parentId) {
         DatabaseReference parentRef = FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -172,7 +169,6 @@ public class ChildQRLoginFragment extends Fragment {
         });
     }
 
-    // מטפל בתוצאת בדיקת ההורה מ-Firebase
     private void handleParentSnapshot(String parentId, DataSnapshot snapshot) {
         if (!isAdded()) {
             return;
@@ -188,7 +184,6 @@ public class ChildQRLoginFragment extends Fragment {
         openChildSelection(parentId, null);
     }
 
-    // מציג שגיאת Firebase בזמן בדיקת ההורה
     private void showParentCheckError(DatabaseError error) {
         if (!isAdded()) {
             return;
@@ -202,7 +197,7 @@ public class ChildQRLoginFragment extends Fragment {
         ).show();
     }
 
-    // בודק שילד ספציפי קיים ב-Firebase: /parents/{parentId}/children/{childId}
+    // בודק שילד ספציפי קיים: /parents/{parentId}/children/{childId}
     private void checkChildExists(final String parentId, final String childId) {
         DatabaseReference childRef = FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -223,7 +218,6 @@ public class ChildQRLoginFragment extends Fragment {
         });
     }
 
-    // מטפל בתוצאת בדיקת הילד מ-Firebase
     private void handleChildSnapshot(String parentId, String childId, DataSnapshot snapshot) {
         if (!isAdded()) {
             return;
@@ -239,7 +233,6 @@ public class ChildQRLoginFragment extends Fragment {
         openChildDashboard(parentId, childId);
     }
 
-    // מציג שגיאת Firebase בזמן בדיקת הילד
     private void showChildCheckError(DatabaseError error) {
         if (!isAdded()) {
             return;
@@ -253,21 +246,17 @@ public class ChildQRLoginFragment extends Fragment {
         ).show();
     }
 
-    // פותח דשבורד ילד עם parentId ו-childId
     private void openChildDashboard(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
-        // parentId אומר לדשבורד מאיזה הורה לקרוא את ענף הילדים
         intent.putExtra(KEY_PARENT, parentId);
-        // childId אומר לדשבורד איזה ילד לפתוח תחת אותו הורה
         intent.putExtra(KEY_CHILD, childId);
         startActivity(intent);
         requireActivity().finish();
     }
 
-    // פותח בחירת ילד כאשר ה-QR זיהה רק את ההורה
+    // ה-QR זיהה רק את ההורה — מסך בחירת ילד
     private void openChildSelection(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
-        // parentId נחסך מהילד במסך הבא כדי שלא יצטרך לבחור הורה ידנית
         intent.putExtra(KEY_PARENT, parentId);
         if (!isBlank(childId)) {
             intent.putExtra(KEY_CHILD, childId);
@@ -276,7 +265,7 @@ public class ChildQRLoginFragment extends Fragment {
         requireActivity().finish();
     }
 
-    // שומר סשן ילד מקומי ב-SharedPreferences כדי לאפשר כניסה מהירה בפעם הבאה
+    // שומר סשן ילד מקומי לכניסה מהירה בפעם הבאה
     private void saveSession(String parentId, String childId) {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -291,14 +280,12 @@ public class ChildQRLoginFragment extends Fragment {
         editor.apply();
     }
 
-    // בודק null או מחרוזת ריקה אחרי ניקוי רווחים
+    // בודק null או ריק
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
-    /**
-     * מחזיק את תוצאת פענוח ה-QR בצורה פשוטה.
-     */
+    // תוצאת פענוח QR
     private static class ParsedQr {
         private String parentId;
         private String childId;

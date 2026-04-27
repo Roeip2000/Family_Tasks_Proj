@@ -1,17 +1,16 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
-/** מודל תבנית משימה כפי שהיא נשמרת ב-Firebase. */
+// מודל תבנית משימה כפי שנשמרת ב-Firebase
 public class TaskTemplate {
-    /** ברירת מחדל לכמות כוכבים — תבניות ישנות שנשמרו לפני שהשדה הזה נוסף יקבלו את הערך הזה. */
+    // ערך ברירת מחדל לתבניות ישנות שנשמרו לפני שהשדה נוסף
     public static final int DEFAULT_STARS_WORTH = 10;
 
     private String id;
     private String title;
     private String imageBase64;
-    /** כמה כוכבים שווה משימה שנוצרת מהתבנית. מינימום 1. */
     private int starsWorth = DEFAULT_STARS_WORTH;
 
-    /** פעולה בונה ריקה — חובה ל-Firebase. */
+    // חובה ל-Firebase
     public TaskTemplate() {}
 
     public TaskTemplate(String id, String title, String imageBase64, int starsWorth) {
@@ -31,17 +30,13 @@ public class TaskTemplate {
     public void setStarsWorth(int starsWorth) { this.starsWorth = starsWorth; }
 
     public String toDisplayTitle() {
-        if (title == null) {
-            return "";
-        }
+        if (title == null) return "";
         return title.trim();
     }
 
-    /** מחזיר ערך כוכבים שמובטח חוקי (תיקון דאטה ישן בלי שדה או עם ערך לא חוקי). */
+    // מחזיר ערך כוכבים חוקי גם לתבניות ישנות בלי שדה
     public int safeStarsWorth() {
-        if (starsWorth > 0) {
-            return starsWorth;
-        }
+        if (starsWorth > 0) return starsWorth;
         return DEFAULT_STARS_WORTH;
     }
 

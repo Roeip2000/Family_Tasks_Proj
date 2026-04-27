@@ -21,7 +21,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
-/** אדפטר שמציג כרטיסי משימות לילד עם סטטוס, תאריך וכפתור "בוצע". */
+// כרטיסי משימות לילד — סטטוס, תאריך וכפתור "בוצע"
 public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.TaskViewHolder> {
 
     private final List<ChildTask> tasks;
@@ -85,7 +85,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
     }
 
-    // כותרת המשימה — עם קו חוצה אם בוצעה
+    // קו חוצה לטקסט אם המשימה בוצעה
     private void bindTitle(TaskViewHolder holder, ChildTask task) {
         android.content.Context ctx = holder.itemView.getContext();
         if (task.getTitle() != null) {
@@ -105,7 +105,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
     }
 
-    // תאריך יעד — צבע משתנה לפי דחיפות
     private void bindDueDate(TaskViewHolder holder, ChildTask task, long daysLeft) {
         android.content.Context ctx = holder.itemView.getContext();
         String dueText;
@@ -126,7 +125,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         holder.tvDueDate.setText(dueText);
     }
 
-    // נקודת סטטוס צבעונית — ירוק/כתום/אדום/אפור
     private void bindStatusDot(TaskViewHolder holder, ChildTask task, long daysLeft) {
         android.content.Context ctx = holder.itemView.getContext();
         GradientDrawable dot = new GradientDrawable();
@@ -145,7 +143,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         holder.viewStatusDot.setBackground(dot);
     }
 
-    // תמונת משימה — מוצגת רק אם קיימת
     private void bindTaskImage(TaskViewHolder holder, ChildTask task) {
         if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {
             Bitmap bmp = ImageHelper.base64ToBitmap(task.getImageBase64());
@@ -161,7 +158,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         holder.imgTaskImage.setVisibility(View.GONE);
     }
 
-    // כוכבים — מוצגים רק אם יש ערך חיובי
     private void bindStars(TaskViewHolder holder, ChildTask task) {
         android.content.Context ctx = holder.itemView.getContext();
         if (task.getStarsWorth() > 0) {
@@ -173,7 +169,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         }
     }
 
-    // כפתור "בוצע" — מוצג רק למשימות פתוחות, עם אנימציה בלחיצה
+    // הכפתור מוסתר כשהמשימה כבר בוצעה
     private void bindDoneButton(TaskViewHolder holder, ChildTask task) {
         if (task.getIsDone()) {
             holder.btnDone.setVisibility(View.GONE);

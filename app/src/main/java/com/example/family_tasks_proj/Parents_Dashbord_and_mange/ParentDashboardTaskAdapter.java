@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,16 +16,27 @@ import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTa
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListItem;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.DateUtils;
-import com.example.family_tasks_proj.util.ImageHelper;
 
 import java.util.List;
 import java.util.Map;
 
-/** אדפטר לרשימת המשימות בדשבורד ההורה, כולל כותרות קבוצה ומשימות. */
+// אדפטר לרשימת המשימות בדשבורד ההורה: כותרות קבוצה ומשימות
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_TASK = 1;
+
+    // צבעי סטטוס משותפים — מוגדרים פעם אחת במקום parseColor חוזר
+    private static final int COLOR_DONE = Color.parseColor("#2E7D32");
+    private static final int COLOR_DONE_BG = Color.parseColor("#E8F5E9");
+    private static final int COLOR_OVERDUE = Color.parseColor("#C62828");
+    private static final int COLOR_OVERDUE_BG = Color.parseColor("#FFEBEE");
+    private static final int COLOR_URGENT = Color.parseColor("#E65100");
+    private static final int COLOR_URGENT_BG = Color.parseColor("#FFF3E0");
+    private static final int COLOR_REGULAR_BG = Color.parseColor("#EEF2F7");
+    private static final int COLOR_REGULAR_TEXT = Color.parseColor("#52606D");
+    private static final int COLOR_REGULAR_DOT = Color.parseColor("#2F80ED");
+    private static final int COLOR_REGULAR_DUE = Color.parseColor("#6B7280");
 
     private final LayoutInflater inflater;
     private final Map<String, Bitmap> childPhotoCache;
@@ -145,41 +155,19 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         return convertView;
     }
 
-    // מחזיר מערך צבעים: [רקע צ'יפ, טקסט צ'יפ, נקודה]
+    // [רקע צ'יפ, טקסט צ'יפ, צבע נקודה]
     private int[] getStatusColors(AssignedTask task) {
         if (task.isDone) {
-            return new int[]{Color.parseColor("#E8F5E9"), Color.parseColor("#2E7D32"), Color.parseColor("#2E7D32")};
+            return new int[]{COLOR_DONE_BG, COLOR_DONE, COLOR_DONE};
         }
         long daysLeft = DateUtils.daysLeft(task.dueAt);
         if (daysLeft < 0) {
-            return new int[]{Color.parseColor("#FFEBEE"), Color.parseColor("#C62828"), Color.parseColor("#C62828")};
+            return new int[]{COLOR_OVERDUE_BG, COLOR_OVERDUE, COLOR_OVERDUE};
         }
         if (isUrgentTask(task)) {
-            return new int[]{Color.parseColor("#FFF3E0"), Color.parseColor("#E65100"), Color.parseColor("#E65100")};
+            return new int[]{COLOR_URGENT_BG, COLOR_URGENT, COLOR_URGENT};
         }
-        return new int[]{Color.parseColor("#EEF2F7"), Color.parseColor("#52606D"), Color.parseColor("#2F80ED")};
-    }
-
-    private void bindChildPhoto(ImageView imageView, String childId, String base64) {
-        imageView.setImageDrawable(null);
-
-        if (base64 == null || base64.trim().isEmpty()) {
-            return;
-        }
-
-        if (childPhotoCache.containsKey(childId)) {
-            imageView.setImageBitmap(childPhotoCache.get(childId));
-            return;
-        }
-
-        Bitmap raw = ImageHelper.base64ToBitmap(base64);
-        if (raw == null) {
-            return;
-        }
-
-        Bitmap circular = ImageHelper.getCircularBitmap(raw);
-        childPhotoCache.put(childId, circular);
-        imageView.setImageBitmap(circular);
+        return new int[]{COLOR_REGULAR_BG, COLOR_REGULAR_TEXT, COLOR_REGULAR_DOT};
     }
 
     private String getTaskStatusLabel(AssignedTask task) {
@@ -213,18 +201,11 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     private int getDueLineColor(AssignedTask task) {
-        if (task.isDone) {
-            return Color.parseColor("#2E7D32");
-        }
-
+        if (task.isDone) return COLOR_DONE;
         long daysLeft = DateUtils.daysLeft(task.dueAt);
-        if (daysLeft < 0) {
-            return Color.parseColor("#C62828");
-        }
-        if (daysLeft <= 2) {
-            return Color.parseColor("#E65100");
-        }
-        return Color.parseColor("#6B7280");
+        if (daysLeft < 0) return COLOR_OVERDUE;
+        if (daysLeft <= 2) return COLOR_URGENT;
+        return COLOR_REGULAR_DUE;
     }
 
     private boolean isUrgentTask(AssignedTask task) {
