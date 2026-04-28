@@ -3,130 +3,105 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
+    android:background="#FFFFFF"
     android:fillViewport="true"
-    android:layoutDirection="rtl"
-    android:overScrollMode="never">
+    android:layoutDirection="rtl">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/screen_padding"
-        android:paddingTop="4dp"
-        android:paddingEnd="@dimen/screen_padding"
-        android:paddingBottom="56dp">
+        android:padding="32dp">
 
         <TextView
-            style="@style/Widget.Family.ScreenTitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/title_parent_register"
-            android:textColor="@color/md_theme_primary"
-            android:textSize="@dimen/text_title" />
+            android:text="הרשמה למערכת"
+            android:textColor="#2D3436"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
         <TextView
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="start"
-            android:text="@string/desc_parent_register" />
+            android:layout_marginTop="8dp"
+            android:text="התחילו לנהל את משימות הבית בקלות"
+            android:textColor="#888888"
+            android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/first_name"
-            app:startIconDrawable="@drawable/ic_person">
-
+            android:layout_marginTop="32dp"
+            android:hint="שם פרטי"
+            app:boxBackgroundColor="#F8F9FA"
+            app:boxStrokeWidth="0dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFirstName"
-                style="@style/Widget.Family.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="givenName"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName"
-                android:nextFocusDown="@id/etLastName" />
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/last_name"
-            app:startIconDrawable="@drawable/ic_person">
-
+            android:layout_marginTop="12dp"
+            android:hint="שם משפחה"
+            app:boxBackgroundColor="#F8F9FA"
+            app:boxStrokeWidth="0dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLastName"
-                style="@style/Widget.Family.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="familyName"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName"
-                android:nextFocusDown="@id/etEmail" />
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/label_email"
-            app:startIconDrawable="@drawable/ic_email">
-
+            android:layout_marginTop="12dp"
+            android:hint="אימייל"
+            app:boxBackgroundColor="#F8F9FA"
+            app:boxStrokeWidth="0dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
-                style="@style/Widget.Family.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
-                android:nextFocusDown="@id/etPassword"
-                android:textDirection="ltr" />
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Family.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/label_password"
-            app:endIconMode="password_toggle"
-            app:startIconDrawable="@drawable/ic_lock">
-
+            android:layout_marginTop="12dp"
+            android:hint="סיסמה"
+            app:boxBackgroundColor="#F8F9FA"
+            app:boxStrokeWidth="0dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
-                style="@style/Widget.Family.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="newPassword"
-                android:imeOptions="actionDone"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnRegister"
-            style="@style/Widget.Family.AccentButton"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginTop="18dp"
-            android:drawableStart="@drawable/ic_person_add"
-            android:text="@string/btn_create_account" />
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="#2D3436"
+            android:text="הרשמה"
+            android:textSize="16sp"
+            app:cornerRadius="12dp" />
 
         <ProgressBar
             android:id="@+id/progressRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:indeterminateTint="@color/md_theme_secondary"
+            android:layout_marginTop="16dp"
+            android:indeterminateTint="#2D3436"
             android:visibility="gone" />
 
     </LinearLayout>

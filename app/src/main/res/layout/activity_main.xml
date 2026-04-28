@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen_gradient"
+    android:background="#FFFFFF"
     android:fillViewport="true"
     android:layoutDirection="rtl"
     android:overScrollMode="never"
@@ -15,218 +16,170 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
-        android:paddingStart="@dimen/screen_padding_compact"
-        android:paddingTop="@dimen/screen_padding_top"
-        android:paddingEnd="@dimen/screen_padding_compact"
-        android:paddingBottom="@dimen/screen_padding_bottom">
+        android:padding="32dp">
 
+        <!-- LOGO & GREETING -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_home_hero"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="18dp">
+            android:orientation="vertical"
+            android:layout_marginBottom="40dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="Family Tasks"
+                android:textColor="#2D3436"
+                android:textSize="32sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    style="@style/Widget.Family.Eyebrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_welcome_eyebrow" />
-
-                <TextView
-                    style="@style/Widget.Family.HeroTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/app_name" />
-
-                <TextView
-                    style="@style/Widget.Family.HeroSubtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/home_subtitle" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="78dp"
-                android:layout_height="78dp"
-                android:layout_marginStart="12dp"
-                android:alpha="0.9"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_home_family" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="ניהול משימות משפחתי פשוט וחכם"
+                android:textColor="#888888"
+                android:textSize="16sp" />
         </LinearLayout>
 
+        <!-- FRAGMENT CONTAINER (For Login/Register forms) -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="300dp"
-            android:paddingBottom="4dp" />
+            android:layout_marginBottom="24dp" />
 
-        <LinearLayout
+        <!-- ROLE SELECTION: PARENT -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardParentRole"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_role_parent_card"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#F8F9FA"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#F1F2F6">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="@drawable/bg_avatar_placeholder"
-                    android:padding="9dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="הורים"
+                    android:textColor="#2D3436"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/home_parent_section_title"
-                        android:src="@drawable/ic_role_parent" />
-                </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="ניהול משימות, ילדים ותגמולים"
+                    android:textColor="#888888"
+                    android:textSize="13sp" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/Widget.Family.RoleTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_parent_section_title" />
+                    <Button
+                        android:id="@+id/btnLogin"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="#2D3436"
+                        android:text="התחברות"
+                        app:cornerRadius="12dp" />
 
-                    <TextView
-                        style="@style/Widget.Family.RoleBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/home_parent_section_subtitle" />
+                    <Button
+                        android:id="@+id/btnRegister"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:text="הרשמה"
+                        android:textColor="#2D3436"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="#DFE4EA" />
                 </LinearLayout>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    style="@style/Widget.Family.PrimaryButton"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_login"
-                    android:text="@string/parents_login" />
-
-                <Button
-                    android:id="@+id/btnRegister"
-                    style="@style/Widget.Family.PrimaryButton"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_person_add"
-                    android:text="@string/register_parents" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
+        <!-- ROLE SELECTION: CHILD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardChildRole"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_role_child_card"
-            android:orientation="vertical"
-            android:padding="16dp">
+            app:cardBackgroundColor="#F8F9FA"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#F1F2F6">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="@drawable/bg_avatar_placeholder"
-                    android:padding="9dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ילדים"
+                    android:textColor="#2D3436"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/home_child_section_title"
-                        android:src="@drawable/ic_role_child" />
-                </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="צפייה במשימות ואיסוף כוכבים"
+                    android:textColor="#888888"
+                    android:textSize="13sp" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/Widget.Family.RoleTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_child_section_title" />
+                    <Button
+                        android:id="@+id/btnChildQR"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="כניסה ב-QR"
+                        android:textColor="#2D3436"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="#DFE4EA" />
 
-                    <TextView
-                        style="@style/Widget.Family.RoleBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/home_child_section_subtitle" />
+                    <Button
+                        android:id="@+id/btnChild"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:text="כניסה ישירה"
+                        android:textColor="#2D3436"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="#DFE4EA" />
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnChildQR"
-                    style="@style/Widget.Family.ChildOutlineButton"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_qr_code_scanner"
-                    android:text="@string/child_login_qr" />
-
-                <Button
-                    android:id="@+id/btnChild"
-                    style="@style/Widget.Family.ChildOutlineButton"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_child_care"
-                    android:text="@string/child_direct_login" />
-            </LinearLayout>
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

@@ -2,102 +2,57 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardChildSummary"
-    android:layout_width="wrap_content"
+    android:layout_width="140dp"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="@dimen/card_corner_radius_large"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/border_light"
-    app:strokeWidth="1dp">
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F1F2F6">
 
-    <!-- צ'יפ בחירת ילד בדשבורד ההורה -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="14dp"
-        android:paddingBottom="10dp">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvChildSummaryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ילד"
+            android:textColor="#2D3436"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:gravity="center">
 
             <TextView
-                android:id="@+id/tvChildSummaryName"
+                android:id="@+id/tvChildSummaryAssigned"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:text="0 פתוחות"
+                android:textColor="#888888"
+                android:textSize="11sp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvChildSummaryOverdue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-
-                <TextView
-                    android:id="@+id/tvChildSummaryAssigned"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvChildSummaryCompleted"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvChildSummaryUrgent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvChildSummaryOverdue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
-            </LinearLayout>
+                android:layout_marginTop="2dp"
+                android:text="0 באיחור"
+                android:textColor="#D63031"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>
