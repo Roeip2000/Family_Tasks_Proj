@@ -109,10 +109,17 @@ public class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         View imgShell = convertView.findViewById(R.id.imgTaskParentShell);
         ImageView imgTask = convertView.findViewById(R.id.imgTaskParent);
 
-        tvTitle.setText(task.getTitle() != null ? task.getTitle() : context.getString(R.string.task_default_title));
+        String titleText = task.getTitle();
+        if (titleText == null || titleText.isEmpty()) {
+            titleText = context.getString(R.string.task_default_title);
+        }
+        tvTitle.setText(titleText);
 
         if (showChildName) {
-            String ownerName = task.getChildName() != null ? task.getChildName() : context.getString(R.string.default_child_name);
+            String ownerName = task.getChildName();
+            if (ownerName == null || ownerName.trim().isEmpty()) {
+                ownerName = context.getString(R.string.default_child_name);
+            }
             tvOwner.setText(context.getString(R.string.task_assigned_to, ownerName));
             tvOwner.setVisibility(View.VISIBLE);
         } else {

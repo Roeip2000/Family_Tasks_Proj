@@ -168,7 +168,12 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     String firstName = snap.child("firstName").getValue(String.class);
                     String lastName = snap.child("lastName").getValue(String.class);
                     childIds.add(childId);
-                    names.add(NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name)));
+                    
+                    String fullName = firstName;
+                    if (lastName != null && !lastName.isEmpty()) {
+                        fullName = fullName + " " + lastName;
+                    }
+                    names.add(fullName);
                 }
                 setSpinnerItems(spAssignee, names);
             }

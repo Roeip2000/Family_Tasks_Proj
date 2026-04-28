@@ -235,8 +235,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String firstName = snapshot.child("firstName").getValue(String.class);
-                String lastName = snapshot.child("lastName").getValue(String.class);
-                tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה יקר"));
+                if (firstName != null && !firstName.isEmpty()) {
+                    tvParentName.setText(firstName + "!");
+                } else {
+                    tvParentName.setText("הורה יקר");
+                }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
@@ -333,10 +336,19 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void deleteTask(AssignedTask task) {
+        // מוחק את המשימה מה-Firebase לפי המזהה שלה.
+        // החלטת מוצר: המשימות לא נמחקות אוטומטית בסיום כדי שההורה יוכל לראות שהן בוצעו,
+        // ורק אז למחוק אותן ידנית כדי לנקות את הדשבורד.
         FirebaseDatabase.getInstance().getReference("parents")
                 .child(FirebaseAuth.getInstance().getUid())
                 .child("children").child(task.getChildId())
-                .child("tasks").child(task.getTaskId()).removeValue();
+                .child("tasks").child(task.getTaskId()).removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(ParentDashboardActivity.this, "המשימה נמחקה", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void showLogoutDialog() {

@@ -376,7 +376,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
-            tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, getString(R.string.default_child_name)));
+            String fullName = item.firstName;
+            if (item.lastName != null && !item.lastName.isEmpty()) {
+                fullName = fullName + " " + item.lastName;
+            }
+            tvChildFullName.setText(fullName);
         }
     }
 

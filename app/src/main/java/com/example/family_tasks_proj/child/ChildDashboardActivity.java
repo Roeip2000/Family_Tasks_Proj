@@ -171,7 +171,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String firstName = snapshot.child("firstName").getValue(String.class);
-                tvChildName.setText("היי " + firstName + "!");
+                if (firstName != null && !firstName.isEmpty()) {
+                    tvChildName.setText("שלום, " + firstName + "! 👋");
+                } else {
+                    tvChildName.setText("שלום! 👋");
+                }
                 Long stars = snapshot.child("stars").getValue(Long.class);
                 if (stars != null) {
                     tvStars.setText("⭐ " + stars);
