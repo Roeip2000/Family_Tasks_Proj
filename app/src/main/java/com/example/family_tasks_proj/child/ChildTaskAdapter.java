@@ -27,7 +27,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     private final List<ChildTask> tasks;
     private final OnTaskDoneListener doneListener;
 
-    public interface OnTaskDoneListener { void onTaskDone(ChildTask task); }
+    public interface OnTaskDoneListener {
+        void onTaskDone(ChildTask task);
+    }
 
     public ChildTaskAdapter(List<ChildTask> tasks, OnTaskDoneListener doneListener) {
         this.tasks = tasks;
@@ -90,7 +92,12 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_primary));
             holder.btnDone.setVisibility(View.VISIBLE);
-            holder.btnDone.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { doneListener.onTaskDone(task); } });
+            holder.btnDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    doneListener.onTaskDone(task);
+                }
+            });
             
             String dueText = formatDueText(ctx, task.getDueAt(), days);
             holder.tvDue.setText(dueText);
@@ -139,20 +146,38 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     }
 
     @Override
-    public int getItemCount() { return tasks.size(); }
+    public int getItemCount() {
+        return tasks.size();
+    }
 
     private String formatDueText(android.content.Context ctx, String dueAt, long days) {
-        if (days == Long.MAX_VALUE) return ctx.getString(R.string.child_due_no_date);
-        if (days < 0) return ctx.getString(R.string.child_due_late, (int)Math.abs(days));
-        if (days == 0) return ctx.getString(R.string.child_due_today);
-        if (days == 1) return ctx.getString(R.string.child_due_tomorrow);
-        if (days <= 7) return ctx.getString(R.string.child_due_days_left, (int)days);
+        if (days == Long.MAX_VALUE) {
+            return ctx.getString(R.string.child_due_no_date);
+        }
+        if (days < 0) {
+            return ctx.getString(R.string.child_due_late, (int) Math.abs(days));
+        }
+        if (days == 0) {
+            return ctx.getString(R.string.child_due_today);
+        }
+        if (days == 1) {
+            return ctx.getString(R.string.child_due_tomorrow);
+        }
+        if (days <= 7) {
+            return ctx.getString(R.string.child_due_days_left, (int) days);
+        }
         return dueAt;
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
-        View viewStatusDot, imgShell; ImageView imgTask;
-        TextView tvTitle, tvDue, tvStars; Button btnDone;
+        View viewStatusDot;
+        View imgShell;
+        ImageView imgTask;
+        TextView tvTitle;
+        TextView tvDue;
+        TextView tvStars;
+        Button btnDone;
+
         TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             viewStatusDot = itemView.findViewById(R.id.viewStatusDot);

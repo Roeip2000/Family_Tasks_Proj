@@ -137,7 +137,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // מטפל בתמונה שנבחרה מהגלריה
     private void handleTemplateImageResult(Uri uri) {
-        if (uri == null) return;
+        if (uri == null) {
+            return;
+        }
         correctedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
         if (correctedBitmap == null) {
             Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
@@ -149,7 +151,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     // טוען את התבניות הקיימות מ-Firebase
     private void loadTemplates() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         getTemplatesRef(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -158,7 +162,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     TaskTemplate template = snap.getValue(TaskTemplate.class);
                     if (template != null) {
-                        if (template.getId() == null) template.setId(snap.getKey());
+                        if (template.getId() == null) {
+                            template.setId(snap.getKey());
+                        }
                         templateList.add(template);
                     }
                 }
@@ -175,8 +181,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private void updateTemplateListVisibility() {
         boolean empty = templateList.isEmpty();
-        tvNoTemplates.setVisibility(empty ? View.VISIBLE : View.GONE);
-        lvTemplates.setVisibility(empty ? View.GONE : View.VISIBLE);
+        if (empty) {
+            tvNoTemplates.setVisibility(View.VISIBLE);
+            lvTemplates.setVisibility(View.GONE);
+        } else {
+            tvNoTemplates.setVisibility(View.GONE);
+            lvTemplates.setVisibility(View.VISIBLE);
+        }
     }
 
     // שומר תבנית חדשה או מעדכן קיימת
@@ -190,7 +201,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         int stars;
         try {
             stars = Integer.parseInt(etStarsWorth.getText().toString().trim());
-            if (stars < MIN_STARS || stars > MAX_STARS) throw new NumberFormatException();
+            if (stars < MIN_STARS || stars > MAX_STARS) {
+                throw new NumberFormatException();
+            }
         } catch (NumberFormatException exception) {
             Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
             return;
@@ -206,7 +219,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // מבצע את השמירה בפועל מול השרת
     private void submitTemplateToFirebase(String uid, String title, int stars) {
-        String templateId = (editingTemplateId != null) ? editingTemplateId : UUID.randomUUID().toString();
+        String templateId;
+        if (editingTemplateId != null) {
+            templateId = editingTemplateId;
+        } else {
+            templateId = UUID.randomUUID().toString();
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("id", templateId);
         data.put("title", title);
@@ -240,7 +258,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // מציג אפשרויות עבור תבנית שנבחרה
     private void showTemplateOptionsDialog(int position) {
-        if (position < 0 || position >= templateList.size()) return;
+        if (position < 0 || position >= templateList.size()) {
+            return;
+        }
         final TaskTemplate template = templateList.get(position);
         String[] options = {getString(R.string.template_option_edit), getString(R.string.template_option_delete)};
         new AlertDialog.Builder(this)
@@ -248,8 +268,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) startEditTemplate(template);
-                        else showDeleteTemplateDialog(template);
+                        if (which == 0) {
+                            startEditTemplate(template);
+                        } else {
+                            showDeleteTemplateDialog(template);
+                        }
                     }
                 })
                 .show();
@@ -272,7 +295,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private void deleteTemplate(TaskTemplate template) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null || template.getId() == null) return;
+        if (user == null || template.getId() == null) {
+            return;
+        }
         getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
@@ -289,7 +314,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         etStarsWorth.setText(String.valueOf(template.safeStarsWorth()));
         if (template.getImageBase64() != null) {
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
-            if (bitmap != null) imgTask.setImageBitmap(bitmap);
+            if (bitmap != null) {
+                imgTask.setImageBitmap(bitmap);
+            }
         }
         tvFormTitle.setText(R.string.template_form_title_edit);
         btnSave.setText(R.string.template_save_changes);
@@ -314,21 +341,31 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // מתאם להצגת רשימת התבניות
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
-        TemplateListAdapter() { super(ParentTaskTemplateActivity.this, 0, templateList); }
+        TemplateListAdapter() {
+            super(ParentTaskTemplateActivity.this, 0, templateList);
+        }
+
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.item_task_template, parent, false);
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_task_template, parent, false);
+            }
             TaskTemplate template = getItem(position);
             if (template != null) {
                 ((TextView) convertView.findViewById(R.id.tvTemplateTitle)).setText(template.getTitle());
-                ((TextView) convertView.findViewById(R.id.tvTemplateStars)).setText(getString(R.string.template_item_stars, (int)template.safeStarsWorth()));
-                ImageView iv = convertView.findViewById(R.id.ivTemplateThumb);
+                ((TextView) convertView.findViewById(R.id.tvTemplateStars)).setText(getString(R.string.template_item_stars, (int) template.safeStarsWorth()));
+                ImageView imageView = convertView.findViewById(R.id.ivTemplateThumb);
                 if (template.getImageBase64() != null) {
-                    Bitmap bmp = ImageHelper.base64ToBitmap(template.getImageBase64());
-                    if (bmp != null) iv.setImageBitmap(bmp);
-                    else iv.setImageResource(R.drawable.ic_image_placeholder);
-                } else iv.setImageResource(R.drawable.ic_image_placeholder);
+                    Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_image_placeholder);
+                    }
+                } else {
+                    imageView.setImageResource(R.drawable.ic_image_placeholder);
+                }
             }
             return convertView;
         }

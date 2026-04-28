@@ -45,7 +45,6 @@
     <string name="btn_enter">כניסה</string>
     <string name="btn_logout">התנתק </string>
     <string name="btn_done">בוצע</string>
-    <string name="btn_change_parent_photo">עריכת תמונה</string>
     <string name="btn_manage_templates">מאגר תבניות</string>
     <string name="btn_show_children_qr">QR לילדים</string>
     <string name="btn_manage_children_short">ניהול ילדים</string>
@@ -276,7 +275,6 @@
     <string name="error_parent_session_missing">ההורה לא מחובר</string>
     <string name="error_with_details">שגיאה: %1$s</string>
     <string name="success_parent_register">ההרשמה הצליחה!</string>
-    <string name="success_parent_photo_saved">תמונת הפרופיל נשמרה!</string>
 
     <string name="cd_profile_image">תמונת פרופיל</string>
     <string name="cd_child_photo">תמונת ילד</string>

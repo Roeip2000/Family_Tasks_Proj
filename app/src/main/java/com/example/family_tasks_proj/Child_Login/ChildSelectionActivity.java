@@ -63,7 +63,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     private void bindActions() {
         btnEnter.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { onEnterClicked(); }
+            @Override
+            public void onClick(View view) {
+                onEnterClicked();
+            }
         });
     }
 
@@ -105,44 +108,54 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 parentItems.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    String uid = snap.getKey();
-                    String fName = snap.child("firstName").getValue(String.class);
-                    String lName = snap.child("lastName").getValue(String.class);
-                    parentItems.add(new ParentItem(uid, NameUtils.fullNameOrDefault(fName, lName, getString(R.string.default_parent_name))));
+                    String parentUid = snap.getKey();
+                    String firstName = snap.child("firstName").getValue(String.class);
+                    String lastName = snap.child("lastName").getValue(String.class);
+                    parentItems.add(new ParentItem(parentUid, NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_parent_name))));
                 }
                 if (parentItems.isEmpty()) {
                     Toast.makeText(ChildSelectionActivity.this, R.string.child_selection_no_parents, Toast.LENGTH_LONG).show();
                     return;
                 }
                 List<String> names = new ArrayList<>();
-                for (ParentItem item : parentItems) names.add(item.name);
+                for (ParentItem item : parentItems) {
+                    names.add(item.name);
+                }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_dropdown_item, names);
                 spinnerParents.setAdapter(adapter);
                 spinnerParents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                        parentId = parentItems.get(pos).id;
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                        parentId = parentItems.get(position).id;
                         loadChildren(parentId);
                     }
-                    @Override public void onNothingSelected(AdapterView<?> p) {}
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
                 });
             }
-            @Override public void onCancelled(@NonNull DatabaseError e) { progressBar.setVisibility(View.GONE); }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+            }
         });
     }
 
     // טוען את הילדים השייכים להורה שנבחר
-    private void loadChildren(String pId) {
+    private void loadChildren(String selectedParentId) {
         progressBar.setVisibility(View.VISIBLE);
-        FirebaseDatabase.getInstance().getReference("parents").child(pId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressBar.setVisibility(View.GONE);
                 childItems.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    String cId = snap.getKey();
-                    String fName = snap.child("firstName").getValue(String.class);
-                    String lName = snap.child("lastName").getValue(String.class);
-                    childItems.add(new ChildItem(cId, NameUtils.fullNameOrDefault(fName, lName, getString(R.string.default_child_name_fallback))));
+                    String childId = snap.getKey();
+                    String firstName = snap.child("firstName").getValue(String.class);
+                    String lastName = snap.child("lastName").getValue(String.class);
+                    childItems.add(new ChildItem(childId, NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name_fallback))));
                 }
                 if (childItems.isEmpty()) {
                     tvNoChildren.setVisibility(View.VISIBLE);
@@ -154,44 +167,61 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 spinnerChildren.setVisibility(View.VISIBLE);
                 btnEnter.setEnabled(true);
                 List<String> names = new ArrayList<>();
-                for (ChildItem item : childItems) names.add(item.name);
+                for (ChildItem item : childItems) {
+                    names.add(item.name);
+                }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_dropdown_item, names);
                 spinnerChildren.setAdapter(adapter);
                 if (preselectedChildId != null) {
                     for (int i = 0; i < childItems.size(); i++) {
-                        if (preselectedChildId.equals(childItems.get(i).id)) { spinnerChildren.setSelection(i); break; }
+                        if (preselectedChildId.equals(childItems.get(i).id)) {
+                            spinnerChildren.setSelection(i);
+                            break;
+                        }
                     }
                 }
             }
-            @Override public void onCancelled(@NonNull DatabaseError e) { progressBar.setVisibility(View.GONE); }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+            }
         });
     }
 
     private void onEnterClicked() {
-        int pos = spinnerChildren.getSelectedItemPosition();
-        if (pos < 0) {
+        int selectedPosition = spinnerChildren.getSelectedItemPosition();
+        if (selectedPosition < 0) {
             Toast.makeText(this, R.string.child_selection_please_select, Toast.LENGTH_SHORT).show();
             return;
         }
-        String cId = childItems.get(pos).id;
-        SharedPreferences.Editor ed = getSharedPreferences("child_session", MODE_PRIVATE).edit();
-        ed.putString("parentId", parentId);
-        ed.putString("childId", cId);
-        ed.apply();
+        String childId = childItems.get(selectedPosition).id;
+        SharedPreferences.Editor editor = getSharedPreferences("child_session", MODE_PRIVATE).edit();
+        editor.putString("parentId", parentId);
+        editor.putString("childId", childId);
+        editor.apply();
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra("parentId", parentId);
-        intent.putExtra("childId", cId);
+        intent.putExtra("childId", childId);
         startActivity(intent);
         finish();
     }
 
     private static class ParentItem {
         String id, name;
-        ParentItem(String id, String name) { this.id = id; this.name = name; }
+
+        ParentItem(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
     }
 
     private static class ChildItem {
         String id, name;
-        ChildItem(String id, String name) { this.id = id; this.name = name; }
+
+        ChildItem(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
     }
 }

@@ -151,7 +151,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // מטפל בתמונה שנבחרה מהגלריה
     private void handleChildImageResult(Uri uri) {
-        if (uri == null) return;
+        if (uri == null) {
+            return;
+        }
 
         selectedChildPhoto = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
         if (selectedChildPhoto == null) {
@@ -171,13 +173,23 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        final String childId = (editingChildId != null) ? editingChildId : childrenRef().push().getKey();
+        final String childId;
+        if (editingChildId != null) {
+            childId = editingChildId;
+        } else {
+            childId = childrenRef().push().getKey();
+        }
         if (childId == null) {
             Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String imageBase64 = (selectedChildPhoto != null) ? ImageHelper.bitmapToBase64(selectedChildPhoto) : editingChildOldImageBase64;
+        String imageBase64;
+        if (selectedChildPhoto != null) {
+            imageBase64 = ImageHelper.bitmapToBase64(selectedChildPhoto);
+        } else {
+            imageBase64 = editingChildOldImageBase64;
+        }
         btnAddChild.setEnabled(false);
 
         Task<Void> saveTask;
@@ -187,7 +199,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
             Map<String, Object> updates = new HashMap<>();
             updates.put("firstName", firstName);
             updates.put("lastName", lastName);
-            if (imageBase64 != null) updates.put("profileImageBase64", imageBase64);
+            if (imageBase64 != null) {
+                updates.put("profileImageBase64", imageBase64);
+            }
             saveTask = childrenRef().child(childId).updateChildren(updates);
         }
 
@@ -195,8 +209,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 btnAddChild.setEnabled(true);
-                int msgRes = (editingChildId == null) ? R.string.manage_children_added_success : R.string.manage_children_updated_success;
-                Toast.makeText(ManageChildrenActivity.this, getString(msgRes, firstName, lastName), Toast.LENGTH_SHORT).show();
+                int messageResId;
+                if (editingChildId == null) {
+                    messageResId = R.string.manage_children_added_success;
+                } else {
+                    messageResId = R.string.manage_children_updated_success;
+                }
+                Toast.makeText(ManageChildrenActivity.this, getString(messageResId, firstName, lastName), Toast.LENGTH_SHORT).show();
                 resetForm();
                 loadChildren();
             }
@@ -241,8 +260,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
     // מציג הודעה אם אין ילדים רשומים
     private void updateChildrenEmptyState() {
         boolean isEmpty = childItems.isEmpty();
-        tvNoChildren.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        lvChildren.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        if (isEmpty) {
+            tvNoChildren.setVisibility(View.VISIBLE);
+            lvChildren.setVisibility(View.GONE);
+        } else {
+            tvNoChildren.setVisibility(View.GONE);
+            lvChildren.setVisibility(View.VISIBLE);
+        }
     }
 
     // ממלא את הטופס בפרטי הילד לצורך עריכה
@@ -283,24 +307,44 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // משנה את עיצוב הכפתורים בין מצב עריכה להוספה
     private void toggleUI(boolean isEdit) {
-        btnAddChild.setText(isEdit ? getString(R.string.manage_children_save_changes) : getString(R.string.add_child));
-        int colorRes = isEdit ? R.color.primary : R.color.accent;
+        if (isEdit) {
+            btnAddChild.setText(getString(R.string.manage_children_save_changes));
+        } else {
+            btnAddChild.setText(getString(R.string.add_child));
+        }
+
+        int colorRes;
+        if (isEdit) {
+            colorRes = R.color.primary;
+        } else {
+            colorRes = R.color.accent;
+        }
         btnAddChild.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, colorRes)));
-        btnCancelEdit.setVisibility(isEdit ? View.VISIBLE : View.GONE);
-        tvFormTitle.setText(isEdit ? R.string.manage_children_form_title_edit : R.string.manage_children_form_title_new);
+        if (isEdit) {
+            btnCancelEdit.setVisibility(View.VISIBLE);
+            tvFormTitle.setText(R.string.manage_children_form_title_edit);
+        } else {
+            btnCancelEdit.setVisibility(View.GONE);
+            tvFormTitle.setText(R.string.manage_children_form_title_new);
+        }
     }
 
     // מציג תפריט אפשרויות לילד שנבחר
     private void showChildOptionsDialog(final int position) {
-        if (position < 0 || position >= childItems.size()) return;
+        if (position < 0 || position >= childItems.size()) {
+            return;
+        }
         String[] options = {getString(R.string.manage_children_option_edit), getString(R.string.manage_children_option_delete)};
         new AlertDialog.Builder(this)
                 .setTitle(R.string.home_question)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) enterEditMode(position);
-                        else showDeleteChildDialog(position);
+                        if (which == 0) {
+                            enterEditMode(position);
+                        } else {
+                            showDeleteChildDialog(position);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.action_cancel, null)
@@ -329,7 +373,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, item.firstName), Toast.LENGTH_SHORT).show();
-                if (item.id.equals(editingChildId)) resetForm();
+                if (item.id.equals(editingChildId)) {
+                    resetForm();
+                }
                 loadChildren();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -347,9 +393,17 @@ public class ManageChildrenActivity extends AppCompatActivity {
     // מעדכן את גובה הרשימה באופן ידני כדי שתעבוד בתוך גלילה
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
-        if (adapter == null) return;
+        if (adapter == null) {
+            return;
+        }
         int totalHeight = 0;
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(listView.getWidth() > 0 ? listView.getWidth() : getResources().getDisplayMetrics().widthPixels - 100, View.MeasureSpec.AT_MOST);
+        int listWidth;
+        if (listView.getWidth() > 0) {
+            listWidth = listView.getWidth();
+        } else {
+            listWidth = getResources().getDisplayMetrics().widthPixels - 100;
+        }
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
         for (int i = 0; i < adapter.getCount(); i++) {
             View item = adapter.getView(i, null, listView);
             item.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
@@ -362,15 +416,23 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // מתאם להצגת רשימת הילדים
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
-        ChildListAdapter() { super(ManageChildrenActivity.this, 0, childItems); }
+        ChildListAdapter() {
+            super(ManageChildrenActivity.this, 0, childItems);
+        }
+
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
+            }
             ChildItem item = getItem(position);
-            if (item != null) bindChildRow(convertView, item);
+            if (item != null) {
+                bindChildRow(convertView, item);
+            }
             return convertView;
         }
+
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
             tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, getString(R.string.default_child_name)));
@@ -387,9 +449,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private static class ChildItem {
-        String id, firstName, lastName, profileImageBase64;
+        String id;
+        String firstName;
+        String lastName;
+        String profileImageBase64;
+
         ChildItem(String id, String firstName, String lastName, String profileImageBase64) {
-            this.id = id; this.firstName = firstName; this.lastName = lastName; this.profileImageBase64 = profileImageBase64;
+            this.id = id;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.profileImageBase64 = profileImageBase64;
         }
     }
 }

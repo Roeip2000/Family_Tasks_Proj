@@ -5,13 +5,18 @@ import java.util.Calendar;
 /** מחלקת עזר לטיפול בתאריכים וחישוב דחיפות משימות. */
 public final class DateUtils {
 
-    private DateUtils() {}
+    private DateUtils() {
+    }
 
     // מחשב כמה ימים נותרו עד תאריך היעד (מחזיר ערך שלילי אם התאריך עבר)
     public static long daysLeft(String dueAt) {
-        if (dueAt == null || dueAt.trim().isEmpty()) return Long.MAX_VALUE;
+        if (dueAt == null || dueAt.trim().isEmpty()) {
+            return Long.MAX_VALUE;
+        }
         String[] parts = dueAt.trim().split("/");
-        if (parts.length != 3) return Long.MAX_VALUE;
+        if (parts.length != 3) {
+            return Long.MAX_VALUE;
+        }
 
         try {
             int day = Integer.parseInt(parts[0]);

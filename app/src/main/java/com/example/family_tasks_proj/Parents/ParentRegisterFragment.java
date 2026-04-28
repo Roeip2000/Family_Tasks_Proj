@@ -28,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 /** מסך הרשמת הורה חדש. יוצר משתמש ב-FirebaseAuth ושומר את פרטיו ב-Realtime Database. */
 public class ParentRegisterFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth firebaseAuth;
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
     private ProgressBar progressRegister;
@@ -43,7 +43,7 @@ public class ParentRegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);
         etEmail = view.findViewById(R.id.etEmail);
@@ -52,12 +52,15 @@ public class ParentRegisterFragment extends Fragment {
         progressRegister = view.findViewById(R.id.progressRegister);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { registerParent(); }
+            @Override
+            public void onClick(View view) {
+                registerParent();
+            }
         });
 
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     registerParent();
                     return true;
@@ -69,33 +72,35 @@ public class ParentRegisterFragment extends Fragment {
 
     // מבצע הרשמה ל-Firebase ושומר פרופיל הורה
     private void registerParent() {
-        final String fName = etFirstName.getText().toString().trim();
-        final String lName = etLastName.getText().toString().trim();
+        final String firstName = etFirstName.getText().toString().trim();
+        final String lastName = etLastName.getText().toString().trim();
         final String email = etEmail.getText().toString().trim();
-        String pass = etPassword.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        if (fName.isEmpty() || lName.isEmpty() || email.isEmpty() || pass.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (pass.length() < 6) {
+        if (password.length() < 6) {
             Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
-        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 if (task.isSuccessful()) {
-                    FBsingleton.getInstance().setUserData(fName, lName, email);
+                    FBsingleton.getInstance().setUserData(firstName, lastName, email);
                     FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> t) {
+                        public void onComplete(@NonNull Task<Void> saveTask) {
                             setLoading(false);
-                            if (t.isSuccessful()) {
+                            if (saveTask.isSuccessful()) {
                                 Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                                 requireActivity().finish();
@@ -104,7 +109,13 @@ public class ParentRegisterFragment extends Fragment {
                     });
                 } else {
                     setLoading(false);
-                    Toast.makeText(requireContext(), getString(R.string.error_with_details, (task.getException() != null ? task.getException().getMessage() : getString(R.string.error_unknown_register))), Toast.LENGTH_LONG).show();
+                    String errorMessage;
+                    if (task.getException() != null) {
+                        errorMessage = task.getException().getMessage();
+                    } else {
+                        errorMessage = getString(R.string.error_unknown_register);
+                    }
+                    Toast.makeText(requireContext(), getString(R.string.error_with_details, errorMessage), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -112,7 +123,18 @@ public class ParentRegisterFragment extends Fragment {
 
     private void setLoading(boolean isLoading) {
         btnRegister.setEnabled(!isLoading);
-        btnRegister.setText(isLoading ? R.string.btn_create_account_loading : R.string.btn_create_account);
-        if (progressRegister != null) progressRegister.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            btnRegister.setText(R.string.btn_create_account_loading);
+        } else {
+            btnRegister.setText(R.string.btn_create_account);
+        }
+
+        if (progressRegister != null) {
+            if (isLoading) {
+                progressRegister.setVisibility(View.VISIBLE);
+            } else {
+                progressRegister.setVisibility(View.GONE);
+            }
+        }
     }
 }

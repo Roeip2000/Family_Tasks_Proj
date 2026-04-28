@@ -26,7 +26,9 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
 
     static final String ALL_CHILDREN_ID = "__ALL__";
 
-    interface OnChildSelectedListener { void onChildSelected(String childId); }
+    interface OnChildSelectedListener {
+        void onChildSelected(String childId);
+    }
 
     private final Context context;
     private final List<ChildSummary> childSummaries;
@@ -41,7 +43,9 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
         this.onChildSelectedListener = listener;
     }
 
-    void setSelectedChildId(String id) { this.selectedChildId = id; }
+    void setSelectedChildId(String id) {
+        this.selectedChildId = id;
+    }
 
     @NonNull
     @Override
@@ -63,11 +67,25 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
         if (summary.getOverdueCount() > 0) {
             holder.tvOverdue.setVisibility(View.VISIBLE);
             bindChip(holder.tvOverdue, context.getString(R.string.child_summary_overdue_tasks, summary.getOverdueCount()), "#FFEBEE", "#C62828", "#FFCDD2");
-        } else holder.tvOverdue.setVisibility(View.GONE);
+        } else {
+            holder.tvOverdue.setVisibility(View.GONE);
+        }
 
-        holder.card.setCardBackgroundColor(Color.parseColor(selected ? "#F3F8FF" : "#FFFFFF"));
-        holder.card.setStrokeColor(Color.parseColor(selected ? "#2F80ED" : "#D9E2EC"));
-        holder.card.setStrokeWidth(selected ? 6 : 3);
+        String cardBackgroundColor;
+        String cardStrokeColor;
+        int cardStrokeWidth;
+        if (selected) {
+            cardBackgroundColor = "#F3F8FF";
+            cardStrokeColor = "#2F80ED";
+            cardStrokeWidth = 6;
+        } else {
+            cardBackgroundColor = "#FFFFFF";
+            cardStrokeColor = "#D9E2EC";
+            cardStrokeWidth = 3;
+        }
+        holder.card.setCardBackgroundColor(Color.parseColor(cardBackgroundColor));
+        holder.card.setStrokeColor(Color.parseColor(cardStrokeColor));
+        holder.card.setStrokeWidth(cardStrokeWidth);
 
         if (isAll) {
             holder.ivPhoto.setImageResource(R.drawable.ic_home_family);
@@ -77,33 +95,50 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
                 if (childPhotoCache.containsKey(summary.getChildId())) {
                     holder.ivPhoto.setImageBitmap(childPhotoCache.get(summary.getChildId()));
                 } else {
-                    Bitmap raw = ImageHelper.base64ToBitmap(summary.getChildProfileBase64());
-                    if (raw != null) {
-                        Bitmap circle = ImageHelper.getCircularBitmap(raw);
-                        childPhotoCache.put(summary.getChildId(), circle);
-                        holder.ivPhoto.setImageBitmap(circle);
+                    Bitmap rawBitmap = ImageHelper.base64ToBitmap(summary.getChildProfileBase64());
+                    if (rawBitmap != null) {
+                        Bitmap circularBitmap = ImageHelper.getCircularBitmap(rawBitmap);
+                        childPhotoCache.put(summary.getChildId(), circularBitmap);
+                        holder.ivPhoto.setImageBitmap(circularBitmap);
                     }
                 }
-            } else holder.ivPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
+            } else {
+                holder.ivPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
+            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { onChildSelectedListener.onChildSelected(summary.getChildId()); }
+            @Override
+            public void onClick(View view) {
+                onChildSelectedListener.onChildSelected(summary.getChildId());
+            }
         });
     }
 
     @Override
-    public int getItemCount() { return childSummaries.size(); }
+    public int getItemCount() {
+        return childSummaries.size();
+    }
 
-    private void bindChip(TextView tv, String text, String bg, String txtColor, String stroke) {
-        GradientDrawable gd = new GradientDrawable();
-        gd.setCornerRadius(40); gd.setColor(Color.parseColor(bg)); gd.setStroke(2, Color.parseColor(stroke));
-        tv.setBackground(gd); tv.setTextColor(Color.parseColor(txtColor)); tv.setText(text);
+    private void bindChip(TextView textView, String text, String backgroundColor, String textColor, String strokeColor) {
+        GradientDrawable background = new GradientDrawable();
+        background.setCornerRadius(40);
+        background.setColor(Color.parseColor(backgroundColor));
+        background.setStroke(2, Color.parseColor(strokeColor));
+        textView.setBackground(background);
+        textView.setTextColor(Color.parseColor(textColor));
+        textView.setText(text);
     }
 
     static class ChildSummaryViewHolder extends RecyclerView.ViewHolder {
-        MaterialCardView card; ImageView ivPhoto;
-        TextView tvName, tvAssigned, tvCompleted, tvUrgent, tvOverdue;
+        MaterialCardView card;
+        ImageView ivPhoto;
+        TextView tvName;
+        TextView tvAssigned;
+        TextView tvCompleted;
+        TextView tvUrgent;
+        TextView tvOverdue;
+
         ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
             card = itemView.findViewById(R.id.cardChildSummary);

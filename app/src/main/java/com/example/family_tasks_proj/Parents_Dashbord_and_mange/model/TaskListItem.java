@@ -7,14 +7,37 @@ public class TaskListItem {
     private int headerCount;
     private AssignedTask task;
 
-    public boolean getIsHeader() { return isHeader; }
-    public void setIsHeader(boolean header) { isHeader = header; }
-    public String getHeaderTitle() { return headerTitle; }
-    public void setHeaderTitle(String headerTitle) { this.headerTitle = headerTitle; }
-    public int getHeaderCount() { return headerCount; }
-    public void setHeaderCount(int headerCount) { this.headerCount = headerCount; }
-    public AssignedTask getTask() { return task; }
-    public void setTask(AssignedTask task) { this.task = task; }
+    public boolean getIsHeader() {
+        return isHeader;
+    }
+
+    public void setIsHeader(boolean header) {
+        isHeader = header;
+    }
+
+    public String getHeaderTitle() {
+        return headerTitle;
+    }
+
+    public void setHeaderTitle(String headerTitle) {
+        this.headerTitle = headerTitle;
+    }
+
+    public int getHeaderCount() {
+        return headerCount;
+    }
+
+    public void setHeaderCount(int headerCount) {
+        this.headerCount = headerCount;
+    }
+
+    public AssignedTask getTask() {
+        return task;
+    }
+
+    public void setTask(AssignedTask task) {
+        this.task = task;
+    }
 
     public static TaskListItem createHeader(String title, int count) {
         TaskListItem item = new TaskListItem();

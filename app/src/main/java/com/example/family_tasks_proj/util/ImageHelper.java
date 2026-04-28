@@ -28,10 +28,14 @@ public class ImageHelper {
             try (InputStream is = resolver.openInputStream(uri)) {
                 bitmap = BitmapFactory.decodeStream(is);
             }
-            if (bitmap == null) return null;
+            if (bitmap == null) {
+                return null;
+            }
 
             int rotation = getRotation(resolver, uri);
-            if (rotation != 0) bitmap = rotate(bitmap, rotation);
+            if (rotation != 0) {
+                bitmap = rotate(bitmap, rotation);
+            }
             return scale(bitmap, MAX_DIMENSION);
         } catch (Exception ignored) {
             return null;
@@ -40,7 +44,9 @@ public class ImageHelper {
 
     // הופך Bitmap למחרוזת טקסט לשמירה ב-Firebase
     public static String bitmapToBase64(Bitmap bitmap) {
-        if (bitmap == null) return null;
+        if (bitmap == null) {
+            return null;
+        }
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out);
@@ -52,7 +58,9 @@ public class ImageHelper {
 
     // הופך מחרוזת Base64 חזרה לתמונה
     public static Bitmap base64ToBitmap(String base64) {
-        if (base64 == null || base64.isEmpty()) return null;
+        if (base64 == null || base64.isEmpty()) {
+            return null;
+        }
         try {
             byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -63,26 +71,34 @@ public class ImageHelper {
 
     // חותך תמונה לצורת עיגול עבור פרופיל
     public static Bitmap getCircularBitmap(Bitmap src) {
-        if (src == null) return null;
-        int s = Math.min(src.getWidth(), src.getHeight());
-        Bitmap out = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(out);
+        if (src == null) {
+            return null;
+        }
+        int size = Math.min(src.getWidth(), src.getHeight());
+        Bitmap outputBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(outputBitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int left = (src.getWidth() - s) / 2;
-        int top = (src.getHeight() - s) / 2;
-        canvas.drawCircle(s / 2f, s / 2f, s / 2f, paint);
+        int left = (src.getWidth() - size) / 2;
+        int top = (src.getHeight() - size) / 2;
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(src, new Rect(left, top, left + s, top + s), new Rect(0, 0, s, s), paint);
-        return out;
+        canvas.drawBitmap(src, new Rect(left, top, left + size, top + size), new Rect(0, 0, size, size), paint);
+        return outputBitmap;
     }
 
     private static int getRotation(ContentResolver res, Uri uri) {
         try (InputStream is = res.openInputStream(uri)) {
             ExifInterface exif = new ExifInterface(is);
             int orient = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            if (orient == ExifInterface.ORIENTATION_ROTATE_90) return 90;
-            if (orient == ExifInterface.ORIENTATION_ROTATE_180) return 180;
-            if (orient == ExifInterface.ORIENTATION_ROTATE_270) return 270;
+            if (orient == ExifInterface.ORIENTATION_ROTATE_90) {
+                return 90;
+            }
+            if (orient == ExifInterface.ORIENTATION_ROTATE_180) {
+                return 180;
+            }
+            if (orient == ExifInterface.ORIENTATION_ROTATE_270) {
+                return 270;
+            }
         } catch (Exception ignored) {
         }
         return 0;
@@ -92,17 +108,23 @@ public class ImageHelper {
         Matrix matrix = new Matrix();
         matrix.postRotate(deg);
         Bitmap res = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-        if (res != src) src.recycle();
+        if (res != src) {
+            src.recycle();
+        }
         return res;
     }
 
     private static Bitmap scale(Bitmap src, int max) {
         int width = src.getWidth();
         int height = src.getHeight();
-        if (width <= max && height <= max) return src;
+        if (width <= max && height <= max) {
+            return src;
+        }
         float ratio = Math.min((float) max / width, (float) max / height);
         Bitmap res = Bitmap.createScaledBitmap(src, Math.round(width * ratio), Math.round(height * ratio), true);
-        if (res != src) src.recycle();
+        if (res != src) {
+            src.recycle();
+        }
         return res;
     }
 }

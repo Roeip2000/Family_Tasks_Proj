@@ -12,7 +12,10 @@ public class FBsingleton {
     private static final FBsingleton instance = new FBsingleton();
     private final FirebaseDatabase db;
     private final FirebaseAuth auth;
-    private String uid, fName, lName, email;
+    private String uid;
+    private String firstName;
+    private String lastName;
+    private String email;
 
     private FBsingleton() {
         db = FirebaseDatabase.getInstance();
@@ -20,24 +23,33 @@ public class FBsingleton {
         auth = FirebaseAuth.getInstance();
     }
 
-    public static FBsingleton getInstance() { return instance; }
+    public static FBsingleton getInstance() {
+        return instance;
+    }
 
     public void setUserData(String first, String last, String email) {
         this.uid = auth.getUid();
-        this.fName = first;
-        this.lName = last;
+        this.firstName = first;
+        this.lastName = last;
         this.email = email;
     }
 
     // שומר את פרטי ההורה ב-Realtime Database
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
-        if (uid == null) return;
+        if (uid == null) {
+            return;
+        }
         Map<String, Object> data = new HashMap<>();
-        data.put("uid", uid); data.put("firstName", fName);
-        data.put("lastName", lName); data.put("email", email);
+        data.put("uid", uid);
+        data.put("firstName", firstName);
+        data.put("lastName", lastName);
+        data.put("email", email);
         data.put("role", "parent");
 
-        if (listener != null) db.getReference("parents").child(uid).updateChildren(data).addOnCompleteListener(listener);
-        else db.getReference("parents").child(uid).updateChildren(data);
+        if (listener != null) {
+            db.getReference("parents").child(uid).updateChildren(data).addOnCompleteListener(listener);
+        } else {
+            db.getReference("parents").child(uid).updateChildren(data);
+        }
     }
 }

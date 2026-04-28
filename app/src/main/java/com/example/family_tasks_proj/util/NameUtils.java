@@ -3,14 +3,19 @@ package com.example.family_tasks_proj.util;
 /** מחלקת עזר לטיפול בשמות משתמשים. */
 public final class NameUtils {
 
-    private NameUtils() {}
+    private NameUtils() {
+    }
 
     // מחזיר שם מלא (פרטי + משפחה) או null אם שניהם ריקים
     public static String fullName(String first, String last) {
         StringBuilder sb = new StringBuilder();
-        if (first != null && !first.trim().isEmpty()) sb.append(first.trim());
+        if (first != null && !first.trim().isEmpty()) {
+            sb.append(first.trim());
+        }
         if (last != null && !last.trim().isEmpty()) {
-            if (sb.length() > 0) sb.append(" ");
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
             sb.append(last.trim());
         }
         if (sb.length() > 0) {

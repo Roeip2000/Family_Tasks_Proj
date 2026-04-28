@@ -48,12 +48,19 @@ public class ParentLoginFragment extends Fragment {
         progressLogin = view.findViewById(R.id.progressLogin);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { loginUser(); }
+            @Override
+            public void onClick(View view) {
+                loginUser();
+            }
         });
 
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) { loginUser(); return true; }
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    loginUser();
+                    return true;
+                }
                 return false;
             }
         });
@@ -77,7 +84,9 @@ public class ParentLoginFragment extends Fragment {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 setLoading(false);
                 if (task.isSuccessful()) {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));

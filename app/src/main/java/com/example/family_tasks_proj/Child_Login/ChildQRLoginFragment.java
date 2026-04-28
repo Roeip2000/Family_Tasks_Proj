@@ -97,7 +97,11 @@ public class ChildQRLoginFragment extends Fragment {
             btnScanQR.setEnabled(!isLoading);
         }
         if (progressScan != null) {
-            progressScan.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            if (isLoading) {
+                progressScan.setVisibility(View.VISIBLE);
+            } else {
+                progressScan.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -134,7 +138,9 @@ public class ChildQRLoginFragment extends Fragment {
     private void fillParsedQrFromParts(ParsedQr parsedQr, String raw) {
         String[] parts = raw.split("\\|");
         for (String part : parts) {
-            if (part == null) continue;
+            if (part == null) {
+                continue;
+            }
 
             String trimmed = part.trim();
             if (trimmed.startsWith("parent:")) {
@@ -150,7 +156,9 @@ public class ChildQRLoginFragment extends Fragment {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 if (!snapshot.exists()) {
                     setLoading(false);
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
@@ -162,7 +170,9 @@ public class ChildQRLoginFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 setLoading(false);
                 Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
@@ -174,7 +184,9 @@ public class ChildQRLoginFragment extends Fragment {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 if (!snapshot.exists()) {
                     setLoading(false);
                     Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
@@ -186,7 +198,9 @@ public class ChildQRLoginFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if (!isAdded()) return;
+                if (!isAdded()) {
+                    return;
+                }
                 setLoading(false);
                 Toast.makeText(requireContext(), getString(R.string.child_qr_connection_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }

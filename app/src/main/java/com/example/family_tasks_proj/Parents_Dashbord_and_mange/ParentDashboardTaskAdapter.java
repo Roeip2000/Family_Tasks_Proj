@@ -48,24 +48,38 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     @Override
-    public int getViewTypeCount() { return 2; }
+    public int getViewTypeCount() {
+        return 2;
+    }
 
     @Override
     public int getItemViewType(int position) {
         TaskListItem item = getItem(position);
-        return (item != null && item.getIsHeader()) ? VIEW_TYPE_HEADER : VIEW_TYPE_TASK;
+        if (item != null && item.getIsHeader()) {
+            return VIEW_TYPE_HEADER;
+        }
+        return VIEW_TYPE_TASK;
     }
 
     @Override
-    public boolean isEnabled(int position) { return getItemViewType(position) == VIEW_TYPE_TASK; }
+    public boolean isEnabled(int position) {
+        return getItemViewType(position) == VIEW_TYPE_TASK;
+    }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         TaskListItem item = getItem(position);
-        if (item == null) return convertView == null ? new View(getContext()) : convertView;
+        if (item == null) {
+            if (convertView == null) {
+                return new View(getContext());
+            }
+            return convertView;
+        }
 
-        if (getItemViewType(position) == VIEW_TYPE_HEADER) return bindHeaderView(convertView, parent, item);
+        if (getItemViewType(position) == VIEW_TYPE_HEADER) {
+            return bindHeaderView(convertView, parent, item);
+        }
         return bindTaskView(convertView, parent, item.getTask());
     }
 
@@ -82,7 +96,9 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         if (convertView == null || convertView.findViewById(R.id.tvTaskTitleCard) == null) {
             convertView = inflater.inflate(R.layout.item_parent_task, parent, false);
         }
-        if (task == null) return convertView;
+        if (task == null) {
+            return convertView;
+        }
 
         Context context = getContext();
         TextView tvTitle = convertView.findViewById(R.id.tvTaskTitleCard);

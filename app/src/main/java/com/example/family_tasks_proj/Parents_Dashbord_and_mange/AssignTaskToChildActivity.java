@@ -85,8 +85,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 handleTemplateSelected(position);
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
 
         etDueDate.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +115,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // מעדכן את הפרטים לפי התבנית שנבחרה
     private void handleTemplateSelected(int position) {
-        if (position < 0 || position >= templates.size()) return;
+        if (position < 0 || position >= templates.size()) {
+            return;
+        }
         TaskTemplate selectedTemplate = templates.get(position);
         etTitle.setText(selectedTemplate.getTitle());
         displayBase64Image(selectedTemplate.getImageBase64());
@@ -129,14 +133,19 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     TaskTemplate template = snap.getValue(TaskTemplate.class);
                     if (template != null) {
-                        if (template.getId() == null) template.setId(snap.getKey());
+                        if (template.getId() == null) {
+                            template.setId(snap.getKey());
+                        }
                         templates.add(template);
                         titles.add(template.getTitle());
                     }
                 }
                 setSpinnerItems(spTemplates, titles);
-                if (!templates.isEmpty()) displayBase64Image(templates.get(0).getImageBase64());
-                else imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+                if (!templates.isEmpty()) {
+                    displayBase64Image(templates.get(0).getImageBase64());
+                } else {
+                    imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -153,10 +162,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<String> names = new ArrayList<>();
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    String id = snap.getKey();
+                    String childId = snap.getKey();
                     String firstName = snap.child("firstName").getValue(String.class);
                     String lastName = snap.child("lastName").getValue(String.class);
-                    childIds.add(id);
+                    childIds.add(childId);
                     names.add(NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name)));
                 }
                 setSpinnerItems(spAssignee, names);
@@ -170,7 +179,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // מציג דיאלוג לאישור לפני השמירה
     private void showAssignConfirmDialog() {
-        if (!isAssignmentInputValid()) return;
+        if (!isAssignmentInputValid()) {
+            return;
+        }
         
         final String title = etTitle.getText().toString().trim();
         final String assignee = (String) spAssignee.getSelectedItem();
@@ -181,7 +192,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .setMessage(getString(R.string.assign_task_confirm_message, title, assignee, dueDate))
                 .setPositiveButton(R.string.assign_task_confirm_action, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) { assignTask(); }
+                    public void onClick(DialogInterface dialog, int which) {
+                        assignTask();
+                    }
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
@@ -201,21 +214,32 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // שומר את המשימה החדשה ב-Firebase
     private void assignTask() {
-        if (!isAssignmentInputValid()) return;
+        if (!isAssignmentInputValid()) {
+            return;
+        }
         btnAssign.setEnabled(false);
-        int pos = spAssignee.getSelectedItemPosition();
-        DatabaseReference ref = parentRef().child("children").child(childIds.get(pos)).child("tasks").push();
+        int selectedChildPosition = spAssignee.getSelectedItemPosition();
+        DatabaseReference ref = parentRef().child("children").child(childIds.get(selectedChildPosition)).child("tasks").push();
         
         TaskTemplate template = null;
-        int tPos = spTemplates.getSelectedItemPosition();
-        if (tPos >= 0 && tPos < templates.size()) template = templates.get(tPos);
+        int selectedTemplatePosition = spTemplates.getSelectedItemPosition();
+        if (selectedTemplatePosition >= 0 && selectedTemplatePosition < templates.size()) {
+            template = templates.get(selectedTemplatePosition);
+        }
+
+        int starsWorth = 10;
+        String imageBase64 = null;
+        if (template != null) {
+            starsWorth = template.safeStarsWorth();
+            imageBase64 = template.getImageBase64();
+        }
 
         Map<String, Object> task = new HashMap<>();
         task.put("title", etTitle.getText().toString().trim());
         task.put("dueAt", etDueDate.getText().toString().trim());
         task.put("isDone", false);
-        task.put("starsWorth", template != null ? template.safeStarsWorth() : 10);
-        task.put("imageBase64", template != null ? template.getImageBase64() : null);
+        task.put("starsWorth", starsWorth);
+        task.put("imageBase64", imageBase64);
         task.put("createdAt", System.currentTimeMillis());
 
         ref.setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -248,17 +272,20 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
         android.graphics.Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
-        if (bitmap != null) imgTaskPreview.setImageBitmap(bitmap);
-        else imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+        if (bitmap != null) {
+            imgTaskPreview.setImageBitmap(bitmap);
+        } else {
+            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+        }
     }
 
     private void showDatePicker() {
-        Calendar c = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
                 etDueDate.setText(day + "/" + (month + 1) + "/" + year);
             }
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 }

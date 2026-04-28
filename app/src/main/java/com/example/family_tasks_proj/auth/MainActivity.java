@@ -32,8 +32,13 @@ public class MainActivity extends AppCompatActivity {
         // אתחול Singleton של Firebase
         FBsingleton.getInstance();
 
-        if (openSavedParentSession()) return;
-        if (openSavedChildSession()) return;
+        if (openSavedParentSession()) {
+            return;
+        }
+
+        if (openSavedChildSession()) {
+            return;
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -42,26 +47,42 @@ public class MainActivity extends AppCompatActivity {
         btnChildQR = findViewById(R.id.btnChildQR);
         btnChild = findViewById(R.id.btnChild);
 
-        if (savedInstanceState == null) showFragment(new ParentLoginFragment(), false);
+        if (savedInstanceState == null) {
+            showFragment(new ParentLoginFragment(), false);
+        }
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showFragment(new ParentRegisterFragment(), true); }
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentRegisterFragment(), true);
+            }
         });
         btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showFragment(new ParentLoginFragment(), true); }
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentLoginFragment(), true);
+            }
         });
         btnChildQR.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showFragment(new ChildQRLoginFragment(), true); }
+            @Override
+            public void onClick(View view) {
+                showFragment(new ChildQRLoginFragment(), true);
+            }
         });
         btnChild.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { openChildQuickLogin(); }
+            @Override
+            public void onClick(View view) {
+                openChildQuickLogin();
+            }
         });
     }
 
     // בודק אם יש הורה מחובר ומדלג לדשבורד
     private boolean openSavedParentSession() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return false;
+        if (user == null) {
+            return false;
+        }
         startActivity(new Intent(this, ParentDashboardActivity.class));
         finish();
         return true;
@@ -70,13 +91,15 @@ public class MainActivity extends AppCompatActivity {
     // בודק אם יש ילד מחובר ומדלג לדשבורד
     private boolean openSavedChildSession() {
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-        String pId = sp.getString("parentId", null);
-        String cId = sp.getString("childId", null);
-        if (pId == null || cId == null) return false;
+        String parentId = sp.getString("parentId", null);
+        String childId = sp.getString("childId", null);
+        if (parentId == null || childId == null) {
+            return false;
+        }
         
         Intent intent = new Intent(this, ChildDashboardActivity.class);
-        intent.putExtra("parentId", pId);
-        intent.putExtra("childId", cId);
+        intent.putExtra("parentId", parentId);
+        intent.putExtra("childId", childId);
         startActivity(intent);
         finish();
         return true;
@@ -84,23 +107,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void openChildQuickLogin() {
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-        String pId = sp.getString("parentId", null);
-        String cId = sp.getString("childId", null);
+        String parentId = sp.getString("parentId", null);
+        String childId = sp.getString("childId", null);
 
-        if (pId != null && cId != null) {
+        if (parentId != null && childId != null) {
             Intent intent = new Intent(this, ChildDashboardActivity.class);
-            intent.putExtra("parentId", pId); intent.putExtra("childId", cId);
+            intent.putExtra("parentId", parentId);
+            intent.putExtra("childId", childId);
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, ChildSelectionActivity.class);
-            if (pId != null) intent.putExtra("parentId", pId);
+            if (parentId != null) {
+                intent.putExtra("parentId", parentId);
+            }
             startActivity(intent);
         }
     }
 
     private void showFragment(Fragment fragment, boolean addToBackStack) {
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
-        if (addToBackStack) transaction.addToBackStack(fragment.getClass().getSimpleName());
+        if (addToBackStack) {
+            transaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
         transaction.commit();
     }
 }
