@@ -7,7 +7,7 @@ public final class NameUtils {
     }
 
     // מחזיר שם מלא (פרטי + משפחה) או null אם שניהם ריקים
-    public static String fullName(String first, String last) {
+    private static String fullName(String first, String last) {
         StringBuilder sb = new StringBuilder();
         if (first != null && !first.trim().isEmpty()) {
             sb.append(first.trim());

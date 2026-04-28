@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FBFBFB"
+    android:background="@color/surface_muted"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -13,32 +13,22 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- HEADER: Greeting & Logout -->
+        <!-- כותרת: ברכה לפי שם ההורה + כפתור התנתקות -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvParentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="שלום,"
-                    android:textColor="#888888"
-                    android:textSize="14sp" />
-                <TextView
-                    android:id="@+id/tvParentName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="הורה יקר"
-                    android:textColor="#2D3436"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_centerVertical="true"
+                android:text="שלום!"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnLogout"
@@ -48,14 +38,14 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:text="התנתק"
-                android:textColor="#D63031" />
+                android:textColor="@color/logout_text" />
         </RelativeLayout>
 
-        <!-- INTERACTIVE SUMMARY: These are now the main filters -->
+        <!-- כרטיס סיכום: 4 פילטרים שלוחצים עליהם להצגת קבוצת משימות -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
@@ -63,11 +53,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:padding="8dp"
-                android:baselineAligned="false">
+                android:padding="8dp">
 
-                <!-- Filter: Open -->
+                <!-- פילטר: משימות פתוחות -->
                 <LinearLayout
                     android:id="@+id/containerFilterOpen"
                     android:layout_width="0dp"
@@ -84,18 +74,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="#2D3436"
+                        android:textColor="@color/text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="פתוחות"
-                        android:textColor="#888888"
+                        android:textColor="@color/text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
 
-                <!-- Filter: Urgent -->
+                <!-- פילטר: משימות דחופות -->
                 <LinearLayout
                     android:id="@+id/containerFilterUrgent"
                     android:layout_width="0dp"
@@ -112,18 +102,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="#D35400"
+                        android:textColor="@color/urgent"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="דחופות"
-                        android:textColor="#888888"
+                        android:textColor="@color/text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
 
-                <!-- Filter: Overdue -->
+                <!-- פילטר: משימות באיחור -->
                 <LinearLayout
                     android:id="@+id/containerFilterOverdue"
                     android:layout_width="0dp"
@@ -140,18 +130,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="#D63031"
+                        android:textColor="@color/danger"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="באיחור"
-                        android:textColor="#888888"
+                        android:textColor="@color/text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
 
-                <!-- Filter: Completed -->
+                <!-- פילטר: משימות שבוצעו -->
                 <LinearLayout
                     android:id="@+id/containerFilterCompleted"
                     android:layout_width="0dp"
@@ -168,20 +158,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="#27AE60"
+                        android:textColor="@color/success"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="בוצעו"
-                        android:textColor="#888888"
+                        android:textColor="@color/text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- CONTROL PANEL -->
+        <!-- כפתורי פעולות מהירות בצורת רשת 2x2 -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -195,7 +185,7 @@
                 android:layout_height="54dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
-                android:backgroundTint="#2D3436"
+                android:backgroundTint="@color/primary"
                 android:text="הקצאת משימה"
                 app:cornerRadius="12dp" />
             <Button
@@ -206,9 +196,9 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:text="ניהול ילדים"
-                android:textColor="#2D3436"
+                android:textColor="@color/primary"
                 app:cornerRadius="12dp"
-                app:strokeColor="#DFE4EA" />
+                app:strokeColor="@color/border_strong" />
             <Button
                 android:id="@+id/btnManageTemplates"
                 style="@style/Widget.Material3.Button.OutlinedButton"
@@ -217,9 +207,9 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:text="תבניות"
-                android:textColor="#2D3436"
+                android:textColor="@color/primary"
                 app:cornerRadius="12dp"
-                app:strokeColor="#DFE4EA" />
+                app:strokeColor="@color/border_strong" />
             <Button
                 android:id="@+id/btnShowQR"
                 style="@style/Widget.Material3.Button.OutlinedButton"
@@ -228,12 +218,12 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:text="קוד QR"
-                android:textColor="#2D3436"
+                android:textColor="@color/primary"
                 app:cornerRadius="12dp"
-                app:strokeColor="#DFE4EA" />
+                app:strokeColor="@color/border_strong" />
         </GridLayout>
 
-        <!-- TASK LIST: The title changes based on top selection -->
+        <!-- רשימת משימות עם כותרת שמשתנה לפי הפילטר הפעיל -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -245,7 +235,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="כל המשימות"
-                android:textColor="#2D3436"
+                android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -257,7 +247,7 @@
                 android:gravity="center"
                 android:padding="40dp"
                 android:text="אין משימות בקטגוריה זו"
-                android:textColor="#888888"
+                android:textColor="@color/text_secondary"
                 android:visibility="gone" />
 
             <ListView
@@ -270,13 +260,6 @@
                 android:nestedScrollingEnabled="true"
                 android:overScrollMode="never" />
         </LinearLayout>
-
-        <!-- Hidden Children List: If you still need it for context, otherwise it's gone from view -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvChildren"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

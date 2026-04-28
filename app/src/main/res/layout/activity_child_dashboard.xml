@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/bg_screen"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Header: Friendly Greeting & Stars -->
+        <!-- כותרת: ברכה לפי שם הילד + כוכבים + יציאה -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -28,8 +28,8 @@
                     android:id="@+id/tvChildName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="היי חמוד!"
-                    android:textColor="#2D3436"
+                    android:text="שלום!"
+                    android:textColor="@color/text_primary"
                     android:textSize="26sp"
                     android:textStyle="bold" />
 
@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="מה המשימה הבאה שלך?"
-                    android:textColor="#888888"
+                    android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -58,7 +58,7 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:text="⭐ 0 כוכבים"
-                    android:textColor="#F1C40F"
+                    android:textColor="@color/star_gold"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -68,12 +68,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="יציאה"
-                    android:textColor="#D63031"
+                    android:textColor="@color/logout_text"
                     android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 
-        <!-- Task Stats: Simple Circles/Pills -->
+        <!-- ארבעה פילטרים מספריים: סה"כ, דחופות, באיחור, בוצעו -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,8 +89,20 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
-                <TextView android:id="@+id/tvTotalTasks" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#2D3436"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="משימות" android:textSize="11sp" android:textColor="#888888"/>
+                <TextView
+                    android:id="@+id/tvTotalTasks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="משימות"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -101,8 +113,20 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
-                <TextView android:id="@+id/tvDueSoon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#D35400"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="דחופות" android:textSize="11sp" android:textColor="#888888"/>
+                <TextView
+                    android:id="@+id/tvDueSoon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/urgent"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="דחופות"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -113,8 +137,20 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
-                <TextView android:id="@+id/tvOverdue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#D63031"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="באיחור" android:textSize="11sp" android:textColor="#888888"/>
+                <TextView
+                    android:id="@+id/tvOverdue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/danger"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="באיחור"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -125,19 +161,31 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
-                <TextView android:id="@+id/tvCompleted" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#27AE60"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="סיימת!" android:textSize="11sp" android:textColor="#888888"/>
+                <TextView
+                    android:id="@+id/tvCompleted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/success"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="סיימת!"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Main Task Area -->
+        <!-- אזור משימות עם כותרת שמשתנה לפי הפילטר הפעיל -->
         <TextView
             android:id="@+id/tvTaskSectionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="המשימות שלי"
-            android:textColor="#2D3436"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -149,7 +197,7 @@
             android:gravity="center"
             android:padding="40dp"
             android:text="מעולה! אין משימות כרגע"
-            android:textColor="#888888"
+            android:textColor="@color/text_secondary"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView

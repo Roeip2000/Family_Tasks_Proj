@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- בסיס -->
-    <color name="black">#FF000000</color>
+    <!-- צבעי בסיס -->
     <color name="white">#FFFFFFFF</color>
 
-    <!-- פלטת צבעים מרכזית -->
+    <!-- פלטה ראשית -->
     <color name="primary">#2D3436</color>
     <color name="primary_light">#F1F2F6</color>
     <color name="primary_dark">#000000</color>
     <color name="secondary">#636E72</color>
     <color name="secondary_light">#DFE4EA</color>
-    
-    <!-- צבעי רקע ומשטחים -->
+
+    <!-- רקע ומשטחים -->
     <color name="bg_screen">#FFFFFF</color>
     <color name="bg_card">#FFFFFF</color>
     <color name="surface_muted">#F8F9FA</color>
     <color name="surface_soft_gold">#FFF9DB</color>
     <color name="hero_top">#FFFFFF</color>
-    <color name="secondary_fill">#FFFFFF</color>
 
     <!-- טקסט וגבולות -->
     <color name="text_primary">#2D3436</color>
@@ -28,9 +26,8 @@
     <color name="border_strong">#DFE4EA</color>
     <color name="divider">#F1F2F6</color>
     <color name="divider_light">#F1F2F6</color>
-    <color name="secondary_border">#DFE4EA</color>
 
-    <!-- צבעי סטטוס והתראות -->
+    <!-- סטטוס והתראות -->
     <color name="success">#2ECC71</color>
     <color name="error">#D63031</color>
     <color name="danger">#D63031</color>
@@ -39,16 +36,9 @@
     <color name="star_gold">#F1C40F</color>
     <color name="urgent">#D35400</color>
     <color name="urgent_light">#FFF0F0</color>
-    <color name="warning_dark">#D35400</color>
-    <color name="logout_bg">#FFF0F0</color>
     <color name="logout_text">#D63031</color>
 
-    <!-- כינויים תואמים (Aliases) -->
-    <color name="accent">@color/primary</color>
-    <color name="accent_light">@color/primary_light</color>
-    <color name="accent_dark">@color/primary_dark</color>
-
-    <!-- צבעים עבור Material Theme (חובה לקומפילציה) -->
+    <!-- מיפוי ל-Material Theme (חובה לבנייה) -->
     <color name="md_theme_primary">@color/primary</color>
     <color name="md_theme_onPrimary">@color/white</color>
     <color name="md_theme_primaryContainer">@color/primary_light</color>
@@ -59,8 +49,6 @@
     <color name="md_theme_onSecondaryContainer">@color/primary</color>
     <color name="md_theme_tertiary">@color/secondary</color>
     <color name="md_theme_onTertiary">@color/white</color>
-    <color name="md_theme_tertiaryContainer">@color/primary_light</color>
-    <color name="md_theme_onTertiaryContainer">@color/primary</color>
     <color name="md_theme_background">@color/white</color>
     <color name="md_theme_surface">@color/white</color>
     <color name="md_theme_error">@color/error</color>

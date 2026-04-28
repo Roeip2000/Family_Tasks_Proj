@@ -119,7 +119,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        String childId = (editChildId != null) ? editChildId : getChildrenReference().push().getKey();
+        String childId;
+        if (editChildId != null) {
+            childId = editChildId;
+        } else {
+            childId = getChildrenReference().push().getKey();
+        }
         if (childId == null) return;
 
         btnAdd.setEnabled(false);
@@ -154,7 +159,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
         updateListViewHeight();
-        tvEmpty.setVisibility(childList.isEmpty() ? View.VISIBLE : View.GONE);
+        if (childList.isEmpty()) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
+        }
     }
 
     private void openOptions(int position) {
@@ -198,7 +207,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         ListAdapter adapter = lvChildren.getAdapter();
         if (adapter == null) return;
         int totalHeight = 0;
-        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(lvChildren.getWidth() > 0 ? lvChildren.getWidth() : 500, View.MeasureSpec.AT_MOST);
+        int listWidth;
+        if (lvChildren.getWidth() > 0) {
+            listWidth = lvChildren.getWidth();
+        } else {
+            listWidth = 500;
+        }
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
         for (int index = 0; index < adapter.getCount(); index++) {
             View itemView = adapter.getView(index, null, lvChildren);
             itemView.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);

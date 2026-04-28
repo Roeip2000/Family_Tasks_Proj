@@ -3,12 +3,15 @@ package com.example.family_tasks_proj.auth;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.Child_Login.ChildQRLoginFragment;
 import com.example.family_tasks_proj.Child_Login.ChildSelectionActivity;
+import com.example.family_tasks_proj.FireBase.FBsingleton;
 import com.example.family_tasks_proj.Parents.ParentLoginFragment;
 import com.example.family_tasks_proj.Parents.ParentRegisterFragment;
 import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
@@ -17,75 +20,119 @@ import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-// מסך הכניסה הראשי המורכב מ-3 פרגמנטים בו זמנית
-public class MainActivity extends AppCompatActivity implements MainSelectionFragment.OnRoleSelectedListener {
+/** מסך הכניסה הראשי של האפליקציה. מנתב בין כניסת הורה לילד ובודק סשנים פעילים. */
+public class MainActivity extends AppCompatActivity {
+
+    private Button btnRegister, btnLogin, btnChildQR, btnChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // אתחול Singleton של Firebase
+        FBsingleton.getInstance();
+
+        if (openSavedParentSession()) {
+            return;
+        }
+
+        if (openSavedChildSession()) {
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
-        // בדיקה אם המשתמש כבר מחובר
-        if (checkExistingSessions()) return;
+        btnRegister = findViewById(R.id.btnRegister);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnChildQR = findViewById(R.id.btnChildQR);
+        btnChild = findViewById(R.id.btnChild);
 
-        // טעינת 3 הפרגמנטים למסך בבת אחת
-        loadStaticFragments();
-    }
-
-    private void loadStaticFragments() {
-        // 1. פרגמנט כותרת (Header)
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.headerContainer, new MainHeaderFragment())
-                .commit();
-
-        // 2. פרגמנט בחירה (Selection) - יושב במרכז
-        MainSelectionFragment selectionFragment = new MainSelectionFragment();
-        selectionFragment.setOnRoleSelectedListener(this);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contentContainer, selectionFragment)
-                .commit();
-
-        // 3. פרגמנט תחתית (Footer)
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.footerContainer, new MainFooterFragment())
-                .commit();
-    }
-
-    @Override
-    public void onRoleSelected(int actionId) {
-        // החלפת הפרגמנט המרכזי בלבד לפי הלחיצה
-        Fragment targetForm = null;
-        switch (actionId) {
-            case 1: targetForm = new ParentLoginFragment(); break;
-            case 2: targetForm = new ParentRegisterFragment(); break;
-            case 3: targetForm = new ChildQRLoginFragment(); break;
-            case 4: 
-                startActivity(new Intent(this, ChildSelectionActivity.class));
-                return;
+        if (savedInstanceState == null) {
+            showFragment(new ParentLoginFragment(), false);
         }
 
-        if (targetForm != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .replace(R.id.contentContainer, targetForm)
-                    .addToBackStack(null)
-                    .commit();
-        }
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentRegisterFragment(), true);
+            }
+        });
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ParentLoginFragment(), true);
+            }
+        });
+        btnChildQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(new ChildQRLoginFragment(), true);
+            }
+        });
+        btnChild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openChildQuickLogin();
+            }
+        });
     }
 
-    private boolean checkExistingSessions() {
+    // בודק אם יש הורה מחובר ומדלג לדשבורד
+    private boolean openSavedParentSession() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            startActivity(new Intent(this, ParentDashboardActivity.class));
-            finish();
-            return true;
+        if (user == null) {
+            return false;
         }
+        startActivity(new Intent(this, ParentDashboardActivity.class));
+        finish();
+        return true;
+    }
+
+    // בודק אם יש ילד מחובר ומדלג לדשבורד
+    private boolean openSavedChildSession() {
         SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-        if (sp.contains("parentId") && sp.contains("childId")) {
-            startActivity(new Intent(this, ChildDashboardActivity.class));
-            finish();
-            return true;
+        String parentId = sp.getString("parentId", null);
+        String childId = sp.getString("childId", null);
+        if (parentId == null || childId == null) {
+            return false;
         }
-        return false;
+        
+        Intent intent = new Intent(this, ChildDashboardActivity.class);
+        intent.putExtra("parentId", parentId);
+        intent.putExtra("childId", childId);
+        startActivity(intent);
+        finish();
+        return true;
+    }
+
+    private void openChildQuickLogin() {
+        SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
+        String parentId = sp.getString("parentId", null);
+        String childId = sp.getString("childId", null);
+
+        if (parentId != null && childId != null) {
+            Intent intent = new Intent(this, ChildDashboardActivity.class);
+            intent.putExtra("parentId", parentId);
+            intent.putExtra("childId", childId);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, ChildSelectionActivity.class);
+            if (parentId != null) {
+                intent.putExtra("parentId", parentId);
+            }
+            startActivity(intent);
+        }
+    }
+
+    // --- נושא במחוון 9.5: Fragments ---
+    // הפונקציה הזו מחליפה בין המסכים השונים (כניסה, הרשמה, סריקת QR)
+    // מבלי להחליף את ה-Activity, מה שמאפשר חוויית משתמש חלקה ומהירה יותר.
+    private void showFragment(Fragment fragment, boolean addToBackStack) {
+        // מחליף בין הפרגמנטים (מסכי כניסה/הרשמה) בתוך ה-Container שמוגדר ב-XML
+        androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
+        if (addToBackStack) {
+            transaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
+        transaction.commit();
     }
 }

@@ -133,7 +133,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                 }
                 templateAdapter.notifyDataSetChanged();
-                tvNoTemplatesInfo.setVisibility(templateDataList.isEmpty() ? View.VISIBLE : View.GONE);
+                if (templateDataList.isEmpty()) {
+                    tvNoTemplatesInfo.setVisibility(View.VISIBLE);
+                } else {
+                    tvNoTemplatesInfo.setVisibility(View.GONE);
+                }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
@@ -148,7 +152,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
-        String templateId = (currentEditTemplateId != null) ? currentEditTemplateId : UUID.randomUUID().toString();
+        String templateId;
+        if (currentEditTemplateId != null) {
+            templateId = currentEditTemplateId;
+        } else {
+            templateId = UUID.randomUUID().toString();
+        }
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
         btnSaveTemplate.setEnabled(false);

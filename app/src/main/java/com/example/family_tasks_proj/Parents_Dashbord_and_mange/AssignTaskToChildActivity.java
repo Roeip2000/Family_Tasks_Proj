@@ -124,7 +124,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childUserIdList.add(childSnapshot.getKey());
                     String firstName = childSnapshot.child("firstName").getValue(String.class);
-                    childNames.add(firstName != null ? firstName : "ילד");
+                    if (firstName != null) {
+                        childNames.add(firstName);
+                    } else {
+                        childNames.add("ילד");
+                    }
                 }
                 fillSpinner(spinnerChildren, childNames);
             }
@@ -147,19 +151,35 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .child("children").child(childUserIdList.get(childPosition))
                 .child("tasks").push();
 
-        TaskTemplate selectedTemplate = (spinnerTemplates.getSelectedItemPosition() >= 0) 
-                ? taskTemplateList.get(spinnerTemplates.getSelectedItemPosition()) : null;
+        TaskTemplate selectedTemplate;
+        if (spinnerTemplates.getSelectedItemPosition() >= 0) {
+            selectedTemplate = taskTemplateList.get(spinnerTemplates.getSelectedItemPosition());
+        } else {
+            selectedTemplate = null;
+        }
 
         btnAssignTask.setEnabled(false);
-        
+
         // שמירה ישירה ללא HashMap
         newTaskRef.child("title").setValue(title);
         newTaskRef.child("dueAt").setValue(date);
         newTaskRef.child("isDone").setValue(false);
         newTaskRef.child("createdAt").setValue(System.currentTimeMillis());
-        newTaskRef.child("starsWorth").setValue(selectedTemplate != null ? selectedTemplate.safeStarsWorth() : 10);
-        
-        String img = selectedTemplate != null ? selectedTemplate.getImageBase64() : "";
+        // אם נבחרה תבנית - לוקחים ממנה את הכוכבים, אחרת ערך ברירת מחדל 10
+        int starsWorth;
+        if (selectedTemplate != null) {
+            starsWorth = selectedTemplate.safeStarsWorth();
+        } else {
+            starsWorth = 10;
+        }
+        newTaskRef.child("starsWorth").setValue(starsWorth);
+
+        String img;
+        if (selectedTemplate != null) {
+            img = selectedTemplate.getImageBase64();
+        } else {
+            img = "";
+        }
         newTaskRef.child("imageBase64").setValue(img).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

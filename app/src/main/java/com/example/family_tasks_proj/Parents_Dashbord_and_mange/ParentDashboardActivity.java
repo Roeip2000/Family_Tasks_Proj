@@ -117,10 +117,27 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void updateFilterUI() {
-        fOpen.setBackgroundColor(activeFilter == FilterMode.ASSIGNED ? 0x1A000000 : Color.TRANSPARENT);
-        fUrgent.setBackgroundColor(activeFilter == FilterMode.URGENT ? 0x1A000000 : Color.TRANSPARENT);
-        fOverdue.setBackgroundColor(activeFilter == FilterMode.OVERDUE ? 0x1A000000 : Color.TRANSPARENT);
-        fDone.setBackgroundColor(activeFilter == FilterMode.COMPLETED ? 0x1A000000 : Color.TRANSPARENT);
+        // צובע את הפילטר הפעיל ברקע אפור שקוף ומאפס את השאר
+        if (activeFilter == FilterMode.ASSIGNED) {
+            fOpen.setBackgroundColor(0x1A000000);
+        } else {
+            fOpen.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.URGENT) {
+            fUrgent.setBackgroundColor(0x1A000000);
+        } else {
+            fUrgent.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.OVERDUE) {
+            fOverdue.setBackgroundColor(0x1A000000);
+        } else {
+            fOverdue.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.COMPLETED) {
+            fDone.setBackgroundColor(0x1A000000);
+        } else {
+            fDone.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         switch (activeFilter) {
             case ASSIGNED: tvFilterTitle.setText("משימות פתוחות"); break;
@@ -167,7 +184,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = snapshot.child("firstName").getValue(String.class);
-                tvName.setText("שלום " + (name != null ? name : "הורה") + "! 👋");
+                String displayName;
+                if (name != null) {
+                    displayName = name;
+                } else {
+                    displayName = "הורה";
+                }
+                tvName.setText("שלום " + displayName + "! 👋");
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
@@ -189,7 +212,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         for (DataSnapshot tSnap : cSnap.child("tasks").getChildren()) {
                             AssignedTask task = new AssignedTask();
                             task.setChildId(cId);
-                            task.setChildName(cName != null ? cName : "ילד");
+                            if (cName != null) {
+                                task.setChildName(cName);
+                            } else {
+                                task.setChildName("ילד");
+                            }
                             task.setTaskId(tSnap.getKey());
                             task.setTitle(tSnap.child("title").getValue(String.class));
                             task.setDueAt(tSnap.child("dueAt").getValue(String.class));
@@ -232,7 +259,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
             if (match) visibleItems.add(TaskListItem.createTask(task));
         }
-        tvNoTasks.setVisibility(visibleItems.isEmpty() ? View.VISIBLE : View.GONE);
+        if (visibleItems.isEmpty()) {
+            tvNoTasks.setVisibility(View.VISIBLE);
+        } else {
+            tvNoTasks.setVisibility(View.GONE);
+        }
         taskAdapter.notifyDataSetChanged();
         updateHeight();
     }

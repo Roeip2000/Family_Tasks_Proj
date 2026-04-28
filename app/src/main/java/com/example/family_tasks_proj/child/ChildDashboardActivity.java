@@ -163,9 +163,22 @@ public class ChildDashboardActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) return;
                 String name = snapshot.child("firstName").getValue(String.class);
-                tvChildName.setText("היי " + (name != null ? name : "") + "! 👋");
+                // אם אין שם ב-Firebase מציגים "ילד" כדי שלא ייראה ריק
+                String displayName;
+                if (name != null && !name.isEmpty()) {
+                    displayName = name;
+                } else {
+                    displayName = "ילד";
+                }
+                tvChildName.setText("שלום " + displayName + "!");
                 Long stars = snapshot.child("stars").getValue(Long.class);
-                tvStars.setText("⭐ " + (stars != null ? stars : 0));
+                long starsCount;
+                if (stars != null) {
+                    starsCount = stars;
+                } else {
+                    starsCount = 0;
+                }
+                tvStars.setText("⭐ " + starsCount);
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
@@ -211,15 +224,36 @@ public class ChildDashboardActivity extends AppCompatActivity {
             }
             if (match) visibleTasks.add(task);
         }
-        tvNoTasks.setVisibility(visibleTasks.isEmpty() ? View.VISIBLE : View.GONE);
+        if (visibleTasks.isEmpty()) {
+            tvNoTasks.setVisibility(View.VISIBLE);
+        } else {
+            tvNoTasks.setVisibility(View.GONE);
+        }
         taskAdapter.notifyDataSetChanged();
     }
 
     private void updateFilterUI() {
-        filterOpen.setBackgroundColor(activeFilter == FilterMode.NOT_COMPLETED ? 0x1A000000 : Color.TRANSPARENT);
-        filterUrgent.setBackgroundColor(activeFilter == FilterMode.URGENT ? 0x1A000000 : Color.TRANSPARENT);
-        filterOverdue.setBackgroundColor(activeFilter == FilterMode.OVERDUE ? 0x1A000000 : Color.TRANSPARENT);
-        filterCompleted.setBackgroundColor(activeFilter == FilterMode.COMPLETED ? 0x1A000000 : Color.TRANSPARENT);
+        // צובע את הפילטר הפעיל עם רקע אפור שקוף ואת השאר שקופים
+        if (activeFilter == FilterMode.NOT_COMPLETED) {
+            filterOpen.setBackgroundColor(0x1A000000);
+        } else {
+            filterOpen.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.URGENT) {
+            filterUrgent.setBackgroundColor(0x1A000000);
+        } else {
+            filterUrgent.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.OVERDUE) {
+            filterOverdue.setBackgroundColor(0x1A000000);
+        } else {
+            filterOverdue.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (activeFilter == FilterMode.COMPLETED) {
+            filterCompleted.setBackgroundColor(0x1A000000);
+        } else {
+            filterCompleted.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         switch (activeFilter) {
             case NOT_COMPLETED: tvTaskSectionTitle.setText(R.string.filter_label_open); break;
