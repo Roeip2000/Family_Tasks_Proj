@@ -60,7 +60,11 @@
     <color name="error">#D63031</color>
     <color name="danger">#D63031</color>
     <color name="gold">#F1C40F</color>
-
+    <color name="star_gold">#F1C40F</color>
+    <color name="danger_light">#FFF0F0</color>
+    <color name="secondary_fill">#FFFFFF</color>
+    <color name="secondary_border">#DFE4EA</color>
+    <color name="hero_top">#FFFFFF</color>
     <color name="logout_bg">#FFF0F0</color>
     <color name="logout_text">#D63031</color>
 </resources>
