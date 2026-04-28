@@ -76,6 +76,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
 
         database = FirebaseDatabase.getInstance().getReference();
+        
+        // --- נושא במחוון 7: Firebase Realtime Database ---
+        // האפליקציה משתמשת במסד נתונים בענן (NoSQL) של גוגל לסנכרון נתונים בזמן אמת.
+        // כל שינוי בילדים או במשימות נשמר מיד בשרת ומתעדכן בכל המכשירים.
+        
         setupChildrenList();
         bindActions();
         loadChildren();
@@ -140,6 +145,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (editingChildId != null) {
             childId = editingChildId;
         } else {
+            // אם זה ילד חדש, מייצרים לו ID ייחודי ב-Firebase
             childId = childrenRef().push().getKey();
         }
         if (childId == null) {
@@ -148,11 +154,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
 
         btnAddChild.setEnabled(false);
-
         Task<Void> saveTask;
         if (editingChildId == null) {
+            // שמירת ילד חדש עם הפרטים שהוזנו
             saveTask = childrenRef().child(childId).setValue(new Child(firstName, lastName, null));
         } else {
+            // עדכון פרטים של ילד קיים בעזרת Map (מעדכן רק את השדות שנשלחו)
             Map<String, Object> updates = new HashMap<>();
             updates.put("firstName", firstName);
             updates.put("lastName", lastName);

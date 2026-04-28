@@ -126,6 +126,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     // טוען את כל התבניות מהשרת
     private void loadTemplates() {
         templates.clear();
+        // מושך את כל תבניות המשימות שההורה יצר מה-Firebase
         parentRef().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -157,6 +158,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     // טוען את רשימת הילדים מהשרת
     private void loadChildren() {
         childIds.clear();
+        // מושך את רשימת הילדים של ההורה כדי שנוכל לבחור למי להקצות את המשימה
         parentRef().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -219,6 +221,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }
         btnAssign.setEnabled(false);
         int selectedChildPosition = spAssignee.getSelectedItemPosition();
+        // יוצר נתיב חדש למשימה תחת הילד שנבחר ויוצר מזהה ייחודי בעזרת push()
         DatabaseReference ref = parentRef().child("children").child(childIds.get(selectedChildPosition)).child("tasks").push();
         
         TaskTemplate template = null;
@@ -242,6 +245,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         task.put("imageBase64", imageBase64);
         task.put("createdAt", System.currentTimeMillis());
 
+        // שומר את כל נתוני המשימה ב-Firebase בבת אחת
         ref.setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

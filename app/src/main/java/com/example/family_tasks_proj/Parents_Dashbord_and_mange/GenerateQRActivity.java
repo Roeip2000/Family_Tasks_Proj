@@ -51,6 +51,7 @@ public class GenerateQRActivity extends AppCompatActivity {
 
     // מייצר QR בפורמט parent:{parentId} ומציג אותו במסך
     private void generateParentQR(String parentId) {
+        // יוצר קוד QR שמכיל את מזהה ההורה כדי שהילד יוכל להתחבר למשפחה
         String payload = "parent:" + parentId;
 
         try {

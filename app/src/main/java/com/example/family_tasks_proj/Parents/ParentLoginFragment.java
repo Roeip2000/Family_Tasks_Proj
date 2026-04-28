@@ -81,6 +81,7 @@ public class ParentLoginFragment extends Fragment {
         }
 
         setLoading(true);
+        // מבצע כניסה למערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -89,6 +90,7 @@ public class ParentLoginFragment extends Fragment {
                 }
                 setLoading(false);
                 if (task.isSuccessful()) {
+                    // אם הכניסה הצליחה, עוברים לדשבורד של ההורה
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
                 } else {

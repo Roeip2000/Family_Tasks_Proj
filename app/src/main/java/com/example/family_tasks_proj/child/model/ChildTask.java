@@ -21,6 +21,14 @@ public class ChildTask {
         this.id = id;
     }
 
+    public String getTaskId() {
+        return id;
+    }
+
+    public void setTaskId(String taskId) {
+        this.id = taskId;
+    }
+
     public String getTitle() {
         return title;
     }

@@ -1,6 +1,6 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
-// מודל משימה מוקצית להצגה בדשבורד ההורה
+/** מודל משימה מוקצית להצגה בדשבורד ההורה. כולל את פרטי הילד והמשימה. */
 public class AssignedTask {
     private String childId;
     private String childName;
@@ -8,6 +8,7 @@ public class AssignedTask {
     private String taskId;
     private String title;
     private String dueAt;
+    private String imageBase64;
     private boolean isDone;
 
     public String getChildId() {
@@ -56,6 +57,14 @@ public class AssignedTask {
 
     public void setDueAt(String dueAt) {
         this.dueAt = dueAt;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     public boolean getIsDone() {

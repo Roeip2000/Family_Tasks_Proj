@@ -129,20 +129,28 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         dot.setColor(ctx.getColor(dotColor));
         holder.viewStatusDot.setBackground(dot);
 
-        // הצגת תמונה אם קיימת
-        if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {
-            Bitmap bitmap = ImageHelper.base64ToBitmap(task.getImageBase64());
+        // הצגת תמונה אם קיימת במשימה
+        String imageBase64 = task.getImageBase64();
+        if (imageBase64 != null && !imageBase64.trim().isEmpty()) {
+            Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
             if (bitmap != null) {
                 holder.imgShell.setVisibility(View.VISIBLE);
+                holder.imgTask.setVisibility(View.VISIBLE);
                 holder.imgTask.setImageBitmap(bitmap);
             } else {
                 holder.imgShell.setVisibility(View.GONE);
+                holder.imgTask.setVisibility(View.GONE);
             }
         } else {
             holder.imgShell.setVisibility(View.GONE);
+            holder.imgTask.setVisibility(View.GONE);
         }
 
-        holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, (int)task.getStarsWorth()));
+        // הצגת כמות כוכבים
+        int stars = (int) task.getStarsWorth();
+        if (stars <= 0) stars = 10; // ברירת מחדל
+        holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, stars));
+        holder.tvStars.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -22,17 +22,21 @@ public final class DateUtils {
             int day = Integer.parseInt(parts[0]);
             int month = Integer.parseInt(parts[1]);
             int year = Integer.parseInt(parts[2]);
-            Calendar due = Calendar.getInstance();
-            due.set(year, month - 1, day, 0, 0, 0);
-            due.set(Calendar.MILLISECOND, 0);
+            
+            // יצירת אובייקט תאריך עבור יעד המשימה
+            Calendar dueCalendar = Calendar.getInstance();
+            dueCalendar.set(year, month - 1, day, 0, 0, 0);
+            dueCalendar.set(Calendar.MILLISECOND, 0);
 
-            Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 0);
-            now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0);
-            now.set(Calendar.MILLISECOND, 0);
+            // יצירת אובייקט תאריך עבור היום (עכשיו)
+            Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            nowCalendar.set(Calendar.MINUTE, 0);
+            nowCalendar.set(Calendar.SECOND, 0);
+            nowCalendar.set(Calendar.MILLISECOND, 0);
 
-            return (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
+            // מחזיר את ההפרש בימים בין התאריכים
+            return (dueCalendar.getTimeInMillis() - nowCalendar.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
         } catch (Exception ignored) {
             return Long.MAX_VALUE;
         }

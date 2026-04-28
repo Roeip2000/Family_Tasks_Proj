@@ -99,9 +99,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
         }
     }
 
-    // טוען את כל ההורים הרשומים במערכת
+    // טוען את כל ההורים הרשומים במערכת מתוך ה-Database
     private void loadParents() {
         progressBar.setVisibility(View.VISIBLE);
+        // ניגש לתיקיית "parents" הראשית כדי להציג את כל המשפחות הקיימות
         FirebaseDatabase.getInstance().getReference("parents").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -143,9 +144,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // טוען את הילדים השייכים להורה שנבחר
+    // טוען את הילדים השייכים להורה שנבחר מתוך תת-התיקייה שלו
     private void loadChildren(String selectedParentId) {
         progressBar.setVisibility(View.VISIBLE);
+        // ניגש לנתיב parents/{parentId}/children כדי למצוא את הילדים של אותה משפחה
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

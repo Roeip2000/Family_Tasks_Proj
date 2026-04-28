@@ -39,6 +39,7 @@ public class FBsingleton {
         if (uid == null) {
             return;
         }
+        // מכין את נתוני ההורה לשמירה בתוך מפה (Map)
         Map<String, Object> data = new HashMap<>();
         data.put("uid", uid);
         data.put("firstName", firstName);
@@ -47,6 +48,7 @@ public class FBsingleton {
         data.put("role", "parent");
 
         if (listener != null) {
+            // שומר את המידע ב-Firebase תחת התיקייה "parents" עם ה-UID של המשתמש
             db.getReference("parents").child(uid).updateChildren(data).addOnCompleteListener(listener);
         } else {
             db.getReference("parents").child(uid).updateChildren(data);

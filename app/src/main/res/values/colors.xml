@@ -62,6 +62,8 @@
     <color name="gold">#F1C40F</color>
     <color name="star_gold">#F1C40F</color>
     <color name="danger_light">#FFF0F0</color>
+    <color name="urgent_light">#FFF0F0</color>
+    <color name="warning_dark">#D35400</color>
     <color name="secondary_fill">#FFFFFF</color>
     <color name="secondary_border">#DFE4EA</color>
     <color name="hero_top">#FFFFFF</color>

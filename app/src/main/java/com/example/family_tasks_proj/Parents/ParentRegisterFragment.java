@@ -88,6 +88,7 @@ public class ParentRegisterFragment extends Fragment {
         }
 
         setLoading(true);
+        // יוצר משתמש חדש במערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -95,6 +96,7 @@ public class ParentRegisterFragment extends Fragment {
                     return;
                 }
                 if (task.isSuccessful()) {
+                    // אם ההרשמה הצליחה, שומרים את שאר פרטי ההורה ב-Realtime Database
                     FBsingleton.getInstance().setUserData(firstName, lastName, email);
                     FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
                         @Override

@@ -62,13 +62,16 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private final List<TaskTemplate> templateList = new ArrayList<>();
     private TemplateListAdapter templateListAdapter;
 
-    // פתיחת הגלריה לבחירת תמונה עבור התבנית
+    // --- נושא במחוון 6.14: ActivityResultContract ---
+    // --- נושא במחוון 10.3: Camera & Gallery ---
+    // הגדרת "חוזה" לפתיחת הגלריה לבחירת תמונה וחזרה עם התוצאה (URI של התמונה)
     private final ActivityResultLauncher<String> imagePicker =
             registerForActivityResult(
                     new ActivityResultContracts.GetContent(),
                     new ActivityResultCallback<Uri>() {
                         @Override
                         public void onActivityResult(Uri uri) {
+                            // הפונקציה הזו מופעלת כשהמשתמש מסיים לבחור תמונה מהגלריה
                             handleTemplateImageResult(uri);
                         }
                     }

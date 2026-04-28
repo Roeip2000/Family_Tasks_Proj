@@ -124,7 +124,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // --- נושא במחוון 9.5: Fragments ---
+    // הפונקציה הזו מחליפה בין המסכים השונים (כניסה, הרשמה, סריקת QR)
+    // מבלי להחליף את ה-Activity, מה שמאפשר חוויית משתמש חלקה ומהירה יותר.
     private void showFragment(Fragment fragment, boolean addToBackStack) {
+        // מחליף בין הפרגמנטים (מסכי כניסה/הרשמה) בתוך ה-Container שמוגדר ב-XML
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
         if (addToBackStack) {
             transaction.addToBackStack(fragment.getClass().getSimpleName());

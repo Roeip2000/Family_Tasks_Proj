@@ -58,10 +58,20 @@ public class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<Par
         }
 
         boolean isSelected = summary.getChildId().equals(selectedChildId);
-        holder.card.setStrokeColor(isSelected ? Color.parseColor("#2D3436") : Color.parseColor("#F1F2F6"));
-        holder.card.setStrokeWidth(isSelected ? 4 : 2);
+        if (isSelected) {
+            holder.card.setStrokeColor(Color.parseColor("#2D3436"));
+            holder.card.setStrokeWidth(4);
+        } else {
+            holder.card.setStrokeColor(Color.parseColor("#F1F2F6"));
+            holder.card.setStrokeWidth(2);
+        }
 
-        holder.itemView.setOnClickListener(v -> listener.onChildSelected(summary.getChildId()));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onChildSelected(summary.getChildId());
+            }
+        });
     }
 
     @Override

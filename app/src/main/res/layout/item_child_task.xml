@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
     android:layoutDirection="rtl"
     app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="@dimen/card_elevation"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
     app:strokeColor="@color/divider_light"
     app:strokeWidth="1dp">
 
@@ -15,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,19 +26,19 @@
 
             <View
                 android:id="@+id/viewStatusDot"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/bg_status_dot" />
 
+            <!-- תמונת משימה קטנה ונקייה בצד -->
             <FrameLayout
                 android:id="@+id/imgTaskImageShell"
-                android:layout_width="88dp"
-                android:layout_height="88dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/bg_preview_shell"
                 android:clipToOutline="true"
-                android:padding="5dp"
                 android:visibility="gone">
 
                 <ImageView
@@ -45,9 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToOutline="true"
-                    android:contentDescription="@string/cd_task_image"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:scaleType="centerCrop" />
             </FrameLayout>
 
             <LinearLayout
@@ -61,21 +60,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:text="@string/default_task_name"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvDueDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/default_today"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <TextView
@@ -84,28 +82,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_star_badge"
-                android:paddingStart="8dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
                 android:textColor="@color/gold"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:textSize="13sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <Button
             android:id="@+id/btnDone"
-            style="@style/Widget.Family.SmallAccentButton"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="12dp"
-            android:drawableStart="@drawable/ic_check"
-            android:minWidth="0dp"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:text="@string/btn_done" />
+            android:text="@string/btn_done"
+            android:textColor="@color/primary_dark"
+            app:icon="@drawable/ic_check"
+            app:cornerRadius="8dp" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

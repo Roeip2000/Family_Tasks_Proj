@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
@@ -14,14 +14,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="12dp">
 
-        <!-- כותרת משימה, בעלות במצב כל הילדים וסטטוס -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top|center_vertical"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
+
+            <!-- תמונת משימה קטנה גם להורה -->
+            <FrameLayout
+                android:id="@+id/imgTaskParentShell"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_preview_shell"
+                android:clipToOutline="true"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imgTaskParent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -34,8 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/default_task_name"
+                    android:maxLines="1"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -44,16 +59,9 @@
                     android:id="@+id/tvTaskOwner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_button_ghost"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
+                    android:layout_marginTop="2dp"
                     android:textColor="@color/primary_dark"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
             </LinearLayout>
@@ -62,30 +70,24 @@
                 android:id="@+id/tvStatusChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:minWidth="64dp"
-                android:paddingStart="10dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="6dp"
-                android:text="@string/default_status"
-                android:textSize="12sp"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- תאריך יעד ודחיפות -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <View
                 android:id="@+id/viewTaskDot"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_status_dot" />
 
@@ -93,7 +95,6 @@
                 android:id="@+id/tvDueDateCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/default_date"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>

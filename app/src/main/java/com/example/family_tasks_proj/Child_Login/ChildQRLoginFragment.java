@@ -109,14 +109,17 @@ public class ChildQRLoginFragment extends Fragment {
     private void checkQrTarget(ParsedQr parsed) {
         setLoading(true);
         if (isBlank(parsed.childId)) {
+            // אם ה-QR מכיל רק הורה, עוברים למסך בחירת ילד מתוך המשפחה
             checkParentExists(parsed.parentId);
         } else {
+            // אם ה-QR מכיל גם הורה וגם ילד, ננסה להיכנס ישירות לדשבורד של הילד
             checkChildExists(parsed.parentId, parsed.childId);
         }
     }
 
     // מפרק את הטקסט של ה-QR לנתונים
     private ParsedQr parseQr(String raw) {
+        // מפרק את המחרוזת שנסרקה מה-QR כדי להוציא את ה-ID של ההורה והילד
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {
             return parsedQr;
@@ -209,6 +212,9 @@ public class ChildQRLoginFragment extends Fragment {
 
     // פותח את מסך המשימות של הילד
     private void openChildDashboard(String parentId, String childId) {
+        // שומר את ה-ID של ההורה והילד ב-SharedPreferences כדי שלא יצטרכו לסרוק שוב בכל כניסה
+        saveSession(parentId, childId);
+        // עובר ישירות לדשבורד של הילד
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
         intent.putExtra(KEY_PARENT, parentId);
         intent.putExtra(KEY_CHILD, childId);
@@ -218,6 +224,8 @@ public class ChildQRLoginFragment extends Fragment {
 
     // פותח את מסך בחירת הילד (כשנסרק רק הורה)
     private void openChildSelection(String parentId, String childId) {
+        // שומר את מזהה ההורה ועובר למסך שבו הילד בוחר את השם שלו מתוך רשימת הילדים
+        saveSession(parentId, childId);
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         intent.putExtra(KEY_PARENT, parentId);
         if (!isBlank(childId)) {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/md_theme_background"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -17,80 +17,107 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="הקצאת משימה"
-            android:textColor="#2D3436"
+            android:textColor="@color/md_theme_primary"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="בחר ילד"
-            android:textColor="#2D3436"
+            android:layout_marginTop="24dp"
+            android:text="בחר תבנית משימה"
+            android:textColor="@color/md_theme_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvChildrenToAssign"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:minHeight="100dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="בחר משימה מהתבניות"
-            android:textColor="#2D3436"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTemplatesToAssign"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:minHeight="150dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="תאריך יעד"
-            android:textColor="#2D3436"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnPickDueDate"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+        <Spinner
+            android:id="@+id/spTemplates"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:layout_marginTop="12dp"
-            android:text="בחר תאריך"
-            android:textColor="#2D3436"
-            app:cornerRadius="12dp"
-            app:strokeColor="#DFE4EA" />
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_spinner" />
+
+        <ImageView
+            android:id="@+id/imgTaskPreview"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_image_placeholder" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="שם המשימה (ניתן לעריכה)"
+            android:textColor="@color/md_theme_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outlined"
+            android:hint="הכנס שם משימה"
+            android:padding="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="בחר ילד להקצאה"
+            android:textColor="@color/md_theme_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spAssignee"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_spinner" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="תאריך יעד"
+            android:textColor="@color/md_theme_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etDueDate"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outlined"
+            android:focusable="false"
+            android:hint="בחר תאריך יעד"
+            android:padding="12dp" />
 
         <Button
-            android:id="@+id/btnConfirmAssignment"
+            android:id="@+id/btnAssign"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="40dp"
-            android:backgroundTint="#2D3436"
+            android:backgroundTint="@color/md_theme_primary"
             android:text="אישור והקצאה"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:cornerRadius="12dp" />
 
         <Button
-            android:id="@+id/btnBack"
+            android:id="@+id/btnBackToDashboard"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="ביטול וחזרה"
-            android:textColor="#888888" />
+            android:textColor="@color/md_theme_secondary" />
 
     </LinearLayout>
 </ScrollView>
