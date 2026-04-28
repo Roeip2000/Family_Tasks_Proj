@@ -36,10 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// === מסך: הקצאת משימה ===
-// תפקיד: בוחר תבנית, ילד ותאריך יעד ושומר משימה חדשה לילד
-// מחלקות קשורות: TaskTemplate, Child, ImageHelper
-// Firebase path: parents/{uid}/children/{childId}/tasks
+/** מסך להקצאת משימה לילד. מאפשר לבחור תבנית משימה, ילד ותאריך יעד. */
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTitle;
@@ -51,7 +48,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private final List<String> childIds = new ArrayList<>();
     private final List<TaskTemplate> templates = new ArrayList<>();
-
     private String parentUid;
 
     @Override
@@ -63,7 +59,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, R.string.assign_task_parent_not_logged_in, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "ההורה לא מחובר", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -89,10 +85,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 handleTemplateSelected(position);
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         etDueDate.setOnClickListener(new View.OnClickListener() {
@@ -117,260 +111,149 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // מעדכן את הכותרת והתמונה כאשר ההורה בוחר תבנית
+    // מעדכן את הפרטים לפי התבנית שנבחרה
     private void handleTemplateSelected(int position) {
-        if (position < 0 || position >= templates.size()) {
-            return;
-        }
-
+        if (position < 0 || position >= templates.size()) return;
         TaskTemplate selectedTemplate = templates.get(position);
-        etTitle.setText(selectedTemplate.toDisplayTitle());
+        etTitle.setText(selectedTemplate.getTitle());
         displayBase64Image(selectedTemplate.getImageBase64());
     }
 
-    // טוען תבניות מ-Firebase: /parents/{uid}/task_templates
+    // טוען את כל התבניות מהשרת
     private void loadTemplates() {
         templates.clear();
-
-        DatabaseReference templatesRef = parentRef().child("task_templates");
-        templatesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        parentRef().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleTemplatesSnapshot(snapshot);
+                List<String> titles = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    TaskTemplate template = snap.getValue(TaskTemplate.class);
+                    if (template != null) {
+                        if (template.getId() == null) template.setId(snap.getKey());
+                        templates.add(template);
+                        titles.add(template.getTitle());
+                    }
+                }
+                setSpinnerItems(spTemplates, titles);
+                if (!templates.isEmpty()) displayBase64Image(templates.get(0).getImageBase64());
+                else imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(
-                        AssignTaskToChildActivity.this,
-                        getString(R.string.assign_task_error_loading_templates, error.getMessage()),
-                        Toast.LENGTH_LONG
-                ).show();
+                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בטעינת תבניות", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // ממיר נתוני תבניות לרשימת כותרות בספינר
-    private void handleTemplatesSnapshot(DataSnapshot snapshot) {
-        List<String> titles = new ArrayList<>();
-
-        for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
-            addTemplateFromSnapshot(templateSnapshot, titles);
-        }
-
-        setSpinnerItems(spTemplates, titles);
-        showFirstTemplateImageOrPlaceholder();
-    }
-
-    private void addTemplateFromSnapshot(DataSnapshot templateSnapshot, List<String> titles) {
-        TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
-        if (template == null) {
-            return;
-        }
-        if (template.getId() == null) {
-            template.setId(templateSnapshot.getKey());
-        }
-
-        templates.add(template);
-        titles.add(template.toDisplayTitle());
-    }
-
-    // מציג תמונת תבנית ראשונה או תמונה חלופית אם אין תבניות
-    private void showFirstTemplateImageOrPlaceholder() {
-        if (!templates.isEmpty()) {
-            displayBase64Image(templates.get(0).getImageBase64());
-        } else {
-            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
-        }
-    }
-
-    // טוען ילדים מ-Firebase: /parents/{uid}/children
+    // טוען את רשימת הילדים מהשרת
     private void loadChildren() {
         childIds.clear();
-
-        DatabaseReference childrenRef = parentRef().child("children");
-        childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        parentRef().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                handleChildrenSnapshot(snapshot);
+                List<String> names = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    String id = snap.getKey();
+                    String firstName = snap.child("firstName").getValue(String.class);
+                    String lastName = snap.child("lastName").getValue(String.class);
+                    childIds.add(id);
+                    names.add(NameUtils.fullNameOrDefault(firstName, lastName, "ילד"));
+                }
+                setSpinnerItems(spAssignee, names);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(
-                        AssignTaskToChildActivity.this,
-                        getString(R.string.assign_task_error_loading_children, error.getMessage()),
-                        Toast.LENGTH_LONG
-                ).show();
+                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בטעינת ילדים", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // ממיר נתוני ילדים לשמות בספינר
-    private void handleChildrenSnapshot(DataSnapshot snapshot) {
-        List<String> childNames = new ArrayList<>();
-
-        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-            addChildFromSnapshot(childSnapshot, childNames);
-        }
-
-        setSpinnerItems(spAssignee, childNames);
-    }
-
-    private void addChildFromSnapshot(DataSnapshot childSnapshot, List<String> childNames) {
-        String childId = childSnapshot.getKey();
-        if (childId == null) {
-            return;
-        }
-
-        String firstName = childSnapshot.child("firstName").getValue(String.class);
-        String lastName = childSnapshot.child("lastName").getValue(String.class);
-        childIds.add(childId);
-        childNames.add(NameUtils.fullNameOrDefault(
-                firstName,
-                lastName,
-                getString(R.string.default_child_name)
-        ));
-    }
-
-    // מציג דיאלוג אישור לפני יצירת משימה
+    // מציג דיאלוג לאישור לפני השמירה
     private void showAssignConfirmDialog() {
-        if (!isAssignmentInputValid()) {
-            return;
-        }
-
-        String title = etTitle.getText().toString().trim();
-        String dueDate = etDueDate.getText().toString().trim();
-        String childName = String.valueOf(spAssignee.getSelectedItem());
-
+        if (!isAssignmentInputValid()) return;
         new AlertDialog.Builder(this)
-                .setTitle(R.string.assign_task_confirm_title)
-                .setMessage(getString(R.string.assign_task_confirm_message, title, childName, dueDate))
-                .setPositiveButton(R.string.assign_task_confirm_action, new DialogInterface.OnClickListener() {
+                .setTitle("אישור הקצאת משימה")
+                .setMessage("האם להקצות את המשימה?")
+                .setPositiveButton("כן", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        assignTask();
-                    }
+                    public void onClick(DialogInterface dialog, int which) { assignTask(); }
                 })
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton("ביטול", null)
                 .show();
     }
 
     private boolean isAssignmentInputValid() {
-        String title = etTitle.getText().toString().trim();
-        String dueDate = etDueDate.getText().toString().trim();
-        int childPosition = spAssignee.getSelectedItemPosition();
-
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
+        if (etTitle.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, "יש למלא כותרת", Toast.LENGTH_SHORT).show();
             return false;
         }
-
-        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
-            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
+        if (etDueDate.getText().toString().trim().isEmpty() || spAssignee.getSelectedItemPosition() < 0) {
+            Toast.makeText(this, "יש לבחור ילד ותאריך", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         return true;
     }
 
-    // יוצר מפת נתונים של משימה ושומר אותה תחת הילד שנבחר ב-Firebase
+    // שומר את המשימה החדשה ב-Firebase
     private void assignTask() {
-        if (!isAssignmentInputValid()) {
-            return;
-        }
-
-        String title = etTitle.getText().toString().trim();
-        String dueDate = etDueDate.getText().toString().trim();
-        int childPosition = spAssignee.getSelectedItemPosition();
-
-        btnAssign.setEnabled(false); // מונע לחיצות כפולות
-
-        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("parents").child(parentUid).child("children").child(childIds.get(childPosition)).child("tasks");
-        String taskId = tasksRef.push().getKey();
-
-        if (taskId == null) {
-            btnAssign.setEnabled(true);
-            Toast.makeText(this, R.string.assign_task_error_create_id, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        TaskTemplate selectedTemplate = null;
-        int templatePosition = spTemplates.getSelectedItemPosition();
-        if (templatePosition >= 0 && templatePosition < templates.size()) {
-            selectedTemplate = templates.get(templatePosition);
-        }
+        if (!isAssignmentInputValid()) return;
+        btnAssign.setEnabled(false);
+        int pos = spAssignee.getSelectedItemPosition();
+        DatabaseReference ref = parentRef().child("children").child(childIds.get(pos)).child("tasks").push();
+        
+        TaskTemplate template = null;
+        int tPos = spTemplates.getSelectedItemPosition();
+        if (tPos >= 0 && tPos < templates.size()) template = templates.get(tPos);
 
         Map<String, Object> task = new HashMap<>();
-        task.put("title", title);
-        task.put("dueAt", dueDate);
+        task.put("title", etTitle.getText().toString().trim());
+        task.put("dueAt", etDueDate.getText().toString().trim());
         task.put("isDone", false);
-        task.put("starsWorth", (selectedTemplate != null) ? selectedTemplate.safeStarsWorth() : TaskTemplate.DEFAULT_STARS_WORTH);
-        task.put("imageBase64", (selectedTemplate != null) ? selectedTemplate.getImageBase64() : null);
+        task.put("starsWorth", template != null ? template.safeStarsWorth() : 10);
+        task.put("imageBase64", template != null ? template.getImageBase64() : null);
         task.put("createdAt", System.currentTimeMillis());
 
-        tasksRef.child(taskId).setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(AssignTaskToChildActivity.this, R.string.assign_task_success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, "המשימה הוקצתה בהצלחה", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
+            public void onFailure(@NonNull Exception e) {
                 btnAssign.setEnabled(true);
-                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בשמירה", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // מחזיר הפניה להורה המחובר: /parents/{uid}
     private DatabaseReference parentRef() {
-        return FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentUid);
+        return FirebaseDatabase.getInstance().getReference("parents").child(parentUid);
     }
 
-    // מכניס רשימת טקסטים לתוך Spinner פשוט
     private void setSpinnerItems(Spinner spinner, List<String> items) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                items
-        );
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         spinner.setAdapter(adapter);
     }
 
     private void displayBase64Image(String base64) {
-        // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
         if (base64 == null || base64.isEmpty()) {
             imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
             return;
         }
-
         android.graphics.Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
-        if (bitmap == null) {
-            imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
-            return;
-        }
-
-        imgTaskPreview.setImageBitmap(bitmap);
+        if (bitmap != null) imgTaskPreview.setImageBitmap(bitmap);
+        else imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
     }
 
-    // פותח DatePicker ובוחר תאריך יעד למשימה
     private void showDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-
-        DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        Calendar c = Calendar.getInstance();
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int dayOfMonth) {
-                etDueDate.setText(getString(R.string.default_date_format, dayOfMonth, month + 1, year));
+            public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
+                etDueDate.setText(day + "/" + (month + 1) + "/" + year);
             }
-        },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-        dialog.show();
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
     }
 }

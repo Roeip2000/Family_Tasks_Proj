@@ -44,10 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// === מסך: ניהול ילדים ===
-// תפקיד: מאפשר להורה להוסיף, לערוך ולמחוק ילדים ולשמור תמונת פרופיל
-// מחלקות קשורות: Child, ImageHelper, NameUtils
-// Firebase path: parents/{uid}/children
+/** מסך ניהול הילדים על ידי ההורה. מאפשר הוספה, עריכה ומחיקה של ילדים. */
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName;
@@ -60,7 +57,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private ImageView imgChildPhoto;
 
     private final List<ChildItem> childItems = new ArrayList<>();
-
     private DatabaseReference database;
     private String parentUid;
     private String editingChildId;
@@ -68,6 +64,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private Bitmap selectedChildPhoto;
     private ChildListAdapter childListAdapter;
 
+    // פתיחת הגלריה לבחירת תמונת פרופיל לילד
     private final ActivityResultLauncher<String> childImagePicker =
             registerForActivityResult(
                     new ActivityResultContracts.GetContent(),
@@ -88,7 +85,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         parentUid = FirebaseAuth.getInstance().getUid();
         if (parentUid == null) {
-            Toast.makeText(this, R.string.manage_children_not_logged_in, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "לא מחובר למערכת", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -110,6 +107,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         tvFormTitle = findViewById(R.id.tvFormTitle);
     }
 
+    // הגדרת רשימת הילדים והפעולות עליה
     private void setupChildrenList() {
         childListAdapter = new ChildListAdapter();
         lvChildren.setAdapter(childListAdapter);
@@ -151,18 +149,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // מטפל בתמונה שנבחרה מהגלריה עבור פרופיל ילד
+    // מטפל בתמונה שנבחרה מהגלריה
     private void handleChildImageResult(Uri uri) {
-        if (uri == null) {
-            return;
-        }
+        if (uri == null) return;
 
         selectedChildPhoto = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
         if (selectedChildPhoto == null) {
-            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה בטעינת התמונה", Toast.LENGTH_SHORT).show();
             return;
         }
-
         imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(selectedChildPhoto));
     }
 
@@ -172,17 +167,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
         final String lastName = etLastName.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
         final String childId = (editingChildId != null) ? editingChildId : childrenRef().push().getKey();
         if (childId == null) {
-            Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה ביצירת מזהה ילד", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
         String imageBase64 = (selectedChildPhoto != null) ? ImageHelper.bitmapToBase64(selectedChildPhoto) : editingChildOldImageBase64;
         btnAddChild.setEnabled(false);
 
@@ -193,9 +187,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             Map<String, Object> updates = new HashMap<>();
             updates.put("firstName", firstName);
             updates.put("lastName", lastName);
-            if (imageBase64 != null) {
-                updates.put("profileImageBase64", imageBase64);
-            }
+            if (imageBase64 != null) updates.put("profileImageBase64", imageBase64);
             saveTask = childrenRef().child(childId).updateChildren(updates);
         }
 
@@ -203,8 +195,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 btnAddChild.setEnabled(true);
-                int messageRes = (editingChildId == null) ? R.string.manage_children_added_success : R.string.manage_children_updated_success;
-                Toast.makeText(ManageChildrenActivity.this, getString(messageRes, firstName, lastName), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "הילד נשמר בהצלחה", Toast.LENGTH_SHORT).show();
                 resetForm();
                 loadChildren();
             }
@@ -212,250 +203,176 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 btnAddChild.setEnabled(true);
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "שגיאה: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // טוען את הילדים מ-Firebase: /parents/{uid}/children
+    // טוען את רשימת הילדים מ-Firebase
     private void loadChildren() {
-        DatabaseReference childrenRef = childrenRef();
-        childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        childrenRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 handleChildrenSnapshot(snapshot);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    // ממיר את נתוני הילדים לרשימה שמוצגת במסך
+    // מעדכן את הרשימה המקומית מהנתונים שהגיעו מהשרת
     private void handleChildrenSnapshot(DataSnapshot snapshot) {
         childItems.clear();
-
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-            addChildItemFromSnapshot(childSnapshot);
+            childItems.add(new ChildItem(
+                    childSnapshot.getKey(),
+                    childSnapshot.child("firstName").getValue(String.class),
+                    childSnapshot.child("lastName").getValue(String.class),
+                    childSnapshot.child("profileImageBase64").getValue(String.class)
+            ));
         }
-
         childListAdapter.notifyDataSetChanged();
         updateListViewHeight(lvChildren);
         updateChildrenEmptyState();
     }
 
-    private void addChildItemFromSnapshot(DataSnapshot childSnapshot) {
-        childItems.add(new ChildItem(
-                childSnapshot.getKey(),
-                childSnapshot.child("firstName").getValue(String.class),
-                childSnapshot.child("lastName").getValue(String.class),
-                childSnapshot.child("profileImageBase64").getValue(String.class)
-        ));
-    }
-
-    // מציג או מסתיר את הודעת הריק של הילדים
+    // מציג הודעה אם אין ילדים רשומים
     private void updateChildrenEmptyState() {
         boolean isEmpty = childItems.isEmpty();
         tvNoChildren.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         lvChildren.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
-    // מכניס את הטופס למצב עריכת ילד קיים
+    // ממלא את הטופס בפרטי הילד לצורך עריכה
     private void enterEditMode(int position) {
         ChildItem item = childItems.get(position);
         editingChildId = item.id;
         editingChildOldImageBase64 = item.profileImageBase64;
-
         etFirstName.setText(item.firstName);
         etLastName.setText(item.lastName);
         showChildPhoto(item.profileImageBase64);
         toggleUI(true);
     }
 
-    // מציג תמונת ילד קיימת או תמונה חלופית
+    // מציג את תמונת הילד בעיגול
     private void showChildPhoto(String profileImageBase64) {
         if (profileImageBase64 == null) {
             imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
             return;
         }
-
         Bitmap bitmap = ImageHelper.base64ToBitmap(profileImageBase64);
         if (bitmap == null) {
             imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
             return;
         }
-
         imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
     }
 
-    // מאפס את הטופס למצב הוספת ילד חדש
+    // מאפס את הטופס למצב הוספה
     private void resetForm() {
         editingChildId = null;
         editingChildOldImageBase64 = null;
         selectedChildPhoto = null;
-
         etFirstName.setText("");
         etLastName.setText("");
         imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
-
         toggleUI(false);
     }
 
-    // משנה טקסטים וצבעים לפי מצב עריכה או הוספה
+    // משנה את עיצוב הכפתורים בין מצב עריכה להוספה
     private void toggleUI(boolean isEdit) {
-        if (isEdit) {
-            btnAddChild.setText(R.string.manage_children_save_changes);
-        } else {
-            btnAddChild.setText(R.string.add_child);
-        }
-
-        int colorRes;
-        if (isEdit) {
-            colorRes = R.color.primary;
-        } else {
-            colorRes = R.color.accent;
-        }
+        btnAddChild.setText(isEdit ? "שמור שינויים" : "הוסף ילד");
+        int colorRes = isEdit ? R.color.primary : R.color.accent;
         btnAddChild.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, colorRes)));
-
         btnCancelEdit.setVisibility(isEdit ? View.VISIBLE : View.GONE);
-        if (isEdit) {
-            tvFormTitle.setText(R.string.manage_children_form_title_edit);
-        } else {
-            tvFormTitle.setText(R.string.manage_children_form_title_new);
-        }
+        tvFormTitle.setText(isEdit ? "עריכת פרטי ילד" : "הוספת ילד חדש");
     }
 
-    // פותח תפריט עריכה/מחיקה לילד שנבחר
+    // מציג תפריט אפשרויות לילד שנבחר
     private void showChildOptionsDialog(final int position) {
-        if (position < 0 || position >= childItems.size()) {
-            return;
-        }
-
-        String[] options = {
-                getString(R.string.manage_children_option_edit),
-                getString(R.string.manage_children_option_delete)
-        };
-
+        if (position < 0 || position >= childItems.size()) return;
+        String[] options = {"ערוך", "מחק"};
         new AlertDialog.Builder(this)
-                .setTitle(getChildDisplayName(childItems.get(position)))
+                .setTitle("בחר פעולה")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            enterEditMode(position);
-                        } else {
-                            showDeleteChildDialog(position);
-                        }
+                        if (which == 0) enterEditMode(position);
+                        else showDeleteChildDialog(position);
                     }
                 })
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton("ביטול", null)
                 .show();
     }
 
-    // פותח דיאלוג אישור לפני מחיקת ילד
+    // מציג דיאלוג לאישור מחיקת ילד
     private void showDeleteChildDialog(int position) {
         final ChildItem item = childItems.get(position);
-
         new AlertDialog.Builder(this)
-                .setTitle(R.string.manage_children_delete_title)
-                .setMessage(getString(R.string.manage_children_delete_message, getChildDisplayName(item)))
-                .setPositiveButton(R.string.manage_children_option_delete, new DialogInterface.OnClickListener() {
+                .setTitle("מחיקת ילד")
+                .setMessage("האם אתה בטוח שברצונך למחוק את הילד?")
+                .setPositiveButton("מחק", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteChild(item);
                     }
                 })
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton("ביטול", null)
                 .show();
     }
 
-    // מוחק את הילד מ-Firebase ומעדכן את הרשימה
+    // מוחק את הילד מ-Firebase
     private void deleteChild(final ChildItem item) {
         childrenRef().child(item.id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, getChildDisplayName(item)), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "הילד נמחק בהצלחה", Toast.LENGTH_SHORT).show();
                 if (item.id.equals(editingChildId)) resetForm();
                 loadChildren();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "שגיאה: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // מחזיר הפניה לנתיב הילדים: /parents/{uid}/children
     private DatabaseReference childrenRef() {
         return database.child("parents").child(parentUid).child("children");
     }
 
-    // מחזיר שם מלא של ילד או ברירת מחדל
-    private String getChildDisplayName(ChildItem item) {
-        return NameUtils.fullNameOrDefault(
-                item.firstName,
-                item.lastName,
-                getString(R.string.default_child_name)
-        );
-    }
-
-    // מחשב גובה לרשימה ידנית כדי שלא יהיה גוש ריק בתוך המסך הנגלל
+    // מעדכן את גובה הרשימה באופן ידני כדי שתעבוד בתוך גלילה
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
-        if (adapter == null) {
-            return;
-        }
-
-        int listWidth;
-        if (listView.getWidth() > 0) {
-            listWidth = listView.getWidth();
-        } else {
-            listWidth = getResources().getDisplayMetrics().widthPixels - 100;
-        }
-
+        if (adapter == null) return;
         int totalHeight = 0;
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
-
-        for (int index = 0; index < adapter.getCount(); index++) {
-            View item = adapter.getView(index, null, listView);
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(listView.getWidth() > 0 ? listView.getWidth() : getResources().getDisplayMetrics().widthPixels - 100, View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View item = adapter.getView(i, null, listView);
             item.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
             totalHeight += item.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
 
-    // מתאם פנימי שמציג ילד אחד בכל שורה
+    // מתאם להצגת רשימת הילדים
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
-
-        ChildListAdapter() {
-            super(ManageChildrenActivity.this, 0, childItems);
-        }
-
+        ChildListAdapter() { super(ManageChildrenActivity.this, 0, childItems); }
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
-            }
-
+            if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
             ChildItem item = getItem(position);
-            if (item == null) {
-                return convertView;
-            }
-
-            bindChildRow(convertView, item);
+            if (item != null) bindChildRow(convertView, item);
             return convertView;
         }
-
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
-            tvChildFullName.setText(getChildDisplayName(item));
-
+            tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, "ילד"));
             ImageView imageView = rowView.findViewById(R.id.ivChildThumb);
             if (item.profileImageBase64 != null) {
                 Bitmap bitmap = ImageHelper.base64ToBitmap(item.profileImageBase64);
@@ -464,23 +381,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     return;
                 }
             }
-
             imageView.setImageResource(R.drawable.ic_avatar_placeholder);
         }
     }
 
-    // פריט פשוט שמייצג ילד ברשימת ניהול הילדים
     private static class ChildItem {
-        String id;
-        String firstName;
-        String lastName;
-        String profileImageBase64;
-
+        String id, firstName, lastName, profileImageBase64;
         ChildItem(String id, String firstName, String lastName, String profileImageBase64) {
-            this.id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.profileImageBase64 = profileImageBase64;
+            this.id = id; this.firstName = firstName; this.lastName = lastName; this.profileImageBase64 = profileImageBase64;
         }
     }
 }

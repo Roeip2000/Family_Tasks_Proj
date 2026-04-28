@@ -495,7 +495,7 @@
                                 style="@style/Widget.Family.DashboardCardButton"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:drawableTop="@drawable/ic_qr_code"
+                                android:drawableTop="@drawable/ic_qr_code_scanner"
                                 android:text="@string/btn_show_children_qr_short" />
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>

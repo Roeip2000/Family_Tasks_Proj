@@ -21,156 +21,98 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 import java.util.Map;
 
-// כרטיסי הילדים בדשבורד ההורה ובחירת ילד
-class ParentDashboardChildSummaryAdapter
-        extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
+/** מתאם עבור רשימת כרטיסי הילדים בדשבורד. מאפשר להורה לבחור ילד ולראות סיכום מהיר עליו. */
+class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder> {
 
-    // מזהה מיוחד לצ'יפ "כל הילדים" שאינו ילד אמיתי ב-Firebase
     static final String ALL_CHILDREN_ID = "__ALL__";
 
-    interface OnChildSelectedListener {
-        void onChildSelected(String childId);
-    }
-
-    private static final String METRIC_BLUE_BG = "#EAF4FF";
-    private static final String METRIC_BLUE_TEXT = "#1F4E79";
-    private static final String METRIC_BLUE_STROKE = "#B8DBFF";
-    private static final String METRIC_GREEN_BG = "#ECF8F1";
-    private static final String METRIC_GREEN_TEXT = "#1E7A45";
-    private static final String METRIC_GREEN_STROKE = "#BDE7C9";
-    private static final String METRIC_ORANGE_BG = "#FFF4E5";
-    private static final String METRIC_ORANGE_TEXT = "#9C5A00";
-    private static final String METRIC_ORANGE_STROKE = "#FFD199";
-    private static final String METRIC_RED_BG = "#FFEBEE";
-    private static final String METRIC_RED_TEXT = "#C62828";
-    private static final String METRIC_RED_STROKE = "#FFCDD2";
-    private static final String CHILD_CARD_DEFAULT_BG = "#FFFFFF";
-    private static final String CHILD_CARD_SELECTED_BG = "#F3F8FF";
-    private static final String CHILD_CARD_DEFAULT_STROKE = "#D9E2EC";
-    private static final String CHILD_CARD_SELECTED_STROKE = "#2F80ED";
+    interface OnChildSelectedListener { void onChildSelected(String childId); }
 
     private final Context context;
-    private final LayoutInflater inflater;
     private final List<ChildSummary> childSummaries;
     private final Map<String, Bitmap> childPhotoCache;
     private final OnChildSelectedListener onChildSelectedListener;
     private String selectedChildId;
 
-    ParentDashboardChildSummaryAdapter(@NonNull Context context,
-                                       @NonNull List<ChildSummary> childSummaries,
-                                       @NonNull Map<String, Bitmap> childPhotoCache,
-                                       @NonNull OnChildSelectedListener onChildSelectedListener) {
+    ParentDashboardChildSummaryAdapter(@NonNull Context context, @NonNull List<ChildSummary> summaries, @NonNull Map<String, Bitmap> cache, @NonNull OnChildSelectedListener listener) {
         this.context = context;
-        this.inflater = LayoutInflater.from(context);
-        this.childSummaries = childSummaries;
-        this.childPhotoCache = childPhotoCache;
-        this.onChildSelectedListener = onChildSelectedListener;
+        this.childSummaries = summaries;
+        this.childPhotoCache = cache;
+        this.onChildSelectedListener = listener;
     }
 
-    void setSelectedChildId(String selectedChildId) {
-        this.selectedChildId = selectedChildId;
-    }
+    void setSelectedChildId(String id) { this.selectedChildId = id; }
 
     @NonNull
     @Override
     public ChildSummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_parent_child_summary, parent, false);
-        return new ChildSummaryViewHolder(view);
+        return new ChildSummaryViewHolder(LayoutInflater.from(context).inflate(R.layout.item_parent_child_summary, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChildSummaryViewHolder holder, int position) {
-        ChildSummary childSummary = childSummaries.get(position);
-        boolean isSelected = childSummary.childId.equals(selectedChildId);
-        boolean isAllChildren = ALL_CHILDREN_ID.equals(childSummary.childId);
+        final ChildSummary summary = childSummaries.get(position);
+        boolean selected = summary.getChildId().equals(selectedChildId);
+        boolean isAll = ALL_CHILDREN_ID.equals(summary.getChildId());
 
-        holder.tvChildSummaryName.setText(childSummary.displayName);
-        bindMetricChip(holder.tvChildSummaryAssigned, R.string.parent_dashboard_summary_assigned,
-                childSummary.assignedCount, METRIC_BLUE_BG, METRIC_BLUE_TEXT, METRIC_BLUE_STROKE);
-        bindMetricChip(holder.tvChildSummaryCompleted, R.string.parent_dashboard_summary_completed,
-                childSummary.completedCount, METRIC_GREEN_BG, METRIC_GREEN_TEXT, METRIC_GREEN_STROKE);
-        bindMetricChip(holder.tvChildSummaryUrgent, R.string.parent_dashboard_summary_urgent,
-                childSummary.urgentCount, METRIC_ORANGE_BG, METRIC_ORANGE_TEXT, METRIC_ORANGE_STROKE);
-        if (childSummary.overdueCount > 0) {
-            holder.tvChildSummaryOverdue.setVisibility(View.VISIBLE);
-            bindMetricChip(holder.tvChildSummaryOverdue, R.string.parent_dashboard_group_overdue,
-                    childSummary.overdueCount, METRIC_RED_BG, METRIC_RED_TEXT, METRIC_RED_STROKE);
+        holder.tvName.setText(summary.getDisplayName());
+        bindChip(holder.tvAssigned, "פתוחות: " + summary.getAssignedCount(), "#EAF4FF", "#1F4E79", "#B8DBFF");
+        bindChip(holder.tvCompleted, "בוצעו: " + summary.getCompletedCount(), "#ECF8F1", "#1E7A45", "#BDE7C9");
+        bindChip(holder.tvUrgent, "דחופות: " + summary.getUrgentCount(), "#FFF4E5", "#9C5A00", "#FFD199");
+        
+        if (summary.getOverdueCount() > 0) {
+            holder.tvOverdue.setVisibility(View.VISIBLE);
+            bindChip(holder.tvOverdue, "באיחור: " + summary.getOverdueCount(), "#FFEBEE", "#C62828", "#FFCDD2");
+        } else holder.tvOverdue.setVisibility(View.GONE);
+
+        holder.card.setCardBackgroundColor(Color.parseColor(selected ? "#F3F8FF" : "#FFFFFF"));
+        holder.card.setStrokeColor(Color.parseColor(selected ? "#2F80ED" : "#D9E2EC"));
+        holder.card.setStrokeWidth(selected ? 6 : 3);
+
+        if (isAll) {
+            holder.ivPhoto.setImageResource(R.drawable.ic_home_family);
         } else {
-            holder.tvChildSummaryOverdue.setVisibility(View.GONE);
-        }
-
-        holder.cardChildSummary.setCardBackgroundColor(Color.parseColor(isSelected ? CHILD_CARD_SELECTED_BG : CHILD_CARD_DEFAULT_BG));
-        holder.cardChildSummary.setStrokeColor(Color.parseColor(isSelected ? CHILD_CARD_SELECTED_STROKE : CHILD_CARD_DEFAULT_STROKE));
-        holder.cardChildSummary.setStrokeWidth(dpToPx(isSelected ? 2 : 1));
-
-        holder.itemView.setContentDescription(context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
-
-        if (isAllChildren) {
-            holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_home_family);
-        } else {
-            holder.ivChildSummaryPhoto.setImageDrawable(null);
-            if (childSummary.childProfileBase64 != null && !childSummary.childProfileBase64.trim().isEmpty()) {
-                if (childPhotoCache.containsKey(childSummary.childId)) {
-                    holder.ivChildSummaryPhoto.setImageBitmap(childPhotoCache.get(childSummary.childId));
+            holder.ivPhoto.setImageDrawable(null);
+            if (summary.getChildProfileBase64() != null && !summary.getChildProfileBase64().isEmpty()) {
+                if (childPhotoCache.containsKey(summary.getChildId())) {
+                    holder.ivPhoto.setImageBitmap(childPhotoCache.get(summary.getChildId()));
                 } else {
-                    Bitmap raw = ImageHelper.base64ToBitmap(childSummary.childProfileBase64);
+                    Bitmap raw = ImageHelper.base64ToBitmap(summary.getChildProfileBase64());
                     if (raw != null) {
-                        Bitmap circular = ImageHelper.getCircularBitmap(raw);
-                        childPhotoCache.put(childSummary.childId, circular);
-                        holder.ivChildSummaryPhoto.setImageBitmap(circular);
+                        Bitmap circle = ImageHelper.getCircularBitmap(raw);
+                        childPhotoCache.put(summary.getChildId(), circle);
+                        holder.ivPhoto.setImageBitmap(circle);
                     }
                 }
-            }
+            } else holder.ivPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onChildSelectedListener.onChildSelected(childSummary.childId);
-            }
+            @Override public void onClick(View v) { onChildSelectedListener.onChildSelected(summary.getChildId()); }
         });
     }
 
     @Override
-    public int getItemCount() {
-        return childSummaries.size();
-    }
+    public int getItemCount() { return childSummaries.size(); }
 
-    private void bindMetricChip(TextView textView, int labelResId, int count,
-                                String backgroundColor, String textColor, String strokeColor) {
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dpToPx(18));
-        background.setColor(Color.parseColor(backgroundColor));
-        background.setStroke(dpToPx(1), Color.parseColor(strokeColor));
-
-        textView.setBackground(background);
-        textView.setTextColor(Color.parseColor(textColor));
-        textView.setText(context.getString(R.string.parent_dashboard_metric_with_count,
-                context.getString(labelResId), count));
-    }
-
-    private int dpToPx(int value) {
-        return Math.round(context.getResources().getDisplayMetrics().density * value);
+    private void bindChip(TextView tv, String text, String bg, String txtColor, String stroke) {
+        GradientDrawable gd = new GradientDrawable();
+        gd.setCornerRadius(40); gd.setColor(Color.parseColor(bg)); gd.setStroke(2, Color.parseColor(stroke));
+        tv.setBackground(gd); tv.setTextColor(Color.parseColor(txtColor)); tv.setText(text);
     }
 
     static class ChildSummaryViewHolder extends RecyclerView.ViewHolder {
-        private final MaterialCardView cardChildSummary;
-        private final ImageView ivChildSummaryPhoto;
-        private final TextView tvChildSummaryName;
-        private final TextView tvChildSummaryAssigned;
-        private final TextView tvChildSummaryCompleted;
-        private final TextView tvChildSummaryUrgent;
-        private final TextView tvChildSummaryOverdue;
-
+        MaterialCardView card; ImageView ivPhoto;
+        TextView tvName, tvAssigned, tvCompleted, tvUrgent, tvOverdue;
         ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardChildSummary = itemView.findViewById(R.id.cardChildSummary);
-            ivChildSummaryPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
-            tvChildSummaryName = itemView.findViewById(R.id.tvChildSummaryName);
-            tvChildSummaryAssigned = itemView.findViewById(R.id.tvChildSummaryAssigned);
-            tvChildSummaryCompleted = itemView.findViewById(R.id.tvChildSummaryCompleted);
-            tvChildSummaryUrgent = itemView.findViewById(R.id.tvChildSummaryUrgent);
-            tvChildSummaryOverdue = itemView.findViewById(R.id.tvChildSummaryOverdue);
+            card = itemView.findViewById(R.id.cardChildSummary);
+            ivPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
+            tvName = itemView.findViewById(R.id.tvChildSummaryName);
+            tvAssigned = itemView.findViewById(R.id.tvChildSummaryAssigned);
+            tvCompleted = itemView.findViewById(R.id.tvChildSummaryCompleted);
+            tvUrgent = itemView.findViewById(R.id.tvChildSummaryUrgent);
+            tvOverdue = itemView.findViewById(R.id.tvChildSummaryOverdue);
         }
     }
 }

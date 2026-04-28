@@ -18,39 +18,27 @@ import com.example.family_tasks_proj.util.DateUtils;
 
 import java.util.List;
 
-// אדפטר לרשימת המשימות בדשבורד ההורה: כותרות קבוצה ומשימות
+/** מתאם עבור רשימת המשימות בדשבורד ההורה. מציג כותרות של קבוצות ומשימות רגילות. */
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_TASK = 1;
 
-    // צבעי סטטוס מרוכזים כדי שיהיה קל לשנות צבע בזמן הבחינה
-    private static final String HEX_DONE = "#2E7D32";
-    private static final String HEX_DONE_BG = "#E8F5E9";
-    private static final String HEX_OVERDUE = "#C62828";
-    private static final String HEX_OVERDUE_BG = "#FFEBEE";
-    private static final String HEX_URGENT = "#E65100";
-    private static final String HEX_URGENT_BG = "#FFF3E0";
-    private static final String HEX_REGULAR_BG = "#EEF2F7";
-    private static final String HEX_REGULAR_TEXT = "#52606D";
-    private static final String HEX_REGULAR_DOT = "#2F80ED";
-    private static final String HEX_REGULAR_DUE = "#6B7280";
-    private static final int COLOR_DONE = Color.parseColor(HEX_DONE);
-    private static final int COLOR_DONE_BG = Color.parseColor(HEX_DONE_BG);
-    private static final int COLOR_OVERDUE = Color.parseColor(HEX_OVERDUE);
-    private static final int COLOR_OVERDUE_BG = Color.parseColor(HEX_OVERDUE_BG);
-    private static final int COLOR_URGENT = Color.parseColor(HEX_URGENT);
-    private static final int COLOR_URGENT_BG = Color.parseColor(HEX_URGENT_BG);
-    private static final int COLOR_REGULAR_BG = Color.parseColor(HEX_REGULAR_BG);
-    private static final int COLOR_REGULAR_TEXT = Color.parseColor(HEX_REGULAR_TEXT);
-    private static final int COLOR_REGULAR_DOT = Color.parseColor(HEX_REGULAR_DOT);
-    private static final int COLOR_REGULAR_DUE = Color.parseColor(HEX_REGULAR_DUE);
+    private static final int COLOR_DONE = Color.parseColor("#2E7D32");
+    private static final int COLOR_DONE_BG = Color.parseColor("#E8F5E9");
+    private static final int COLOR_OVERDUE = Color.parseColor("#C62828");
+    private static final int COLOR_OVERDUE_BG = Color.parseColor("#FFEBEE");
+    private static final int COLOR_URGENT = Color.parseColor("#E65100");
+    private static final int COLOR_URGENT_BG = Color.parseColor("#FFF3E0");
+    private static final int COLOR_REGULAR_BG = Color.parseColor("#EEF2F7");
+    private static final int COLOR_REGULAR_TEXT = Color.parseColor("#52606D");
+    private static final int COLOR_REGULAR_DOT = Color.parseColor("#2F80ED");
+    private static final int COLOR_REGULAR_DUE = Color.parseColor("#6B7280");
 
     private final LayoutInflater inflater;
     private boolean showChildName = false;
 
-    ParentDashboardTaskAdapter(@NonNull Context context,
-                               @NonNull List<TaskListItem> items) {
+    ParentDashboardTaskAdapter(@NonNull Context context, @NonNull List<TaskListItem> items) {
         super(context, 0, items);
         this.inflater = LayoutInflater.from(context);
     }
@@ -60,102 +48,80 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     }
 
     @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
+    public int getViewTypeCount() { return 2; }
 
     @Override
     public int getItemViewType(int position) {
         TaskListItem item = getItem(position);
-        if (item != null && item.isHeader) {
-            return VIEW_TYPE_HEADER;
-        }
-        return VIEW_TYPE_TASK;
+        return (item != null && item.getIsHeader()) ? VIEW_TYPE_HEADER : VIEW_TYPE_TASK;
     }
 
     @Override
-    public boolean isEnabled(int position) {
-        return getItemViewType(position) == VIEW_TYPE_TASK;
-    }
+    public boolean isEnabled(int position) { return getItemViewType(position) == VIEW_TYPE_TASK; }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         TaskListItem item = getItem(position);
-        if (item == null) {
-            if (convertView == null) {
-                return new View(getContext());
-            }
-            return convertView;
-        }
+        if (item == null) return convertView == null ? new View(getContext()) : convertView;
 
-        if (getItemViewType(position) == VIEW_TYPE_HEADER) {
-            return bindHeaderView(convertView, parent, item);
-        }
-
-        return bindTaskView(convertView, parent, item.task);
+        if (getItemViewType(position) == VIEW_TYPE_HEADER) return bindHeaderView(convertView, parent, item);
+        return bindTaskView(convertView, parent, item.getTask());
     }
 
+    // מציג כותרת קבוצה (למשל "דחוף")
     private View bindHeaderView(View convertView, ViewGroup parent, TaskListItem item) {
         if (convertView == null || convertView.findViewById(R.id.tvTaskSectionGroupTitle) == null) {
             convertView = inflater.inflate(R.layout.item_parent_task_section_header, parent, false);
         }
-
-        TextView tvGroupTitle = convertView.findViewById(R.id.tvTaskSectionGroupTitle);
-        TextView tvGroupCount = convertView.findViewById(R.id.tvTaskSectionGroupCount);
-        tvGroupTitle.setText(item.headerTitle);
-        tvGroupCount.setText(String.valueOf(item.headerCount));
+        ((TextView) convertView.findViewById(R.id.tvTaskSectionGroupTitle)).setText(item.getHeaderTitle());
+        ((TextView) convertView.findViewById(R.id.tvTaskSectionGroupCount)).setText(String.valueOf(item.getHeaderCount()));
         return convertView;
     }
 
+    // מציג שורת משימה עם כל פרטיה
     private View bindTaskView(View convertView, ViewGroup parent, AssignedTask task) {
         if (convertView == null || convertView.findViewById(R.id.tvTaskTitleCard) == null) {
             convertView = inflater.inflate(R.layout.item_parent_task, parent, false);
         }
-        if (task == null) {
-            return convertView;
-        }
+        if (task == null) return convertView;
 
-        TextView tvTaskTitleCard = convertView.findViewById(R.id.tvTaskTitleCard);
-        TextView tvTaskOwner = convertView.findViewById(R.id.tvTaskOwner);
-        TextView tvDueDateCard = convertView.findViewById(R.id.tvDueDateCard);
-        TextView tvStatusChip = convertView.findViewById(R.id.tvStatusChip);
-        View viewTaskDot = convertView.findViewById(R.id.viewTaskDot);
+        TextView tvTitle = convertView.findViewById(R.id.tvTaskTitleCard);
+        TextView tvOwner = convertView.findViewById(R.id.tvTaskOwner);
+        TextView tvDue = convertView.findViewById(R.id.tvDueDateCard);
+        TextView tvStatus = convertView.findViewById(R.id.tvStatusChip);
+        View viewDot = convertView.findViewById(R.id.viewTaskDot);
 
-        if (task.title == null || task.title.isEmpty()) {
-            tvTaskTitleCard.setText(getContext().getString(R.string.default_task_name));
-        } else {
-            tvTaskTitleCard.setText(task.title);
-        }
+        tvTitle.setText(task.getTitle().isEmpty() ? "משימה" : task.getTitle());
 
-        if (showChildName && task.childName != null && !task.childName.trim().isEmpty()) {
-            tvTaskOwner.setText(getContext().getString(R.string.parent_dashboard_task_owner_label, task.childName));
-            tvTaskOwner.setVisibility(View.VISIBLE);
-        } else {
-            tvTaskOwner.setVisibility(View.GONE);
-        }
+        if (showChildName && task.getChildName() != null && !task.getChildName().trim().isEmpty()) {
+            tvOwner.setText("מיועד ל: " + task.getChildName());
+            tvOwner.setVisibility(View.VISIBLE);
+        } else tvOwner.setVisibility(View.GONE);
 
-        long daysLeft = DateUtils.daysLeft(task.dueAt);
+        long days = DateUtils.daysLeft(task.getDueAt());
+        boolean urgent = DateUtils.isDueSoon(task.getDueAt());
 
-        tvDueDateCard.setText(getContext().getString(task.isDone ? R.string.parent_dashboard_task_due_done : (daysLeft < 0 ? R.string.parent_dashboard_task_due_late : (daysLeft <= 2 ? R.string.parent_dashboard_task_due_urgent : R.string.parent_dashboard_task_due_regular)), task.dueAt));
-        tvDueDateCard.setTextColor(task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_DUE)));
+        tvDue.setText((task.getIsDone() ? "בוצע בתאריך: " : (days < 0 ? "באיחור: " : (urgent ? "דחוף: " : "תאריך יעד: "))) + task.getDueAt());
+        tvDue.setTextColor(task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DUE)));
 
-        int chipBgColor = task.isDone ? COLOR_DONE_BG : (daysLeft < 0 ? COLOR_OVERDUE_BG : (daysLeft <= 2 ? COLOR_URGENT_BG : COLOR_REGULAR_BG));
-        int chipTextColor = task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_TEXT));
-        int dotColor = task.isDone ? COLOR_DONE : (daysLeft < 0 ? COLOR_OVERDUE : (daysLeft <= 2 ? COLOR_URGENT : COLOR_REGULAR_DOT));
+        int bg = task.getIsDone() ? COLOR_DONE_BG : (days < 0 ? COLOR_OVERDUE_BG : (urgent ? COLOR_URGENT_BG : COLOR_REGULAR_BG));
+        int text = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_TEXT));
+        int dot = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DOT));
 
-        tvStatusChip.setText(getContext().getString(task.isDone ? R.string.parent_dashboard_task_status_done : (daysLeft < 0 ? R.string.parent_dashboard_task_status_late : (daysLeft <= 2 ? R.string.parent_dashboard_task_status_urgent : R.string.parent_dashboard_task_status_waiting))));
-        tvStatusChip.setTextColor(chipTextColor);
-
-        GradientDrawable chipBg = new GradientDrawable();
-        chipBg.setColor(chipBgColor);
-        chipBg.setCornerRadius(Math.round(getContext().getResources().getDisplayMetrics().density * 14));
-        tvStatusChip.setBackground(chipBg);
+        tvStatus.setText(task.getIsDone() ? "בוצע" : (days < 0 ? "באיחור" : (urgent ? "דחוף" : "ממתין")));
+        tvStatus.setTextColor(text);
+        
+        GradientDrawable chip = new GradientDrawable();
+        chip.setColor(bg);
+        chip.setCornerRadius(Math.round(getContext().getResources().getDisplayMetrics().density * 14));
+        tvStatus.setBackground(chip);
 
         GradientDrawable dotBg = new GradientDrawable();
         dotBg.setShape(GradientDrawable.OVAL);
-        dotBg.setColor(dotColor);
-        viewTaskDot.setBackground(dotBg);
+        dotBg.setColor(dot);
+        viewDot.setBackground(dotBg);
+
         return convertView;
     }
 }

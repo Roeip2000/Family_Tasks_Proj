@@ -65,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/cd_task_preview"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_placeholder_image" />
+                    android:src="@drawable/ic_image_placeholder" />
             </FrameLayout>
 
             <LinearLayout

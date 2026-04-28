@@ -52,8 +52,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         if (holder.itemView instanceof MaterialCardView) {
             MaterialCardView card = (MaterialCardView) holder.itemView;
-            int bgColor = ctx.getColor(task.getIsDone() ? R.color.surface_soft_green : (daysLeft < 0 ? R.color.danger_light : (daysLeft <= 2 ? R.color.surface_soft_orange : R.color.bg_card)));
-            int strokeColor = ctx.getColor(task.getIsDone() ? R.color.accent_light : (daysLeft < 0 ? R.color.urgent : (daysLeft <= 2 ? R.color.urgent_light : R.color.border_light)));
+            int bgColor = ctx.getColor(task.getIsDone() ? R.color.surface_soft_green : (daysLeft < 0 ? R.color.danger_light : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.surface_soft_orange : R.color.bg_card)));
+            int strokeColor = ctx.getColor(task.getIsDone() ? R.color.accent_light : (daysLeft < 0 ? R.color.urgent : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.urgent_light : R.color.border_light)));
             card.setCardBackgroundColor(bgColor);
             card.setStrokeColor(strokeColor);
             card.setStrokeWidth(1);
@@ -75,7 +75,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             String dueText = formatDueText(holder, task.getDueAt(), daysLeft);
             if (daysLeft < 0) {
                 holder.tvDueDate.setTextColor(ctx.getColor(R.color.danger));
-            } else if (daysLeft <= 2) {
+            } else if (DateUtils.isDueSoon(task.getDueAt())) {
                 dueText = ctx.getString(R.string.child_due_urgent_prefix, dueText);
                 holder.tvDueDate.setTextColor(ctx.getColor(R.color.warning_dark));
             } else {
@@ -87,7 +87,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setSize(14, 14);
-        dot.setColor(ctx.getColor(task.getIsDone() ? R.color.success_dark : (daysLeft < 0 ? R.color.danger : (daysLeft <= 2 ? R.color.warning_dark : R.color.text_hint))));
+        dot.setColor(ctx.getColor(task.getIsDone() ? R.color.success_dark : (daysLeft < 0 ? R.color.danger : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.warning_dark : R.color.text_hint))));
         holder.viewStatusDot.setBackground(dot);
 
         if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {

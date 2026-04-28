@@ -26,10 +26,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-// === מסך: סריקת QR לילד ===
-// תפקיד: סורק QR, מאמת הורה/ילד, ושומר סשן ילד מקומי
-// מחלקות קשורות: ChildSelectionActivity, ChildDashboardActivity
-// Firebase path: parents/{parentId}, parents/{parentId}/children/{childId}
+/** מסך סריקת QR עבור הילד להתחברות מהירה. */
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String PREFS = "child_session";
@@ -39,7 +36,7 @@ public class ChildQRLoginFragment extends Fragment {
     private Button btnScanQR;
     private android.widget.ProgressBar progressScan;
 
-    // ZXing = ספרייה חיצונית שסורקת QR codes דרך מצלמת הטלפון
+    // אובייקט לניהול פתיחת המצלמה וקבלת תוצאת הסריקה
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(
                     new ScanContract(),
@@ -65,6 +62,7 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
+    // פותח את מסך הסריקה
     private void startQrScan() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
@@ -72,6 +70,7 @@ public class ChildQRLoginFragment extends Fragment {
         barcodeLauncher.launch(options);
     }
 
+    // מטפל בתוצאה שהתקבלה מהמצלמה
     private void handleQrScanResult(ScanIntentResult result) {
         if (!isAdded()) {
             return;
@@ -79,19 +78,20 @@ public class ChildQRLoginFragment extends Fragment {
 
         String raw = result.getContents();
         if (raw == null) {
-            Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "הסריקה בוטלה", Toast.LENGTH_SHORT).show();
             return;
         }
 
         ParsedQr parsed = parseQr(raw.trim());
         if (isBlank(parsed.parentId)) {
-            Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "QR לא תקין", Toast.LENGTH_SHORT).show();
             return;
         }
 
         checkQrTarget(parsed);
     }
 
+    // מציג או מסתיר את מצב הטעינה
     private void setLoading(boolean isLoading) {
         if (btnScanQR != null) {
             btnScanQR.setEnabled(!isLoading);
@@ -101,7 +101,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // אם ה-QR מכיל רק parentId — בחירת ילד; אם גם childId — דשבורד
+    // בודק לאן להפנות את המשתמש לפי תוכן ה-QR
     private void checkQrTarget(ParsedQr parsed) {
         setLoading(true);
         if (isBlank(parsed.childId)) {
@@ -111,20 +111,18 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // מפענח טקסט QR למזהה הורה ומזהה ילד אם קיים
+    // מפרק את הטקסט של ה-QR לנתונים
     private ParsedQr parseQr(String raw) {
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {
             return parsedQr;
         }
 
-        // פורמט מלא: parent:{id}|child:{id}
         if (raw.contains("|")) {
             fillParsedQrFromParts(parsedQr, raw);
             return parsedQr;
         }
 
-        // פורמט קצר: parent:{id}
         if (raw.startsWith("parent:")) {
             parsedQr.parentId = raw.substring("parent:".length()).trim();
         }
@@ -132,13 +130,11 @@ public class ChildQRLoginFragment extends Fragment {
         return parsedQr;
     }
 
-    // פורמט מלא: parent:{id}|child:{id}
+    // עוזר לפירוק QR מורכב המכיל גם הורה וגם ילד
     private void fillParsedQrFromParts(ParsedQr parsedQr, String raw) {
         String[] parts = raw.split("\\|");
         for (String part : parts) {
-            if (part == null) {
-                continue;
-            }
+            if (part == null) continue;
 
             String trimmed = part.trim();
             if (trimmed.startsWith("parent:")) {
@@ -149,7 +145,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // בודק שענף ההורה קיים: /parents/{parentId}
+    // בודק מול Firebase שההורה קיים במערכת
     private void checkParentExists(final String parentId) {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -157,7 +153,7 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) return;
                 if (!snapshot.exists()) {
                     setLoading(false);
-                    Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "הורה לא נמצא", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 saveSession(parentId, null);
@@ -168,12 +164,12 @@ public class ChildQRLoginFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
                 setLoading(false);
-                Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "שגיאת מסד נתונים: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    // בודק שילד ספציפי קיים: /parents/{parentId}/children/{childId}
+    // בודק מול Firebase שהילד קיים תחת ההורה
     private void checkChildExists(final String parentId, final String childId) {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -181,7 +177,7 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) return;
                 if (!snapshot.exists()) {
                     setLoading(false);
-                    Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "ילד לא נמצא", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 saveSession(parentId, childId);
@@ -192,11 +188,12 @@ public class ChildQRLoginFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
                 setLoading(false);
-                Toast.makeText(requireContext(), getString(R.string.child_qr_connection_error, error.getMessage()), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "שגיאת חיבור: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
+    // פותח את מסך המשימות של הילד
     private void openChildDashboard(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
         intent.putExtra(KEY_PARENT, parentId);
@@ -205,7 +202,7 @@ public class ChildQRLoginFragment extends Fragment {
         requireActivity().finish();
     }
 
-    // ה-QR זיהה רק את ההורה — מסך בחירת ילד
+    // פותח את מסך בחירת הילד (כשנסרק רק הורה)
     private void openChildSelection(String parentId, String childId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         intent.putExtra(KEY_PARENT, parentId);
@@ -216,7 +213,7 @@ public class ChildQRLoginFragment extends Fragment {
         requireActivity().finish();
     }
 
-    // שומר סשן ילד מקומי לכניסה מהירה בפעם הבאה
+    // שומר את פרטי ההתחברות בזיכרון המכשיר
     private void saveSession(String parentId, String childId) {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -227,16 +224,15 @@ public class ChildQRLoginFragment extends Fragment {
         } else {
             editor.putString(KEY_CHILD, childId);
         }
-
         editor.apply();
     }
 
-    // בודק null או ריק
+    // בודק אם מחרוזת היא ריקה
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
-    // תוצאת פענוח QR
+    // אובייקט עזר לשמירת נתוני ה-QR שפוענחו
     private static class ParsedQr {
         private String parentId;
         private String childId;
