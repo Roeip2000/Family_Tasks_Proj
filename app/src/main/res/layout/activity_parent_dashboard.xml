@@ -36,11 +36,8 @@
                     android:layout_width="68dp"
                     android:layout_height="68dp"
                     android:background="@drawable/bg_avatar_placeholder"
-                    android:clickable="true"
                     android:clipToOutline="true"
                     android:contentDescription="@string/cd_profile_image"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_avatar_placeholder" />
 
@@ -67,12 +64,6 @@
                         android:textColor="@color/md_theme_primary" />
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnChangeProfilePic"
-                    style="@style/Widget.Family.LinkButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/btn_change_parent_photo" />
             </LinearLayout>
 
             <LinearLayout
@@ -329,6 +320,7 @@
                         android:id="@+id/filterCompletedTasks"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:paddingStart="6dp"
@@ -343,8 +335,18 @@
                     <TextView
                         android:id="@+id/filterAllTasks"
                         android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingStart="6dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="6dp"
+                        android:paddingBottom="10dp"
+                        android:text="@string/filter_all"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
                 </LinearLayout>
 
                 <TextView

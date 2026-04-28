@@ -259,6 +259,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
+                btnSave.setEnabled(true);
                 Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
@@ -350,6 +351,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         imgTask.setImageResource(R.drawable.ic_image_placeholder);
         tvFormTitle.setText(R.string.template_form_title_new);
         btnSave.setText(R.string.btn_save_template);
+        btnSave.setEnabled(true);
         btnCancelEdit.setVisibility(View.GONE);
     }
 

@@ -285,6 +285,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String taskId = tasksRef.push().getKey();
 
         if (taskId == null) {
+            btnAssign.setEnabled(true);
             Toast.makeText(this, R.string.assign_task_error_create_id, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -312,6 +313,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
+                btnAssign.setEnabled(true);
                 Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });

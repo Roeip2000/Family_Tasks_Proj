@@ -383,6 +383,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void updateTaskFilterSelectionUi() {
         boolean enabled = getSelectedChildSummary() != null;
+        bindTaskTab(filterAllTasks, activeFilter == FilterMode.ALL, enabled);
         bindTaskTab(filterOpenTasks, activeFilter == FilterMode.ASSIGNED, enabled);
         bindTaskTab(filterCompletedTasks, activeFilter == FilterMode.COMPLETED, enabled);
         bindTaskTab(filterUrgentTasks, activeFilter == FilterMode.URGENT, enabled);

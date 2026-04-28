@@ -46,7 +46,6 @@ public class ImageHelper {
 
             return bitmap;
         } catch (Exception exception) {
-            exception.printStackTrace();
             return null;
         }
     }
@@ -62,7 +61,6 @@ public class ImageHelper {
             byte[] bytes = baos.toByteArray();
             return Base64.encodeToString(bytes, Base64.NO_WRAP);
         } catch (Exception exception) {
-            exception.printStackTrace();
             return null;
         }
     }
@@ -76,7 +74,6 @@ public class ImageHelper {
             byte[] decoded = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
         } catch (Exception exception) {
-            exception.printStackTrace();
             return null;
         }
     }
