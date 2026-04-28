@@ -32,14 +32,12 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
 
     private final Context context;
     private final List<ChildSummary> childSummaries;
-    private final Map<String, Bitmap> childPhotoCache;
     private final OnChildSelectedListener onChildSelectedListener;
     private String selectedChildId;
 
-    ParentDashboardChildSummaryAdapter(@NonNull Context context, @NonNull List<ChildSummary> summaries, @NonNull Map<String, Bitmap> cache, @NonNull OnChildSelectedListener listener) {
+    ParentDashboardChildSummaryAdapter(@NonNull Context context, @NonNull List<ChildSummary> summaries, @NonNull OnChildSelectedListener listener) {
         this.context = context;
         this.childSummaries = summaries;
-        this.childPhotoCache = cache;
         this.onChildSelectedListener = listener;
     }
 
@@ -57,7 +55,6 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
     public void onBindViewHolder(@NonNull ChildSummaryViewHolder holder, int position) {
         final ChildSummary summary = childSummaries.get(position);
         boolean selected = summary.getChildId().equals(selectedChildId);
-        boolean isAll = ALL_CHILDREN_ID.equals(summary.getChildId());
 
         holder.tvName.setText(summary.getDisplayName());
         bindChip(holder.tvAssigned, context.getString(R.string.child_summary_open_tasks, summary.getAssignedCount()), "#EAF4FF", "#1F4E79", "#B8DBFF");
@@ -87,26 +84,6 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
         holder.card.setStrokeColor(Color.parseColor(cardStrokeColor));
         holder.card.setStrokeWidth(cardStrokeWidth);
 
-        if (isAll) {
-            holder.ivPhoto.setImageResource(R.drawable.ic_home_family);
-        } else {
-            holder.ivPhoto.setImageDrawable(null);
-            if (summary.getChildProfileBase64() != null && !summary.getChildProfileBase64().isEmpty()) {
-                if (childPhotoCache.containsKey(summary.getChildId())) {
-                    holder.ivPhoto.setImageBitmap(childPhotoCache.get(summary.getChildId()));
-                } else {
-                    Bitmap rawBitmap = ImageHelper.base64ToBitmap(summary.getChildProfileBase64());
-                    if (rawBitmap != null) {
-                        Bitmap circularBitmap = ImageHelper.getCircularBitmap(rawBitmap);
-                        childPhotoCache.put(summary.getChildId(), circularBitmap);
-                        holder.ivPhoto.setImageBitmap(circularBitmap);
-                    }
-                }
-            } else {
-                holder.ivPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
-            }
-        }
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,7 +109,6 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
 
     static class ChildSummaryViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView card;
-        ImageView ivPhoto;
         TextView tvName;
         TextView tvAssigned;
         TextView tvCompleted;
@@ -142,7 +118,6 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
         ChildSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
             card = itemView.findViewById(R.id.cardChildSummary);
-            ivPhoto = itemView.findViewById(R.id.ivChildSummaryPhoto);
             tvName = itemView.findViewById(R.id.tvChildSummaryName);
             tvAssigned = itemView.findViewById(R.id.tvChildSummaryAssigned);
             tvCompleted = itemView.findViewById(R.id.tvChildSummaryCompleted);

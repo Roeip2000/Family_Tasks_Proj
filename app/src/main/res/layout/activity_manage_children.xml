@@ -66,58 +66,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/manage_children_form_title_new" />
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_repository_list"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-
-                    <ImageView
-                        android:id="@+id/imgChildPhoto"
-                        android:layout_width="78dp"
-                        android:layout_height="78dp"
-                        android:background="@drawable/bg_avatar_placeholder"
-                        android:clipToOutline="true"
-                        android:contentDescription="@string/cd_child_photo"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_avatar_placeholder" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/Widget.Family.PanelTitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/btn_pick_child_photo" />
-
-                        <TextView
-                            style="@style/Widget.Family.PanelSubtitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/manage_children_photo_hint" />
-
-                        <Button
-                            android:id="@+id/btnPickChildPhoto"
-                            style="@style/Widget.Family.SecondaryButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:drawableStart="@drawable/ic_camera"
-                            android:text="@string/btn_pick_child_photo" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.Family.TextInputLayout"
                     android:layout_width="match_parent"

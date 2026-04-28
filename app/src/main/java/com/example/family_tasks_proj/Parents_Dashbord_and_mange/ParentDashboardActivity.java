@@ -3,13 +3,11 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,7 +24,6 @@ import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskListIt
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.util.DateUtils;
-import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,38 +35,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/** מסך ראשי להורה. מציג סיכום של משימות הבית, רשימת ילדים וניהול משימות. */
+/** מסך ראשי להורה בעיצוב מרכז בקרה נקי. */
 public class ParentDashboardActivity extends AppCompatActivity {
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
-    private TextView tvParentName, tvParentTotalTasks, tvParentCompleted, tvParentDueSoon;
-    private TextView tvNoTasks, tvTaskSectionTitle, tvTaskSectionSubtitle, tvNoChildren;
-    private TextView filterAllTasks, filterOpenTasks, filterCompletedTasks, filterUrgentTasks, filterOverdueTasks;
-    private ImageView ivParentProfile;
+    private TextView tvParentName, tvParentTotalTasks, tvParentCompleted, tvParentDueSoon, tvParentOverdue, tvNoTasks, tvTaskSectionTitle;
+    private View containerFilterOpen, containerFilterUrgent, containerFilterOverdue, containerFilterCompleted;
     private ListView lvTasks;
     private RecyclerView rvChildren;
 
     private final List<AssignedTask> allAssignedTasks = new ArrayList<>();
     private final List<TaskListItem> visibleTaskItems = new ArrayList<>();
     private final List<ChildSummary> childSummaries = new ArrayList<>();
-    private final Map<String, Bitmap> childPhotoCache = new HashMap<>();
 
-    private int houseAssigned, houseDone, houseUrgent, houseOverdue, houseTotal;
+    private int houseAssigned, houseDone, houseUrgent, houseOverdue;
     private ParentDashboardTaskAdapter taskAdapter;
     private ParentDashboardChildSummaryAdapter childSummaryAdapter;
-    private String selectedChildId;
-    private FilterMode activeFilter = FilterMode.ASSIGNED;
+    private String selectedChildId = "ALL";
+    private FilterMode activeFilter = FilterMode.ALL;
 
     private enum FilterMode {
-        ALL,
-        ASSIGNED,
-        COMPLETED,
-        URGENT,
-        OVERDUE
+        ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE
     }
 
     @Override
@@ -80,36 +68,38 @@ public class ParentDashboardActivity extends AppCompatActivity {
         bindActions();
         setupChildrenList();
         setupTaskList();
-        setupTaskFilters();
+        setupInteractiveFilters();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseUser user = getSignedInParentOrRedirect();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             loadParentProfile(user);
             loadDashboardData(user);
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
 
     private void bindViews() {
-        ivParentProfile = findViewById(R.id.ivParentProfile);
         tvParentName = findViewById(R.id.tvParentName);
         tvParentTotalTasks = findViewById(R.id.tvParentTotalTasks);
         tvParentCompleted = findViewById(R.id.tvParentCompleted);
         tvParentDueSoon = findViewById(R.id.tvParentDueSoon);
+        tvParentOverdue = findViewById(R.id.tvParentOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasks);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
-        tvTaskSectionSubtitle = findViewById(R.id.tvTaskSectionSubtitle);
-        tvNoChildren = findViewById(R.id.tvNoChildren);
         lvTasks = findViewById(R.id.lvTasks);
         rvChildren = findViewById(R.id.rvChildren);
-        filterAllTasks = findViewById(R.id.filterAllTasks);
-        filterOpenTasks = findViewById(R.id.filterOpenTasks);
-        filterCompletedTasks = findViewById(R.id.filterCompletedTasks);
-        filterUrgentTasks = findViewById(R.id.filterUrgentTasks);
-        filterOverdueTasks = findViewById(R.id.filterOverdueTasks);
+
+        containerFilterOpen = findViewById(R.id.containerFilterOpen);
+        containerFilterUrgent = findViewById(R.id.containerFilterUrgent);
+        containerFilterOverdue = findViewById(R.id.containerFilterOverdue);
+        containerFilterCompleted = findViewById(R.id.containerFilterCompleted);
+
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
         btnAssignTaskToChild = findViewById(R.id.btnAssignTaskToChild);
@@ -117,571 +107,188 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
     }
 
-    private void bindActions() {
-        btnManageChildren.setOnClickListener(new View.OnClickListener() {
+    private void setupInteractiveFilters() {
+        View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                openScreen(ManageChildrenActivity.class);
+            public void onClick(View v) {
+                if (v == containerFilterOpen) setActiveFilter(FilterMode.ASSIGNED);
+                else if (v == containerFilterUrgent) setActiveFilter(FilterMode.URGENT);
+                else if (v == containerFilterOverdue) setActiveFilter(FilterMode.OVERDUE);
+                else if (v == containerFilterCompleted) setActiveFilter(FilterMode.COMPLETED);
             }
-        });
-        btnManageTemplates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(ParentTaskTemplateActivity.class);
-            }
-        });
-        btnAssignTaskToChild.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(AssignTaskToChildActivity.class);
-            }
-        });
-        btnShowQR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openScreen(GenerateQRActivity.class);
-            }
-        });
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showLogoutDialog();
-            }
-        });
+        };
+        containerFilterOpen.setOnClickListener(filterClick);
+        containerFilterUrgent.setOnClickListener(filterClick);
+        containerFilterOverdue.setOnClickListener(filterClick);
+        containerFilterCompleted.setOnClickListener(filterClick);
     }
 
-    private void openScreen(Class<?> target) {
-        if (target != null) {
-            startActivity(new Intent(this, target));
+    private void setActiveFilter(FilterMode mode) {
+        if (activeFilter == mode) {
+            activeFilter = FilterMode.ALL; // Toggle off to show all
+        } else {
+            activeFilter = mode;
+        }
+        updateFilterUi();
+        buildTaskList();
+    }
+
+    private void updateFilterUi() {
+        containerFilterOpen.setBackgroundColor(activeFilter == FilterMode.ASSIGNED ? 0x1A000000 : Color.TRANSPARENT);
+        containerFilterUrgent.setBackgroundColor(activeFilter == FilterMode.URGENT ? 0x1A000000 : Color.TRANSPARENT);
+        containerFilterOverdue.setBackgroundColor(activeFilter == FilterMode.OVERDUE ? 0x1A000000 : Color.TRANSPARENT);
+        containerFilterCompleted.setBackgroundColor(activeFilter == FilterMode.COMPLETED ? 0x1A000000 : Color.TRANSPARENT);
+
+        switch (activeFilter) {
+            case ASSIGNED: tvTaskSectionTitle.setText("משימות פתוחות"); break;
+            case URGENT: tvTaskSectionTitle.setText("משימות דחופות"); break;
+            case OVERDUE: tvTaskSectionTitle.setText("משימות באיחור"); break;
+            case COMPLETED: tvTaskSectionTitle.setText("משימות שהושלמו"); break;
+            default: tvTaskSectionTitle.setText("כל המשימות"); break;
         }
     }
 
-    // הגדרת רשימת הילדים האופקית
+    private void bindActions() {
+        btnManageChildren.setOnClickListener(v -> startActivity(new Intent(this, ManageChildrenActivity.class)));
+        btnManageTemplates.setOnClickListener(v -> startActivity(new Intent(this, ParentTaskTemplateActivity.class)));
+        btnAssignTaskToChild.setOnClickListener(v -> startActivity(new Intent(this, AssignTaskToChildActivity.class)));
+        btnShowQR.setOnClickListener(v -> startActivity(new Intent(this, GenerateQRActivity.class)));
+        btnLogout.setOnClickListener(v -> showLogoutDialog());
+    }
+
     private void setupChildrenList() {
         rvChildren.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        childSummaryAdapter = new ParentDashboardChildSummaryAdapter(this, childSummaries, childPhotoCache, new ParentDashboardChildSummaryAdapter.OnChildSelectedListener() {
-            @Override
-            public void onChildSelected(String childId) {
-                selectChild(childId);
-            }
+        childSummaryAdapter = new ParentDashboardChildSummaryAdapter(this, childSummaries, id -> {
+            selectedChildId = id;
+            buildTaskList();
         });
         rvChildren.setAdapter(childSummaryAdapter);
     }
 
-    // הגדרת רשימת המשימות המרכזית
     private void setupTaskList() {
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems);
         lvTasks.setAdapter(taskAdapter);
-        lvTasks.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                showTaskOptionsDialog(position);
-            }
-        });
+        lvTasks.setOnItemClickListener((parent, view, position, id) -> showTaskOptionsDialog(position));
     }
 
-    private void setupTaskFilters() {
-        filterAllTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setActiveFilter(FilterMode.ALL);
-            }
-        });
-        filterOpenTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setActiveFilter(FilterMode.ASSIGNED);
-            }
-        });
-        filterCompletedTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setActiveFilter(FilterMode.COMPLETED);
-            }
-        });
-        filterUrgentTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setActiveFilter(FilterMode.URGENT);
-            }
-        });
-        filterOverdueTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setActiveFilter(FilterMode.OVERDUE);
-            }
-        });
-        updateTaskFilterSelectionUi();
-    }
-
-    private void setActiveFilter(FilterMode mode) {
-        if (mode == activeFilter) {
-            return;
-        }
-        activeFilter = mode;
-        updateTaskFilterSelectionUi();
-        buildSelectedChildTaskList();
-    }
-
-    private FirebaseUser getSignedInParentOrRedirect() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            return user;
-        }
-        Toast.makeText(this, R.string.error_parent_session_missing, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-        return null;
-    }
-
-    // טוען את פרטי הפרופיל של ההורה
-    private void loadParentProfile(@NonNull FirebaseUser user) {
-        parentRef(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void loadParentProfile(FirebaseUser user) {
+        FirebaseDatabase.getInstance().getReference("parents").child(user.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
-                tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_parent_name)));
-                String base64 = snapshot.child("profileImageBase64").getValue(String.class);
-                Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
-                if (bitmap == null) {
-                    ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
-                } else {
-                    ivParentProfile.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
-                }
+                tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה יקר"));
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    // טוען את כל נתוני הילדים והמשימות
-    private void loadDashboardData(@NonNull FirebaseUser user) {
-        parentRef(user.getUid()).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
+    private void loadDashboardData(FirebaseUser user) {
+        FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children")
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                parseDashboardData(snapshot);
-                refreshDashboardUi();
+                allAssignedTasks.clear();
+                childSummaries.clear();
+                houseAssigned = houseDone = houseUrgent = houseOverdue = 0;
+
+                for (DataSnapshot childSnap : snapshot.getChildren()) {
+                    ChildSummary summary = new ChildSummary();
+                    summary.setChildId(childSnap.getKey());
+                    summary.setDisplayName(childSnap.child("firstName").getValue(String.class));
+
+                    for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
+                        AssignedTask task = new AssignedTask();
+                        task.setChildId(summary.getChildId());
+                        task.setChildName(summary.getDisplayName());
+                        task.setTaskId(taskSnap.getKey());
+                        task.setTitle(taskSnap.child("title").getValue(String.class));
+                        task.setDueAt(taskSnap.child("dueAt").getValue(String.class));
+                        Boolean done = taskSnap.child("isDone").getValue(Boolean.class);
+                        task.setIsDone(done != null && done);
+
+                        allAssignedTasks.add(task);
+                        if (task.getIsDone()) houseDone++;
+                        else {
+                            houseAssigned++;
+                            if (DateUtils.isOverdue(task.getDueAt())) houseOverdue++;
+                            else if (DateUtils.isDueSoon(task.getDueAt())) houseUrgent++;
+                        }
+                    }
+                }
+                updateSummaryUi();
+                buildTaskList();
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_loading_data, error.getMessage()), Toast.LENGTH_SHORT).show();
-            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    // מפרק את הנתונים מהשרת לאובייקטים מקומיים
-    private void parseDashboardData(DataSnapshot snapshot) {
-        allAssignedTasks.clear();
-        childSummaries.clear();
-        childPhotoCache.clear();
-        houseAssigned = houseDone = houseUrgent = houseOverdue = houseTotal = 0;
-
-        for (DataSnapshot childSnap : snapshot.getChildren()) {
-            String childId = childSnap.getKey();
-            if (childId == null || childId.trim().isEmpty()) {
-                continue;
-            }
-
-            ChildSummary summary = new ChildSummary();
-            summary.setChildId(childId);
-            summary.setDisplayName(NameUtils.fullNameOrDefault(childSnap.child("firstName").getValue(String.class), childSnap.child("lastName").getValue(String.class), getString(R.string.default_child_name)));
-            summary.setChildProfileBase64(childSnap.child("profileImageBase64").getValue(String.class));
-
-            for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
-                AssignedTask task = parseTask(taskSnap, summary);
-                if (task == null) {
-                    continue;
-                }
-                allAssignedTasks.add(task);
-                countTaskInto(task, summary);
-            }
-            childSummaries.add(summary);
-        }
-        houseTotal = allAssignedTasks.size();
-        if (!childSummaries.isEmpty()) {
-            ChildSummary all = new ChildSummary();
-            all.setChildId(ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID);
-            all.setDisplayName(getString(R.string.parent_dashboard_all_children));
-            all.setTotalCount(houseTotal);
-            all.setAssignedCount(houseAssigned);
-            all.setCompletedCount(houseDone);
-            all.setUrgentCount(houseUrgent);
-            all.setOverdueCount(houseOverdue);
-            childSummaries.add(0, all);
-        }
-    }
-
-    private AssignedTask parseTask(DataSnapshot snap, ChildSummary ownerSummary) {
-        String taskId = snap.getKey();
-        if (taskId == null || taskId.trim().isEmpty()) {
-            return null;
-        }
-        AssignedTask task = new AssignedTask();
-        task.setChildId(ownerSummary.getChildId());
-        task.setChildName(ownerSummary.getDisplayName());
-        task.setChildProfileBase64(ownerSummary.getChildProfileBase64());
-        task.setTaskId(taskId);
-        task.setTitle(safeText(snap.child("title").getValue(String.class)));
-        task.setDueAt(safeText(snap.child("dueAt").getValue(String.class)));
-        Boolean isDone = snap.child("isDone").getValue(Boolean.class);
-        task.setIsDone(isDone != null && isDone);
-        return task;
-    }
-
-    // סופר משימות לסיכום הכללי ולסיכום של כל ילד
-    private void countTaskInto(AssignedTask task, ChildSummary summary) {
-        summary.setTotalCount(summary.getTotalCount() + 1);
-        if (task.getIsDone()) {
-            summary.setCompletedCount(summary.getCompletedCount() + 1);
-            houseDone++;
-            return;
-        }
-        summary.setAssignedCount(summary.getAssignedCount() + 1);
-        houseAssigned++;
-        if (DateUtils.isOverdue(task.getDueAt())) {
-            summary.setOverdueCount(summary.getOverdueCount() + 1);
-            houseOverdue++;
-        } else if (DateUtils.isDueSoon(task.getDueAt())) {
-            summary.setUrgentCount(summary.getUrgentCount() + 1);
-            houseUrgent++;
-        }
-    }
-
-    private void refreshDashboardUi() {
-        ensureSelectedChild();
-        childSummaryAdapter.setSelectedChildId(selectedChildId);
-        childSummaryAdapter.notifyDataSetChanged();
-        boolean hasChildren = !childSummaries.isEmpty();
-        if (hasChildren) {
-            rvChildren.setVisibility(View.VISIBLE);
-            tvNoChildren.setVisibility(View.GONE);
-        } else {
-            rvChildren.setVisibility(View.GONE);
-            tvNoChildren.setVisibility(View.VISIBLE);
-        }
+    private void updateSummaryUi() {
         tvParentTotalTasks.setText(String.valueOf(houseAssigned));
         tvParentCompleted.setText(String.valueOf(houseDone));
         tvParentDueSoon.setText(String.valueOf(houseUrgent));
-        updateTaskFilterSelectionUi();
-        updateSelectedChildSection();
-        buildSelectedChildTaskList();
+        tvParentOverdue.setText(String.valueOf(houseOverdue));
     }
 
-    private void ensureSelectedChild() {
-        if (childSummaries.isEmpty()) {
-            selectedChildId = null;
-            return;
-        }
-        for (ChildSummary summary : childSummaries) {
-            if (summary.getChildId().equals(selectedChildId)) {
-                return;
-            }
-        }
-        selectedChildId = childSummaries.get(0).getChildId();
-    }
-
-    private void updateTaskFilterSelectionUi() {
-        boolean enabled = getSelectedChildSummary() != null;
-        bindTaskTab(filterAllTasks, activeFilter == FilterMode.ALL, enabled);
-        bindTaskTab(filterOpenTasks, activeFilter == FilterMode.ASSIGNED, enabled);
-        bindTaskTab(filterCompletedTasks, activeFilter == FilterMode.COMPLETED, enabled);
-        bindTaskTab(filterUrgentTasks, activeFilter == FilterMode.URGENT, enabled);
-        bindTaskTab(filterOverdueTasks, activeFilter == FilterMode.OVERDUE, enabled);
-    }
-
-    private void bindTaskTab(TextView textView, boolean selected, boolean enabled) {
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dpToPx(12));
-
-        int backgroundColorRes;
-        int textColorRes;
-        if (selected) {
-            backgroundColorRes = R.color.primary;
-            textColorRes = R.color.white;
-        } else {
-            backgroundColorRes = android.R.color.transparent;
-            textColorRes = R.color.text_secondary;
-        }
-
-        background.setColor(getColor(backgroundColorRes));
-        textView.setBackground(background);
-        textView.setTextColor(getColor(textColorRes));
-        textView.setEnabled(enabled);
-
-        if (enabled) {
-            textView.setAlpha(1f);
-        } else {
-            textView.setAlpha(0.45f);
-        }
-    }
-
-    private void updateSelectedChildSection() {
-        ChildSummary summary = getSelectedChildSummary();
-        if (summary == null) {
-            tvTaskSectionTitle.setText(R.string.parent_dashboard_selected_child_empty_title);
-            tvTaskSectionSubtitle.setText(R.string.parent_dashboard_selected_child_empty_subtitle);
-            return;
-        }
-        if (ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(summary.getChildId())) {
-            tvTaskSectionTitle.setText(R.string.parent_dashboard_all_children_title);
-        } else {
-            tvTaskSectionTitle.setText(getString(R.string.parent_dashboard_selected_child_title, summary.getDisplayName()));
-        }
-        tvTaskSectionSubtitle.setText(getString(R.string.parent_dashboard_selected_child_stats, summary.getAssignedCount(), summary.getCompletedCount(), summary.getUrgentCount(), summary.getOverdueCount()));
-    }
-
-    // בונה את רשימת המשימות לתצוגה לפי הילד והפילטר שנבחרו
-    private void buildSelectedChildTaskList() {
+    private void buildTaskList() {
         visibleTaskItems.clear();
-        ChildSummary selectedChild = getSelectedChildSummary();
-        if (selectedChild == null) {
-            showTaskListVisibility(false);
-            return;
-        }
-
-        boolean isAll = ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(selectedChild.getChildId());
-        taskAdapter.setShowChildName(isAll);
-
-        List<AssignedTask> overdue = new ArrayList<>();
-        List<AssignedTask> urgent = new ArrayList<>();
-        List<AssignedTask> open = new ArrayList<>();
-        List<AssignedTask> completed = new ArrayList<>();
         for (AssignedTask task : allAssignedTasks) {
-            if (!isAll && !selectedChild.getChildId().equals(task.getChildId())) {
-                continue;
+            boolean matchFilter = false;
+            switch (activeFilter) {
+                case ASSIGNED: matchFilter = !task.getIsDone(); break;
+                case COMPLETED: matchFilter = task.getIsDone(); break;
+                case URGENT: matchFilter = !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt()); break;
+                case OVERDUE: matchFilter = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt()); break;
+                case ALL: default: matchFilter = true; break;
             }
-            if (task.getIsDone()) {
-                completed.add(task);
-            } else if (DateUtils.isOverdue(task.getDueAt())) {
-                overdue.add(task);
-            } else if (DateUtils.isDueSoon(task.getDueAt())) {
-                urgent.add(task);
-            } else {
-                open.add(task);
-            }
+            if (matchFilter) visibleTaskItems.add(TaskListItem.createTask(task));
         }
-
-        populateByActiveFilter(overdue, urgent, open, completed, isAll);
+        tvNoTasks.setVisibility(visibleTaskItems.isEmpty() ? View.VISIBLE : View.GONE);
         taskAdapter.notifyDataSetChanged();
         updateListViewHeight(lvTasks);
-        showTaskListVisibility(!visibleTaskItems.isEmpty());
     }
 
-    private void populateByActiveFilter(List<AssignedTask> overdue, List<AssignedTask> urgent, List<AssignedTask> open, List<AssignedTask> completed, boolean isAll) {
-        switch (activeFilter) {
-            case ASSIGNED:
-                addTasksWithHeader(null, open);
-                if (isAll) {
-                    tvNoTasks.setText(R.string.parent_dashboard_all_no_tasks_open);
-                } else {
-                    tvNoTasks.setText(R.string.parent_dashboard_no_tasks_open);
-                }
-                break;
-            case COMPLETED:
-                addTasksWithHeader(null, completed);
-                if (isAll) {
-                    tvNoTasks.setText(R.string.parent_dashboard_all_no_tasks_completed);
-                } else {
-                    tvNoTasks.setText(R.string.parent_dashboard_no_tasks_completed);
-                }
-                break;
-            case URGENT:
-                addTasksWithHeader(null, urgent);
-                if (isAll) {
-                    tvNoTasks.setText(R.string.parent_dashboard_all_no_tasks_urgent);
-                } else {
-                    tvNoTasks.setText(R.string.parent_dashboard_no_tasks_urgent);
-                }
-                break;
-            case OVERDUE:
-                addTasksWithHeader(null, overdue);
-                if (isAll) {
-                    tvNoTasks.setText(R.string.parent_dashboard_all_no_tasks_overdue);
-                } else {
-                    tvNoTasks.setText(R.string.parent_dashboard_no_tasks_overdue);
-                }
-                break;
-            case ALL:
-            default:
-                addTasksWithHeader(getString(R.string.parent_dashboard_group_overdue), overdue); 
-                addTasksWithHeader(getString(R.string.parent_dashboard_group_urgent), urgent);
-                addTasksWithHeader(getString(R.string.parent_dashboard_group_assigned), open); 
-                addTasksWithHeader(getString(R.string.parent_dashboard_group_completed), completed);
-                if (isAll) {
-                    tvNoTasks.setText(R.string.parent_dashboard_all_no_tasks_all);
-                } else {
-                    tvNoTasks.setText(R.string.parent_dashboard_no_tasks_all);
-                }
-                break;
-        }
-    }
-
-    private void addTasksWithHeader(String header, List<AssignedTask> tasks) {
-        if (tasks == null || tasks.isEmpty()) {
-            return;
-        }
-        if (header != null) {
-            visibleTaskItems.add(TaskListItem.createHeader(header, tasks.size()));
-        }
-        for (AssignedTask task : tasks) {
-            visibleTaskItems.add(TaskListItem.createTask(task));
-        }
-    }
-
-    private void showTaskListVisibility(boolean hasTasks) {
-        if (hasTasks) {
-            tvNoTasks.setVisibility(View.GONE);
-            lvTasks.setVisibility(View.VISIBLE);
-        } else {
-            tvNoTasks.setVisibility(View.VISIBLE);
-            lvTasks.setVisibility(View.GONE);
-        }
-    }
-
-    private ChildSummary getSelectedChildSummary() {
-        if (selectedChildId == null) {
-            return null;
-        }
-        for (ChildSummary summary : childSummaries) {
-            if (summary.getChildId().equals(selectedChildId)) {
-                return summary;
-            }
-        }
-        return null;
-    }
-
-    private void selectChild(String childId) {
-        if (childId == null || childId.equals(selectedChildId)) {
-            return;
-        }
-        selectedChildId = childId;
-        childSummaryAdapter.setSelectedChildId(selectedChildId);
-        childSummaryAdapter.notifyDataSetChanged();
-        updateSelectedChildSection();
-        updateTaskFilterSelectionUi();
-        buildSelectedChildTaskList();
-    }
-
-    // פותח דיאלוג עם פרטי המשימה ואפשרות מחיקה
     private void showTaskOptionsDialog(int position) {
-        if (position < 0 || position >= visibleTaskItems.size()) {
-            return;
-        }
         TaskListItem item = visibleTaskItems.get(position);
-        if (item.getIsHeader()) {
-            return;
-        }
-        final AssignedTask task = item.getTask();
-
-        String details = getString(R.string.parent_dashboard_task_details, task.getTitle(), task.getChildName(), task.getDueAt(), getTaskStatusLabel(task));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_task_details_title);
-
-        if (task.getIsDone()) {
-            builder.setMessage(details + "\n\n" + getString(R.string.parent_dashboard_task_completed_readonly)).setNegativeButton(R.string.parent_dashboard_close, null);
-        } else {
-            builder.setMessage(details).setNeutralButton(R.string.parent_dashboard_delete_task, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showDeleteTaskDialog(task);
-                }
-            }).setNegativeButton(R.string.parent_dashboard_close, null);
-        }
-        builder.show();
+        if (item.getIsHeader()) return;
+        AssignedTask task = item.getTask();
+        new AlertDialog.Builder(this)
+                .setTitle(task.getTitle())
+                .setMessage("לילד: " + task.getChildName() + "\nתאריך יעד: " + task.getDueAt())
+                .setNeutralButton("מחק משימה", (dialog, which) -> deleteTask(task))
+                .setNegativeButton("סגור", null)
+                .show();
     }
 
-    private void showDeleteTaskDialog(final AssignedTask task) {
-        new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_delete_task_title).setMessage(getString(R.string.parent_dashboard_delete_task_message, task.getTitle()))
-                .setPositiveButton(R.string.parent_dashboard_delete_task, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteTaskFromFirebase(task);
-                    }
-                }).setNegativeButton(R.string.action_cancel, null).show();
-    }
-
-    private void deleteTaskFromFirebase(AssignedTask task) {
-        parentRef(FirebaseAuth.getInstance().getUid()).child("children").child(task.getChildId()).child("tasks").child(task.getTaskId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ParentDashboardActivity.this, R.string.parent_dashboard_task_deleted, Toast.LENGTH_SHORT).show();
-                loadDashboardData(FirebaseAuth.getInstance().getCurrentUser());
-            }
-        });
-    }
-
-    private DatabaseReference parentRef(String uid) {
-        return FirebaseDatabase.getInstance().getReference("parents").child(uid);
+    private void deleteTask(AssignedTask task) {
+        FirebaseDatabase.getInstance().getReference("parents")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child("children").child(task.getChildId())
+                .child("tasks").child(task.getTaskId()).removeValue();
     }
 
     private void showLogoutDialog() {
-        new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_logout_title).setMessage(R.string.parent_dashboard_logout_message)
-                .setPositiveButton(R.string.parent_dashboard_logout_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        logoutParent();
-                    }
-                }).setNegativeButton(R.string.action_cancel, null).show();
-    }
-
-    private void logoutParent() {
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private String getTaskStatusLabel(AssignedTask task) {
-        if (task.getIsDone()) {
-            return getString(R.string.parent_dashboard_task_status_done);
-        }
-        long daysLeft = DateUtils.daysLeft(task.getDueAt());
-        if (daysLeft < 0) {
-            return getString(R.string.parent_dashboard_task_status_late);
-        }
-        if (DateUtils.isDueSoon(task.getDueAt())) {
-            return getString(R.string.parent_dashboard_task_status_urgent);
-        }
-        return getString(R.string.parent_dashboard_task_status_waiting);
-    }
-
-    private int dpToPx(int value) {
-        return Math.round(getResources().getDisplayMetrics().density * value);
-    }
-
-    private String safeText(String text) {
-        if (text == null) {
-            return "";
-        }
-        return text.trim();
+        new AlertDialog.Builder(this).setTitle("התנתקות").setMessage("האם בטוח שברצונך לצאת?")
+                .setPositiveButton("כן", (d, w) -> {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                }).setNegativeButton("ביטול", null).show();
     }
 
     private void updateListViewHeight(ListView listView) {
         ListAdapter adapter = listView.getAdapter();
-        if (adapter == null) {
-            return;
-        }
-
-        int listWidth;
-        if (listView.getWidth() > 0) {
-            listWidth = listView.getWidth();
-        } else {
-            listWidth = getResources().getDisplayMetrics().widthPixels - dpToPx(32);
-        }
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+        if (adapter == null) return;
         int totalHeight = 0;
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
         for (int i = 0; i < adapter.getCount(); i++) {
             View item = adapter.getView(i, null, listView);
             item.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
             totalHeight += item.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * Math.max(0, adapter.getCount() - 1));
+        params.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
 }

@@ -54,27 +54,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private ListView lvChildren;
     private TextView tvNoChildren;
     private TextView tvFormTitle;
-    private ImageView imgChildPhoto;
 
     private final List<ChildItem> childItems = new ArrayList<>();
     private DatabaseReference database;
     private String parentUid;
     private String editingChildId;
-    private String editingChildOldImageBase64;
-    private Bitmap selectedChildPhoto;
     private ChildListAdapter childListAdapter;
-
-    // פתיחת הגלריה לבחירת תמונת פרופיל לילד
-    private final ActivityResultLauncher<String> childImagePicker =
-            registerForActivityResult(
-                    new ActivityResultContracts.GetContent(),
-                    new ActivityResultCallback<Uri>() {
-                        @Override
-                        public void onActivityResult(Uri uri) {
-                            handleChildImageResult(uri);
-                        }
-                    }
-            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +82,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        imgChildPhoto = findViewById(R.id.imgChildPhoto);
         etFirstName = findViewById(R.id.etFirstName);
         etLastName = findViewById(R.id.etLastName);
         btnAddChild = findViewById(R.id.btnAddChild);
@@ -120,13 +104,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void bindActions() {
-        findViewById(R.id.btnPickChildPhoto).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                childImagePicker.launch("image/*");
-            }
-        });
-
         findViewById(R.id.btnBackToDashboard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,20 +124,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 resetForm();
             }
         });
-    }
-
-    // מטפל בתמונה שנבחרה מהגלריה
-    private void handleChildImageResult(Uri uri) {
-        if (uri == null) {
-            return;
-        }
-
-        selectedChildPhoto = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
-        if (selectedChildPhoto == null) {
-            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(selectedChildPhoto));
     }
 
     // שומר ילד חדש או מעדכן ילד קיים ב-Firebase
@@ -184,24 +147,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        String imageBase64;
-        if (selectedChildPhoto != null) {
-            imageBase64 = ImageHelper.bitmapToBase64(selectedChildPhoto);
-        } else {
-            imageBase64 = editingChildOldImageBase64;
-        }
         btnAddChild.setEnabled(false);
 
         Task<Void> saveTask;
         if (editingChildId == null) {
-            saveTask = childrenRef().child(childId).setValue(new Child(firstName, lastName, imageBase64));
+            saveTask = childrenRef().child(childId).setValue(new Child(firstName, lastName, null));
         } else {
             Map<String, Object> updates = new HashMap<>();
             updates.put("firstName", firstName);
             updates.put("lastName", lastName);
-            if (imageBase64 != null) {
-                updates.put("profileImageBase64", imageBase64);
-            }
             saveTask = childrenRef().child(childId).updateChildren(updates);
         }
 
@@ -248,8 +202,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             childItems.add(new ChildItem(
                     childSnapshot.getKey(),
                     childSnapshot.child("firstName").getValue(String.class),
-                    childSnapshot.child("lastName").getValue(String.class),
-                    childSnapshot.child("profileImageBase64").getValue(String.class)
+                    childSnapshot.child("lastName").getValue(String.class)
             ));
         }
         childListAdapter.notifyDataSetChanged();
@@ -273,35 +226,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private void enterEditMode(int position) {
         ChildItem item = childItems.get(position);
         editingChildId = item.id;
-        editingChildOldImageBase64 = item.profileImageBase64;
         etFirstName.setText(item.firstName);
         etLastName.setText(item.lastName);
-        showChildPhoto(item.profileImageBase64);
         toggleUI(true);
-    }
-
-    // מציג את תמונת הילד בעיגול
-    private void showChildPhoto(String profileImageBase64) {
-        if (profileImageBase64 == null) {
-            imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
-            return;
-        }
-        Bitmap bitmap = ImageHelper.base64ToBitmap(profileImageBase64);
-        if (bitmap == null) {
-            imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
-            return;
-        }
-        imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
     }
 
     // מאפס את הטופס למצב הוספה
     private void resetForm() {
         editingChildId = null;
-        editingChildOldImageBase64 = null;
-        selectedChildPhoto = null;
         etFirstName.setText("");
         etLastName.setText("");
-        imgChildPhoto.setImageResource(R.drawable.ic_avatar_placeholder);
         toggleUI(false);
     }
 
@@ -436,15 +370,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
             tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, getString(R.string.default_child_name)));
-            ImageView imageView = rowView.findViewById(R.id.ivChildThumb);
-            if (item.profileImageBase64 != null) {
-                Bitmap bitmap = ImageHelper.base64ToBitmap(item.profileImageBase64);
-                if (bitmap != null) {
-                    imageView.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
-                    return;
-                }
-            }
-            imageView.setImageResource(R.drawable.ic_avatar_placeholder);
         }
     }
 
@@ -452,13 +377,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
         String id;
         String firstName;
         String lastName;
-        String profileImageBase64;
 
-        ChildItem(String id, String firstName, String lastName, String profileImageBase64) {
+        ChildItem(String id, String firstName, String lastName) {
             this.id = id;
             this.firstName = firstName;
             this.lastName = lastName;
-            this.profileImageBase64 = profileImageBase64;
         }
     }
 }

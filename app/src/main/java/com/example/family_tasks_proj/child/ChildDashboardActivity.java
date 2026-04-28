@@ -41,7 +41,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private RecyclerView rvTasks;
     private Button btnLogout;
     private LinearLayout filterNotCompleted, filterCompleted, filterUrgent, filterOverdue;
-    private ImageView imgChildAvatar;
 
     private final List<ChildTask> allTasks = new ArrayList<>();
     private final List<ChildTask> visibleTasks = new ArrayList<>();
@@ -90,7 +89,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvTasks);
         btnLogout = findViewById(R.id.btnLogout);
-        imgChildAvatar = findViewById(R.id.imgChildAvatar);
         filterNotCompleted = findViewById(R.id.filterNotCompleted);
         filterCompleted = findViewById(R.id.filterCompleted);
         filterUrgent = findViewById(R.id.filterUrgent);
@@ -164,17 +162,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
                 tvChildName.setText(getString(R.string.child_hello_with_name, NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name))));
-                String base64 = snapshot.child("profileImageBase64").getValue(String.class);
-                if (base64 != null) {
-                    android.graphics.Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
-                    if (bitmap != null) {
-                        imgChildAvatar.setImageBitmap(ImageHelper.getCircularBitmap(bitmap));
-                    } else {
-                        imgChildAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
-                    }
-                } else {
-                    imgChildAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
-                }
             }
 
             @Override

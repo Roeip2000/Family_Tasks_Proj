@@ -19,26 +19,10 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_avatar_placeholder"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/ivChildThumb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToOutline="true"
-                android:contentDescription="@string/cd_child_avatar"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_avatar_placeholder" />
-        </FrameLayout>
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:orientation="vertical">
 

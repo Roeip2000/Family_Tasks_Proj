@@ -1,295 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollRootChildDashboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen_gradient"
+    android:background="#FFFFFF"
     android:fillViewport="true"
-    android:layoutDirection="rtl"
-    android:overScrollMode="never">
+    android:layoutDirection="rtl">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layoutDirection="rtl"
-        android:paddingStart="@dimen/screen_padding_compact"
-        android:paddingTop="@dimen/screen_padding_top"
-        android:paddingEnd="@dimen/screen_padding_compact"
-        android:paddingBottom="56dp">
+        android:padding="24dp">
 
-        <LinearLayout
+        <!-- Header: Friendly Greeting & Stars -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_home_hero"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/imgChildAvatar"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:background="@drawable/bg_avatar_placeholder"
-                    android:contentDescription="@string/cd_child_avatar"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_avatar_placeholder" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tvChildName"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="היי חמוד!"
+                    android:textColor="#2D3436"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        style="@style/Widget.Family.Eyebrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/child_dashboard_header_eyebrow" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="מה המשימה הבאה שלך?"
+                    android:textColor="#888888"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvChildName"
-                        style="@style/Widget.Family.SectionTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/child_hello"
-                        android:textColor="@color/md_theme_primary"
-                        android:textSize="22sp" />
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvStars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_star_badge"
-                    android:paddingStart="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="8dp"
-                    android:text="@string/child_stars_default"
-                    android:textColor="@color/gold"
-                    android:textSize="16sp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="⭐ 0 כוכבים"
+                    android:textColor="#F1C40F"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
-            </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="@dimen/card_corner_radius_large"
-            app:cardElevation="@dimen/card_elevation"
-            app:strokeColor="@color/divider_light"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tvTaskSectionTitle"
-                    style="@style/Widget.Family.SectionTitle"
+                <Button
+                    android:id="@+id/btnLogout"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/child_task_section_open" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/filterNotCompleted"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_metric_primary"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:minHeight="90dp"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/tvTotalTasks"
-                            style="@style/Widget.Family.MetricValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_zero"
-                            android:textColor="@color/primary_dark"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:text="@string/filter_open_tasks"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/filterCompleted"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_metric_success"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:minHeight="90dp"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/tvCompleted"
-                            style="@style/Widget.Family.MetricValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_zero"
-                            android:textColor="@color/success_dark"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:text="@string/filter_completed"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/filterUrgent"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_metric_urgent"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:minHeight="90dp"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/tvDueSoon"
-                            style="@style/Widget.Family.MetricValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_zero"
-                            android:textColor="@color/warning_dark"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:text="@string/filter_urgent"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/filterOverdue"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_metric_urgent"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:minHeight="90dp"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/tvOverdue"
-                            style="@style/Widget.Family.MetricValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_zero"
-                            android:textColor="@color/danger"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:text="@string/child_dashboard_filter_overdue"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvNoTasks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_empty_state"
-                    android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:padding="20dp"
-                    android:text="@string/child_no_tasks_open"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="15sp"
-                    android:visibility="gone" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvTasks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="8dp"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/item_child_task" />
+                    android:text="יציאה"
+                    android:textColor="#D63031"
+                    android:textSize="12sp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/btnLogout"
-            style="@style/Widget.Family.DangerOutlineButton"
+        <!-- Task Stats: Simple Circles/Pills -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/filterNotCompleted"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView android:id="@+id/tvTotalTasks" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#2D3436"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="משימות" android:textSize="11sp" android:textColor="#888888"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filterUrgent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView android:id="@+id/tvDueSoon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#D35400"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="דחופות" android:textSize="11sp" android:textColor="#888888"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filterOverdue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView android:id="@+id/tvOverdue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#D63031"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="באיחור" android:textSize="11sp" android:textColor="#888888"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filterCompleted"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView android:id="@+id/tvCompleted" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" android:textColor="#27AE60"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="סיימת!" android:textSize="11sp" android:textColor="#888888"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Main Task Area -->
+        <TextView
+            android:id="@+id/tvTaskSectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="המשימות שלי"
+            android:textColor="#2D3436"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNoTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:padding="40dp"
+            android:text="מעולה! אין משימות כרגע"
+            android:textColor="#888888"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTasks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_logout"
-            android:text="@string/btn_logout" />
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false" />
 
     </LinearLayout>
 </ScrollView>
