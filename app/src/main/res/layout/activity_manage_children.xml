@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/surface_muted"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -14,104 +14,115 @@
         android:padding="24dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ניהול ילדים"
-            android:textColor="#2D3436"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="הוספת ילד חדש"
-            android:textColor="#2D3436"
-            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:text="ניהול ילדים"
+            android:textColor="@color/primary"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="הוסף, ערוך או מחק ילדים מהמשפחה"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <!-- Form Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="שם פרטי"
-            app:boxBackgroundColor="#F8F9FA"
-            app:boxStrokeWidth="0dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFirstName"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="24dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="שם משפחה"
-            app:boxBackgroundColor="#F8F9FA"
-            app:boxStrokeWidth="0dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLastName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <EditText
+                    android:id="@+id/etFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:background="@drawable/bg_repository_list"
+                    android:hint="שם פרטי"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="horizontal">
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="12dp" />
 
-            <Button
-                android:id="@+id/btnAddChild"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_weight="1"
-                android:backgroundTint="#2D3436"
-                android:text="שמירה"
-                app:cornerRadius="12dp" />
+                <EditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:background="@drawable/bg_repository_list"
+                    android:hint="שם משפחה"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/btnCancelEdit"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="54dp"
-                android:layout_marginStart="8dp"
-                android:text="ביטול"
-                android:textColor="#D63031"
-                android:visibility="gone" />
-        </LinearLayout>
+                <Button
+                    android:id="@+id/btnAddChild"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="@color/primary"
+                    android:text="הוסף ילד"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp" />
 
+                <Button
+                    android:id="@+id/btnCancelEdit"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="12dp"
+                    android:text="ביטול עריכה"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- List Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
+            android:layout_marginBottom="12dp"
             android:text="רשימת הילדים"
-            android:textColor="#2D3436"
-            android:textSize="16sp"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvNoChildren"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:padding="32dp"
-            android:text="עדיין לא הוספת ילדים"
-            android:textColor="#888888"
-            android:visibility="gone" />
 
         <ListView
             android:id="@+id/lvChildren"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="8dp" />
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:nestedScrollingEnabled="true" />
+
+        <TextView
+            android:id="@+id/tvNoChildren"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:text="טרם נוספו ילדים למשפחה"
+            android:textColor="@color/text_hint"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnBackToDashboard"
@@ -120,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="חזרה לדשבורד"
-            android:textColor="#888888" />
+            android:textColor="@color/secondary" />
 
     </LinearLayout>
 </ScrollView>

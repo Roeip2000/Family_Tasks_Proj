@@ -2,56 +2,51 @@ package com.example.family_tasks_proj.FireBase;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import java.util.HashMap;
-import java.util.Map;
 
-/** מחלקת Singleton לניהול הקשר מול Firebase. מרכזת את פרטי המשתמש והגדרות בסיס. */
+// מחלקה שעוזרת לנו לגשת ל-Firebase מכל מקום באפליקציה בקלות
 public class FBsingleton {
-
+    
     private static final FBsingleton instance = new FBsingleton();
-    private final FirebaseDatabase db;
-    private final FirebaseAuth auth;
-    private String uid;
-    private String firstName;
-    private String lastName;
-    private String email;
+
+    private final FirebaseAuth firebaseAuth;
+    private final FirebaseDatabase firebaseDatabase;
+
+    private String parentFirstName, parentLastName, parentEmail;
+    private String userId;
 
     private FBsingleton() {
-        db = FirebaseDatabase.getInstance();
-        db.setPersistenceEnabled(true); // מאפשר עבודה ללא אינטרנט
-        auth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
     }
 
     public static FBsingleton getInstance() {
         return instance;
     }
 
-    public void setUserData(String first, String last, String email) {
-        this.uid = auth.getUid();
-        this.firstName = first;
-        this.lastName = last;
-        this.email = email;
+    // שמירת הפרטים שמילאו בטופס ההרשמה
+    public void setUserData(String firstName, String lastName, String email) {
+        this.parentFirstName = firstName;
+        this.parentLastName = lastName;
+        this.parentEmail = email;
+        this.userId = firebaseAuth.getUid();
     }
 
-    // שומר את פרטי ההורה ב-Realtime Database
+    // שומר את ההורה ב-Database אחרי שההרשמה הצליחה
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
-        if (uid == null) {
-            return;
+        if (userId == null) {
+            userId = firebaseAuth.getUid();
         }
-        // מכין את נתוני ההורה לשמירה בתוך מפה (Map)
-        Map<String, Object> data = new HashMap<>();
-        data.put("uid", uid);
-        data.put("firstName", firstName);
-        data.put("lastName", lastName);
-        data.put("email", email);
-        data.put("role", "parent");
+        if (userId == null) return;
 
-        if (listener != null) {
-            // שומר את המידע ב-Firebase תחת התיקייה "parents" עם ה-UID של המשתמש
-            db.getReference("parents").child(uid).updateChildren(data).addOnCompleteListener(listener);
-        } else {
-            db.getReference("parents").child(uid).updateChildren(data);
-        }
+        // שמירה ישירה של כל שדה כדי להימנע משימוש במבני נתונים מורכבים כמו HashMap
+        DatabaseReference parentReference = firebaseDatabase.getReference("parents").child(userId);
+        
+        parentReference.child("uid").setValue(userId);
+        parentReference.child("firstName").setValue(parentFirstName);
+        parentReference.child("lastName").setValue(parentLastName);
+        parentReference.child("email").setValue(parentEmail);
+        parentReference.child("role").setValue("parent").addOnCompleteListener(listener);
     }
 }

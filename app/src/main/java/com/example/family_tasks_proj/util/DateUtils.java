@@ -2,54 +2,50 @@ package com.example.family_tasks_proj.util;
 
 import java.util.Calendar;
 
-/** מחלקת עזר לטיפול בתאריכים וחישוב דחיפות משימות. */
+// עוזר לנו לחשב תאריכים ודחיפות של משימות
 public final class DateUtils {
 
-    private DateUtils() {
-    }
+    private DateUtils() {}
 
-    // מחשב כמה ימים נותרו עד תאריך היעד (מחזיר ערך שלילי אם התאריך עבר)
-    public static long daysLeft(String dueAt) {
-        if (dueAt == null || dueAt.trim().isEmpty()) {
-            return Long.MAX_VALUE;
-        }
-        String[] parts = dueAt.trim().split("/");
-        if (parts.length != 3) {
-            return Long.MAX_VALUE;
-        }
+    // מחזיר כמה ימים נשארו עד התאריך שקיבלנו (או מספר שלילי אם התאריך עבר)
+    public static long daysLeft(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return Long.MAX_VALUE;
+
+        String[] parts = dateStr.split("/");
+        if (parts.length != 3) return Long.MAX_VALUE;
 
         try {
-            int day = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]);
-            int year = Integer.parseInt(parts[2]);
+            int d = Integer.parseInt(parts[0]);
+            int m = Integer.parseInt(parts[1]);
+            int y = Integer.parseInt(parts[2]);
             
-            // יצירת אובייקט תאריך עבור יעד המשימה
-            Calendar dueCalendar = Calendar.getInstance();
-            dueCalendar.set(year, month - 1, day, 0, 0, 0);
-            dueCalendar.set(Calendar.MILLISECOND, 0);
+            // תאריך המשימה
+            Calendar calTask = Calendar.getInstance();
+            calTask.set(y, m - 1, d, 0, 0, 0);
+            calTask.set(Calendar.MILLISECOND, 0);
 
-            // יצירת אובייקט תאריך עבור היום (עכשיו)
-            Calendar nowCalendar = Calendar.getInstance();
-            nowCalendar.set(Calendar.HOUR_OF_DAY, 0);
-            nowCalendar.set(Calendar.MINUTE, 0);
-            nowCalendar.set(Calendar.SECOND, 0);
-            nowCalendar.set(Calendar.MILLISECOND, 0);
+            // היום הנוכחי
+            Calendar calToday = Calendar.getInstance();
+            calToday.set(Calendar.HOUR_OF_DAY, 0);
+            calToday.set(Calendar.MINUTE, 0);
+            calToday.set(Calendar.SECOND, 0);
+            calToday.set(Calendar.MILLISECOND, 0);
 
-            // מחזיר את ההפרש בימים בין התאריכים
-            return (dueCalendar.getTimeInMillis() - nowCalendar.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-        } catch (Exception ignored) {
+            // חישוב ההפרש
+            long diff = calTask.getTimeInMillis() - calToday.getTimeInMillis();
+            return diff / (24L * 60L * 60L * 1000L);
+            
+        } catch (Exception e) {
             return Long.MAX_VALUE;
         }
     }
 
-    // משימה דחופה מוגדרת ככזו שנותרו לה עד יומיים לביצוע
-    public static boolean isDueSoon(String dueAt) {
-        long days = daysLeft(dueAt);
+    public static boolean isDueSoon(String date) {
+        long days = daysLeft(date);
         return days >= 0 && days <= 2;
     }
 
-    // משימה באיחור אם תאריך היעד שלה קטן מהיום
-    public static boolean isOverdue(String dueAt) {
-        return daysLeft(dueAt) < 0;
+    public static boolean isOverdue(String date) {
+        return daysLeft(date) < 0;
     }
 }
