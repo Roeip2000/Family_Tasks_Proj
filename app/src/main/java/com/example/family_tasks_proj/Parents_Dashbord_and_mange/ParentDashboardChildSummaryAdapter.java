@@ -106,7 +106,7 @@ class ParentDashboardChildSummaryAdapter
         holder.itemView.setContentDescription(context.getString(R.string.parent_dashboard_child_content_description, childSummary.displayName));
 
         if (isAllChildren) {
-            holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_family_cluster);
+            holder.ivChildSummaryPhoto.setImageResource(R.drawable.ic_home_family);
         } else {
             holder.ivChildSummaryPhoto.setImageDrawable(null);
             if (childSummary.childProfileBase64 != null && !childSummary.childProfileBase64.trim().isEmpty()) {

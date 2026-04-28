@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- טאב פעיל — מלא בצבע ראשי עמוק, מבחין מיד איזה סינון פתוח -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/primary" />
-    <corners android:radius="14dp" />
-</shape>

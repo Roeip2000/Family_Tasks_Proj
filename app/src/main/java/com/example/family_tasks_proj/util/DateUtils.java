@@ -38,7 +38,7 @@ public final class DateUtils {
         }
     }
 
-    // משימה דחופה: 0-2 ימים
+    // משימה דחופה: 0-2 ימים (כאן משנים אם רוצים שדחוף יהיה 3 ימים)
     public static boolean isDueSoon(String dueAt) {
         long days = daysLeft(dueAt);
         return days >= 0 && days <= 2;
