@@ -14,17 +14,23 @@ public final class DateUtils {
         if (parts.length != 3) return Long.MAX_VALUE;
 
         try {
-            int d = Integer.parseInt(parts[0]), m = Integer.parseInt(parts[1]), y = Integer.parseInt(parts[2]);
+            int day = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]);
+            int year = Integer.parseInt(parts[2]);
             Calendar due = Calendar.getInstance();
-            due.set(y, m - 1, d, 0, 0, 0);
+            due.set(year, month - 1, day, 0, 0, 0);
             due.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 0); now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0); now.set(Calendar.MILLISECOND, 0);
+            now.set(Calendar.HOUR_OF_DAY, 0);
+            now.set(Calendar.MINUTE, 0);
+            now.set(Calendar.SECOND, 0);
+            now.set(Calendar.MILLISECOND, 0);
 
             return (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-        } catch (Exception e) { return Long.MAX_VALUE; }
+        } catch (Exception ignored) {
+            return Long.MAX_VALUE;
+        }
     }
 
     // משימה דחופה מוגדרת ככזו שנותרו לה עד יומיים לביצוע

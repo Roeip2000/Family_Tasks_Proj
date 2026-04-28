@@ -44,14 +44,39 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         final ChildTask task = tasks.get(position);
         long days = DateUtils.daysLeft(task.getDueAt());
+        boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
         android.content.Context ctx = holder.itemView.getContext();
 
         // עיצוב הכרטיס לפי סטטוס המשימה
         if (holder.itemView instanceof MaterialCardView) {
             MaterialCardView card = (MaterialCardView) holder.itemView;
-            int bg = ctx.getColor(task.getIsDone() ? R.color.surface_soft_green : (days < 0 ? R.color.danger_light : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.surface_soft_orange : R.color.bg_card)));
-            int stroke = ctx.getColor(task.getIsDone() ? R.color.accent_light : (days < 0 ? R.color.urgent : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.urgent_light : R.color.border_light)));
-            card.setCardBackgroundColor(bg); card.setStrokeColor(stroke); card.setStrokeWidth(2);
+            int bgColor;
+            if (task.getIsDone()) {
+                bgColor = R.color.surface_soft_green;
+            } else if (days < 0) {
+                bgColor = R.color.danger_light;
+            } else if (dueSoon) {
+                bgColor = R.color.surface_soft_orange;
+            } else {
+                bgColor = R.color.bg_card;
+            }
+
+            int strokeColor;
+            if (task.getIsDone()) {
+                strokeColor = R.color.accent_light;
+            } else if (days < 0) {
+                strokeColor = R.color.urgent;
+            } else if (dueSoon) {
+                strokeColor = R.color.urgent_light;
+            } else {
+                strokeColor = R.color.border_light;
+            }
+
+            int bg = ctx.getColor(bgColor);
+            int stroke = ctx.getColor(strokeColor);
+            card.setCardBackgroundColor(bg);
+            card.setStrokeColor(stroke);
+            card.setStrokeWidth(2);
         }
 
         holder.tvTitle.setText(task.getTitle());
@@ -69,23 +94,46 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             
             String dueText = formatDueText(ctx, task.getDueAt(), days);
             holder.tvDue.setText(dueText);
-            holder.tvDue.setTextColor(ctx.getColor(days < 0 ? R.color.danger : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.warning_dark : R.color.text_secondary)));
+            int dueTextColor;
+            if (days < 0) {
+                dueTextColor = R.color.danger;
+            } else if (dueSoon) {
+                dueTextColor = R.color.warning_dark;
+            } else {
+                dueTextColor = R.color.text_secondary;
+            }
+            holder.tvDue.setTextColor(ctx.getColor(dueTextColor));
         }
 
         // נקודת סטטוס צבעונית
         GradientDrawable dot = new GradientDrawable();
-        dot.setShape(GradientDrawable.OVAL); dot.setSize(14, 14);
-        dot.setColor(ctx.getColor(task.getIsDone() ? R.color.success_dark : (days < 0 ? R.color.danger : (DateUtils.isDueSoon(task.getDueAt()) ? R.color.warning_dark : R.color.text_hint))));
+        dot.setShape(GradientDrawable.OVAL);
+        dot.setSize(14, 14);
+        int dotColor;
+        if (task.getIsDone()) {
+            dotColor = R.color.success_dark;
+        } else if (days < 0) {
+            dotColor = R.color.danger;
+        } else if (dueSoon) {
+            dotColor = R.color.warning_dark;
+        } else {
+            dotColor = R.color.text_hint;
+        }
+        dot.setColor(ctx.getColor(dotColor));
         holder.viewStatusDot.setBackground(dot);
 
         // הצגת תמונה אם קיימת
         if (task.getImageBase64() != null && !task.getImageBase64().isEmpty()) {
-            Bitmap bmp = ImageHelper.base64ToBitmap(task.getImageBase64());
-            if (bmp != null) {
+            Bitmap bitmap = ImageHelper.base64ToBitmap(task.getImageBase64());
+            if (bitmap != null) {
                 holder.imgShell.setVisibility(View.VISIBLE);
-                holder.imgTask.setImageBitmap(bmp);
-            } else holder.imgShell.setVisibility(View.GONE);
-        } else holder.imgShell.setVisibility(View.GONE);
+                holder.imgTask.setImageBitmap(bitmap);
+            } else {
+                holder.imgShell.setVisibility(View.GONE);
+            }
+        } else {
+            holder.imgShell.setVisibility(View.GONE);
+        }
 
         holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, (int)task.getStarsWorth()));
     }

@@ -84,30 +84,97 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         }
         if (task == null) return convertView;
 
+        Context context = getContext();
         TextView tvTitle = convertView.findViewById(R.id.tvTaskTitleCard);
         TextView tvOwner = convertView.findViewById(R.id.tvTaskOwner);
         TextView tvDue = convertView.findViewById(R.id.tvDueDateCard);
         TextView tvStatus = convertView.findViewById(R.id.tvStatusChip);
         View viewDot = convertView.findViewById(R.id.viewTaskDot);
 
-        tvTitle.setText(task.getTitle().isEmpty() ? "משימה" : task.getTitle());
+        String taskTitle = task.getTitle();
+        if (taskTitle == null || taskTitle.isEmpty()) {
+            taskTitle = context.getString(R.string.task_default_title);
+        }
+        tvTitle.setText(taskTitle);
 
         if (showChildName && task.getChildName() != null && !task.getChildName().trim().isEmpty()) {
-            tvOwner.setText("מיועד ל: " + task.getChildName());
+            tvOwner.setText(context.getString(R.string.task_assigned_to, task.getChildName()));
             tvOwner.setVisibility(View.VISIBLE);
-        } else tvOwner.setVisibility(View.GONE);
+        } else {
+            tvOwner.setVisibility(View.GONE);
+        }
 
         long days = DateUtils.daysLeft(task.getDueAt());
         boolean urgent = DateUtils.isDueSoon(task.getDueAt());
 
-        tvDue.setText((task.getIsDone() ? "בוצע בתאריך: " : (days < 0 ? "באיחור: " : (urgent ? "דחוף: " : "תאריך יעד: "))) + task.getDueAt());
-        tvDue.setTextColor(task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DUE)));
+        String duePrefix;
+        if (task.getIsDone()) {
+            duePrefix = context.getString(R.string.task_due_done_prefix);
+        } else if (days < 0) {
+            duePrefix = context.getString(R.string.task_due_overdue_prefix);
+        } else if (urgent) {
+            duePrefix = context.getString(R.string.task_due_urgent_prefix);
+        } else {
+            duePrefix = context.getString(R.string.task_due_regular_prefix);
+        }
+        tvDue.setText(duePrefix + task.getDueAt());
 
-        int bg = task.getIsDone() ? COLOR_DONE_BG : (days < 0 ? COLOR_OVERDUE_BG : (urgent ? COLOR_URGENT_BG : COLOR_REGULAR_BG));
-        int text = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_TEXT));
-        int dotColor = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DOT));
+        int dueTextColor;
+        if (task.getIsDone()) {
+            dueTextColor = COLOR_DONE;
+        } else if (days < 0) {
+            dueTextColor = COLOR_OVERDUE;
+        } else if (urgent) {
+            dueTextColor = COLOR_URGENT;
+        } else {
+            dueTextColor = COLOR_REGULAR_DUE;
+        }
+        tvDue.setTextColor(dueTextColor);
 
-        tvStatus.setText(task.getIsDone() ? "בוצע" : (days < 0 ? "באיחור" : (urgent ? "דחוף" : "ממתין")));
+        int bg;
+        if (task.getIsDone()) {
+            bg = COLOR_DONE_BG;
+        } else if (days < 0) {
+            bg = COLOR_OVERDUE_BG;
+        } else if (urgent) {
+            bg = COLOR_URGENT_BG;
+        } else {
+            bg = COLOR_REGULAR_BG;
+        }
+
+        int text;
+        if (task.getIsDone()) {
+            text = COLOR_DONE;
+        } else if (days < 0) {
+            text = COLOR_OVERDUE;
+        } else if (urgent) {
+            text = COLOR_URGENT;
+        } else {
+            text = COLOR_REGULAR_TEXT;
+        }
+
+        int dotColor;
+        if (task.getIsDone()) {
+            dotColor = COLOR_DONE;
+        } else if (days < 0) {
+            dotColor = COLOR_OVERDUE;
+        } else if (urgent) {
+            dotColor = COLOR_URGENT;
+        } else {
+            dotColor = COLOR_REGULAR_DOT;
+        }
+
+        String statusText;
+        if (task.getIsDone()) {
+            statusText = context.getString(R.string.parent_dashboard_task_status_done);
+        } else if (days < 0) {
+            statusText = context.getString(R.string.parent_dashboard_task_status_late);
+        } else if (urgent) {
+            statusText = context.getString(R.string.parent_dashboard_task_status_urgent);
+        } else {
+            statusText = context.getString(R.string.parent_dashboard_task_status_waiting);
+        }
+        tvStatus.setText(statusText);
         tvStatus.setTextColor(text);
         
         GradientDrawable chip = new GradientDrawable();

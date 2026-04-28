@@ -13,12 +13,18 @@ public final class NameUtils {
             if (sb.length() > 0) sb.append(" ");
             sb.append(last.trim());
         }
-        return sb.length() > 0 ? sb.toString() : null;
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
     }
 
     // מחזיר שם מלא או ערך ברירת מחדל אם אין שם
     public static String fullNameOrDefault(String first, String last, String fallback) {
         String name = fullName(first, last);
-        return name != null ? name : fallback;
+        if (name != null) {
+            return name;
+        }
+        return fallback;
     }
 }

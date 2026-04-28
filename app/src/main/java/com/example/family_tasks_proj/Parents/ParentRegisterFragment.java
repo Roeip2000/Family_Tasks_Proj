@@ -2,12 +2,15 @@ package com.example.family_tasks_proj.Parents;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,6 +53,17 @@ public class ParentRegisterFragment extends Fragment {
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { registerParent(); }
+        });
+
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    registerParent();
+                    return true;
+                }
+                return false;
+            }
         });
     }
 

@@ -151,6 +151,12 @@
     <string name="parent_dashboard_task_due_late">באיחור | %1$s</string>
     <string name="parent_dashboard_task_due_urgent">דחוף | %1$s</string>
     <string name="parent_dashboard_task_due_regular">יעד | %1$s</string>
+    <string name="task_default_title">משימה</string>
+    <string name="task_assigned_to">מיועד ל: %1$s</string>
+    <string name="task_due_done_prefix">בוצע בתאריך:\u0020</string>
+    <string name="task_due_overdue_prefix">באיחור:\u0020</string>
+    <string name="task_due_urgent_prefix">דחוף:\u0020</string>
+    <string name="task_due_regular_prefix">תאריך יעד:\u0020</string>
     <string name="parent_dashboard_task_status_done">בוצע</string>
     <string name="parent_dashboard_task_status_waiting">ממתין</string>
     <string name="parent_dashboard_task_status_late">באיחור</string>
@@ -172,6 +178,10 @@
     <string name="parent_dashboard_summary_assigned">נשלח</string>
     <string name="parent_dashboard_summary_completed">בוצע</string>
     <string name="parent_dashboard_summary_urgent">דחוף</string>
+    <string name="child_summary_open_tasks">פתוחות: %1$d</string>
+    <string name="child_summary_completed_tasks">בוצעו: %1$d</string>
+    <string name="child_summary_urgent_tasks">דחופות: %1$d</string>
+    <string name="child_summary_overdue_tasks">באיחור: %1$d</string>
     <string name="parent_dashboard_group_urgent">דחופות</string>
     <string name="parent_dashboard_group_overdue">באיחור</string>
     <string name="parent_dashboard_group_assigned">נשלחו</string>
@@ -211,6 +221,9 @@
     <string name="child_selection_error_loading_children">שגיאה בטעינת ילדים: %1$s</string>
     <string name="child_selection_pick_parent">בחר הורה מהרשימה</string>
     <string name="child_selection_pick_child">בחר ילד מהרשימה</string>
+    <string name="child_selection_subtitle_parent">בחר הורה כדי להמשיך</string>
+    <string name="child_selection_subtitle_child">בחר את השם שלך מהרשימה</string>
+    <string name="child_selection_please_select">אנא בחר ילד</string>
     <string name="child_selection_step_title">בוחרים הורה אם צריך, בוחרים שם, ונכנסים ישר למשימות.</string>
 
     <string name="assign_task_parent_not_logged_in">ההורה לא מחובר</string>
@@ -250,13 +263,15 @@
     <string name="template_item_stars">שווה %1$d כוכבים</string>
 
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
-    <string name="error_invalid_email">פורמט אימייל לא תקין</string>
+    <string name="error_invalid_email">כתובת אימייל לא תקינה</string>
     <string name="error_short_password">הסיסמה חייבת להכיל לפחות 6 תווים</string>
     <string name="error_loading_image">שגיאה בטעינת התמונה</string>
     <string name="error_image_conversion">שגיאה בהמרת התמונה</string>
     <string name="error_save_generic">שגיאה בשמירה: %1$s</string>
     <string name="error_loading_data">שגיאה בטעינת נתונים: %1$s</string>
     <string name="error_unknown_login">שגיאת התחברות לא ידועה</string>
+    <string name="error_login_failed">התחברות נכשלה: %1$s</string>
+    <string name="error_try_again">נסה שוב</string>
     <string name="error_unknown_register">שגיאת הרשמה לא ידועה</string>
     <string name="error_parent_session_missing">ההורה לא מחובר</string>
     <string name="error_with_details">שגיאה: %1$s</string>
@@ -282,12 +297,13 @@
     <string name="default_task_name">שם המשימה</string>
     <string name="default_parent_name">הורה</string>
     <string name="default_child_name">שם הילד</string>
+    <string name="default_child_name_fallback">ילד</string>
     <string name="default_date">תאריך</string>
     <string name="default_date_format">%1$d/%2$d/%3$d</string>
     <string name="default_status">ממתין</string>
     <string name="default_today">היום</string>
     <string name="default_zero">0</string>
-    <string name="btn_login_loading">מתחברים...</string>
+    <string name="btn_login_loading">מתחבר...</string>
     <string name="btn_create_account_loading">יוצרים חשבון...</string>
     <string name="child_dashboard_header_eyebrow">היום שלי</string>
     <string name="child_dashboard_workspace_eyebrow">המשימות שלי</string>

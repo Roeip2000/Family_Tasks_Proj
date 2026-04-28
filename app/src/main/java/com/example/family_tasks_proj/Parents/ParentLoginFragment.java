@@ -64,7 +64,12 @@ public class ParentLoginFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -78,7 +83,13 @@ public class ParentLoginFragment extends Fragment {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
                 } else {
-                    Toast.makeText(requireContext(), "התחברות נכשלה: " + (task.getException() != null ? task.getException().getMessage() : "נסה שוב"), Toast.LENGTH_LONG).show();
+                    String errorMessage;
+                    if (task.getException() != null) {
+                        errorMessage = task.getException().getMessage();
+                    } else {
+                        errorMessage = getString(R.string.error_try_again);
+                    }
+                    Toast.makeText(requireContext(), getString(R.string.error_login_failed, errorMessage), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -86,7 +97,17 @@ public class ParentLoginFragment extends Fragment {
 
     private void setLoading(boolean isLoading) {
         btnLogin.setEnabled(!isLoading);
-        btnLogin.setText(isLoading ? "מתחבר..." : "התחברות");
-        if (progressLogin != null) progressLogin.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            btnLogin.setText(R.string.btn_login_loading);
+        } else {
+            btnLogin.setText(R.string.btn_login);
+        }
+        if (progressLogin != null) {
+            if (isLoading) {
+                progressLogin.setVisibility(View.VISIBLE);
+            } else {
+                progressLogin.setVisibility(View.GONE);
+            }
+        }
     }
 }

@@ -56,13 +56,13 @@ class ParentDashboardChildSummaryAdapter extends RecyclerView.Adapter<ParentDash
         boolean isAll = ALL_CHILDREN_ID.equals(summary.getChildId());
 
         holder.tvName.setText(summary.getDisplayName());
-        bindChip(holder.tvAssigned, "פתוחות: " + summary.getAssignedCount(), "#EAF4FF", "#1F4E79", "#B8DBFF");
-        bindChip(holder.tvCompleted, "בוצעו: " + summary.getCompletedCount(), "#ECF8F1", "#1E7A45", "#BDE7C9");
-        bindChip(holder.tvUrgent, "דחופות: " + summary.getUrgentCount(), "#FFF4E5", "#9C5A00", "#FFD199");
+        bindChip(holder.tvAssigned, context.getString(R.string.child_summary_open_tasks, summary.getAssignedCount()), "#EAF4FF", "#1F4E79", "#B8DBFF");
+        bindChip(holder.tvCompleted, context.getString(R.string.child_summary_completed_tasks, summary.getCompletedCount()), "#ECF8F1", "#1E7A45", "#BDE7C9");
+        bindChip(holder.tvUrgent, context.getString(R.string.child_summary_urgent_tasks, summary.getUrgentCount()), "#FFF4E5", "#9C5A00", "#FFD199");
         
         if (summary.getOverdueCount() > 0) {
             holder.tvOverdue.setVisibility(View.VISIBLE);
-            bindChip(holder.tvOverdue, "באיחור: " + summary.getOverdueCount(), "#FFEBEE", "#C62828", "#FFCDD2");
+            bindChip(holder.tvOverdue, context.getString(R.string.child_summary_overdue_tasks, summary.getOverdueCount()), "#FFEBEE", "#C62828", "#FFCDD2");
         } else holder.tvOverdue.setVisibility(View.GONE);
 
         holder.card.setCardBackgroundColor(Color.parseColor(selected ? "#F3F8FF" : "#FFFFFF"));

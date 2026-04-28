@@ -84,14 +84,14 @@ public class ChildSelectionActivity extends AppCompatActivity {
             spinnerParents.setVisibility(View.VISIBLE);
             tvChildLabel.setVisibility(View.GONE);
             spinnerChildren.setVisibility(View.GONE);
-            tvSubtitle.setText("בחר הורה כדי להמשיך");
+            tvSubtitle.setText(R.string.child_selection_subtitle_parent);
             loadParents();
         } else {
             tvParentLabel.setVisibility(View.GONE);
             spinnerParents.setVisibility(View.GONE);
             tvChildLabel.setVisibility(View.VISIBLE);
             spinnerChildren.setVisibility(View.VISIBLE);
-            tvSubtitle.setText("בחר את השם שלך מהרשימה");
+            tvSubtitle.setText(R.string.child_selection_subtitle_child);
             loadChildren(parentId);
         }
     }
@@ -108,10 +108,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String uid = snap.getKey();
                     String fName = snap.child("firstName").getValue(String.class);
                     String lName = snap.child("lastName").getValue(String.class);
-                    parentItems.add(new ParentItem(uid, NameUtils.fullNameOrDefault(fName, lName, "הורה")));
+                    parentItems.add(new ParentItem(uid, NameUtils.fullNameOrDefault(fName, lName, getString(R.string.default_parent_name))));
                 }
                 if (parentItems.isEmpty()) {
-                    Toast.makeText(ChildSelectionActivity.this, "לא נמצאו הורים במערכת", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChildSelectionActivity.this, R.string.child_selection_no_parents, Toast.LENGTH_LONG).show();
                     return;
                 }
                 List<String> names = new ArrayList<>();
@@ -142,7 +142,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String cId = snap.getKey();
                     String fName = snap.child("firstName").getValue(String.class);
                     String lName = snap.child("lastName").getValue(String.class);
-                    childItems.add(new ChildItem(cId, NameUtils.fullNameOrDefault(fName, lName, "ילד")));
+                    childItems.add(new ChildItem(cId, NameUtils.fullNameOrDefault(fName, lName, getString(R.string.default_child_name_fallback))));
                 }
                 if (childItems.isEmpty()) {
                     tvNoChildren.setVisibility(View.VISIBLE);
@@ -169,7 +169,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     private void onEnterClicked() {
         int pos = spinnerChildren.getSelectedItemPosition();
-        if (pos < 0) { Toast.makeText(this, "אנא בחר ילד", Toast.LENGTH_SHORT).show(); return; }
+        if (pos < 0) {
+            Toast.makeText(this, R.string.child_selection_please_select, Toast.LENGTH_SHORT).show();
+            return;
+        }
         String cId = childItems.get(pos).id;
         SharedPreferences.Editor ed = getSharedPreferences("child_session", MODE_PRIVATE).edit();
         ed.putString("parentId", parentId);

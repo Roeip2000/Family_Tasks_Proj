@@ -18,30 +18,36 @@ import java.io.InputStream;
 /** מחלקת עזר לטיפול בתמונות: המרה ל-Base64, שינוי גודל וחיתוך לעיגול. */
 public class ImageHelper {
 
-    private static final int MAX_DIM = 800;
-    private static final int QUALITY = 75;
+    private static final int MAX_DIMENSION = 800;
+    private static final int JPEG_QUALITY = 75;
 
     // טוען תמונה מהגלריה ומתקן את הכיוון שלה
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
         try {
-            Bitmap bmp;
-            try (InputStream is = resolver.openInputStream(uri)) { bmp = BitmapFactory.decodeStream(is); }
-            if (bmp == null) return null;
+            Bitmap bitmap;
+            try (InputStream is = resolver.openInputStream(uri)) {
+                bitmap = BitmapFactory.decodeStream(is);
+            }
+            if (bitmap == null) return null;
 
             int rotation = getRotation(resolver, uri);
-            if (rotation != 0) bmp = rotate(bmp, rotation);
-            return scale(bmp, MAX_DIM);
-        } catch (Exception e) { return null; }
+            if (rotation != 0) bitmap = rotate(bitmap, rotation);
+            return scale(bitmap, MAX_DIMENSION);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     // הופך Bitmap למחרוזת טקסט לשמירה ב-Firebase
-    public static String bitmapToBase64(Bitmap bmp) {
-        if (bmp == null) return null;
+    public static String bitmapToBase64(Bitmap bitmap) {
+        if (bitmap == null) return null;
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, QUALITY, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out);
             return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-        } catch (Exception e) { return null; }
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     // הופך מחרוזת Base64 חזרה לתמונה
@@ -50,7 +56,9 @@ public class ImageHelper {
         try {
             byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } catch (Exception e) { return null; }
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     // חותך תמונה לצורת עיגול עבור פרופיל
@@ -60,10 +68,11 @@ public class ImageHelper {
         Bitmap out = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(out);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int l = (src.getWidth() - s) / 2, t = (src.getHeight() - s) / 2;
+        int left = (src.getWidth() - s) / 2;
+        int top = (src.getHeight() - s) / 2;
         canvas.drawCircle(s / 2f, s / 2f, s / 2f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(src, new Rect(l, t, l + s, t + s), new Rect(0, 0, s, s), paint);
+        canvas.drawBitmap(src, new Rect(left, top, left + s, top + s), new Rect(0, 0, s, s), paint);
         return out;
     }
 
@@ -74,22 +83,25 @@ public class ImageHelper {
             if (orient == ExifInterface.ORIENTATION_ROTATE_90) return 90;
             if (orient == ExifInterface.ORIENTATION_ROTATE_180) return 180;
             if (orient == ExifInterface.ORIENTATION_ROTATE_270) return 270;
-        } catch (Exception e) {}
+        } catch (Exception ignored) {
+        }
         return 0;
     }
 
     private static Bitmap rotate(Bitmap src, int deg) {
-        Matrix m = new Matrix(); m.postRotate(deg);
-        Bitmap res = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, true);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(deg);
+        Bitmap res = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
         if (res != src) src.recycle();
         return res;
     }
 
     private static Bitmap scale(Bitmap src, int max) {
-        int w = src.getWidth(), h = src.getHeight();
-        if (w <= max && h <= max) return src;
-        float r = Math.min((float) max / w, (float) max / h);
-        Bitmap res = Bitmap.createScaledBitmap(src, Math.round(w * r), Math.round(h * r), true);
+        int width = src.getWidth();
+        int height = src.getHeight();
+        if (width <= max && height <= max) return src;
+        float ratio = Math.min((float) max / width, (float) max / height);
+        Bitmap res = Bitmap.createScaledBitmap(src, Math.round(width * ratio), Math.round(height * ratio), true);
         if (res != src) src.recycle();
         return res;
     }
