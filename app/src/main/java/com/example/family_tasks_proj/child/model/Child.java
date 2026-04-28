@@ -1,12 +1,11 @@
 package com.example.family_tasks_proj.child.model;
 
-// מודל ילד כפי שנשמר תחת ההורה ב-Firebase
+/** מודל המייצג ילד במערכת. נשמר תחת רשימת הילדים של ההורה ב-Firebase. */
 public class Child {
     private String firstName;
     private String lastName;
     private String profileImageBase64;
 
-    // חובה ל-Firebase
     public Child() {}
 
     public Child(String firstName, String lastName, String profileImageBase64) {

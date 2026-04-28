@@ -59,7 +59,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "ההורה לא מחובר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.assign_task_parent_not_logged_in, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -140,7 +140,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בטעינת תבניות", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.assign_task_error_loading_templates, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -157,13 +157,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     String firstName = snap.child("firstName").getValue(String.class);
                     String lastName = snap.child("lastName").getValue(String.class);
                     childIds.add(id);
-                    names.add(NameUtils.fullNameOrDefault(firstName, lastName, "ילד"));
+                    names.add(NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name)));
                 }
                 setSpinnerItems(spAssignee, names);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בטעינת ילדים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.assign_task_error_loading_children, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -171,24 +171,29 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     // מציג דיאלוג לאישור לפני השמירה
     private void showAssignConfirmDialog() {
         if (!isAssignmentInputValid()) return;
+        
+        final String title = etTitle.getText().toString().trim();
+        final String assignee = (String) spAssignee.getSelectedItem();
+        final String dueDate = etDueDate.getText().toString().trim();
+
         new AlertDialog.Builder(this)
-                .setTitle("אישור הקצאת משימה")
-                .setMessage("האם להקצות את המשימה?")
-                .setPositiveButton("כן", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.assign_task_confirm_title)
+                .setMessage(getString(R.string.assign_task_confirm_message, title, assignee, dueDate))
+                .setPositiveButton(R.string.assign_task_confirm_action, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { assignTask(); }
                 })
-                .setNegativeButton("ביטול", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
     private boolean isAssignmentInputValid() {
         if (etTitle.getText().toString().trim().isEmpty()) {
-            Toast.makeText(this, "יש למלא כותרת", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (etDueDate.getText().toString().trim().isEmpty() || spAssignee.getSelectedItemPosition() < 0) {
-            Toast.makeText(this, "יש לבחור ילד ותאריך", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -216,14 +221,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         ref.setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(AssignTaskToChildActivity.this, "המשימה הוקצתה בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, R.string.assign_task_success, Toast.LENGTH_SHORT).show();
                 finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 btnAssign.setEnabled(true);
-                Toast.makeText(AssignTaskToChildActivity.this, "שגיאה בשמירה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_save_generic, e.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -174,7 +174,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private FirebaseUser getSignedInParentOrRedirect() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) return user;
-        Toast.makeText(this, "הסשן פג, אנא התחבר מחדש", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.error_parent_session_missing, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -189,7 +189,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
-                tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה"));
+                tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_parent_name)));
                 String base64 = snapshot.child("profileImageBase64").getValue(String.class);
                 Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
                 if (bitmap == null) ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
@@ -209,7 +209,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ParentDashboardActivity.this, "שגיאה בטעינת נתונים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_loading_data, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -227,7 +227,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
             ChildSummary summary = new ChildSummary();
             summary.setChildId(childId);
-            summary.setDisplayName(NameUtils.fullNameOrDefault(childSnap.child("firstName").getValue(String.class), childSnap.child("lastName").getValue(String.class), "ילד"));
+            summary.setDisplayName(NameUtils.fullNameOrDefault(childSnap.child("firstName").getValue(String.class), childSnap.child("lastName").getValue(String.class), getString(R.string.default_child_name)));
             summary.setChildProfileBase64(childSnap.child("profileImageBase64").getValue(String.class));
 
             for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
@@ -242,7 +242,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         if (!childSummaries.isEmpty()) {
             ChildSummary all = new ChildSummary();
             all.setChildId(ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID);
-            all.setDisplayName("כל הילדים");
+            all.setDisplayName(getString(R.string.parent_dashboard_all_children));
             all.setTotalCount(houseTotal);
             all.setAssignedCount(houseAssigned);
             all.setCompletedCount(houseDone);
@@ -329,16 +329,16 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void updateSelectedChildSection() {
         ChildSummary summary = getSelectedChildSummary();
         if (summary == null) {
-            tvTaskSectionTitle.setText("אין ילדים רשומים");
-            tvTaskSectionSubtitle.setText("הוסף ילד כדי להתחיל");
+            tvTaskSectionTitle.setText(R.string.parent_dashboard_selected_child_empty_title);
+            tvTaskSectionSubtitle.setText(R.string.parent_dashboard_selected_child_empty_subtitle);
             return;
         }
         if (ParentDashboardChildSummaryAdapter.ALL_CHILDREN_ID.equals(summary.getChildId())) {
-            tvTaskSectionTitle.setText("כל המשימות בבית");
+            tvTaskSectionTitle.setText(R.string.parent_dashboard_all_children_title);
         } else {
-            tvTaskSectionTitle.setText("משימות של " + summary.getDisplayName());
+            tvTaskSectionTitle.setText(getString(R.string.parent_dashboard_selected_child_title, summary.getDisplayName()));
         }
-        tvTaskSectionSubtitle.setText(String.format("פתוחות: %d | בוצעו: %d | דחופות: %d | באיחור: %d", summary.getAssignedCount(), summary.getCompletedCount(), summary.getUrgentCount(), summary.getOverdueCount()));
+        tvTaskSectionSubtitle.setText(getString(R.string.parent_dashboard_selected_child_stats, summary.getAssignedCount(), summary.getCompletedCount(), summary.getUrgentCount(), summary.getOverdueCount()));
     }
 
     // בונה את רשימת המשימות לתצוגה לפי הילד והפילטר שנבחרו
@@ -359,23 +359,25 @@ public class ParentDashboardActivity extends AppCompatActivity {
             else open.add(task);
         }
 
-        populateByActiveFilter(overdue, urgent, open, completed);
+        populateByActiveFilter(overdue, urgent, open, completed, isAll);
         taskAdapter.notifyDataSetChanged();
         updateListViewHeight(lvTasks);
         showTaskListVisibility(!visibleTaskItems.isEmpty());
     }
 
-    private void populateByActiveFilter(List<AssignedTask> overdue, List<AssignedTask> urgent, List<AssignedTask> open, List<AssignedTask> completed) {
+    private void populateByActiveFilter(List<AssignedTask> overdue, List<AssignedTask> urgent, List<AssignedTask> open, List<AssignedTask> completed, boolean isAll) {
         switch (activeFilter) {
-            case ASSIGNED: addTasksWithHeader(null, open); tvNoTasks.setText("אין משימות פתוחות"); break;
-            case COMPLETED: addTasksWithHeader(null, completed); tvNoTasks.setText("אין משימות שבוצעו"); break;
-            case URGENT: addTasksWithHeader(null, urgent); tvNoTasks.setText("אין משימות דחופות"); break;
-            case OVERDUE: addTasksWithHeader(null, overdue); tvNoTasks.setText("אין משימות באיחור"); break;
+            case ASSIGNED: addTasksWithHeader(null, open); tvNoTasks.setText(isAll ? R.string.parent_dashboard_all_no_tasks_open : R.string.parent_dashboard_no_tasks_open); break;
+            case COMPLETED: addTasksWithHeader(null, completed); tvNoTasks.setText(isAll ? R.string.parent_dashboard_all_no_tasks_completed : R.string.parent_dashboard_no_tasks_completed); break;
+            case URGENT: addTasksWithHeader(null, urgent); tvNoTasks.setText(isAll ? R.string.parent_dashboard_all_no_tasks_urgent : R.string.parent_dashboard_no_tasks_urgent); break;
+            case OVERDUE: addTasksWithHeader(null, overdue); tvNoTasks.setText(isAll ? R.string.parent_dashboard_all_no_tasks_overdue : R.string.parent_dashboard_no_tasks_overdue); break;
             case ALL:
             default:
-                addTasksWithHeader("באיחור", overdue); addTasksWithHeader("דחוף", urgent);
-                addTasksWithHeader("פתוח", open); addTasksWithHeader("בוצע", completed);
-                tvNoTasks.setText("אין משימות להצגה"); break;
+                addTasksWithHeader(getString(R.string.parent_dashboard_group_overdue), overdue); 
+                addTasksWithHeader(getString(R.string.parent_dashboard_group_urgent), urgent);
+                addTasksWithHeader(getString(R.string.parent_dashboard_group_assigned), open); 
+                addTasksWithHeader(getString(R.string.parent_dashboard_group_completed), completed);
+                tvNoTasks.setText(isAll ? R.string.parent_dashboard_all_no_tasks_all : R.string.parent_dashboard_no_tasks_all); break;
         }
     }
 
@@ -413,30 +415,30 @@ public class ParentDashboardActivity extends AppCompatActivity {
         if (item.getIsHeader()) return;
         final AssignedTask task = item.getTask();
 
-        String details = String.format("משימה: %s\nילד: %s\nתאריך: %s\nסטטוס: %s", task.getTitle(), task.getChildName(), task.getDueAt(), getTaskStatusLabel(task));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle("פרטי משימה");
+        String details = getString(R.string.parent_dashboard_task_details, task.getTitle(), task.getChildName(), task.getDueAt(), getTaskStatusLabel(task));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_task_details_title);
 
         if (task.getIsDone()) {
-            builder.setMessage(details + "\n\nמשימה שבוצעה לא ניתן לערוך.").setNegativeButton("סגור", null);
+            builder.setMessage(details + "\n\n" + getString(R.string.parent_dashboard_task_completed_readonly)).setNegativeButton(R.string.parent_dashboard_close, null);
         } else {
-            builder.setMessage(details).setNeutralButton("מחק משימה", new DialogInterface.OnClickListener() {
+            builder.setMessage(details).setNeutralButton(R.string.parent_dashboard_delete_task, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface d, int w) { showDeleteTaskDialog(task); }
-            }).setNegativeButton("סגור", null);
+            }).setNegativeButton(R.string.parent_dashboard_close, null);
         }
         builder.show();
     }
 
     private void showDeleteTaskDialog(final AssignedTask task) {
-        new AlertDialog.Builder(this).setTitle("מחיקת משימה").setMessage("האם למחוק את המשימה?")
-                .setPositiveButton("מחק", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_delete_task_title).setMessage(getString(R.string.parent_dashboard_delete_task_message, task.getTitle()))
+                .setPositiveButton(R.string.parent_dashboard_delete_task, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) { deleteTaskFromFirebase(task); }
-                }).setNegativeButton("ביטול", null).show();
+                }).setNegativeButton(R.string.action_cancel, null).show();
     }
 
     private void deleteTaskFromFirebase(AssignedTask task) {
         parentRef(FirebaseAuth.getInstance().getUid()).child("children").child(task.getChildId()).child("tasks").child(task.getTaskId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override public void onSuccess(Void unused) {
-                Toast.makeText(ParentDashboardActivity.this, "המשימה נמחקה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentDashboardActivity.this, R.string.parent_dashboard_task_deleted, Toast.LENGTH_SHORT).show();
                 loadDashboardData(FirebaseAuth.getInstance().getCurrentUser());
             }
         });
@@ -447,10 +449,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void showLogoutDialog() {
-        new AlertDialog.Builder(this).setTitle("התנתקות").setMessage("האם אתה בטוח שברצונך להתנתק?")
-                .setPositiveButton("התנתק", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(R.string.parent_dashboard_logout_title).setMessage(R.string.parent_dashboard_logout_message)
+                .setPositiveButton(R.string.parent_dashboard_logout_confirm, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) { logoutParent(); }
-                }).setNegativeButton("ביטול", null).show();
+                }).setNegativeButton(R.string.action_cancel, null).show();
     }
 
     private void logoutParent() {
@@ -462,11 +464,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private String getTaskStatusLabel(AssignedTask task) {
-        if (task.getIsDone()) return "בוצע";
+        if (task.getIsDone()) return getString(R.string.parent_dashboard_task_status_done);
         long daysLeft = DateUtils.daysLeft(task.getDueAt());
-        if (daysLeft < 0) return "באיחור";
-        if (DateUtils.isDueSoon(task.getDueAt())) return "דחוף";
-        return "ממתין";
+        if (daysLeft < 0) return getString(R.string.parent_dashboard_task_status_late);
+        if (DateUtils.isDueSoon(task.getDueAt())) return getString(R.string.parent_dashboard_task_status_urgent);
+        return getString(R.string.parent_dashboard_task_status_waiting);
     }
 
     private int dpToPx(int value) { return Math.round(getResources().getDisplayMetrics().density * value); }

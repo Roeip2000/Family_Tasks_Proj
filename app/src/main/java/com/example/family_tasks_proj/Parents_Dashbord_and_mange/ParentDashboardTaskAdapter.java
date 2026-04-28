@@ -69,7 +69,6 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         return bindTaskView(convertView, parent, item.getTask());
     }
 
-    // מציג כותרת קבוצה (למשל "דחוף")
     private View bindHeaderView(View convertView, ViewGroup parent, TaskListItem item) {
         if (convertView == null || convertView.findViewById(R.id.tvTaskSectionGroupTitle) == null) {
             convertView = inflater.inflate(R.layout.item_parent_task_section_header, parent, false);
@@ -79,7 +78,6 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
         return convertView;
     }
 
-    // מציג שורת משימה עם כל פרטיה
     private View bindTaskView(View convertView, ViewGroup parent, AssignedTask task) {
         if (convertView == null || convertView.findViewById(R.id.tvTaskTitleCard) == null) {
             convertView = inflater.inflate(R.layout.item_parent_task, parent, false);
@@ -107,7 +105,7 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
         int bg = task.getIsDone() ? COLOR_DONE_BG : (days < 0 ? COLOR_OVERDUE_BG : (urgent ? COLOR_URGENT_BG : COLOR_REGULAR_BG));
         int text = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_TEXT));
-        int dot = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DOT));
+        int dotColor = task.getIsDone() ? COLOR_DONE : (days < 0 ? COLOR_OVERDUE : (urgent ? COLOR_URGENT : COLOR_REGULAR_DOT));
 
         tvStatus.setText(task.getIsDone() ? "בוצע" : (days < 0 ? "באיחור" : (urgent ? "דחוף" : "ממתין")));
         tvStatus.setTextColor(text);
@@ -119,7 +117,7 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
 
         GradientDrawable dotBg = new GradientDrawable();
         dotBg.setShape(GradientDrawable.OVAL);
-        dotBg.setColor(dot);
+        dotBg.setColor(dotColor);
         viewDot.setBackground(dotBg);
 
         return convertView;

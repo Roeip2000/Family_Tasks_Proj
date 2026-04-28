@@ -78,13 +78,13 @@ public class ChildQRLoginFragment extends Fragment {
 
         String raw = result.getContents();
         if (raw == null) {
-            Toast.makeText(requireContext(), "הסריקה בוטלה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
             return;
         }
 
         ParsedQr parsed = parseQr(raw.trim());
         if (isBlank(parsed.parentId)) {
-            Toast.makeText(requireContext(), "QR לא תקין", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -153,7 +153,7 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) return;
                 if (!snapshot.exists()) {
                     setLoading(false);
-                    Toast.makeText(requireContext(), "הורה לא נמצא", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 saveSession(parentId, null);
@@ -164,7 +164,7 @@ public class ChildQRLoginFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
                 setLoading(false);
-                Toast.makeText(requireContext(), "שגיאת מסד נתונים: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -177,7 +177,7 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) return;
                 if (!snapshot.exists()) {
                     setLoading(false);
-                    Toast.makeText(requireContext(), "ילד לא נמצא", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 saveSession(parentId, childId);
@@ -188,7 +188,7 @@ public class ChildQRLoginFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
                 setLoading(false);
-                Toast.makeText(requireContext(), "שגיאת חיבור: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), getString(R.string.child_qr_connection_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
     }

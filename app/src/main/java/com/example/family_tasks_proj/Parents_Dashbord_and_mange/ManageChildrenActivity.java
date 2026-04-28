@@ -85,7 +85,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         parentUid = FirebaseAuth.getInstance().getUid();
         if (parentUid == null) {
-            Toast.makeText(this, "לא מחובר למערכת", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.manage_children_not_logged_in, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -155,7 +155,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         selectedChildPhoto = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
         if (selectedChildPhoto == null) {
-            Toast.makeText(this, "שגיאה בטעינת התמונה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
             return;
         }
         imgChildPhoto.setImageBitmap(ImageHelper.getCircularBitmap(selectedChildPhoto));
@@ -167,13 +167,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         final String lastName = etLastName.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         final String childId = (editingChildId != null) ? editingChildId : childrenRef().push().getKey();
         if (childId == null) {
-            Toast.makeText(this, "שגיאה ביצירת מזהה ילד", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.manage_children_error_create_child_id, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -195,7 +195,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 btnAddChild.setEnabled(true);
-                Toast.makeText(ManageChildrenActivity.this, "הילד נשמר בהצלחה", Toast.LENGTH_SHORT).show();
+                int msgRes = (editingChildId == null) ? R.string.manage_children_added_success : R.string.manage_children_updated_success;
+                Toast.makeText(ManageChildrenActivity.this, getString(msgRes, firstName, lastName), Toast.LENGTH_SHORT).show();
                 resetForm();
                 loadChildren();
             }
@@ -203,7 +204,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 btnAddChild.setEnabled(true);
-                Toast.makeText(ManageChildrenActivity.this, "שגיאה: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -282,19 +283,19 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // משנה את עיצוב הכפתורים בין מצב עריכה להוספה
     private void toggleUI(boolean isEdit) {
-        btnAddChild.setText(isEdit ? "שמור שינויים" : "הוסף ילד");
+        btnAddChild.setText(isEdit ? getString(R.string.manage_children_save_changes) : getString(R.string.add_child));
         int colorRes = isEdit ? R.color.primary : R.color.accent;
         btnAddChild.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, colorRes)));
         btnCancelEdit.setVisibility(isEdit ? View.VISIBLE : View.GONE);
-        tvFormTitle.setText(isEdit ? "עריכת פרטי ילד" : "הוספת ילד חדש");
+        tvFormTitle.setText(isEdit ? R.string.manage_children_form_title_edit : R.string.manage_children_form_title_new);
     }
 
     // מציג תפריט אפשרויות לילד שנבחר
     private void showChildOptionsDialog(final int position) {
         if (position < 0 || position >= childItems.size()) return;
-        String[] options = {"ערוך", "מחק"};
+        String[] options = {getString(R.string.manage_children_option_edit), getString(R.string.manage_children_option_delete)};
         new AlertDialog.Builder(this)
-                .setTitle("בחר פעולה")
+                .setTitle(R.string.home_question)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -302,7 +303,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                         else showDeleteChildDialog(position);
                     }
                 })
-                .setNegativeButton("ביטול", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -310,15 +311,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private void showDeleteChildDialog(int position) {
         final ChildItem item = childItems.get(position);
         new AlertDialog.Builder(this)
-                .setTitle("מחיקת ילד")
-                .setMessage("האם אתה בטוח שברצונך למחוק את הילד?")
-                .setPositiveButton("מחק", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.manage_children_delete_title)
+                .setMessage(getString(R.string.manage_children_delete_message, item.firstName + " " + item.lastName))
+                .setPositiveButton(R.string.manage_children_option_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteChild(item);
                     }
                 })
-                .setNegativeButton("ביטול", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -327,14 +328,14 @@ public class ManageChildrenActivity extends AppCompatActivity {
         childrenRef().child(item.id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(ManageChildrenActivity.this, "הילד נמחק בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, item.firstName), Toast.LENGTH_SHORT).show();
                 if (item.id.equals(editingChildId)) resetForm();
                 loadChildren();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, "שגיאה: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -372,7 +373,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
-            tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, "ילד"));
+            tvChildFullName.setText(NameUtils.fullNameOrDefault(item.firstName, item.lastName, getString(R.string.default_child_name)));
             ImageView imageView = rowView.findViewById(R.id.ivChildThumb);
             if (item.profileImageBase64 != null) {
                 Bitmap bitmap = ImageHelper.base64ToBitmap(item.profileImageBase64);

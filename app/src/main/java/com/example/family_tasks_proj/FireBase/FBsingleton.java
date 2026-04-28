@@ -1,63 +1,43 @@
 package com.example.family_tasks_proj.FireBase;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.HashMap;
 import java.util.Map;
 
-// Singleton = מחלקה שיש ממנה רק מופע אחד בכל האפליקציה
+/** מחלקת Singleton לניהול הקשר מול Firebase. מרכזת את פרטי המשתמש והגדרות בסיס. */
 public class FBsingleton {
 
     private static final FBsingleton instance = new FBsingleton();
-
-    private final FirebaseDatabase database;
+    private final FirebaseDatabase db;
     private final FirebaseAuth auth;
-
-    private String uid;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private String uid, fName, lName, email;
 
     private FBsingleton() {
-        database = FirebaseDatabase.getInstance();
-        // setPersistenceEnabled = שומר נתונים גם אם אין אינטרנט
-        database.setPersistenceEnabled(true);
+        db = FirebaseDatabase.getInstance();
+        db.setPersistenceEnabled(true); // מאפשר עבודה ללא אינטרנט
         auth = FirebaseAuth.getInstance();
     }
 
-    public static FBsingleton getInstance() {
-        return instance;
-    }
+    public static FBsingleton getInstance() { return instance; }
 
-    public void setUserData(String firstName, String lastName, String email) {
+    public void setUserData(String first, String last, String email) {
         this.uid = auth.getUid();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.fName = first;
+        this.lName = last;
         this.email = email;
     }
 
+    // שומר את פרטי ההורה ב-Realtime Database
     public void saveParentToFirebase(OnCompleteListener<Void> listener) {
         if (uid == null) return;
+        Map<String, Object> data = new HashMap<>();
+        data.put("uid", uid); data.put("firstName", fName);
+        data.put("lastName", lName); data.put("email", email);
+        data.put("role", "parent");
 
-        DatabaseReference ref = database.getReference("parents").child(uid);
-
-        Map<String, Object> profileData = new HashMap<>();
-        profileData.put("uid", uid);
-        profileData.put("firstName", firstName);
-        profileData.put("lastName", lastName);
-        profileData.put("email", email);
-        profileData.put("role", "parent");
-
-        // updateChildren ולא setValue — שומר על ילדים ותבניות שכבר קיימים
-        if (listener != null) {
-            Task<Void> updateTask = ref.updateChildren(profileData);
-            updateTask.addOnCompleteListener(listener);
-        } else {
-            ref.updateChildren(profileData);
-        }
+        if (listener != null) db.getReference("parents").child(uid).updateChildren(data).addOnCompleteListener(listener);
+        else db.getReference("parents").child(uid).updateChildren(data);
     }
 }

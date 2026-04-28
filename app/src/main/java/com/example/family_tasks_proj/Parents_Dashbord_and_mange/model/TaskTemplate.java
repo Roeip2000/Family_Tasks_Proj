@@ -1,8 +1,7 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 
-// מודל תבנית משימה כפי שנשמרת ב-Firebase
+/** מודל המייצג תבנית של משימה (למשל "סידור חדר"). משמש ליצירה מהירה של משימות חוזרות. */
 public class TaskTemplate {
-    // ערך ברירת מחדל לתבניות ישנות שנשמרו לפני שהשדה נוסף
     public static final int DEFAULT_STARS_WORTH = 10;
 
     private String id;
@@ -10,7 +9,6 @@ public class TaskTemplate {
     private String imageBase64;
     private int starsWorth = DEFAULT_STARS_WORTH;
 
-    // חובה ל-Firebase
     public TaskTemplate() {}
 
     public TaskTemplate(String id, String title, String imageBase64, int starsWorth) {
@@ -29,19 +27,12 @@ public class TaskTemplate {
     public int getStarsWorth() { return starsWorth; }
     public void setStarsWorth(int starsWorth) { this.starsWorth = starsWorth; }
 
-    public String toDisplayTitle() {
-        if (title == null) return "";
-        return title.trim();
-    }
-
-    // מחזיר ערך כוכבים חוקי גם לתבניות ישנות בלי שדה
     public int safeStarsWorth() {
-        if (starsWorth > 0) return starsWorth;
-        return DEFAULT_STARS_WORTH;
+        return starsWorth > 0 ? starsWorth : DEFAULT_STARS_WORTH;
     }
 
     @Override
     public String toString() {
-        return toDisplayTitle();
+        return title != null ? title : "";
     }
 }

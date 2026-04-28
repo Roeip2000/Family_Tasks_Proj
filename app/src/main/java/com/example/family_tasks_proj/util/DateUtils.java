@@ -2,51 +2,39 @@ package com.example.family_tasks_proj.util;
 
 import java.util.Calendar;
 
-// עוזר לחישובי תאריכים במסכי המשימות
+/** מחלקת עזר לטיפול בתאריכים וחישוב דחיפות משימות. */
 public final class DateUtils {
 
-    private DateUtils() {} // לא ליצור מופע של המחלקה
+    private DateUtils() {}
 
-    // מחשב כמה ימים נותרו עד תאריך היעד
+    // מחשב כמה ימים נותרו עד תאריך היעד (מחזיר ערך שלילי אם התאריך עבר)
     public static long daysLeft(String dueAt) {
-        if (dueAt == null || dueAt.trim().isEmpty()) {
-            return Long.MAX_VALUE;
-        }
+        if (dueAt == null || dueAt.trim().isEmpty()) return Long.MAX_VALUE;
         String[] parts = dueAt.trim().split("/");
-        if (parts.length != 3) {
-            return Long.MAX_VALUE;
-        }
+        if (parts.length != 3) return Long.MAX_VALUE;
 
         try {
-            int day = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]);
-            int year = Integer.parseInt(parts[2]);
-
+            int d = Integer.parseInt(parts[0]), m = Integer.parseInt(parts[1]), y = Integer.parseInt(parts[2]);
             Calendar due = Calendar.getInstance();
-            due.set(year, month - 1, day, 0, 0, 0);
+            due.set(y, m - 1, d, 0, 0, 0);
             due.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 0);
-            now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0);
-            now.set(Calendar.MILLISECOND, 0);
+            now.set(Calendar.HOUR_OF_DAY, 0); now.set(Calendar.MINUTE, 0);
+            now.set(Calendar.SECOND, 0); now.set(Calendar.MILLISECOND, 0);
 
             return (due.getTimeInMillis() - now.getTimeInMillis()) / (24L * 60L * 60L * 1000L);
-        } catch (NumberFormatException exception) {
-            return Long.MAX_VALUE;
-        }
+        } catch (Exception e) { return Long.MAX_VALUE; }
     }
 
-    // משימה דחופה: 0-2 ימים (כאן משנים אם רוצים שדחוף יהיה 3 ימים)
+    // משימה דחופה מוגדרת ככזו שנותרו לה עד יומיים לביצוע
     public static boolean isDueSoon(String dueAt) {
         long days = daysLeft(dueAt);
         return days >= 0 && days <= 2;
     }
 
-    // משימה באיחור: עברה את תאריך היעד
+    // משימה באיחור אם תאריך היעד שלה קטן מהיום
     public static boolean isOverdue(String dueAt) {
-        long days = daysLeft(dueAt);
-        return days < 0;
+        return daysLeft(dueAt) < 0;
     }
 }

@@ -140,7 +140,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         if (uri == null) return;
         correctedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
         if (correctedBitmap == null) {
-            Toast.makeText(this, "שגיאה בטעינת התמונה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show();
             return;
         }
         imgTask.setImageBitmap(correctedBitmap);
@@ -168,7 +168,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "שגיאה בטעינת נתונים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_loading_data, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -183,7 +183,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private void saveOrUpdateTemplate() {
         String title = etTitle.getText().toString().trim();
         if (title.isEmpty() || (editingTemplateId == null && correctedBitmap == null)) {
-            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -192,13 +192,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             stars = Integer.parseInt(etStarsWorth.getText().toString().trim());
             if (stars < MIN_STARS || stars > MAX_STARS) throw new NumberFormatException();
         } catch (NumberFormatException exception) {
-            Toast.makeText(this, "כמות כוכבים לא תקינה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.template_stars_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "ההורה לא מחובר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_parent_session_missing, Toast.LENGTH_SHORT).show();
             return;
         }
         submitTemplateToFirebase(user.getUid(), title, stars);
@@ -215,7 +215,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         if (correctedBitmap != null) {
             String imageBase64 = ImageHelper.bitmapToBase64(correctedBitmap);
             if (imageBase64 == null) {
-                Toast.makeText(this, "שגיאה בהמרת התמונה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.error_image_conversion, Toast.LENGTH_SHORT).show();
                 return;
             }
             data.put("imageBase64", imageBase64);
@@ -225,7 +225,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         getTemplatesRef(uid).child(templateId).updateChildren(data).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "התבנית נשמרה!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, R.string.template_saved_success, Toast.LENGTH_SHORT).show();
                 resetForm();
                 loadTemplates();
             }
@@ -233,7 +233,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 btnSave.setEnabled(true);
-                Toast.makeText(ParentTaskTemplateActivity.this, "שגיאה בשמירה: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -242,7 +242,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private void showTemplateOptionsDialog(int position) {
         if (position < 0 || position >= templateList.size()) return;
         final TaskTemplate template = templateList.get(position);
-        String[] options = {"ערוך", "מחק"};
+        String[] options = {getString(R.string.template_option_edit), getString(R.string.template_option_delete)};
         new AlertDialog.Builder(this)
                 .setTitle(template.getTitle())
                 .setItems(options, new DialogInterface.OnClickListener() {
@@ -258,15 +258,15 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     // מציג דיאלוג לאישור מחיקה
     private void showDeleteTemplateDialog(final TaskTemplate template) {
         new AlertDialog.Builder(this)
-                .setTitle("מחיקת תבנית")
-                .setMessage("האם למחוק את התבנית?")
-                .setPositiveButton("מחק", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.template_delete_title)
+                .setMessage(getString(R.string.template_delete_message, template.getTitle()))
+                .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteTemplate(template);
                     }
                 })
-                .setNegativeButton("ביטול", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -276,7 +276,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "התבנית נמחקה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, R.string.template_deleted_success, Toast.LENGTH_SHORT).show();
                 resetForm();
                 loadTemplates();
             }
@@ -291,8 +291,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
             if (bitmap != null) imgTask.setImageBitmap(bitmap);
         }
-        tvFormTitle.setText("עריכת תבנית");
-        btnSave.setText("שמור שינויים");
+        tvFormTitle.setText(R.string.template_form_title_edit);
+        btnSave.setText(R.string.template_save_changes);
         btnCancelEdit.setVisibility(View.VISIBLE);
     }
 
@@ -302,8 +302,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         etTitle.setText("");
         etStarsWorth.setText("");
         imgTask.setImageResource(R.drawable.ic_image_placeholder);
-        tvFormTitle.setText("תבנית חדשה");
-        btnSave.setText("שמור תבנית");
+        tvFormTitle.setText(R.string.template_form_title_new);
+        btnSave.setText(R.string.btn_save_template);
         btnSave.setEnabled(true);
         btnCancelEdit.setVisibility(View.GONE);
     }
@@ -322,7 +322,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             TaskTemplate template = getItem(position);
             if (template != null) {
                 ((TextView) convertView.findViewById(R.id.tvTemplateTitle)).setText(template.getTitle());
-                ((TextView) convertView.findViewById(R.id.tvTemplateStars)).setText(template.safeStarsWorth() + " כוכבים");
+                ((TextView) convertView.findViewById(R.id.tvTemplateStars)).setText(getString(R.string.template_item_stars, (int)template.safeStarsWorth()));
                 ImageView iv = convertView.findViewById(R.id.ivTemplateThumb);
                 if (template.getImageBase64() != null) {
                     Bitmap bmp = ImageHelper.base64ToBitmap(template.getImageBase64());
