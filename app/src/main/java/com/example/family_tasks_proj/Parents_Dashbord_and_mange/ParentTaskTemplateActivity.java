@@ -280,36 +280,46 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                         if (which == 0) {
                             startEditTemplate(template);
                         } else {
-                            new AlertDialog.Builder(ParentTaskTemplateActivity.this)
-                                    .setTitle(R.string.template_delete_title)
-                                    .setMessage(getString(R.string.template_delete_message, template.getTitle()))
-                                    .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface confirmDialog, int confirmWhich) {
-                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                            if (user == null || template.getId() == null) return;
-
-                                            getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Toast.makeText(ParentTaskTemplateActivity.this, R.string.template_deleted_success, Toast.LENGTH_SHORT).show();
-                                                    resetForm();
-                                                    loadTemplates();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception exception) {
-                                                    Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.action_cancel, null)
-                                    .show();
+                            showDeleteTemplateDialog(template);
                         }
                     }
                 })
                 .show();
+    }
+
+    // פותח דיאלוג אישור לפני מחיקת תבנית
+    private void showDeleteTemplateDialog(final TaskTemplate template) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.template_delete_title)
+                .setMessage(getString(R.string.template_delete_message, template.getTitle()))
+                .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface confirmDialog, int confirmWhich) {
+                        deleteTemplate(template);
+                    }
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
+    }
+
+    // מוחק את התבנית מ-Firebase ומעדכן את הרשימה
+    private void deleteTemplate(TaskTemplate template) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null || template.getId() == null) return;
+
+        getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ParentTaskTemplateActivity.this, R.string.template_deleted_success, Toast.LENGTH_SHORT).show();
+                resetForm();
+                loadTemplates();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_save_generic, exception.getMessage()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // מכניס את הטופס למצב עריכה ומציג את נתוני התבנית

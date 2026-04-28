@@ -322,24 +322,29 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.child_mark_task_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        childRef().child(NODE_TASKS).child(task.getId()).child("isDone").setValue(true)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Toast.makeText(ChildDashboardActivity.this, R.string.child_mark_task_success, Toast.LENGTH_SHORT).show();
-                                        task.setIsDone(true);
-                                        loadTasks();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.child_error_updating_task, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        writeTaskDone(task);
                     }
                 })
                 .setNegativeButton(R.string.child_mark_task_later, null)
                 .show();
+    }
+
+    // מעדכן את המשימה כבוצעה ב-Firebase ומטעין מחדש את הרשימה
+    private void writeTaskDone(final ChildTask task) {
+        childRef().child(NODE_TASKS).child(task.getId()).child("isDone").setValue(true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(ChildDashboardActivity.this, R.string.child_mark_task_success, Toast.LENGTH_SHORT).show();
+                        task.setIsDone(true);
+                        loadTasks();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.child_error_updating_task, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // מציג דיאלוג אישור להתנתקות ילד

@@ -235,21 +235,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // מציג דיאלוג אישור לפני יצירת משימה
     private void showAssignConfirmDialog() {
+        if (!isAssignmentInputValid()) {
+            return;
+        }
+
         String title = etTitle.getText().toString().trim();
         String dueDate = etDueDate.getText().toString().trim();
-        int childPosition = spAssignee.getSelectedItemPosition();
-
-        if (title.isEmpty()) {
-            Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
-            Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String childName = String.valueOf(spAssignee.getSelectedItem());
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.assign_task_confirm_title)
                 .setMessage(getString(R.string.assign_task_confirm_message, title, childName, dueDate))
@@ -263,21 +256,33 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .show();
     }
 
-    // יוצר מפת נתונים של משימה ושומר אותה תחת הילד שנבחר ב-Firebase
-    private void assignTask() {
+    private boolean isAssignmentInputValid() {
         String title = etTitle.getText().toString().trim();
         String dueDate = etDueDate.getText().toString().trim();
         int childPosition = spAssignee.getSelectedItemPosition();
 
         if (title.isEmpty()) {
             Toast.makeText(this, R.string.assign_task_missing_title, Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
         if (dueDate.isEmpty() || childPosition < 0 || childPosition >= childIds.size()) {
             Toast.makeText(this, R.string.assign_task_missing_child_or_date, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    // יוצר מפת נתונים של משימה ושומר אותה תחת הילד שנבחר ב-Firebase
+    private void assignTask() {
+        if (!isAssignmentInputValid()) {
             return;
         }
+
+        String title = etTitle.getText().toString().trim();
+        String dueDate = etDueDate.getText().toString().trim();
+        int childPosition = spAssignee.getSelectedItemPosition();
 
         btnAssign.setEnabled(false); // מונע לחיצות כפולות
 

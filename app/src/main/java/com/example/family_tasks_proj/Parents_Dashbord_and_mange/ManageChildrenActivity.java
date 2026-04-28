@@ -363,23 +363,28 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.manage_children_option_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        childrenRef().child(item.id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, getChildDisplayName(item)), Toast.LENGTH_SHORT).show();
-                                if (item.id.equals(editingChildId)) resetForm();
-                                loadChildren();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        deleteChild(item);
                     }
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
+    }
+
+    // מוחק את הילד מ-Firebase ומעדכן את הרשימה
+    private void deleteChild(final ChildItem item) {
+        childrenRef().child(item.id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.manage_children_deleted_success, getChildDisplayName(item)), Toast.LENGTH_SHORT).show();
+                if (item.id.equals(editingChildId)) resetForm();
+                loadChildren();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // מחזיר הפניה לנתיב הילדים: /parents/{uid}/children

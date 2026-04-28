@@ -118,22 +118,17 @@ public class ChildQRLoginFragment extends Fragment {
             return parsedQr;
         }
 
+        // פורמט מלא: parent:{id}|child:{id}
         if (raw.contains("|")) {
             fillParsedQrFromParts(parsedQr, raw);
             return parsedQr;
         }
 
+        // פורמט קצר: parent:{id}
         if (raw.startsWith("parent:")) {
             parsedQr.parentId = raw.substring("parent:".length()).trim();
-            return parsedQr;
         }
 
-        if (raw.startsWith("childId:")) {
-            parsedQr.childId = raw.substring("childId:".length()).trim();
-            return parsedQr;
-        }
-
-        parsedQr.childId = raw;
         return parsedQr;
     }
 

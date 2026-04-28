@@ -704,7 +704,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         if (daysLeft < 0) {
             return getString(R.string.parent_dashboard_task_status_late);
         }
-        if (daysLeft <= 2) {
+        if (DateUtils.isDueSoon(task.dueAt)) {
             return getString(R.string.parent_dashboard_task_status_urgent);
         }
         return getString(R.string.parent_dashboard_task_status_waiting);
