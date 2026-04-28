@@ -26,7 +26,10 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-// סריקת QR לילד והעברה לבחירת ילד או לדשבורד
+// === מסך: סריקת QR לילד ===
+// תפקיד: סורק QR, מאמת הורה/ילד, ושומר סשן ילד מקומי
+// מחלקות קשורות: ChildSelectionActivity, ChildDashboardActivity
+// Firebase path: parents/{parentId}, parents/{parentId}/children/{childId}
 public class ChildQRLoginFragment extends Fragment {
 
     private static final String PREFS = "child_session";
@@ -36,6 +39,7 @@ public class ChildQRLoginFragment extends Fragment {
     private Button btnScanQR;
     private android.widget.ProgressBar progressScan;
 
+    // ZXing = ספרייה חיצונית שסורקת QR codes דרך מצלמת הטלפון
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(
                     new ScanContract(),

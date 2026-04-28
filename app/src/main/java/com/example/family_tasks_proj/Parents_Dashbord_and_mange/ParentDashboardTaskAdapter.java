@@ -1,7 +1,6 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.DateUtils;
 
 import java.util.List;
-import java.util.Map;
 
 // אדפטר לרשימת המשימות בדשבורד ההורה: כותרות קבוצה ומשימות
 class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
@@ -26,28 +24,35 @@ class ParentDashboardTaskAdapter extends ArrayAdapter<TaskListItem> {
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_TASK = 1;
 
-    // צבעי סטטוס משותפים — מוגדרים פעם אחת במקום parseColor חוזר
-    private static final int COLOR_DONE = Color.parseColor("#2E7D32");
-    private static final int COLOR_DONE_BG = Color.parseColor("#E8F5E9");
-    private static final int COLOR_OVERDUE = Color.parseColor("#C62828");
-    private static final int COLOR_OVERDUE_BG = Color.parseColor("#FFEBEE");
-    private static final int COLOR_URGENT = Color.parseColor("#E65100");
-    private static final int COLOR_URGENT_BG = Color.parseColor("#FFF3E0");
-    private static final int COLOR_REGULAR_BG = Color.parseColor("#EEF2F7");
-    private static final int COLOR_REGULAR_TEXT = Color.parseColor("#52606D");
-    private static final int COLOR_REGULAR_DOT = Color.parseColor("#2F80ED");
-    private static final int COLOR_REGULAR_DUE = Color.parseColor("#6B7280");
+    // צבעי סטטוס מרוכזים כדי שיהיה קל לשנות צבע בזמן הבחינה
+    private static final String HEX_DONE = "#2E7D32";
+    private static final String HEX_DONE_BG = "#E8F5E9";
+    private static final String HEX_OVERDUE = "#C62828";
+    private static final String HEX_OVERDUE_BG = "#FFEBEE";
+    private static final String HEX_URGENT = "#E65100";
+    private static final String HEX_URGENT_BG = "#FFF3E0";
+    private static final String HEX_REGULAR_BG = "#EEF2F7";
+    private static final String HEX_REGULAR_TEXT = "#52606D";
+    private static final String HEX_REGULAR_DOT = "#2F80ED";
+    private static final String HEX_REGULAR_DUE = "#6B7280";
+    private static final int COLOR_DONE = Color.parseColor(HEX_DONE);
+    private static final int COLOR_DONE_BG = Color.parseColor(HEX_DONE_BG);
+    private static final int COLOR_OVERDUE = Color.parseColor(HEX_OVERDUE);
+    private static final int COLOR_OVERDUE_BG = Color.parseColor(HEX_OVERDUE_BG);
+    private static final int COLOR_URGENT = Color.parseColor(HEX_URGENT);
+    private static final int COLOR_URGENT_BG = Color.parseColor(HEX_URGENT_BG);
+    private static final int COLOR_REGULAR_BG = Color.parseColor(HEX_REGULAR_BG);
+    private static final int COLOR_REGULAR_TEXT = Color.parseColor(HEX_REGULAR_TEXT);
+    private static final int COLOR_REGULAR_DOT = Color.parseColor(HEX_REGULAR_DOT);
+    private static final int COLOR_REGULAR_DUE = Color.parseColor(HEX_REGULAR_DUE);
 
     private final LayoutInflater inflater;
-    private final Map<String, Bitmap> childPhotoCache;
     private boolean showChildName = false;
 
     ParentDashboardTaskAdapter(@NonNull Context context,
-                               @NonNull List<TaskListItem> items,
-                               @NonNull Map<String, Bitmap> childPhotoCache) {
+                               @NonNull List<TaskListItem> items) {
         super(context, 0, items);
         this.inflater = LayoutInflater.from(context);
-        this.childPhotoCache = childPhotoCache;
     }
 
     public void setShowChildName(boolean showChildName) {

@@ -27,7 +27,6 @@ import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.util.ImageHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,7 +41,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** מסך ניהול תבניות משימה של ההורה. */
+// === מסך: תבניות משימה ===
+// תפקיד: מאפשר להורה ליצור, לערוך ולמחוק תבניות משימה עם תמונה וכוכבים
+// מחלקות קשורות: TaskTemplate, ImageHelper
+// Firebase path: parents/{uid}/task_templates
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private static final int MIN_STARS = 1;
@@ -74,7 +76,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
             );
 
-    // יוצר את המסך ומחבר את הטופס, הרשימה והכפתורים
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +86,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         loadTemplates();
     }
 
-    // מחבר את רכיבי המסך ומכין את מתאם התבניות
     private void bindViews() {
         etTitle = findViewById(R.id.etTitle);
         etStarsWorth = findViewById(R.id.etStarsWorth);
@@ -100,7 +100,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         lvTemplates.setAdapter(templateListAdapter);
     }
 
-    // מגדיר פעולות לחיצה במסך התבניות
     private void bindActions() {
         Button btnPickImage = findViewById(R.id.btnPickImage);
         btnPickImage.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +188,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         updateTemplateListVisibility();
     }
 
-    // מוסיף תבנית אחת מהרשומה שלה ב-Firebase
     private void addTemplateFromSnapshot(DataSnapshot snap) {
         TaskTemplate template = snap.getValue(TaskTemplate.class);
         if (template == null) {
@@ -231,6 +229,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
+        // UUID = מזהה ייחודי אוטומטי, כמו תעודת זהות לתבנית
         String templateId = (editingTemplateId != null) ? editingTemplateId : UUID.randomUUID().toString();
         Map<String, Object> data = new HashMap<>();
         data.put("id", templateId);
@@ -238,6 +237,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         data.put("starsWorth", stars);
 
         if (correctedBitmap != null) {
+            // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
             String imageBase64 = ImageHelper.bitmapToBase64(correctedBitmap);
             if (imageBase64 == null) {
                 Toast.makeText(this, R.string.error_image_conversion, Toast.LENGTH_SHORT).show();
@@ -287,7 +287,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface confirmDialog, int confirmWhich) {
                                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                             if (user == null || template.getId() == null) return;
-                                            
+
                                             getTemplatesRef(user.getUid()).child(template.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
@@ -341,55 +341,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         imgTask.setImageBitmap(bitmap);
     }
 
-    // פותח דיאלוג אישור לפני מחיקת תבנית
-    private void showDeleteConfirmDialog(final TaskTemplate template) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.template_delete_title)
-                .setMessage(getString(R.string.template_delete_message, template.getTitle()))
-                .setPositiveButton(R.string.template_option_delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteTemplate(template);
-                    }
-                })
-                .setNegativeButton(R.string.action_cancel, null)
-                .show();
-    }
-
-    // מוחק תבנית מ-Firebase: /parents/{uid}/task_templates/{templateId}
-    private void deleteTemplate(final TaskTemplate template) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null || template.getId() == null) {
-            return;
-        }
-
-        DatabaseReference templateRef = getTemplatesRef(user.getUid()).child(template.getId());
-        Task<Void> deleteTask = templateRef.removeValue();
-
-        deleteTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                handleTemplateDeleted();
-            }
-        });
-
-        deleteTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentTaskTemplateActivity.this,
-                        getString(R.string.error_save_generic, exception.getMessage()),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // מטפל במחיקה מוצלחת של תבנית
-    private void handleTemplateDeleted() {
-        Toast.makeText(this, R.string.template_deleted_success, Toast.LENGTH_SHORT).show();
-        resetForm();
-        loadTemplates();
-    }
-
     // מאפס את הטופס חזרה למצב יצירת תבנית חדשה
     private void resetForm() {
         editingTemplateId = null;
@@ -410,17 +361,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .child("task_templates");
     }
 
-    /**
-     * מתאם פנימי שמציג תבניות ברשימה.
-     */
+    // מתאם פנימי שמציג תבניות ברשימה
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
 
-        // מחבר את המתאם לרשימת התבניות של המסך
         TemplateListAdapter() {
             super(ParentTaskTemplateActivity.this, 0, templateList);
         }
 
-        // מציג שם, כוכבים ותמונה עבור תבנית אחת
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -437,7 +384,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return convertView;
         }
 
-        // מחבר את נתוני התבנית לשורה של הרשימה
         private void bindTemplateRow(View rowView, TaskTemplate template) {
             ImageView ivTemplateThumb = rowView.findViewById(R.id.ivTemplateThumb);
             TextView tvTemplateTitle = rowView.findViewById(R.id.tvTemplateTitle);

@@ -44,7 +44,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** מסך ניהול ילדים של הורה: הוספה, עריכה ומחיקה. */
+// === מסך: ניהול ילדים ===
+// תפקיד: מאפשר להורה להוסיף, לערוך ולמחוק ילדים ולשמור תמונת פרופיל
+// מחלקות קשורות: Child, ImageHelper, NameUtils
+// Firebase path: parents/{uid}/children
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName;
@@ -76,7 +79,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     }
             );
 
-    // יוצר את המסך, מזהה את ההורה המחובר, וטוען את רשימת הילדים
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +99,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    // מחבר את רכיבי המסך
     private void bindViews() {
         imgChildPhoto = findViewById(R.id.imgChildPhoto);
         etFirstName = findViewById(R.id.etFirstName);
@@ -109,7 +110,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         tvFormTitle = findViewById(R.id.tvFormTitle);
     }
 
-    // מגדיר את רשימת הילדים ואת הלחיצה על שורה
     private void setupChildrenList() {
         childListAdapter = new ChildListAdapter();
         lvChildren.setAdapter(childListAdapter);
@@ -121,7 +121,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // מחבר כפתורי טופס וניווט
     private void bindActions() {
         findViewById(R.id.btnPickChildPhoto).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +182,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
+        // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
         String imageBase64 = (selectedChildPhoto != null) ? ImageHelper.bitmapToBase64(selectedChildPhoto) : editingChildOldImageBase64;
         btnAddChild.setEnabled(false);
 
@@ -245,7 +245,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         updateChildrenEmptyState();
     }
 
-    // מוסיף ילד אחד מהרשומה שלו ב-Firebase
     private void addChildItemFromSnapshot(DataSnapshot childSnapshot) {
         childItems.add(new ChildItem(
                 childSnapshot.getKey(),
@@ -425,17 +424,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
     }
 
-    /**
-     * מתאם פנימי שמציג ילד אחד בכל שורה.
-     */
+    // מתאם פנימי שמציג ילד אחד בכל שורה
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
 
-        // מחבר את המתאם לרשימת הילדים של המסך
         ChildListAdapter() {
             super(ManageChildrenActivity.this, 0, childItems);
         }
 
-        // מציג שם ותמונה עבור ילד אחד ברשימה
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -452,7 +447,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return convertView;
         }
 
-        // מחבר את נתוני הילד לשורה של הרשימה
         private void bindChildRow(View rowView, ChildItem item) {
             TextView tvChildFullName = rowView.findViewById(R.id.tvChildFullName);
             tvChildFullName.setText(getChildDisplayName(item));
@@ -470,16 +464,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * פריט פשוט שמייצג ילד ברשימת ניהול הילדים.
-     */
+    // פריט פשוט שמייצג ילד ברשימת ניהול הילדים
     private static class ChildItem {
         String id;
         String firstName;
         String lastName;
         String profileImageBase64;
 
-        // שומר את הערכים שהגיעו מ-Firebase עבור ילד אחד
         ChildItem(String id, String firstName, String lastName, String profileImageBase64) {
             this.id = id;
             this.firstName = firstName;

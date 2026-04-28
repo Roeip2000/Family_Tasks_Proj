@@ -17,7 +17,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-/** מסך שמציג QR קבוע של ההורה לילדים. */
+// מסך שמציג QR קבוע של ההורה לילדים
 public class GenerateQRActivity extends AppCompatActivity {
 
     private ImageView imageViewQrCode;
@@ -28,7 +28,6 @@ public class GenerateQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_qr);
 
-        // חיבור רכיבי המסך
         imageViewQrCode = findViewById(R.id.imageViewQrCode);
         tvError = findViewById(R.id.tvError);
         Button btnBack = findViewById(R.id.btnBackToDashboard);
@@ -40,7 +39,6 @@ public class GenerateQRActivity extends AppCompatActivity {
             }
         });
 
-        // זיהוי ההורה המחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, R.string.error_parent_session_missing, Toast.LENGTH_SHORT).show();
@@ -48,7 +46,6 @@ public class GenerateQRActivity extends AppCompatActivity {
             return;
         }
 
-        // יצירת QR קבוע להורה, שכל הילדים סורקים
         generateParentQR(user.getUid());
     }
 

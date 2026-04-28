@@ -37,7 +37,7 @@ public class ParentRegisterFragment extends Fragment {
     private Button btnRegister;
     private ProgressBar progressRegister;
 
-    // חובה לשמור פעולה בונה ריקה כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
+    // חובה ל-Fragment
     public ParentRegisterFragment() {
     }
 

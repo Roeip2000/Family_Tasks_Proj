@@ -17,7 +17,7 @@ import androidx.exifinterface.media.ExifInterface;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-// תיקון, הקטנה ושמירת תמונות כ-Base64
+// Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
 public class ImageHelper {
 
     // צלע מקסימלית בפיקסלים — מאזן בין איכות לבין גודל ב-Firebase
@@ -96,20 +96,18 @@ public class ImageHelper {
         Rect dstRect = new Rect(0, 0, size, size);
         // שלב 1: מציירים עיגול כמסכה
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
-        // שלב 2: מציירים את התמונה רק בתוך המסכה
+        // חותך את התמונה לעיגול — מציירים עיגול ומסירים את מה שמחוץ לו
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(src, srcRect, dstRect, paint);
         return output;
     }
 
-    // ========== מתודות פנימיות ==========
-
-    // קורא זווית סיבוב מנתוני EXIF של תמונה מהמצלמה
     private static int getExifRotation(ContentResolver resolver, Uri uri) {
         try (InputStream is = resolver.openInputStream(uri)) {
             if (is == null) {
                 return 0;
             }
+            // בודק לאיזה כיוון המצלמה צילמה ומסובב את התמונה בהתאם
             ExifInterface exif = new ExifInterface(is);
             int orientation = exif.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);

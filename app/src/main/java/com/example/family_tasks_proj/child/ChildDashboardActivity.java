@@ -26,7 +26,6 @@ import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** מסך דשבורד הילד להצגת משימות, כוכבים וסימון משימה כבוצעה. */
+// === מסך: דשבורד ילד ===
+// תפקיד: מציג משימות של ילד, סינון, כוכבים וסימון משימה כבוצעה
+// מחלקות קשורות: ChildTaskAdapter, ChildTask, DateUtils
+// Firebase path: parents/{parentId}/children/{childId}/tasks
 public class ChildDashboardActivity extends AppCompatActivity {
 
     private static final String PREFS_SESSION = "child_session";
@@ -70,7 +72,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private ChildTaskAdapter adapter;
     private FilterMode activeFilter = FilterMode.NOT_COMPLETED;
 
-    // יוצר את המסך, פותר סשן, וטוען את נתוני הילד
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +95,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadTasks();
     }
 
-    // מחבר את כל רכיבי המסך
     private void bindViews() {
         tvChildName = findViewById(R.id.tvChildName);
         tvStars = findViewById(R.id.tvStars);
@@ -113,7 +113,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         filterOverdue = findViewById(R.id.filterOverdue);
     }
 
-    // מגדיר RecyclerView למשימות הילד
     private void setupTaskList() {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ChildTaskAdapter(visibleTasks, new ChildTaskAdapter.OnTaskDoneListener() {
@@ -125,7 +124,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         rvTasks.setAdapter(adapter);
     }
 
-    // מחבר את כפתורי הפילטרים
     private void setupFilters() {
         filterNotCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +151,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // מחבר את כפתור ההתנתקות
     private void bindActions() {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,6 +214,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         tvChildName.setText(getString(R.string.child_hello_with_name, displayName));
 
+        // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
         String base64 = snapshot.child("profileImageBase64").getValue(String.class);
         showChildAvatar(base64);
     }
@@ -270,7 +268,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         applyFilter();
     }
 
-    // מוסיף משימה אחת מהרשומה שלה ב-Firebase ומעדכן סיכומים
     private void addTaskFromSnapshot(DataSnapshot taskSnapshot, TaskCounts counts) {
         ChildTask task = taskSnapshot.getValue(ChildTask.class);
         if (task == null) {
@@ -440,7 +437,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // מעדכן את העיצוב של שלושת כפתורי הפילטר
+    // מעדכן את העיצוב של כפתורי הפילטר
     private void updateFilterSelectionUi() {
         updateFilterBlock(filterUrgent, activeFilter == FilterMode.URGENT, R.color.surface_soft_orange);
         updateFilterBlock(filterOverdue, activeFilter == FilterMode.OVERDUE, R.color.surface_soft_rose);
@@ -474,12 +471,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // פעולת עזר מקומית — בודקת null או מחרוזת ריקה
+    // בודק null/ריק
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
-    // פעולת עזר מקומית — מחזירה טקסט בטוח להצגה
+    // טקסט בטוח להצגה
     private String safeText(String value) {
         if (value == null) {
             return "";
@@ -487,9 +484,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         return value.trim();
     }
 
-    /**
-     * מונה פשוט לסיכומי המשימות של הילד.
-     */
+    // מונה פשוט לסיכומי המשימות של הילד
     private static class TaskCounts {
         int completedCount;
         int urgentCount;
@@ -498,9 +493,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         long stars;
     }
 
-    /**
-     * פילטרים אפשריים למשימות הילד.
-     */
+    // פילטרים אפשריים למשימות הילד
     private enum FilterMode {
         NOT_COMPLETED,
         COMPLETED,

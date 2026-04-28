@@ -33,7 +33,7 @@ public class ParentLoginFragment extends Fragment {
     private Button btnLogin;
     private ProgressBar progressLogin;
 
-    // חובה לשמור פעולה בונה ריקה כדי שאנדרואיד יוכל ליצור את ה-Fragment מחדש
+    // חובה ל-Fragment
     public ParentLoginFragment() {
     }
 

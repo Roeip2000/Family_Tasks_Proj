@@ -28,7 +28,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** מסך בחירת ילד, עם parentId מוכן או עם בחירת הורה ידנית. */
+// === מסך: בחירת ילד ===
+// תפקיד: בוחר הורה וילד כאשר QR נתן רק parentId או כשנכנסים ידנית
+// מחלקות קשורות: ChildQRLoginFragment, ChildDashboardActivity, NameUtils
+// Firebase path: parents, parents/{parentId}/children
 public class ChildSelectionActivity extends AppCompatActivity {
 
     private static final String PREFS = "child_session";
@@ -50,7 +53,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private String parentId;
     private String preselectedChildId;
 
-    // יוצר את המסך, מוצא מזהים, וטוען הורים או ילדים לפי המצב
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
         openCorrectPicker();
     }
 
-    // מחבר את כל רכיבי המסך
     private void bindViews() {
         tvSubtitle = findViewById(R.id.tvSubtitle);
         tvParentLabel = findViewById(R.id.tvParentLabel);
@@ -75,7 +76,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
     }
 
-    // מגדיר את כפתור הכניסה
     private void bindActions() {
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,28 +336,22 @@ public class ChildSelectionActivity extends AppCompatActivity {
         tvSubtitle.setText(subtitleRes);
     }
 
-    /**
-     * פריט הורה פשוט לספינר ההורים.
-     */
+    // פריט הורה פשוט לספינר ההורים
     private static class ParentItem {
         private final String id;
         private final String name;
 
-        // שומר מזהה ושם תצוגה של הורה אחד
         private ParentItem(String id, String name) {
             this.id = id;
             this.name = name;
         }
     }
 
-    /**
-     * פריט ילד פשוט לספינר הילדים.
-     */
+    // פריט ילד פשוט לספינר הילדים
     private static class ChildItem {
         private final String id;
         private final String name;
 
-        // שומר מזהה ושם תצוגה של ילד אחד
         private ChildItem(String id, String name) {
             this.id = id;
             this.name = name;

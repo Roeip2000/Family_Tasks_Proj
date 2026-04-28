@@ -19,7 +19,10 @@ import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-// מסך כניסה ראשי להורה ולילד
+// === מסך: כניסה ראשית ===
+// תפקיד: בוחר כניסת הורה או ילד, ומדלג לדשבורד אם יש סשן שמור
+// מחלקות קשורות: ParentLoginFragment, ParentRegisterFragment, ChildQRLoginFragment
+// Firebase path: FirebaseAuth, child_session
 public class MainActivity extends AppCompatActivity {
 
     private Button btnRegister, btnLogin, btnChildQR, btnChild;

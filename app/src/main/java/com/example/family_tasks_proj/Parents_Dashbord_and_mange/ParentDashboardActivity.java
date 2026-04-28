@@ -1,12 +1,10 @@
 package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,15 +40,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** מסך דשבורד ההורה עם סיכום בית, ילדים, משימות ופעולות ניהול. */
+// === מסך: דשבורד הורה ===
+// תפקיד: מציג ילדים, סיכום בית ומשימות, ומאפשר סינון וניהול
+// מחלקות קשורות: ParentDashboardTaskAdapter, ParentDashboardChildSummaryAdapter
+// Firebase path: parents/{uid}/children/{childId}/tasks
 public class ParentDashboardActivity extends AppCompatActivity {
 
-    // תצוגות — כותרת, סיכום בית, רשימת ילדים, רשימת משימות, פילטרים וכפתורים
     private Button btnManageChildren, btnManageTemplates, btnAssignTaskToChild, btnShowQR, btnLogout;
     private TextView tvParentName, tvParentTotalTasks, tvParentCompleted, tvParentDueSoon;
     private TextView tvNoTasks, tvTaskSectionTitle, tvTaskSectionSubtitle, tvNoChildren;
@@ -62,7 +58,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private ListView lvTasks;
     private RecyclerView rvChildren;
 
-    // נתונים
     private final List<AssignedTask> allAssignedTasks = new ArrayList<>();
     private final List<TaskListItem> visibleTaskItems = new ArrayList<>();
     private final List<ChildSummary> childSummaries = new ArrayList<>();
@@ -141,31 +136,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) { showLogoutDialog(); }
         });
-        
-        View.OnClickListener filterListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int id = view.getId();
-                if (id == R.id.filterAllTasks) setActiveFilter(FilterMode.ALL);
-                else if (id == R.id.filterOpenTasks) setActiveFilter(FilterMode.ASSIGNED);
-                else if (id == R.id.filterCompletedTasks) setActiveFilter(FilterMode.COMPLETED);
-                else if (id == R.id.filterUrgentTasks) setActiveFilter(FilterMode.URGENT);
-                else if (id == R.id.filterOverdueTasks) setActiveFilter(FilterMode.OVERDUE);
-            }
-        };
-        filterAllTasks.setOnClickListener(filterListener);
-        filterOpenTasks.setOnClickListener(filterListener);
-        filterCompletedTasks.setOnClickListener(filterListener);
-        filterUrgentTasks.setOnClickListener(filterListener);
-        filterOverdueTasks.setOnClickListener(filterListener);
     }
 
     // פותח מסך פעולה של ההורה בלי לשנות את הדשבורד הנוכחי
     private void openScreen(Class<?> target) {
         if (target == null) return;
         startActivity(new Intent(this, target));
-        // הערה: לא נועלים כפתורים פה כי המעבר מהיר,
-        // אבל אפשר להוסיף debouncing אם רואים בעיות באמולטור
     }
 
     private void setupChildrenList() {
@@ -182,7 +158,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void setupTaskList() {
-        taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems, childPhotoCache);
+        taskAdapter = new ParentDashboardTaskAdapter(this, visibleTaskItems);
         lvTasks.setAdapter(taskAdapter);
         lvTasks.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
             @Override
@@ -258,8 +234,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 String firstName = snapshot.child("firstName").getValue(String.class);
                 String lastName = snapshot.child("lastName").getValue(String.class);
                 tvParentName.setText(NameUtils.fullNameOrDefault(firstName, lastName, "הורה"));
+                // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
                 String base64 = snapshot.child("profileImageBase64").getValue(String.class);
-                
+
                 Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
                 if (bitmap == null) {
                     ivParentProfile.setImageResource(R.drawable.ic_avatar_placeholder);
@@ -277,9 +254,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // ברגע שהנתונים הגיעו, מעבירים אותם לפיענוח
                         parseDashboardData(snapshot);
-                        // ואז מעדכנים את המסך
                         refreshDashboardUi();
                     }
                     @Override
@@ -304,7 +279,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 continue;
             }
 
-            // יצירת אובייקט סיכום לילד (מכיל שם, תמונה וסטטיסטיקה)
             ChildSummary summary = new ChildSummary();
             summary.childId = childId;
             summary.displayName = NameUtils.fullNameOrDefault(
@@ -312,14 +286,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     childSnap.child("lastName").getValue(String.class), "ילד");
             summary.childProfileBase64 = childSnap.child("profileImageBase64").getValue(String.class);
 
-            // לולאה פנימית: מעבר על כל המשימות של הילד הנוכחי
             for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
                 AssignedTask task = parseTask(taskSnap, summary);
                 if (task == null) {
                     continue;
                 }
                 allAssignedTasks.add(task);
-                // עדכון המונים (כמה בוצעו, כמה דחופים וכו')
                 countTaskInto(task, summary);
             }
             childSummaries.add(summary);
@@ -464,7 +436,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         taskAdapter.setShowChildName(isAll);
 
         // מצב כל הילדים לא משנה Firebase; הוא רק מסנן את הרשימה שכבר נטענה
-        // חלוקה לשלוש קבוצות פשוטות: דחופה, פתוחה, הושלמה
+        // חלוקה לקבוצות כדי שהילד/הסטטוס יהיה קל לקריאה
         List<AssignedTask> overdue = new ArrayList<>();
         List<AssignedTask> urgent = new ArrayList<>();
         List<AssignedTask> open = new ArrayList<>();
@@ -491,7 +463,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         showTaskListVisibility(!visibleTaskItems.isEmpty());
     }
 
-    // מכניס משימה לאחת משלוש הקבוצות: דחופה, פתוחה או הושלמה
+    // מכניס משימה לקבוצה אחת לפי סטטוס ותאריך
     private void addTaskToCorrectGroup(AssignedTask task,
                                        List<AssignedTask> overdue,
                                        List<AssignedTask> urgent,
@@ -568,12 +540,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void showTaskListVisibility(boolean hasTasks) {
         tvNoTasks.setVisibility(hasTasks ? View.GONE : View.VISIBLE);
         lvTasks.setVisibility(hasTasks ? View.VISIBLE : View.GONE);
-    }
-
-    private boolean isUrgentTask(AssignedTask task) {
-        return task != null && !task.isDone
-                && !DateUtils.isOverdue(task.dueAt)
-                && DateUtils.isDueSoon(task.dueAt);
     }
 
     private ChildSummary getSelectedChildSummary() {
@@ -687,7 +653,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private DatabaseReference parentRef(String uid) {
-        // שורש הנתונים של הורה אחד: /parents/{uid}
+        // מפנה ל-FirebaseDatabase.getInstance() — נקודת הגישה ל-DB
         return FirebaseDatabase.getInstance().getReference("parents").child(uid);
     }
 

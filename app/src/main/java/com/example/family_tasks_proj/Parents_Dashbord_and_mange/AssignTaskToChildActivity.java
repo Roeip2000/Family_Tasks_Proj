@@ -22,7 +22,6 @@ import com.example.family_tasks_proj.util.ImageHelper;
 import com.example.family_tasks_proj.util.NameUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** מסך הקצאת משימה לילד לפי תבנית, ילד ותאריך יעד. */
+// === מסך: הקצאת משימה ===
+// תפקיד: בוחר תבנית, ילד ותאריך יעד ושומר משימה חדשה לילד
+// מחלקות קשורות: TaskTemplate, Child, ImageHelper
+// Firebase path: parents/{uid}/children/{childId}/tasks
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTitle;
@@ -52,7 +54,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private String parentUid;
 
-    // יוצר את המסך, מזהה את ההורה המחובר, וטוען ילדים ותבניות
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +74,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    // מחבר את כל רכיבי המסך
     private void bindViews() {
         etTitle = findViewById(R.id.etTitle);
         etDueDate = findViewById(R.id.etDueDate);
@@ -83,7 +83,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         btnAssign = findViewById(R.id.btnAssign);
     }
 
-    // מגדיר מאזיני לחיצה ובחירת תבנית
     private void bindActions() {
         spTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -163,7 +162,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         showFirstTemplateImageOrPlaceholder();
     }
 
-    // מוסיף תבנית אחת מהרשומה שלה ב-Firebase
     private void addTemplateFromSnapshot(DataSnapshot templateSnapshot, List<String> titles) {
         TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
         if (template == null) {
@@ -219,7 +217,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         setSpinnerItems(spAssignee, childNames);
     }
 
-    // מוסיף ילד אחד מהרשומה שלו ב-Firebase
     private void addChildFromSnapshot(DataSnapshot childSnapshot, List<String> childNames) {
         String childId = childSnapshot.getKey();
         if (childId == null) {
@@ -283,7 +280,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }
 
         btnAssign.setEnabled(false); // מונע לחיצות כפולות
-        
+
         DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("parents").child(parentUid).child("children").child(childIds.get(childPosition)).child("tasks");
         String taskId = tasksRef.push().getKey();
 
@@ -337,8 +334,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
-    // מציג תמונת משימה מ-Base64 או תמונה חלופית אם אין תמונה
     private void displayBase64Image(String base64) {
+        // Base64 = קידוד שהופך תמונה למחרוזת טקסט כדי לשמור ב-Firebase
         if (base64 == null || base64.isEmpty()) {
             imgTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
             return;
