@@ -323,4 +323,13 @@
     <string name="parent_dashboard_task_owner_label">ל-%1$s</string>
     <string name="assign_task_form_section_what">מה המשימה?</string>
     <string name="assign_task_form_section_who">למי ומתי?</string>
+    <string name="child_task_mark_done_success">כל הכבוד! סיימת את המשימה</string>
+    <string name="dialog_logout_title">יציאה</string>
+    <string name="dialog_logout_message">בטוח שרוצה לצאת?</string>
+    <string name="dialog_yes">כן</string>
+    <string name="dialog_no">לא</string>
+    <string name="filter_label_open">משימות פתוחות</string>
+    <string name="filter_label_urgent">משימות דחופות</string>
+    <string name="filter_label_overdue">משימות באיחור</string>
+    <string name="filter_label_completed">משימות שסיימתי</string>
 </resources>

@@ -53,31 +53,24 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         if (holder.itemView instanceof MaterialCardView) {
             MaterialCardView card = (MaterialCardView) holder.itemView;
             int bgColor;
+            int strokeColor;
+
             if (task.getIsDone()) {
-                bgColor = R.color.surface_soft_green;
+                bgColor = R.color.primary_light;
+                strokeColor = R.color.divider;
             } else if (days < 0) {
                 bgColor = R.color.danger_light;
+                strokeColor = R.color.danger;
             } else if (dueSoon) {
-                bgColor = R.color.surface_soft_orange;
+                bgColor = R.color.urgent_light;
+                strokeColor = R.color.urgent;
             } else {
                 bgColor = R.color.bg_card;
-            }
-
-            int strokeColor;
-            if (task.getIsDone()) {
-                strokeColor = R.color.accent_light;
-            } else if (days < 0) {
-                strokeColor = R.color.urgent;
-            } else if (dueSoon) {
-                strokeColor = R.color.urgent_light;
-            } else {
                 strokeColor = R.color.border_light;
             }
 
-            int bg = ctx.getColor(bgColor);
-            int stroke = ctx.getColor(strokeColor);
-            card.setCardBackgroundColor(bg);
-            card.setStrokeColor(stroke);
+            card.setCardBackgroundColor(ctx.getColor(bgColor));
+            card.setStrokeColor(ctx.getColor(strokeColor));
             card.setStrokeWidth(2);
         }
 
@@ -86,7 +79,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_hint));
             holder.tvDue.setText(ctx.getString(R.string.child_due_done));
-            holder.tvDue.setTextColor(ctx.getColor(R.color.success_dark));
+            holder.tvDue.setTextColor(ctx.getColor(R.color.success));
             holder.btnDone.setVisibility(View.GONE);
         } else {
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
@@ -105,7 +98,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             if (days < 0) {
                 dueTextColor = R.color.danger;
             } else if (dueSoon) {
-                dueTextColor = R.color.warning_dark;
+                dueTextColor = R.color.urgent;
             } else {
                 dueTextColor = R.color.text_secondary;
             }
@@ -118,11 +111,11 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         dot.setSize(14, 14);
         int dotColor;
         if (task.getIsDone()) {
-            dotColor = R.color.success_dark;
+            dotColor = R.color.success;
         } else if (days < 0) {
             dotColor = R.color.danger;
         } else if (dueSoon) {
-            dotColor = R.color.warning_dark;
+            dotColor = R.color.urgent;
         } else {
             dotColor = R.color.text_hint;
         }

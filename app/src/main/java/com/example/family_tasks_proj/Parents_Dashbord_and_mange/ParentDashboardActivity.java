@@ -253,30 +253,54 @@ public class ParentDashboardActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allAssignedTasks.clear();
                 childSummaries.clear();
-                houseAssigned = houseDone = houseUrgent = houseOverdue = 0;
+                houseAssigned = 0;
+                houseDone = 0;
+                houseUrgent = 0;
+                houseOverdue = 0;
 
-                for (DataSnapshot childSnap : snapshot.getChildren()) {
+                if (!snapshot.exists()) {
+                    updateSummaryUi();
+                    buildTaskList();
+                    return;
+                }
+
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     ChildSummary summary = new ChildSummary();
-                    summary.setChildId(childSnap.getKey());
-                    summary.setDisplayName(childSnap.child("firstName").getValue(String.class));
+                    summary.setChildId(childSnapshot.getKey());
+                    
+                    String firstName = childSnapshot.child("firstName").getValue(String.class);
+                    summary.setDisplayName(firstName != null ? firstName : "ילד");
 
-                    for (DataSnapshot taskSnap : childSnap.child("tasks").getChildren()) {
-                        AssignedTask task = new AssignedTask();
-                        task.setChildId(summary.getChildId());
-                        task.setChildName(summary.getDisplayName());
-                        task.setTaskId(taskSnap.getKey());
-                        task.setTitle(taskSnap.child("title").getValue(String.class));
-                        task.setDueAt(taskSnap.child("dueAt").getValue(String.class));
-                        task.setImageBase64(taskSnap.child("imageBase64").getValue(String.class));
-                        Boolean done = taskSnap.child("isDone").getValue(Boolean.class);
-                        task.setIsDone(done != null && done);
+                    DataSnapshot tasksSnapshot = childSnapshot.child("tasks");
+                    if (tasksSnapshot.exists()) {
+                        for (DataSnapshot taskSnapshot : tasksSnapshot.getChildren()) {
+                            AssignedTask task = new AssignedTask();
+                            task.setChildId(summary.getChildId());
+                            task.setChildName(summary.getDisplayName());
+                            task.setTaskId(taskSnapshot.getKey());
+                            
+                            String title = taskSnapshot.child("title").getValue(String.class);
+                            task.setTitle(title != null ? title : "משימה ללא שם");
+                            
+                            String dueAt = taskSnapshot.child("dueAt").getValue(String.class);
+                            task.setDueAt(dueAt != null ? dueAt : "אין תאריך");
+                            
+                            task.setImageBase64(taskSnapshot.child("imageBase64").getValue(String.class));
+                            
+                            Boolean isDone = taskSnapshot.child("isDone").getValue(Boolean.class);
+                            task.setIsDone(isDone != null && isDone);
 
-                        allAssignedTasks.add(task);
-                        if (task.getIsDone()) houseDone++;
-                        else {
-                            houseAssigned++;
-                            if (DateUtils.isOverdue(task.getDueAt())) houseOverdue++;
-                            else if (DateUtils.isDueSoon(task.getDueAt())) houseUrgent++;
+                            allAssignedTasks.add(task);
+                            if (task.getIsDone()) {
+                                houseDone++;
+                            } else {
+                                houseAssigned++;
+                                if (DateUtils.isOverdue(task.getDueAt())) {
+                                    houseOverdue++;
+                                } else if (DateUtils.isDueSoon(task.getDueAt())) {
+                                    houseUrgent++;
+                                }
+                            }
                         }
                     }
                 }
