@@ -14,35 +14,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:layoutDirection="rtl">
-
-        <!-- Avatar Placeholder -->
-        <View
-            android:id="@+id/viewChildAvatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_star_pill"
-            android:backgroundTint="@color/primary_light" />
-            
-        <TextView
-            android:id="@+id/tvAvatarChar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="👶"
-            android:textSize="20sp" />
+        android:layoutDirection="rtl"
+        android:padding="16dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/viewChildAvatar"
             android:orientation="vertical">
 
             <TextView
