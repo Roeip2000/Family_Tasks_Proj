@@ -133,12 +133,19 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
-                        addStarToChild(); // מוסיף כוכב לילד
+                        addStarsToChild(task.getStarsWorth());
                     }
                 });
     }
 
-    private void addStarToChild() {
+    private void addStarsToChild(long starsWorth) {
+        final long starsToAdd;
+        if (starsWorth > 0) {
+            starsToAdd = starsWorth;
+        } else {
+            starsToAdd = 10;
+        }
+
         // משיכת כמות הכוכבים הנוכחית והוספת 1
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("stars")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,7 +156,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     Long val = snapshot.getValue(Long.class);
                     if (val != null) currentStars = val;
                 }
-                snapshot.getRef().setValue(currentStars + 1);
+                snapshot.getRef().setValue(currentStars + starsToAdd);
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
