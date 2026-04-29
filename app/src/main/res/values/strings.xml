@@ -3,9 +3,9 @@
 
     <!-- כפתורים כלליים -->
     <string name="btn_login">התחברות</string>
-    <string name="btn_login_loading">מתחבר...</string>
+    <string name="btn_login_loading">מתחבר…</string>
     <string name="btn_create_account">יצירת חשבון</string>
-    <string name="btn_create_account_loading">יוצרים חשבון...</string>
+    <string name="btn_create_account_loading">יוצרים חשבון…</string>
     <string name="btn_back_to_dashboard">חזרה לדשבורד</string>
     <string name="btn_enter">כניסה</string>
     <string name="btn_done">בוצע</string>

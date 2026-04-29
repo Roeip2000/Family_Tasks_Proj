@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:text="פתוחות"
                         android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- פילטר: משימות דחופות -->
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:text="דחופות"
                         android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- פילטר: משימות באיחור -->
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:text="באיחור"
                         android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- פילטר: משימות שבוצעו -->
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:text="בוצעו"
                         android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

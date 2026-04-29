@@ -47,7 +47,6 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation(libs.lifecycle.runtime.ktx)
     // RecyclerView + CardView (כרטיסי משימות)
     implementation("androidx.recyclerview:recyclerview:1.3.2")

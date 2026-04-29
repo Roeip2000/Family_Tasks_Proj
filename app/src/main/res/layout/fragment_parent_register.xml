@@ -22,8 +22,10 @@
         android:id="@+id/etFirstName"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:autofillHints="givenName"
         android:background="@drawable/bg_repository_list"
         android:hint="שם פרטי"
+        android:inputType="textPersonName"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
 
@@ -33,8 +35,10 @@
         android:id="@+id/etLastName"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:autofillHints="familyName"
         android:background="@drawable/bg_repository_list"
         android:hint="שם משפחה"
+        android:inputType="textPersonName"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
 
@@ -44,6 +48,7 @@
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:autofillHints="emailAddress"
         android:background="@drawable/bg_repository_list"
         android:hint="אימייל"
         android:inputType="textEmailAddress"
@@ -56,6 +61,7 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:autofillHints="newPassword"
         android:background="@drawable/bg_repository_list"
         android:hint="סיסמה"
         android:inputType="textPassword"

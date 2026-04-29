@@ -73,6 +73,7 @@
                         android:id="@+id/imgTaskPreview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:contentDescription="@string/cd_task_image"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_image_placeholder" />
                 </FrameLayout>
@@ -93,6 +94,8 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_repository_list"
                     android:hint="הכנס שם משימה"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
                     android:paddingHorizontal="16dp"
                     android:textSize="16sp" />
 
@@ -129,6 +132,8 @@
                     android:background="@drawable/bg_repository_list"
                     android:focusable="false"
                     android:hint="לחץ לבחירת תאריך"
+                    android:importantForAutofill="no"
+                    android:inputType="date"
                     android:paddingHorizontal="16dp"
                     android:textSize="16sp" />
 
