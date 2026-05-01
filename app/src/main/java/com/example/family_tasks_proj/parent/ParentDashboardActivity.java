@@ -6,15 +6,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.models.AssignedTask;
 import com.example.family_tasks_proj.parent.adapter.ParentDashboardTaskAdapter;
@@ -38,7 +37,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR, btnLogout;
     private TextView tvName, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
     private View fOpen, fUrgent, fOverdue, fDone;
-    private ListView lvTasks;
+    private RecyclerView rvTasks;
 
     private final List<AssignedTask> allTasks = new ArrayList<>();
     private final List<AssignedTask> visibleTasks = new ArrayList<>();
@@ -79,7 +78,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         tvOverdue = findViewById(R.id.tvParentOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasks);
         tvFilterTitle = findViewById(R.id.tvTaskSectionTitle);
-        lvTasks = findViewById(R.id.lvTasks);
+        rvTasks = findViewById(R.id.rvTasks);
 
         fOpen = findViewById(R.id.containerFilterOpen);
         fUrgent = findViewById(R.id.containerFilterUrgent);
@@ -200,15 +199,16 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void setupLists() {
+        rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
         taskAdapter.setShowChildName(true);
-        lvTasks.setAdapter(taskAdapter);
-        lvTasks.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+        taskAdapter.setOnItemClickListener(new ParentDashboardTaskAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(android.widget.AdapterView<?> p, View v, int pos, long id) {
-                showTaskOptions(pos);
+            public void onItemClick(AssignedTask task, int position) {
+                showTaskOptions(position);
             }
         });
+        rvTasks.setAdapter(taskAdapter);
     }
 
     private void loadProfile(FirebaseUser user) {
@@ -324,7 +324,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             tvNoTasks.setVisibility(View.GONE);
         }
         taskAdapter.notifyDataSetChanged();
-        updateHeight();
     }
 
     private void showTaskOptions(int pos) {
@@ -361,22 +360,5 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         finish();
                     }
                 }).setNegativeButton(R.string.dialog_cancel, null).show();
-    }
-
-    private void updateHeight() {
-        ListAdapter adp = lvTasks.getAdapter();
-        if (adp == null) {
-            return;
-        }
-        int h = 0;
-        int spec = View.MeasureSpec.makeMeasureSpec(lvTasks.getWidth(), View.MeasureSpec.AT_MOST);
-        for (int i = 0; i < adp.getCount(); i++) {
-            View v = adp.getView(i, null, lvTasks);
-            v.measure(spec, View.MeasureSpec.UNSPECIFIED);
-            h += v.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams p = lvTasks.getLayoutParams();
-        p.height = h + (lvTasks.getDividerHeight() * (adp.getCount() - 1));
-        lvTasks.setLayoutParams(p);
     }
 }

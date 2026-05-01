@@ -253,13 +253,11 @@
                 android:textColor="@color/text_secondary"
                 android:visibility="gone" />
 
-            <ListView
-                android:id="@+id/lvTasks"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="10dp"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
                 tools:ignore="NestedScrolling" />

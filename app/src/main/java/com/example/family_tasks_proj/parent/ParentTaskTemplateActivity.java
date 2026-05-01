@@ -153,6 +153,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                 }
                 templateAdapter.notifyDataSetChanged();
+                updateHeight();
                 if (templateDataList.isEmpty()) {
                     tvNoTemplatesInfo.setVisibility(View.VISIBLE);
                 } else {
@@ -257,7 +258,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     delete(template.getId());
                 }
             }
-        }).show();
+        }).setNegativeButton(R.string.dialog_cancel, null).show();
     }
 
     private void clearForm() {
@@ -274,6 +275,23 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private DatabaseReference getTemplatesReference() {
         return FirebaseDatabase.getInstance().getReference("parents").child(currentParentUserId).child("task_templates");
+    }
+
+    private void updateHeight() {
+        android.widget.ListAdapter adp = listViewTemplates.getAdapter();
+        if (adp == null) {
+            return;
+        }
+        int h = 0;
+        int spec = View.MeasureSpec.makeMeasureSpec(listViewTemplates.getWidth(), View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < adp.getCount(); i++) {
+            View v = adp.getView(i, null, listViewTemplates);
+            v.measure(spec, View.MeasureSpec.UNSPECIFIED);
+            h += v.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams p = listViewTemplates.getLayoutParams();
+        p.height = h + (listViewTemplates.getDividerHeight() * (adp.getCount() - 1));
+        listViewTemplates.setLayoutParams(p);
     }
 
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {

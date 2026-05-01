@@ -1,97 +1,93 @@
 package com.example.family_tasks_proj.parent.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.family_tasks_proj.models.AssignedTask;
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.models.AssignedTask;
 import com.example.family_tasks_proj.utils.DateUtils;
+import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
-/** מתאם עבור רשימת המשימות בדשבורד ההורה. */
-public class ParentDashboardTaskAdapter extends ArrayAdapter<AssignedTask> {
+/** מתאם עבור רשימת המשימות בדשבורד ההורה (RecyclerView). */
+public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
-    private final LayoutInflater inflater;
+    private final Context context;
+    private final List<AssignedTask> items;
     private boolean showChildName = false;
+    private OnItemClickListener listener;
 
-    public ParentDashboardTaskAdapter(@NonNull Context context, @NonNull List<AssignedTask> items) {
-        super(context, 0, items);
-        this.inflater = LayoutInflater.from(context);
+    public interface OnItemClickListener {
+        void onItemClick(AssignedTask task, int position);
+    }
+
+    public ParentDashboardTaskAdapter(Context context, List<AssignedTask> items) {
+        this.context = context;
+        this.items = items;
     }
 
     public void setShowChildName(boolean showChildName) {
         this.showChildName = showChildName;
     }
 
-    @NonNull
-    @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        AssignedTask task = getItem(position);
-        return bindTaskView(convertView, parent, task);
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
-    private View bindTaskView(View convertView, ViewGroup parent, AssignedTask task) {
-        if (convertView == null || convertView.findViewById(R.id.tvTaskTitleCard) == null) {
-            convertView = inflater.inflate(R.layout.item_parent_task, parent, false);
-        }
-        if (task == null) {
-            return convertView;
-        }
+    @NonNull
+    @Override
+    public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_parent_task, parent, false);
+        return new TaskViewHolder(view);
+    }
 
-        Context context = getContext();
-        TextView tvTitle = convertView.findViewById(R.id.tvTaskTitleCard);
-        TextView tvOwner = convertView.findViewById(R.id.tvTaskOwner);
-        TextView tvDue = convertView.findViewById(R.id.tvDueDateCard);
-        TextView tvStatus = convertView.findViewById(R.id.tvStatusChip);
-        View viewDot = convertView.findViewById(R.id.viewTaskDot);
+    @Override
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        AssignedTask task = items.get(position);
         
-        View imgShell = convertView.findViewById(R.id.imgTaskParentShell);
-        ImageView imgTask = convertView.findViewById(R.id.imgTaskParent);
-
         String titleText = task.getTitle();
         if (titleText == null || titleText.isEmpty()) {
             titleText = context.getString(R.string.task_default_title);
         }
-        tvTitle.setText(titleText);
+        holder.tvTitle.setText(titleText);
 
         if (showChildName) {
             String ownerName = task.getChildName();
             if (ownerName == null || ownerName.trim().isEmpty()) {
                 ownerName = context.getString(R.string.default_child_name);
             }
-            tvOwner.setText(context.getString(R.string.task_assigned_to, ownerName));
-            tvOwner.setVisibility(View.VISIBLE);
+            holder.tvOwner.setText(context.getString(R.string.task_assigned_to, ownerName));
+            holder.tvOwner.setVisibility(View.VISIBLE);
         } else {
-            tvOwner.setVisibility(View.GONE);
+            holder.tvOwner.setVisibility(View.GONE);
         }
         
-        // --- נושא במחוון: Image/Base64 ---
         String base64 = task.getImageBase64();
         if (base64 != null && !base64.trim().isEmpty()) {
-            android.graphics.Bitmap bitmap = com.example.family_tasks_proj.utils.ImageHelper.base64ToBitmap(base64);
+            Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
             if (bitmap != null) {
-                imgShell.setVisibility(View.VISIBLE);
-                imgTask.setImageBitmap(bitmap);
+                holder.imgShell.setVisibility(View.VISIBLE);
+                holder.imgTask.setImageBitmap(bitmap);
             } else {
-                imgShell.setVisibility(View.GONE);
+                holder.imgShell.setVisibility(View.GONE);
             }
         } else {
-            imgShell.setVisibility(View.GONE);
+            holder.imgShell.setVisibility(View.GONE);
         }
 
         long days = DateUtils.daysLeft(task.getDueAt());
         boolean urgent = DateUtils.isDueSoon(task.getDueAt());
 
-        // צבעים וטקסטים משתנים לפי מצב המשימה: בוצעה, באיחור, דחופה או רגילה.
         String duePrefix;
         int dueTextColor;
         if (task.getIsDone()) {
@@ -107,8 +103,8 @@ public class ParentDashboardTaskAdapter extends ArrayAdapter<AssignedTask> {
             duePrefix = context.getString(R.string.task_due_regular_prefix);
             dueTextColor = R.color.regular_due;
         }
-        tvDue.setText(context.getString(R.string.task_due_display, duePrefix, task.getDueAt()));
-        tvDue.setTextColor(context.getColor(dueTextColor));
+        holder.tvDue.setText(context.getString(R.string.task_due_display, duePrefix, task.getDueAt()));
+        holder.tvDue.setTextColor(context.getColor(dueTextColor));
 
         int bg, text, dotColor;
         String statusText;
@@ -135,19 +131,49 @@ public class ParentDashboardTaskAdapter extends ArrayAdapter<AssignedTask> {
             statusText = context.getString(R.string.parent_dashboard_task_status_waiting);
         }
 
-        tvStatus.setText(statusText);
-        tvStatus.setTextColor(context.getColor(text));
+        holder.tvStatus.setText(statusText);
+        holder.tvStatus.setTextColor(context.getColor(text));
         
         GradientDrawable chip = new GradientDrawable();
         chip.setColor(context.getColor(bg));
         chip.setCornerRadius(context.getResources().getDisplayMetrics().density * 14);
-        tvStatus.setBackground(chip);
+        holder.tvStatus.setBackground(chip);
 
         GradientDrawable dotBg = new GradientDrawable();
         dotBg.setShape(GradientDrawable.OVAL);
         dotBg.setColor(context.getColor(dotColor));
-        viewDot.setBackground(dotBg);
+        holder.viewDot.setBackground(dotBg);
 
-        return convertView;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    // המשתמש הקליד על הפריט - פותח אפשרויות ניהול ב-Activity
+                    listener.onItemClick(task, holder.getAdapterPosition());
+                }
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    public static class TaskViewHolder extends RecyclerView.ViewHolder {
+        TextView tvTitle, tvOwner, tvDue, tvStatus;
+        View viewDot, imgShell;
+        ImageView imgTask;
+
+        public TaskViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvTitle = itemView.findViewById(R.id.tvTaskTitleCard);
+            tvOwner = itemView.findViewById(R.id.tvTaskOwner);
+            tvDue = itemView.findViewById(R.id.tvDueDateCard);
+            tvStatus = itemView.findViewById(R.id.tvStatusChip);
+            viewDot = itemView.findViewById(R.id.viewTaskDot);
+            imgShell = itemView.findViewById(R.id.imgTaskParentShell);
+            imgTask = itemView.findViewById(R.id.imgTaskParent);
+        }
     }
 }

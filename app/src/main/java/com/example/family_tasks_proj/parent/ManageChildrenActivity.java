@@ -209,7 +209,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     delete(item.id);
                 }
             }
-        }).show();
+        }).setNegativeButton(R.string.dialog_cancel, null).show();
     }
 
     private DatabaseReference getChildrenReference() {
