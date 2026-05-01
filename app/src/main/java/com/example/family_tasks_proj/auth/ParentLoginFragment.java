@@ -78,7 +78,6 @@ public class ParentLoginFragment extends Fragment {
             return;
         }
 
-        setLoading(true);
         // מבצע כניסה למערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
@@ -86,7 +85,6 @@ public class ParentLoginFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-                setLoading(false);
                 if (task.isSuccessful()) {
                     // אם הכניסה הצליחה, עוברים לדשבורד של ההורה
                     // אין צורך להעביר uid ב-Intent כי FirebaseAuth יודע מי המשתמש המחובר.
@@ -103,14 +101,5 @@ public class ParentLoginFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void setLoading(boolean isLoading) {
-        btnLogin.setEnabled(!isLoading);
-        if (isLoading) {
-            btnLogin.setText(R.string.btn_login_loading);
-        } else {
-            btnLogin.setText(R.string.btn_login);
-        }
     }
 }

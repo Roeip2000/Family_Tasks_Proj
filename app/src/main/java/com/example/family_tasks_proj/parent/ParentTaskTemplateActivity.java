@@ -190,7 +190,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
-        btnSaveTemplate.setEnabled(false);
         // שומרים רק את שדות התבנית: id, כותרת, כוכבים ותמונה אופציונלית.
         ref.child("title").setValue(title);
         ref.child("starsWorth").setValue(starsWorth);
@@ -203,7 +202,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         ref.child("id").setValue(templateId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                btnSaveTemplate.setEnabled(true);
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
@@ -270,7 +268,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         tvFormHeader.setText(R.string.title_create_template);
         btnSaveTemplate.setText(R.string.btn_save_template);
         btnCancelTemplateEdit.setVisibility(View.GONE);
-        btnSaveTemplate.setEnabled(true);
     }
 
     private DatabaseReference getTemplatesReference() {

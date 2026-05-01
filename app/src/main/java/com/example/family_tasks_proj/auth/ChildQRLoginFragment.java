@@ -88,16 +88,8 @@ public class ChildQRLoginFragment extends Fragment {
         checkQrTarget(parsed);
     }
 
-    // מציג או מסתיר את מצב הטעינה
-    private void setLoading(boolean isLoading) {
-        if (btnScanQR != null) {
-            btnScanQR.setEnabled(!isLoading);
-        }
-    }
-
     // בודק לאן להפנות את המשתמש לפי תוכן ה-QR
     private void checkQrTarget(ParsedQr parsed) {
-        setLoading(true);
         if (isBlank(parsed.childId)) {
             // אם ה-QR מכיל רק הורה, עוברים למסך בחירת ילד מתוך המשפחה
             checkParentExists(parsed.parentId);
@@ -155,7 +147,6 @@ public class ChildQRLoginFragment extends Fragment {
                     return;
                 }
                 if (!snapshot.exists()) {
-                    setLoading(false);
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -168,7 +159,6 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-                setLoading(false);
                 Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
@@ -183,7 +173,6 @@ public class ChildQRLoginFragment extends Fragment {
                     return;
                 }
                 if (!snapshot.exists()) {
-                    setLoading(false);
                     Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -196,7 +185,6 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-                setLoading(false);
                 Toast.makeText(requireContext(), getString(R.string.child_qr_connection_error, error.getMessage()), Toast.LENGTH_LONG).show();
             }
         });

@@ -182,8 +182,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             selectedTemplate = null;
         }
 
-        btnAssignTask.setEnabled(false);
-
         // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
         newTaskRef.child("title").setValue(title);
         newTaskRef.child("dueAt").setValue(date);

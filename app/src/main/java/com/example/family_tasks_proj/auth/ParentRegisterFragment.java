@@ -85,7 +85,6 @@ public class ParentRegisterFragment extends Fragment {
             return;
         }
 
-        setLoading(true);
         // יוצר משתמש חדש במערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
@@ -99,7 +98,6 @@ public class ParentRegisterFragment extends Fragment {
                     FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> saveTask) {
-                            setLoading(false);
                             if (saveTask.isSuccessful()) {
                                 Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
@@ -108,7 +106,6 @@ public class ParentRegisterFragment extends Fragment {
                         }
                     });
                 } else {
-                    setLoading(false);
                     String errorMessage;
                     if (task.getException() != null) {
                         errorMessage = task.getException().getMessage();
@@ -119,14 +116,5 @@ public class ParentRegisterFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void setLoading(boolean isLoading) {
-        btnRegister.setEnabled(!isLoading);
-        if (isLoading) {
-            btnRegister.setText(R.string.btn_create_account_loading);
-        } else {
-            btnRegister.setText(R.string.btn_create_account);
-        }
     }
 }

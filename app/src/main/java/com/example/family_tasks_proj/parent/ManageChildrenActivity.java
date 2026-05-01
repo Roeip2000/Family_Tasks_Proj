@@ -146,14 +146,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        btnAdd.setEnabled(false);
         // שמירה של שני שדות פשוטים: שם פרטי ושם משפחה. אין כאן תמונת ילד.
         DatabaseReference currentChildRef = getChildrenReference().child(childId);
         currentChildRef.child("firstName").setValue(firstName);
         currentChildRef.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                btnAdd.setEnabled(true);
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
