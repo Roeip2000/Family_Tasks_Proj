@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents;
+package com.example.family_tasks_proj.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.family_tasks_proj.Parents_Dashbord_and_mange.ParentDashboardActivity;
+import com.example.family_tasks_proj.parent.ParentDashboardActivity;
 import com.example.family_tasks_proj.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

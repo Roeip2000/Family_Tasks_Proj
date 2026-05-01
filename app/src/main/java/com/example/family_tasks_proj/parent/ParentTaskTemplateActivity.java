@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.parent;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,9 +22,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.TaskTemplate;
+import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.util.ImageHelper;
+import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

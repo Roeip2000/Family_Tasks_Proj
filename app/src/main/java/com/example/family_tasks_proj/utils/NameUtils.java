@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.util;
+package com.example.family_tasks_proj.utils;
 
 /** מחלקת עזר לטיפול בשמות משתמשים. */
 public final class NameUtils {

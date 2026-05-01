@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.parent;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;

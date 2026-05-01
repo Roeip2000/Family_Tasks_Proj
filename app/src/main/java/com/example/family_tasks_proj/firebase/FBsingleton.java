@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.FireBase;
+package com.example.family_tasks_proj.firebase;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;

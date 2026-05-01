@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Child_Login;
+package com.example.family_tasks_proj.auth;
 
 import android.content.Context;
 import android.content.Intent;

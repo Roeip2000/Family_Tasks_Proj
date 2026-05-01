@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.child.model;
+package com.example.family_tasks_proj.models;
 
 /** מודל המייצג משימה שהוקצתה לילד. כוללת תאריך יעד, סטטוס ביצוע וכמות כוכבים. */
 public class ChildTask {

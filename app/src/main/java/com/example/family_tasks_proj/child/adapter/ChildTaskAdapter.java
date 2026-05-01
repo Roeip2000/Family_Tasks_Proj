@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.child;
+package com.example.family_tasks_proj.child.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -14,9 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.model.ChildTask;
-import com.example.family_tasks_proj.util.DateUtils;
-import com.example.family_tasks_proj.util.ImageHelper;
+import com.example.family_tasks_proj.models.ChildTask;
+import com.example.family_tasks_proj.utils.DateUtils;
+import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;

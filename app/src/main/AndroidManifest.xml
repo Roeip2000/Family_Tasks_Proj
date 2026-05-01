@@ -18,22 +18,22 @@
         <!-- מסכי הורה אחרי התחברות -->
         <!-- מסכי הורה — adjustResize כדי שהמקלדת לא תסתיר שדות קלט -->
         <activity
-            android:name=".Parents_Dashbord_and_mange.AssignTaskToChildActivity"
+            android:name=".parent.AssignTaskToChildActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Parents_Dashbord_and_mange.ParentTaskTemplateActivity"
+            android:name=".parent.ParentTaskTemplateActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Parents_Dashbord_and_mange.ParentDashboardActivity"
+            android:name=".parent.ParentDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".Parents_Dashbord_and_mange.ManageChildrenActivity"
+            android:name=".parent.ManageChildrenActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Parents_Dashbord_and_mange.GenerateQRActivity"
+            android:name=".parent.GenerateQRActivity"
             android:exported="false" />
 
         <!-- מסך פתיחה ראשי — adjustResize בגלל שדות login/register -->
@@ -52,7 +52,7 @@
             android:name=".child.ChildDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".Child_Login.ChildSelectionActivity"
+            android:name=".auth.ChildSelectionActivity"
             android:exported="false" />
 
         <!-- מסך סריקת QR -->

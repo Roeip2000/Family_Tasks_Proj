@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Child_Login;
+package com.example.family_tasks_proj.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
-import com.example.family_tasks_proj.util.NameUtils;
+import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;

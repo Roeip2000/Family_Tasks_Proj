@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
+package com.example.family_tasks_proj.models;
 
 /** מודל המייצג תבנית של משימה (למשל "סידור חדר"). משמש ליצירה מהירה של משימות חוזרות. */
 public class TaskTemplate {

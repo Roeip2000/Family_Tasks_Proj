@@ -7,7 +7,7 @@
     android:background="@color/bg_screen"
     android:fillViewport="true"
     android:layoutDirection="rtl"
-    tools:context=".Parents_Dashbord_and_mange.GenerateQRActivity">
+    tools:context=".parent.GenerateQRActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

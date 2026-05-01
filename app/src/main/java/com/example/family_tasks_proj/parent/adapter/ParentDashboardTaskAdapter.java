@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.parent.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTask;
+import com.example.family_tasks_proj.models.AssignedTask;
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.utils.DateUtils;
 
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class ParentDashboardTaskAdapter extends ArrayAdapter<AssignedTask> {
         // --- נושא במחוון: Image/Base64 ---
         String base64 = task.getImageBase64();
         if (base64 != null && !base64.trim().isEmpty()) {
-            android.graphics.Bitmap bitmap = com.example.family_tasks_proj.util.ImageHelper.base64ToBitmap(base64);
+            android.graphics.Bitmap bitmap = com.example.family_tasks_proj.utils.ImageHelper.base64ToBitmap(base64);
             if (bitmap != null) {
                 imgShell.setVisibility(View.VISIBLE);
                 imgTask.setImageBitmap(bitmap);

@@ -18,8 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
-import com.example.family_tasks_proj.child.model.ChildTask;
-import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.models.ChildTask;
+import com.example.family_tasks_proj.child.adapter.ChildTaskAdapter;
+import com.example.family_tasks_proj.utils.DateUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;

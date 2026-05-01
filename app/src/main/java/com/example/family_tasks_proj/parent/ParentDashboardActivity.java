@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange;
+package com.example.family_tasks_proj.parent;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,10 +16,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.family_tasks_proj.Parents_Dashbord_and_mange.model.AssignedTask;
+import com.example.family_tasks_proj.models.AssignedTask;
+import com.example.family_tasks_proj.parent.adapter.ParentDashboardTaskAdapter;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
-import com.example.family_tasks_proj.util.DateUtils;
+import com.example.family_tasks_proj.utils.DateUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

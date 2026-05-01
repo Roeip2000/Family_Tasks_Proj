@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.util;
+package com.example.family_tasks_proj.utils;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
+package com.example.family_tasks_proj.models;
 
 /** מודל משימה מוקצית להצגה בדשבורד ההורה. כולל את פרטי הילד והמשימה. */
 public class AssignedTask {
