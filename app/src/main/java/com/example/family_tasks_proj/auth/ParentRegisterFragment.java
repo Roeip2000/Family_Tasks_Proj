@@ -31,7 +31,6 @@ public class ParentRegisterFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
-    private ProgressBar progressRegister;
 
     public ParentRegisterFragment() {}
 
@@ -49,7 +48,6 @@ public class ParentRegisterFragment extends Fragment {
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnRegister = view.findViewById(R.id.btnRegister);
-        progressRegister = view.findViewById(R.id.progressRegister);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,14 +128,6 @@ public class ParentRegisterFragment extends Fragment {
             btnRegister.setText(R.string.btn_create_account_loading);
         } else {
             btnRegister.setText(R.string.btn_create_account);
-        }
-
-        if (progressRegister != null) {
-            if (isLoading) {
-                progressRegister.setVisibility(View.VISIBLE);
-            } else {
-                progressRegister.setVisibility(View.GONE);
-            }
         }
     }
 }

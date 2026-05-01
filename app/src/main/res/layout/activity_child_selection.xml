@@ -48,14 +48,6 @@
                     android:layout_marginTop="6dp"
                     android:text="@string/subtitle_child_login" />
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_marginStart="12dp"
-                android:contentDescription="@string/title_child_login"
-                android:src="@drawable/ic_child_care"
-                app:tint="@color/md_theme_primary" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -156,15 +148,6 @@
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"
-            android:indeterminateTint="@color/md_theme_primary"
-            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

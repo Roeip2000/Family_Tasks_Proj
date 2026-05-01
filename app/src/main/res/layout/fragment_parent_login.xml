@@ -58,12 +58,4 @@
         android:textStyle="bold"
         app:cornerRadius="12dp" />
 
-    <ProgressBar
-        android:id="@+id/progressLogin"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:visibility="gone" />
-
 </LinearLayout>

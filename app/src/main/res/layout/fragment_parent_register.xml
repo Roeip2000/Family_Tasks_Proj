@@ -78,12 +78,4 @@
         android:textColor="@color/white"
         app:cornerRadius="12dp" />
 
-    <ProgressBar
-        android:id="@+id/progressRegister"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:visibility="gone" />
-
 </LinearLayout>

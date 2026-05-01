@@ -33,7 +33,6 @@ public class ChildQRLoginFragment extends Fragment {
     private static final String KEY_CHILD = "childId";
 
     private Button btnScanQR;
-    private android.widget.ProgressBar progressScan;
 
     // אובייקט לניהול פתיחת המצלמה וקבלת תוצאת הסריקה
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
@@ -51,7 +50,6 @@ public class ChildQRLoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
         btnScanQR = view.findViewById(R.id.btnScanQR);
-        progressScan = view.findViewById(R.id.progressScan);
         btnScanQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,13 +92,6 @@ public class ChildQRLoginFragment extends Fragment {
     private void setLoading(boolean isLoading) {
         if (btnScanQR != null) {
             btnScanQR.setEnabled(!isLoading);
-        }
-        if (progressScan != null) {
-            if (isLoading) {
-                progressScan.setVisibility(View.VISIBLE);
-            } else {
-                progressScan.setVisibility(View.GONE);
-            }
         }
     }
 

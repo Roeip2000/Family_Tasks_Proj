@@ -29,7 +29,6 @@ public class ParentLoginFragment extends Fragment {
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private ProgressBar progressLogin;
 
     public ParentLoginFragment() {}
 
@@ -45,7 +44,6 @@ public class ParentLoginFragment extends Fragment {
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
-        progressLogin = view.findViewById(R.id.progressLogin);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,13 +112,6 @@ public class ParentLoginFragment extends Fragment {
             btnLogin.setText(R.string.btn_login_loading);
         } else {
             btnLogin.setText(R.string.btn_login);
-        }
-        if (progressLogin != null) {
-            if (isLoading) {
-                progressLogin.setVisibility(View.VISIBLE);
-            } else {
-                progressLogin.setVisibility(View.GONE);
-            }
         }
     }
 }

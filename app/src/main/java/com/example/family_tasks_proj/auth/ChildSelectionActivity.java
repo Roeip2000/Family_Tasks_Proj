@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private TextView tvParentLabel, tvSubtitle, tvChildLabel, tvNoChildren;
     private Spinner spinnerParents, spinnerChildren;
     private Button btnEnter;
-    private ProgressBar progressBar;
 
     private final List<ParentItem> parentItems = new ArrayList<>();
     private final List<ChildItem> childItems = new ArrayList<>();
@@ -57,7 +55,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
         spinnerChildren = findViewById(R.id.spinnerChildren);
         tvNoChildren = findViewById(R.id.tvNoChildren);
         btnEnter = findViewById(R.id.btnEnter);
-        progressBar = findViewById(R.id.progressBar);
     }
 
     private void bindActions() {
@@ -100,13 +97,11 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     // טוען את כל ההורים הרשומים במערכת מתוך ה-Database
     private void loadParents() {
-        progressBar.setVisibility(View.VISIBLE);
         // ניגש לתיקיית "parents" הראשית כדי להציג את כל המשפחות הקיימות
         // זה משמש כניסה ידנית לילד כשאין QR או כשצריך לבחור משפחה.
         FirebaseDatabase.getInstance().getReference("parents").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                progressBar.setVisibility(View.GONE);
                 parentItems.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String parentUid = snap.getKey();
@@ -139,20 +134,17 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
 
     // טוען את הילדים השייכים להורה שנבחר מתוך תת-התיקייה שלו
     private void loadChildren(String selectedParentId) {
-        progressBar.setVisibility(View.VISIBLE);
         // ניגש לנתיב parents/{parentId}/children כדי למצוא את הילדים של אותה משפחה
         // ה-Spinner מציג שמות, אבל הבחירה נשמרת לפי childId כדי למנוע בלבול בין שמות דומים.
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                progressBar.setVisibility(View.GONE);
                 childItems.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String childId = snap.getKey();
@@ -187,7 +179,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
