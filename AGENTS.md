@@ -47,12 +47,12 @@
 - Child records: `/parents/{uid}/children/{childId}`
 - Child tasks: `/parents/{uid}/children/{childId}/tasks/{taskId}`
 - Task templates: `/parents/{uid}/task_templates/{templateId}`
-- Parent profile image field in current source: `profileImageBase64`
-- Child profile image field in current source: `profileImageBase64`
+- Current source does not store or display parent/child profile images.
+- Task images are stored on task templates and copied into assigned tasks as `imageBase64`.
 
 ## Important Implementation Conventions
 - `FBsingleton` writes parent profile fields with `updateChildren`, not `setValue`, to avoid overwriting child/template subtrees.
-- `ImageHelper` is the shared path for image pick/load, EXIF correction, Base64 conversion, and circular avatar rendering.
+- `ImageHelper` is the shared path for task image pick/load, Base64 conversion, and image preview rendering.
 - Parent dashboard summaries should be derived from task state, not from new backend counters.
 - Child session persistence uses `SharedPreferences` under `child_session`.
 
@@ -85,7 +85,7 @@
   - existing `ImageView`, `TextView`, `Button`, `Spinner`
 - Prefer 18dp-22dp corner radii for main cards and 12dp-16dp for smaller pills and buttons.
 - Keep parent and child flows visually distinct with soft tinted surfaces, not with new logic or extra screens.
-- Use project-owned placeholders like `@drawable/ic_image_placeholder` and the shared avatar placeholder. Do not fall back to old default Android gallery/calendar icons in polished UI.
+- Use project-owned placeholders like `@drawable/ic_image_placeholder` for task images. Do not fall back to old default Android gallery/calendar icons in polished UI.
 - Secondary and back buttons must always look active and readable. They should never look like disabled dark blocks.
 - For design-only polish, Java changes should stay minimal and only support the visual system:
   - swapping old placeholders

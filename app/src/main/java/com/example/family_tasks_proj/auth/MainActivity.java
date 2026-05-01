@@ -32,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
         // אתחול Singleton של Firebase
         FBsingleton.getInstance();
 
+        // FirebaseAuth שומר התחברות של הורה גם אחרי סגירת האפליקציה.
+        // לכן קודם בודקים אם כבר יש הורה מחובר לפני שמציגים את מסך הבית.
         if (openSavedParentSession()) {
             return;
         }
 
+        // לילד אין FirebaseAuth משלו. את פרטי הילד שומרים מקומית ב-SharedPreferences.
         if (openSavedChildSession()) {
             return;
         }
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         
+        // Intent מעביר את מזהי ההורה והילד למסך הבא כדי לדעת מאיזה נתיב ב-Firebase לטעון משימות.
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra("parentId", parentId);
         intent.putExtra("childId", childId);
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         String parentId = sp.getString("parentId", null);
         String childId = sp.getString("childId", null);
 
+        // אם כבר נשמר ילד במכשיר, נכנסים ישר אליו. אחרת פותחים בחירת משפחה/ילד.
         if (parentId != null && childId != null) {
             Intent intent = new Intent(this, ChildDashboardActivity.class);
             intent.putExtra("parentId", parentId);

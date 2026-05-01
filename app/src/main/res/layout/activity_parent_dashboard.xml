@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface_muted"
@@ -25,7 +26,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="שלום!"
+                android:layout_marginEnd="12dp"
+                android:layout_toStartOf="@id/btnLogout"
+                android:text="@string/parent_hello_initial"
                 android:textColor="@color/text_primary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -37,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="התנתק"
+                android:text="@string/btn_logout"
                 android:textColor="@color/logout_text" />
         </RelativeLayout>
 
@@ -73,14 +76,14 @@
                         android:id="@+id/tvParentTotalTasks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
+                        android:text="@string/zero_count"
                         android:textColor="@color/text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="פתוחות"
+                        android:text="@string/stat_open_short"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -101,14 +104,14 @@
                         android:id="@+id/tvParentDueSoon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
+                        android:text="@string/zero_count"
                         android:textColor="@color/urgent"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="דחופות"
+                        android:text="@string/stat_urgent_short"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -129,14 +132,14 @@
                         android:id="@+id/tvParentOverdue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
+                        android:text="@string/zero_count"
                         android:textColor="@color/danger"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="באיחור"
+                        android:text="@string/stat_overdue_short"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -157,14 +160,14 @@
                         android:id="@+id/tvParentCompleted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
+                        android:text="@string/zero_count"
                         android:textColor="@color/success"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="בוצעו"
+                        android:text="@string/stat_done_short"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -186,7 +189,7 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:backgroundTint="@color/primary"
-                android:text="הקצאת משימה"
+                android:text="@string/title_assign_task"
                 app:cornerRadius="12dp" />
             <Button
                 android:id="@+id/btnManageChildren"
@@ -195,7 +198,7 @@
                 android:layout_height="54dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
-                android:text="ניהול ילדים"
+                android:text="@string/title_manage_children"
                 android:textColor="@color/primary"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/border_strong" />
@@ -206,7 +209,7 @@
                 android:layout_height="54dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
-                android:text="תבניות"
+                android:text="@string/btn_templates"
                 android:textColor="@color/primary"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/border_strong" />
@@ -217,7 +220,7 @@
                 android:layout_height="54dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
-                android:text="קוד QR"
+                android:text="@string/btn_qr_code"
                 android:textColor="@color/primary"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/border_strong" />
@@ -234,7 +237,7 @@
                 android:id="@+id/tvTaskSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="כל המשימות"
+                android:text="@string/parent_filter_all"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -246,7 +249,7 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:padding="40dp"
-                android:text="אין משימות בקטגוריה זו"
+                android:text="@string/empty_tasks_filter"
                 android:textColor="@color/text_secondary"
                 android:visibility="gone" />
 
@@ -257,8 +260,9 @@
                 android:layout_marginTop="16dp"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="10dp"
-                android:nestedScrollingEnabled="true"
-                android:overScrollMode="never" />
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:ignore="NestedScrolling" />
         </LinearLayout>
 
     </LinearLayout>

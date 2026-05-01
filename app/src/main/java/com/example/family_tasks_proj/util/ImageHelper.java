@@ -19,7 +19,9 @@ public class ImageHelper {
         try {
             InputStream inputStream = resolver.openInputStream(uri);
             Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
-            if (originalBitmap == null) return null;
+            if (originalBitmap == null) {
+                return null;
+            }
 
             // חישוב יחס הקטנה
             int width = originalBitmap.getWidth();
@@ -37,7 +39,9 @@ public class ImageHelper {
 
     // הופך Bitmap למחרוזת טקסט (Base64) כדי לשמור ב-Database
     public static String bitmapToBase64(Bitmap bitmap) {
-        if (bitmap == null) return null;
+        if (bitmap == null) {
+            return null;
+        }
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             // דוחס את התמונה כ-JPEG כדי לחסוך מקום
@@ -51,7 +55,9 @@ public class ImageHelper {
 
     // הופך מחרוזת טקסט (Base64) חזרה לתמונה (Bitmap) להצגה במסך
     public static Bitmap base64ToBitmap(String base64) {
-        if (base64 == null || base64.trim().isEmpty()) return null;
+        if (base64 == null || base64.trim().isEmpty()) {
+            return null;
+        }
         try {
             byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);

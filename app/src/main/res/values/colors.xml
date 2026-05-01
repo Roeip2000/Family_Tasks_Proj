@@ -29,6 +29,7 @@
 
     <!-- סטטוס והתראות -->
     <color name="success">#2ECC71</color>
+    <color name="success_light">#E8F5E9</color>
     <color name="error">#D63031</color>
     <color name="danger">#D63031</color>
     <color name="danger_light">#FFF0F0</color>
@@ -37,6 +38,11 @@
     <color name="urgent">#D35400</color>
     <color name="urgent_light">#FFF0F0</color>
     <color name="logout_text">#D63031</color>
+    <color name="regular_task_bg">#EEF2F7</color>
+    <color name="regular_task_text">#52606D</color>
+    <color name="regular_task_dot">#2F80ED</color>
+    <color name="regular_due">#6B7280</color>
+    <color name="filter_selected_overlay">#1A000000</color>
 
     <!-- מיפוי ל-Material Theme (חובה לבנייה) -->
     <color name="md_theme_primary">@color/primary</color>

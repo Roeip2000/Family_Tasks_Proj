@@ -56,10 +56,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             new ActivityResultCallback<Uri>() {
-                @Override public void onActivityResult(Uri uri) {
+                @Override
+                public void onActivityResult(Uri uri) {
                     if (uri != null) {
                         currentSelectedBitmap = ImageHelper.loadCorrectedBitmap(getContentResolver(), uri);
-                        if (currentSelectedBitmap != null) imagePreview.setImageBitmap(currentSelectedBitmap);
+                        if (currentSelectedBitmap != null) {
+                            imagePreview.setImageBitmap(currentSelectedBitmap);
+                        }
                     }
                 }
             }
@@ -71,7 +74,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parent_task_template);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) { finish(); return; }
+        if (user == null) {
+            finish();
+            return;
+        }
         currentParentUserId = user.getUid();
 
         initViews();
@@ -94,19 +100,31 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private void setupEvents() {
         findViewById(R.id.btnPickImage).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { galleryLauncher.launch("image/*"); }
+            @Override
+            public void onClick(View view) {
+                galleryLauncher.launch("image/*");
+            }
         });
 
         btnSaveTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { processSave(); }
+            @Override
+            public void onClick(View view) {
+                processSave();
+            }
         });
 
         btnCancelTemplateEdit.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { clearForm(); }
+            @Override
+            public void onClick(View view) {
+                clearForm();
+            }
         });
 
         btnBackToMain.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { finish(); }
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
     }
 
@@ -114,13 +132,15 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         templateAdapter = new TemplateListAdapter();
         listViewTemplates.setAdapter(templateAdapter);
         listViewTemplates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override public void onItemClick(AdapterView<?> p, View v, int position, long id) {
+            @Override
+            public void onItemClick(AdapterView<?> p, View v, int position, long id) {
                 showOptions(position);
             }
         });
     }
 
     private void loadFromFirebase() {
+        // תבניות נטענות בזמן אמת מה-Firebase, כדי שכל שמירה או מחיקה תופיע מיד ברשימה.
         getTemplatesReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -139,7 +159,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     tvNoTemplatesInfo.setVisibility(View.GONE);
                 }
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
@@ -147,8 +170,14 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         String title = etTemplateTitle.getText().toString().trim();
         String stars = etTemplateStars.getText().toString().trim();
 
+        // תבנית חייבת שם וכמות כוכבים, כי שני הנתונים האלה מועתקים למשימה שמקצים לילד.
         if (title.isEmpty() || stars.isEmpty()) {
-            Toast.makeText(this, "מלאו את כל הפרטים", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_template_missing_details, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Integer starsWorth = readStarsWorth(stars);
+        if (starsWorth == null) {
             return;
         }
 
@@ -161,10 +190,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
         btnSaveTemplate.setEnabled(false);
-        // שמירה ישירה ללא HashMap
-        ref.child("id").setValue(templateId);
+        // שומרים רק את שדות התבנית: id, כותרת, כוכבים ותמונה אופציונלית.
         ref.child("title").setValue(title);
-        ref.child("starsWorth").setValue(Integer.parseInt(stars));
+        ref.child("starsWorth").setValue(starsWorth);
 
         if (currentSelectedBitmap != null) {
             String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
@@ -175,30 +203,55 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 btnSaveTemplate.setEnabled(true);
-                Toast.makeText(ParentTaskTemplateActivity.this, "התבנית נשמרה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
         });
     }
 
+    private Integer readStarsWorth(String stars) {
+        // המרה בטוחה ממחרוזת למספר, כדי שקלט לא תקין לא יפיל את האפליקציה.
+        int starsWorth;
+        try {
+            starsWorth = Integer.parseInt(stars);
+        } catch (NumberFormatException exception) {
+            Toast.makeText(this, R.string.error_template_stars_number, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        if (starsWorth <= 0) {
+            Toast.makeText(this, R.string.error_template_stars_positive, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        return starsWorth;
+    }
+
     private void delete(String templateId) {
         getTemplatesReference().child(templateId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override public void onSuccess(Void unused) { Toast.makeText(ParentTaskTemplateActivity.this, "התבנית נמחקה", Toast.LENGTH_SHORT).show(); }
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_deleted, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void showOptions(int position) {
         final TaskTemplate template = templateDataList.get(position);
-        String[] options = {"עריכה", "מחיקה"};
+        String[] options = {
+                getString(R.string.dialog_option_edit),
+                getString(R.string.dialog_option_delete)
+        };
         new AlertDialog.Builder(this).setTitle(template.getTitle()).setItems(options, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface d, int which) {
+            @Override
+            public void onClick(DialogInterface d, int which) {
                 if (which == 0) {
                     currentEditTemplateId = template.getId();
                     etTemplateTitle.setText(template.getTitle());
                     etTemplateStars.setText(String.valueOf(template.getStarsWorth()));
                     imagePreview.setImageBitmap(ImageHelper.base64ToBitmap(template.getImageBase64()));
-                    tvFormHeader.setText("עריכת תבנית");
-                    btnSaveTemplate.setText("עדכן תבנית");
+                    tvFormHeader.setText(R.string.title_edit_template);
+                    btnSaveTemplate.setText(R.string.btn_update_template);
                     btnCancelTemplateEdit.setVisibility(View.VISIBLE);
                 } else {
                     delete(template.getId());
@@ -213,8 +266,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         etTemplateTitle.setText("");
         etTemplateStars.setText("");
         imagePreview.setImageResource(R.drawable.ic_image_placeholder);
-        tvFormHeader.setText("יצירת תבנית");
-        btnSaveTemplate.setText("שמור תבנית");
+        tvFormHeader.setText(R.string.title_create_template);
+        btnSaveTemplate.setText(R.string.btn_save_template);
         btnCancelTemplateEdit.setVisibility(View.GONE);
         btnSaveTemplate.setEnabled(true);
     }
@@ -225,13 +278,20 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
         TemplateListAdapter() {
-            super(ParentTaskTemplateActivity.this, 0, templateDataList); }
-        @NonNull @Override public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.item_task_template, parent, false);
+            super(ParentTaskTemplateActivity.this, 0, templateDataList);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_task_template, parent, false);
+            }
             TaskTemplate template = getItem(position);
             if (template != null) {
                 ((TextView) convertView.findViewById(R.id.tvTemplateTitle)).setText(template.getTitle());
-                ((TextView) convertView.findViewById(R.id.tvTemplateStars)).setText(template.getStarsWorth() + " כוכבים");
+                ((TextView) convertView.findViewById(R.id.tvTemplateStars))
+                        .setText(getString(R.string.template_stars_count, template.getStarsWorth()));
                 ((ImageView) convertView.findViewById(R.id.ivTemplateThumb)).setImageBitmap(ImageHelper.base64ToBitmap(template.getImageBase64()));
             }
             return convertView;

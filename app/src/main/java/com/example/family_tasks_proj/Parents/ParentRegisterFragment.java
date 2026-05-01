@@ -77,6 +77,7 @@ public class ParentRegisterFragment extends Fragment {
         final String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // בהרשמה שומרים גם שם פרטי ומשפחה, כדי שבהמשך הדשבורד יוכל להציג ברכה אישית.
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;

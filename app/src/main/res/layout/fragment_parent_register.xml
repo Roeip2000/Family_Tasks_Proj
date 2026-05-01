@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="הרשמת הורה"
+        android:text="@string/title_parent_register"
         android:textColor="@color/primary"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -24,7 +24,7 @@
         android:layout_height="52dp"
         android:autofillHints="givenName"
         android:background="@drawable/bg_repository_list"
-        android:hint="שם פרטי"
+        android:hint="@string/hint_first_name"
         android:inputType="textPersonName"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
@@ -37,7 +37,7 @@
         android:layout_height="52dp"
         android:autofillHints="familyName"
         android:background="@drawable/bg_repository_list"
-        android:hint="שם משפחה"
+        android:hint="@string/hint_last_name"
         android:inputType="textPersonName"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
@@ -50,7 +50,7 @@
         android:layout_height="52dp"
         android:autofillHints="emailAddress"
         android:background="@drawable/bg_repository_list"
-        android:hint="אימייל"
+        android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
@@ -63,7 +63,7 @@
         android:layout_height="52dp"
         android:autofillHints="newPassword"
         android:background="@drawable/bg_repository_list"
-        android:hint="סיסמה"
+        android:hint="@string/hint_password"
         android:inputType="textPassword"
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
@@ -74,7 +74,7 @@
         android:layout_height="56dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/primary"
-        android:text="יצירת חשבון"
+        android:text="@string/btn_create_account"
         android:textColor="@color/white"
         app:cornerRadius="12dp" />
 

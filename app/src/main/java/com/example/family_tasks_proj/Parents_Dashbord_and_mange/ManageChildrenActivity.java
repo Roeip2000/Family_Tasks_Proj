@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.util.NameUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -72,13 +73,22 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void setupEvents() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { saveChildData(); }
+            @Override
+            public void onClick(View view) {
+                saveChildData();
+            }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { clearForm(); }
+            @Override
+            public void onClick(View view) {
+                clearForm();
+            }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { finish(); }
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
     }
 
@@ -94,6 +104,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void loadFromFirebase() {
+        // מציגים את רשימת הילדים מהנתיב parents/{parentId}/children.
+        // כל שינוי ב-Firebase מעדכן את הרשימה במסך דרך ValueEventListener.
         getChildrenReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,7 +118,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 }
                 updateUI();
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
@@ -114,8 +129,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
         final String firstName = etFirstName.getText().toString().trim();
         final String lastName = etLastName.getText().toString().trim();
 
+        // לא שומרים ילד בלי שם מלא, כדי שלא יופיעו רשומות ריקות בדשבורדים.
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -123,19 +139,22 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (editChildId != null) {
             childId = editChildId;
         } else {
+            // push יוצר id ייחודי לילד חדש תחת ההורה המחובר.
             childId = getChildrenReference().push().getKey();
         }
-        if (childId == null) return;
+        if (childId == null) {
+            return;
+        }
 
         btnAdd.setEnabled(false);
-        // שמירה ישירה ללא HashMap
+        // שמירה של שני שדות פשוטים: שם פרטי ושם משפחה. אין כאן תמונת ילד.
         DatabaseReference currentChildRef = getChildrenReference().child(childId);
         currentChildRef.child("firstName").setValue(firstName);
         currentChildRef.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 btnAdd.setEnabled(true);
-                Toast.makeText(ManageChildrenActivity.this, "הנתונים נשמרו", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
         });
@@ -143,7 +162,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void delete(String childId) {
         getChildrenReference().child(childId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override public void onSuccess(Void unused) { Toast.makeText(ManageChildrenActivity.this, "הילד נמחק", Toast.LENGTH_SHORT).show(); }
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_deleted, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -151,9 +173,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
         editChildId = null;
         etFirstName.setText("");
         etLastName.setText("");
-        btnAdd.setText("הוסף ילד");
+        btnAdd.setText(R.string.btn_add_child);
         btnCancel.setVisibility(View.GONE);
-        tvTitle.setText("הוספת ילד");
+        tvTitle.setText(R.string.title_add_child);
     }
 
     private void updateUI() {
@@ -168,15 +190,21 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void openOptions(int position) {
         final ChildItem item = childList.get(position);
-        String[] options = {"עריכה", "מחיקה"};
+        String[] options = {
+                getString(R.string.dialog_option_edit),
+                getString(R.string.dialog_option_delete)
+        };
         new AlertDialog.Builder(this).setTitle(item.firstName).setItems(options, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
+                    // מצב עריכה משתמש באותו טופס של הוספה, רק עם id קיים.
                     editChildId = item.id;
                     etFirstName.setText(item.firstName);
                     etLastName.setText(item.lastName);
-                    btnAdd.setText("עדכן");
+                    btnAdd.setText(R.string.btn_update);
                     btnCancel.setVisibility(View.VISIBLE);
+                    tvTitle.setText(R.string.title_edit_child);
                 } else {
                     delete(item.id);
                 }
@@ -189,23 +217,44 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
-        ChildListAdapter() { super(ManageChildrenActivity.this, 0, childList); }
-        @NonNull @Override public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
+        ChildListAdapter() {
+            super(ManageChildrenActivity.this, 0, childList);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
+            }
             ChildItem item = getItem(position);
-            if (item != null) ((TextView) convertView.findViewById(R.id.tvChildFullName)).setText(item.firstName + " " + item.lastName);
+            if (item != null) {
+                // הרשימה מציגה רק שם מלא וטקסט עזר, בלי תמונה ליד הילד.
+                TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
+                tvChildFullName.setText(NameUtils.fullNameOrDefault(
+                        item.firstName,
+                        item.lastName,
+                        getString(R.string.default_child_name_fallback)));
+            }
             return convertView;
         }
     }
 
     private static class ChildItem {
         String id, firstName, lastName;
-        ChildItem(String id, String f, String l) { this.id = id; this.firstName = f; this.lastName = l; }
+
+        ChildItem(String id, String f, String l) {
+            this.id = id;
+            this.firstName = f;
+            this.lastName = l;
+        }
     }
 
     private void updateListViewHeight() {
         ListAdapter adapter = lvChildren.getAdapter();
-        if (adapter == null) return;
+        if (adapter == null) {
+            return;
+        }
         int totalHeight = 0;
         int listWidth;
         if (lvChildren.getWidth() > 0) {

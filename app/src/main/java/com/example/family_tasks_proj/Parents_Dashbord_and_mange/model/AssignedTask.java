@@ -4,7 +4,6 @@ package com.example.family_tasks_proj.Parents_Dashbord_and_mange.model;
 public class AssignedTask {
     private String childId;
     private String childName;
-    private String childProfileBase64;
     private String taskId;
     private String title;
     private String dueAt;
@@ -25,14 +24,6 @@ public class AssignedTask {
 
     public void setChildName(String childName) {
         this.childName = childName;
-    }
-
-    public String getChildProfileBase64() {
-        return childProfileBase64;
-    }
-
-    public void setChildProfileBase64(String childProfileBase64) {
-        this.childProfileBase64 = childProfileBase64;
     }
 
     public String getTaskId() {

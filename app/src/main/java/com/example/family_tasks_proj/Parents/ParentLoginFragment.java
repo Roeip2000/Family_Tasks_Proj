@@ -70,6 +70,7 @@ public class ParentLoginFragment extends Fragment {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // בדיקת קלט בסיסית לפני פנייה ל-Firebase, כדי לתת למשתמש תשובה מידית.
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
@@ -91,6 +92,7 @@ public class ParentLoginFragment extends Fragment {
                 setLoading(false);
                 if (task.isSuccessful()) {
                     // אם הכניסה הצליחה, עוברים לדשבורד של ההורה
+                    // אין צורך להעביר uid ב-Intent כי FirebaseAuth יודע מי המשתמש המחובר.
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
                 } else {

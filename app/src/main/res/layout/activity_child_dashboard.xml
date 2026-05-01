@@ -19,16 +19,19 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/layoutChildHeaderText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_marginEnd="12dp"
+                android:layout_toStartOf="@id/layoutChildHeaderActions"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvChildName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="שלום!"
+                    android:text="@string/child_hello_initial"
                     android:textColor="@color/text_primary"
                     android:textSize="26sp"
                     android:textStyle="bold" />
@@ -37,12 +40,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="מה המשימה הבאה שלך?"
+                    android:text="@string/child_dashboard_subtitle"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layoutChildHeaderActions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -57,7 +61,7 @@
                     android:background="@drawable/bg_star_badge"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
-                    android:text="⭐ 0 כוכבים"
+                    android:text="@string/child_stars_initial"
                     android:textColor="@color/star_gold"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -67,7 +71,7 @@
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="יציאה"
+                    android:text="@string/btn_exit"
                     android:textColor="@color/logout_text"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -94,14 +98,14 @@
                     android:id="@+id/tvTotalTasks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero_count"
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="משימות"
+                    android:text="@string/child_stat_tasks"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -118,14 +122,14 @@
                     android:id="@+id/tvDueSoon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero_count"
                     android:textColor="@color/urgent"
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="דחופות"
+                    android:text="@string/stat_urgent_short"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -142,14 +146,14 @@
                     android:id="@+id/tvOverdue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero_count"
                     android:textColor="@color/danger"
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="באיחור"
+                    android:text="@string/stat_overdue_short"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -166,14 +170,14 @@
                     android:id="@+id/tvCompleted"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/zero_count"
                     android:textColor="@color/success"
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="סיימת!"
+                    android:text="@string/child_stat_completed"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -185,7 +189,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="המשימות שלי"
+            android:text="@string/child_tasks_title"
             android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -197,7 +201,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:padding="40dp"
-            android:text="מעולה! אין משימות כרגע"
+            android:text="@string/child_empty_no_tasks"
             android:textColor="@color/text_secondary"
             android:visibility="gone" />
 

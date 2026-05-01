@@ -102,6 +102,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private void loadParents() {
         progressBar.setVisibility(View.VISIBLE);
         // ניגש לתיקיית "parents" הראשית כדי להציג את כל המשפחות הקיימות
+        // זה משמש כניסה ידנית לילד כשאין QR או כשצריך לבחור משפחה.
         FirebaseDatabase.getInstance().getReference("parents").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -147,6 +148,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private void loadChildren(String selectedParentId) {
         progressBar.setVisibility(View.VISIBLE);
         // ניגש לנתיב parents/{parentId}/children כדי למצוא את הילדים של אותה משפחה
+        // ה-Spinner מציג שמות, אבל הבחירה נשמרת לפי childId כדי למנוע בלבול בין שמות דומים.
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -197,6 +199,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
             return;
         }
         String childId = childItems.get(selectedPosition).id;
+        // אחרי בחירת ילד שומרים session מקומי, כדי שבפעם הבאה אפשר יהיה להמשיך מהר יותר.
         SharedPreferences.Editor editor = getSharedPreferences("child_session", MODE_PRIVATE).edit();
         editor.putString("parentId", parentId);
         editor.putString("childId", childId);

@@ -11,56 +11,28 @@
     app:strokeColor="@color/divider"
     app:strokeWidth="1dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:layoutDirection="rtl">
+        android:layoutDirection="rtl"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Avatar Placeholder -->
-        <View
-            android:id="@+id/viewChildAvatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_star_pill"
-            android:backgroundTint="@color/primary_light" />
-            
         <TextView
-            android:id="@+id/tvAvatarChar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="👶"
-            android:textSize="20sp" />
-
-        <LinearLayout
+            android:id="@+id/tvChildFullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/viewChildAvatar"
-            android:orientation="vertical">
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvChildFullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/manage_child_hint"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="לחץ לניהול ועריכה"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-    </RelativeLayout>
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -119,6 +119,7 @@ public class ChildQRLoginFragment extends Fragment {
     // מפרק את הטקסט של ה-QR לנתונים
     private ParsedQr parseQr(String raw) {
         // מפרק את המחרוזת שנסרקה מה-QR כדי להוציא את ה-ID של ההורה והילד
+        // הפורמט החדש הוא parent:{parentId}; הפורמט הישן יכול לכלול גם child:{childId}.
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {
             return parsedQr;
@@ -155,6 +156,7 @@ public class ChildQRLoginFragment extends Fragment {
 
     // בודק מול Firebase שההורה קיים במערכת
     private void checkParentExists(final String parentId) {
+        // לא מספיק לסרוק טקסט שנראה כמו QR תקין; בודקים שבאמת קיים הורה כזה ב-Firebase.
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -236,6 +238,7 @@ public class ChildQRLoginFragment extends Fragment {
 
     // שומר את פרטי ההתחברות בזיכרון המכשיר
     private void saveSession(String parentId, String childId) {
+        // SharedPreferences מתאים כאן כי אלה נתוני התחברות קטנים למכשיר אחד.
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_PARENT, parentId);

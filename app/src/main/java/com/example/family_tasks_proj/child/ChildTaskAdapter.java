@@ -39,7 +39,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TaskViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_child_task, parent, false));
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_child_task, parent, false);
+        return new TaskViewHolder(view);
     }
 
     @Override
@@ -141,7 +142,9 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         // הצגת כמות כוכבים
         int stars = (int) task.getStarsWorth();
-        if (stars <= 0) stars = 10; // ברירת מחדל
+        if (stars <= 0) {
+            stars = 10; // ברירת מחדל
+        }
         holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, stars));
         holder.tvStars.setVisibility(View.VISIBLE);
     }

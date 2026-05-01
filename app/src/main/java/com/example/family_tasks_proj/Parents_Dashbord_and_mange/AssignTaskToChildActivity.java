@@ -77,23 +77,36 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateSelectedTemplateData(position);
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         etTaskDueDate.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { openDatePicker(); }
+            @Override
+            public void onClick(View view) {
+                openDatePicker();
+            }
         });
 
         btnAssignTask.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { confirmAndAssign(); }
+            @Override
+            public void onClick(View view) {
+                confirmAndAssign();
+            }
         });
 
         btnGoBack.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { finish(); }
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
     }
 
     private void loadTemplatesFromFirebase() {
+        // תבניות משימה נשמרות אצל ההורה, כדי שיוכל להקצות שוב משימות דומות בלי להקליד הכל מחדש.
         getParentDbReference().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -108,13 +121,20 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     }
                 }
                 fillSpinner(spinnerTemplates, titles);
-                if (!taskTemplateList.isEmpty()) updateSelectedTemplateData(0);
+                if (!taskTemplateList.isEmpty()) {
+                    updateSelectedTemplateData(0);
+                }
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
     private void loadChildrenFromFirebase() {
+        // טוענים את ילדי המשפחה ל-Spinner, אבל שומרים בצד גם את ה-id האמיתי של כל ילד.
+        // השם מוצג למשתמש, וה-id משמש לכתיבה לנתיב הנכון ב-Firebase.
         getParentDbReference().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -126,12 +146,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     if (firstName != null) {
                         childNames.add(firstName);
                     } else {
-                        childNames.add("ילד");
+                        childNames.add(getString(R.string.default_child_name_fallback));
                     }
                 }
                 fillSpinner(spinnerChildren, childNames);
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
@@ -140,8 +163,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String date = etTaskDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
-        if (title.isEmpty() || date.isEmpty() || childPosition < 0) {
-            Toast.makeText(this, "חסרים פרטים להקצאה", Toast.LENGTH_SHORT).show();
+        // בדיקת קלט לפני כתיבה למסד הנתונים: חייבים שם משימה, תאריך וילד נבחר.
+        if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
+            Toast.makeText(this, R.string.error_assign_missing_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -151,15 +175,16 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 .child("tasks").push();
 
         TaskTemplate selectedTemplate;
-        if (spinnerTemplates.getSelectedItemPosition() >= 0) {
-            selectedTemplate = taskTemplateList.get(spinnerTemplates.getSelectedItemPosition());
+        int templatePosition = spinnerTemplates.getSelectedItemPosition();
+        if (templatePosition >= 0 && templatePosition < taskTemplateList.size()) {
+            selectedTemplate = taskTemplateList.get(templatePosition);
         } else {
             selectedTemplate = null;
         }
 
         btnAssignTask.setEnabled(false);
 
-        // שמירה ישירה ללא HashMap
+        // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
         newTaskRef.child("title").setValue(title);
         newTaskRef.child("dueAt").setValue(date);
         newTaskRef.child("isDone").setValue(false);
@@ -169,7 +194,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         if (selectedTemplate != null) {
             starsWorth = selectedTemplate.safeStarsWorth();
         } else {
-            starsWorth = 10;
+            starsWorth = TaskTemplate.DEFAULT_STARS_WORTH;
         }
         newTaskRef.child("starsWorth").setValue(starsWorth);
 
@@ -182,7 +207,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTaskRef.child("imageBase64").setValue(img).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(AssignTaskToChildActivity.this, "המשימה הוקצתה!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AssignTaskToChildActivity.this, R.string.success_task_assigned, Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -202,9 +227,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
+        // DatePicker נותן בחירת תאריך נוחה ומונע מהמשתמש להקליד תאריך בפורמט שגוי.
         new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
-            @Override public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
-                etTaskDueDate.setText(day + "/" + (month + 1) + "/" + year);
+            @Override
+            public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
+                etTaskDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }

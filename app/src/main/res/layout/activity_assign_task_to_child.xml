@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="הקצאת משימה"
+            android:text="@string/title_assign_task"
             android:textColor="@color/primary"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="בחר תבנית והקצה לילד המתאים"
+            android:text="@string/subtitle_assign_task"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
@@ -50,7 +50,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="בחר תבנית משימה"
+                    android:text="@string/label_choose_template"
                     android:textColor="@color/primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="שם המשימה"
+                    android:text="@string/label_task_name"
                     android:textColor="@color/primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -93,7 +93,7 @@
                     android:layout_height="54dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_repository_list"
-                    android:hint="הכנס שם משימה"
+                    android:hint="@string/hint_task_name"
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:paddingHorizontal="16dp"
@@ -103,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="למי להקצות?"
+                    android:text="@string/label_assign_to"
                     android:textColor="@color/primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -119,7 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="תאריך יעד"
+                    android:text="@string/label_due_date"
                     android:textColor="@color/primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -131,7 +131,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_repository_list"
                     android:focusable="false"
-                    android:hint="לחץ לבחירת תאריך"
+                    android:hint="@string/hint_select_date"
                     android:importantForAutofill="no"
                     android:inputType="date"
                     android:paddingHorizontal="16dp"
@@ -143,7 +143,7 @@
                     android:layout_height="58dp"
                     android:layout_marginTop="32dp"
                     android:backgroundTint="@color/primary"
-                    android:text="אישור והקצאה"
+                    android:text="@string/btn_confirm_assign"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -158,7 +158,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="ביטול וחזרה"
+            android:text="@string/btn_cancel_back"
             android:textColor="@color/text_secondary" />
 
     </LinearLayout>

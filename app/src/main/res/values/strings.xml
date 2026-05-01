@@ -10,10 +10,28 @@
     <string name="btn_enter">כניסה</string>
     <string name="btn_done">בוצע</string>
     <string name="scan_qr">סרוק QR</string>
+    <string name="btn_register_short">הרשמה</string>
+    <string name="btn_qr_login">כניסה ב-QR</string>
+    <string name="btn_direct_login">כניסה ישירה</string>
+    <string name="btn_logout">התנתק</string>
+    <string name="btn_exit">יציאה</string>
+    <string name="btn_cancel_edit">ביטול עריכה</string>
+    <string name="btn_cancel_back">ביטול וחזרה</string>
+    <string name="btn_confirm_assign">אישור והקצאה</string>
+    <string name="btn_pick_image">בחר תמונה…</string>
+    <string name="btn_templates">תבניות</string>
+    <string name="btn_qr_code">קוד QR</string>
 
     <!-- כותרות וכותרות משנה -->
     <string name="title_qr_family">QR כניסה למשפחה</string>
     <string name="title_child_login">כניסת ילד</string>
+    <string name="title_parent_login">כניסת הורה</string>
+    <string name="title_parent_register">הרשמת הורה</string>
+    <string name="main_subtitle">ניהול משימות משפחתי פשוט וחכם</string>
+    <string name="role_parents">הורים</string>
+    <string name="role_parents_desc">ניהול משימות, ילדים ותגמולים</string>
+    <string name="role_children">ילדים</string>
+    <string name="role_children_desc">צפייה במשימות ואיסוף כוכבים</string>
     <string name="subtitle_qr_family">הילדים סורקים את הקוד ובוחרים את השם שלהם.</string>
     <string name="subtitle_child_login">בוחרים את הילד שנכנס וממשיכים ישר למשימות.</string>
 
@@ -81,16 +99,97 @@
     <string name="default_child_name">שם הילד</string>
     <string name="default_child_name_fallback">ילד</string>
     <string name="default_today">היום</string>
+    <string name="zero_count">0</string>
+    <string name="hint_first_name">שם פרטי</string>
+    <string name="hint_last_name">שם משפחה</string>
+    <string name="hint_email">אימייל</string>
+    <string name="hint_password">סיסמה</string>
 
     <!-- דיאלוגים -->
     <string name="dialog_logout_title">יציאה</string>
     <string name="dialog_logout_message">בטוח שרוצה לצאת?</string>
     <string name="dialog_yes">כן</string>
     <string name="dialog_no">לא</string>
+    <string name="dialog_cancel">ביטול</string>
+    <string name="dialog_close">סגור</string>
+    <string name="dialog_delete_task">מחק משימה</string>
+    <string name="dialog_option_edit">עריכה</string>
+    <string name="dialog_option_delete">מחיקה</string>
 
     <!-- תוויות סינון משימות -->
     <string name="filter_label_open">משימות פתוחות</string>
     <string name="filter_label_urgent">משימות דחופות</string>
     <string name="filter_label_overdue">משימות באיחור</string>
     <string name="filter_label_completed">משימות שסיימתי</string>
+
+    <!-- טקסטים למסכי הורה -->
+    <string name="parent_greeting">שלום %1$s! 👋</string>
+    <string name="parent_filter_all">כל המשימות</string>
+    <string name="parent_filter_open">משימות פתוחות</string>
+    <string name="parent_filter_urgent">משימות דחופות</string>
+    <string name="parent_filter_overdue">משימות באיחור</string>
+    <string name="parent_filter_completed">משימות שהושלמו</string>
+    <string name="parent_task_dialog_message">לילד: %1$s\nיעד: %2$s</string>
+    <string name="toast_deleted">נמחק</string>
+    <string name="toast_child_saved">הנתונים נשמרו</string>
+    <string name="toast_child_deleted">הילד נמחק</string>
+    <string name="btn_add_child">הוסף ילד</string>
+    <string name="btn_update">עדכן</string>
+    <string name="title_add_child">הוספת ילד</string>
+    <string name="title_edit_child">עריכת ילד</string>
+    <string name="error_assign_missing_details">חסרים פרטים להקצאה</string>
+    <string name="success_task_assigned">המשימה הוקצתה!</string>
+    <string name="date_slash_format">%1$d/%2$d/%3$d</string>
+
+    <!-- טקסטים לתבניות משימה -->
+    <string name="error_template_missing_details">מלאו את כל הפרטים</string>
+    <string name="error_template_stars_number">כמות כוכבים חייבת להיות מספר</string>
+    <string name="error_template_stars_positive">כמות כוכבים חייבת להיות גדולה מ-0</string>
+    <string name="toast_template_saved">התבנית נשמרה</string>
+    <string name="toast_template_deleted">התבנית נמחקה</string>
+    <string name="title_create_template">יצירת תבנית</string>
+    <string name="title_edit_template">עריכת תבנית</string>
+    <string name="btn_save_template">שמור תבנית</string>
+    <string name="btn_update_template">עדכן תבנית</string>
+    <string name="template_stars_count">%1$d כוכבים</string>
+    <string name="task_due_display">%1$s%2$s</string>
+
+    <!-- טקסטים למסך ילד -->
+    <string name="child_greeting">שלום %1$s!</string>
+    <string name="child_stars_count">⭐ %1$d</string>
+    <string name="child_stars_initial">⭐ 0 כוכבים</string>
+    <string name="child_hello_initial">שלום!</string>
+    <string name="child_dashboard_subtitle">מה המשימה הבאה שלך?</string>
+    <string name="child_stat_tasks">משימות</string>
+    <string name="child_stat_completed">סיימת!</string>
+    <string name="child_tasks_title">המשימות שלי</string>
+    <string name="child_empty_no_tasks">מעולה! אין משימות כרגע</string>
+
+    <!-- טקסטים למסכי טפסים -->
+    <string name="title_assign_task">הקצאת משימה</string>
+    <string name="subtitle_assign_task">בחר תבנית והקצה לילד המתאים</string>
+    <string name="label_choose_template">בחר תבנית משימה</string>
+    <string name="label_task_name">שם המשימה</string>
+    <string name="hint_task_name">הכנס שם משימה</string>
+    <string name="label_assign_to">למי להקצות?</string>
+    <string name="label_due_date">תאריך יעד</string>
+    <string name="hint_select_date">לחץ לבחירת תאריך</string>
+    <string name="title_manage_children">ניהול ילדים</string>
+    <string name="subtitle_manage_children">הוסף, ערוך או מחק ילדים מהמשפחה</string>
+    <string name="title_children_list">רשימת הילדים</string>
+    <string name="empty_no_children_management">טרם נוספו ילדים למשפחה</string>
+    <string name="title_task_templates">תבניות משימה</string>
+    <string name="subtitle_task_templates">צור תבניות מוכנות להקצאה מהירה</string>
+    <string name="hint_template_title">שם התבנית (למשל: סידור חדר)</string>
+    <string name="hint_template_stars">כמות כוכבים לביצוע</string>
+    <string name="label_task_image">תמונת המשימה</string>
+    <string name="title_existing_templates">תבניות קיימות</string>
+    <string name="empty_no_templates">טרם יצרת תבניות</string>
+    <string name="parent_hello_initial">שלום!</string>
+    <string name="stat_open_short">פתוחות</string>
+    <string name="stat_urgent_short">דחופות</string>
+    <string name="stat_overdue_short">באיחור</string>
+    <string name="stat_done_short">בוצעו</string>
+    <string name="empty_tasks_filter">אין משימות בקטגוריה זו</string>
+    <string name="manage_child_hint">לחץ לניהול ועריכה</string>
 </resources>

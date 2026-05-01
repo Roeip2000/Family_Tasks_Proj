@@ -5,6 +5,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 // מחלקה שעוזרת לנו לגשת ל-Firebase מכל מקום באפליקציה בקלות
 public class FBsingleton {
     
@@ -38,15 +41,22 @@ public class FBsingleton {
         if (userId == null) {
             userId = firebaseAuth.getUid();
         }
-        if (userId == null) return;
+        if (userId == null) {
+            return;
+        }
 
-        // שמירה ישירה של כל שדה כדי להימנע משימוש במבני נתונים מורכבים כמו HashMap
+        // מעדכן רק את שדות הפרופיל של ההורה בלי לגעת בילדים ובתבניות.
+        // הנתיב המרכזי של ההורה הוא parents/{uid}.
         DatabaseReference parentReference = firebaseDatabase.getReference("parents").child(userId);
-        
-        parentReference.child("uid").setValue(userId);
-        parentReference.child("firstName").setValue(parentFirstName);
-        parentReference.child("lastName").setValue(parentLastName);
-        parentReference.child("email").setValue(parentEmail);
-        parentReference.child("role").setValue("parent").addOnCompleteListener(listener);
+
+        // updateChildren מתאים כאן כי הוא מעדכן כמה שדות ביחד ולא מוחק תתי-תיקיות קיימות.
+        Map<String, Object> parentData = new HashMap<>();
+        parentData.put("uid", userId);
+        parentData.put("firstName", parentFirstName);
+        parentData.put("lastName", parentLastName);
+        parentData.put("email", parentEmail);
+        parentData.put("role", "parent");
+
+        parentReference.updateChildren(parentData).addOnCompleteListener(listener);
     }
 }

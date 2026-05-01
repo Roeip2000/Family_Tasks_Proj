@@ -9,10 +9,14 @@ public final class DateUtils {
 
     // מחזיר כמה ימים נשארו עד התאריך שקיבלנו (או מספר שלילי אם התאריך עבר)
     public static long daysLeft(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return Long.MAX_VALUE;
+        if (dateStr == null || dateStr.isEmpty()) {
+            return Long.MAX_VALUE;
+        }
 
         String[] parts = dateStr.split("/");
-        if (parts.length != 3) return Long.MAX_VALUE;
+        if (parts.length != 3) {
+            return Long.MAX_VALUE;
+        }
 
         try {
             int d = Integer.parseInt(parts[0]);
@@ -41,6 +45,7 @@ public final class DateUtils {
     }
 
     public static boolean isDueSoon(String date) {
+        // בפרויקט הזה "דחוף" אומר שהתאריך הוא היום, מחר או עוד יומיים.
         long days = daysLeft(date);
         return days >= 0 && days <= 2;
     }

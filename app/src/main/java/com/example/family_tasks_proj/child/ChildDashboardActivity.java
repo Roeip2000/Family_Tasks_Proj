@@ -104,17 +104,25 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void setupListeners() {
         // מאזין לכפתור התנתקות
         btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showLogoutDialog(); }
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
         });
 
         // מאזינים לפילטרים
         View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v == filterOpen) activeFilter = FilterMode.NOT_COMPLETED;
-                else if (v == filterUrgent) activeFilter = FilterMode.URGENT;
-                else if (v == filterOverdue) activeFilter = FilterMode.OVERDUE;
-                else if (v == filterCompleted) activeFilter = FilterMode.COMPLETED;
+                if (v == filterOpen) {
+                    activeFilter = FilterMode.NOT_COMPLETED;
+                } else if (v == filterUrgent) {
+                    activeFilter = FilterMode.URGENT;
+                } else if (v == filterOverdue) {
+                    activeFilter = FilterMode.OVERDUE;
+                } else if (v == filterCompleted) {
+                    activeFilter = FilterMode.COMPLETED;
+                }
                 updateFilterUI();
             }
         };
@@ -127,6 +135,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     // --- לוגיקה: סיום משימה ועדכון כוכבים ---
     private void processMarkTaskAsDone(ChildTask task) {
         // 1. עדכון המשימה ב-Firebase
+        // הילד משנה רק את הסטטוס של המשימה שלו ל-"בוצע".
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("tasks")
                 .child(task.getTaskId()).child("isDone").setValue(true)
                 .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
@@ -140,6 +149,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     private void addStarToChild() {
         // משיכת כמות הכוכבים הנוכחית והוספת 1
+        // הכוכבים נשמרים אצל הילד עצמו, ולכן אפשר להציג אותם גם בכניסה הבאה.
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("stars")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -147,11 +157,16 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 long currentStars = 0;
                 if (snapshot.exists()) {
                     Long val = snapshot.getValue(Long.class);
-                    if (val != null) currentStars = val;
+                    if (val != null) {
+                        currentStars = val;
+                    }
                 }
                 snapshot.getRef().setValue(currentStars + 1);
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
@@ -161,16 +176,18 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()) return;
+                if (!snapshot.exists()) {
+                    return;
+                }
                 String name = snapshot.child("firstName").getValue(String.class);
                 // אם אין שם ב-Firebase מציגים "ילד" כדי שלא ייראה ריק
                 String displayName;
                 if (name != null && !name.isEmpty()) {
                     displayName = name;
                 } else {
-                    displayName = "ילד";
+                    displayName = getString(R.string.default_child_name_fallback);
                 }
-                tvChildName.setText("שלום " + displayName + "!");
+                tvChildName.setText(getString(R.string.child_greeting, displayName));
                 Long stars = snapshot.child("stars").getValue(Long.class);
                 long starsCount;
                 if (stars != null) {
@@ -178,13 +195,17 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 } else {
                     starsCount = 0;
                 }
-                tvStars.setText("⭐ " + starsCount);
+                tvStars.setText(getString(R.string.child_stars_count, starsCount));
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
     private void loadChildTasks() {
+        // המשימות של הילד נמצאות מתחת להורה שלו, ולכן צריך גם parentId וגם childId.
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("tasks")
                 .addValueEventListener(new ValueEventListener() {
             @Override
@@ -194,35 +215,55 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         ChildTask task = snap.getValue(ChildTask.class);
-                        if (task == null) continue;
+                        if (task == null) {
+                            continue;
+                        }
                         task.setTaskId(snap.getKey());
                         allTasks.add(task);
-                        if (task.getIsDone()) done++;
-                        else {
+                        if (task.getIsDone()) {
+                            done++;
+                        } else {
                             open++;
-                            if (DateUtils.isOverdue(task.getDueAt())) overdue++;
-                            else if (DateUtils.isDueSoon(task.getDueAt())) urgent++;
+                            if (DateUtils.isOverdue(task.getDueAt())) {
+                                overdue++;
+                            } else if (DateUtils.isDueSoon(task.getDueAt())) {
+                                urgent++;
+                            }
                         }
                     }
                 }
                 updateCountersUI(open, done, urgent, overdue);
                 applyFilterAndRefresh();
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
     private void applyFilterAndRefresh() {
         visibleTasks.clear();
         for (ChildTask task : allTasks) {
+            // סינון מקומי: הנתונים נשארים בזיכרון, ורק הרשימה המוצגת משתנה.
             boolean match = false;
             switch (activeFilter) {
-                case NOT_COMPLETED: match = !task.getIsDone(); break;
-                case COMPLETED: match = task.getIsDone(); break;
-                case URGENT: match = !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt()); break;
-                case OVERDUE: match = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt()); break;
+                case NOT_COMPLETED:
+                    match = !task.getIsDone();
+                    break;
+                case COMPLETED:
+                    match = task.getIsDone();
+                    break;
+                case URGENT:
+                    match = !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt());
+                    break;
+                case OVERDUE:
+                    match = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt());
+                    break;
             }
-            if (match) visibleTasks.add(task);
+            if (match) {
+                visibleTasks.add(task);
+            }
         }
         if (visibleTasks.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
@@ -235,31 +276,39 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void updateFilterUI() {
         // צובע את הפילטר הפעיל עם רקע אפור שקוף ואת השאר שקופים
         if (activeFilter == FilterMode.NOT_COMPLETED) {
-            filterOpen.setBackgroundColor(0x1A000000);
+            filterOpen.setBackgroundColor(getColor(R.color.filter_selected_overlay));
         } else {
             filterOpen.setBackgroundColor(Color.TRANSPARENT);
         }
         if (activeFilter == FilterMode.URGENT) {
-            filterUrgent.setBackgroundColor(0x1A000000);
+            filterUrgent.setBackgroundColor(getColor(R.color.filter_selected_overlay));
         } else {
             filterUrgent.setBackgroundColor(Color.TRANSPARENT);
         }
         if (activeFilter == FilterMode.OVERDUE) {
-            filterOverdue.setBackgroundColor(0x1A000000);
+            filterOverdue.setBackgroundColor(getColor(R.color.filter_selected_overlay));
         } else {
             filterOverdue.setBackgroundColor(Color.TRANSPARENT);
         }
         if (activeFilter == FilterMode.COMPLETED) {
-            filterCompleted.setBackgroundColor(0x1A000000);
+            filterCompleted.setBackgroundColor(getColor(R.color.filter_selected_overlay));
         } else {
             filterCompleted.setBackgroundColor(Color.TRANSPARENT);
         }
 
         switch (activeFilter) {
-            case NOT_COMPLETED: tvTaskSectionTitle.setText(R.string.filter_label_open); break;
-            case URGENT: tvTaskSectionTitle.setText(R.string.filter_label_urgent); break;
-            case OVERDUE: tvTaskSectionTitle.setText(R.string.filter_label_overdue); break;
-            case COMPLETED: tvTaskSectionTitle.setText(R.string.filter_label_completed); break;
+            case NOT_COMPLETED:
+                tvTaskSectionTitle.setText(R.string.filter_label_open);
+                break;
+            case URGENT:
+                tvTaskSectionTitle.setText(R.string.filter_label_urgent);
+                break;
+            case OVERDUE:
+                tvTaskSectionTitle.setText(R.string.filter_label_overdue);
+                break;
+            case COMPLETED:
+                tvTaskSectionTitle.setText(R.string.filter_label_completed);
+                break;
         }
         applyFilterAndRefresh();
     }
@@ -276,6 +325,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         childId = getIntent().getStringExtra("childId");
         if (parentId == null || childId == null) {
             // --- נושא במחוון: SharedPreferences ---
+            // אם המסך נפתח בלי Intent, מנסים לשחזר את הילד האחרון שנכנס מהמכשיר.
             SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
             parentId = sp.getString("parentId", null);
             childId = sp.getString("childId", null);
@@ -283,7 +333,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void showLogoutDialog() {
-        new AlertDialog.Builder(this).setTitle(R.string.dialog_logout_title).setMessage(R.string.dialog_logout_message)
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_logout_title)
+                .setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -291,6 +343,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         startActivity(new Intent(ChildDashboardActivity.this, MainActivity.class));
                         finish();
                     }
-                }).setNegativeButton(R.string.dialog_no, null).show();
+                })
+                .setNegativeButton(R.string.dialog_no, null)
+                .show();
     }
 }
