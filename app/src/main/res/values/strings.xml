@@ -14,7 +14,6 @@
     <string name="btn_qr_login">כניסה ב-QR</string>
     <string name="btn_direct_login">כניסה ישירה</string>
     <string name="btn_logout">התנתק</string>
-    <string name="btn_exit">יציאה</string>
     <string name="btn_cancel_edit">ביטול עריכה</string>
     <string name="btn_cancel_back">ביטול וחזרה</string>
     <string name="btn_confirm_assign">אישור והקצאה</string>
@@ -120,7 +119,6 @@
     <string name="filter_label_open">משימות פתוחות</string>
     <string name="filter_label_urgent">משימות דחופות</string>
     <string name="filter_label_overdue">משימות באיחור</string>
-    <string name="filter_label_completed">משימות שסיימתי</string>
 
     <!-- טקסטים למסכי הורה -->
     <string name="parent_greeting">שלום %1$s! 👋</string>
@@ -159,11 +157,6 @@
     <string name="child_stars_count">⭐ %1$d</string>
     <string name="child_stars_initial">⭐ 0 כוכבים</string>
     <string name="child_hello_initial">שלום!</string>
-    <string name="child_dashboard_subtitle">מה המשימה הבאה שלך?</string>
-    <string name="child_stat_tasks">משימות</string>
-    <string name="child_stat_completed">סיימת!</string>
-    <string name="child_tasks_title">המשימות שלי</string>
-    <string name="child_empty_no_tasks">מעולה! אין משימות כרגע</string>
 
     <!-- טקסטים למסכי טפסים -->
     <string name="title_assign_task">הקצאת משימה</string>

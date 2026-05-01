@@ -79,12 +79,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvDueSoon = findViewById(R.id.tvDueSoon);
         tvOverdue = findViewById(R.id.tvOverdue);
-        tvNoTasks = findViewById(R.id.tvNoTasks);
+        tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
-        rvTasks = findViewById(R.id.rvTasks);
-        btnLogout = findViewById(R.id.btnLogout);
+        rvTasks = findViewById(R.id.rvChildTasks);
+        btnLogout = findViewById(R.id.btnChildLogout);
 
-        filterOpen = findViewById(R.id.filterNotCompleted);
+        filterOpen = findViewById(R.id.filterOpen);
         filterUrgent = findViewById(R.id.filterUrgent);
         filterOverdue = findViewById(R.id.filterOverdue);
     }
@@ -147,10 +147,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
+                        // מוסיפים בדיוק את כמות הכוכבים שההורה הגדיר למשימה (מינימום 10 אם לא הוגדר).
+                        long reward;
                         if (starsReward > 0) {
-                            // מוסיפים בדיוק את כמות הכוכבים שההורה הגדיר למשימה.
-                            addStarToChild(starsReward);
+                            reward = starsReward;
+                        } else {
+                            reward = 10;
                         }
+                        addStarToChild(reward);
                     }
                 });
     }

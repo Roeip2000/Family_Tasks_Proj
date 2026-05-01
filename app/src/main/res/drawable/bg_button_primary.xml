@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/md_theme_primaryContainer">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/md_theme_primary" />
-            <corners android:radius="@dimen/button_corner_radius" />
-        </shape>
-    </item>
-    <item android:id="@android:id/mask">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/white" />
-            <corners android:radius="@dimen/button_corner_radius" />
-        </shape>
-    </item>
-</ripple>
+<!-- כפתור ראשי בלי אנימציית לחיצה (ללא ripple). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/md_theme_primary" />
+    <corners android:radius="@dimen/button_corner_radius" />
+</shape>
