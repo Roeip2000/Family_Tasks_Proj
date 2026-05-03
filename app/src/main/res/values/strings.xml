@@ -126,7 +126,10 @@
     <string name="parent_filter_overdue">משימות באיחור</string>
     <string name="parent_filter_completed">משימות שהושלמו</string>
     <string name="parent_task_dialog_message">לילד: %1$s\nיעד: %2$s</string>
+    <string name="dialog_edit_task_title">עריכת משימה</string>
+    <string name="dialog_save_task">שמור</string>
     <string name="toast_deleted">נמחק</string>
+    <string name="toast_task_updated">המשימה עודכנה</string>
     <string name="toast_child_saved">הנתונים נשמרו</string>
     <string name="toast_child_deleted">הילד נמחק</string>
     <string name="btn_add_child">הוסף ילד</string>
@@ -134,6 +137,7 @@
     <string name="title_add_child">הוספת ילד</string>
     <string name="title_edit_child">עריכת ילד</string>
     <string name="error_assign_missing_details">חסרים פרטים להקצאה</string>
+    <string name="error_task_missing_details">יש למלא שם ותאריך למשימה</string>
     <string name="success_task_assigned">המשימה הוקצתה!</string>
     <string name="date_slash_format">%1$d/%2$d/%3$d</string>
 
