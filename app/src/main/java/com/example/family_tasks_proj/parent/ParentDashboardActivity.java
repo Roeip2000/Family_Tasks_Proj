@@ -1,12 +1,16 @@
 package com.example.family_tasks_proj.parent;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +29,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // דשבורד ניהול להורה - מציג את כל המשימות של כל הילדים
 public class ParentDashboardActivity extends AppCompatActivity {
@@ -61,10 +69,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+
+        if (user != null)
+        {
             loadProfile(user);
             loadData(user);
-        } else {
+        }
+        else {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -125,28 +136,37 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void updateFilterUI() {
         // צובע את הפילטר הפעיל ברקע אפור שקוף ומאפס את השאר
-        if (activeFilter == FilterMode.ASSIGNED) {
+        if (activeFilter == FilterMode.ASSIGNED)
+        {
             fOpen.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
+        } else
+        {
             fOpen.setBackgroundColor(Color.TRANSPARENT);
         }
-        if (activeFilter == FilterMode.URGENT) {
+        if (activeFilter == FilterMode.URGENT)
+        {
             fUrgent.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
+        } else
+        {
             fUrgent.setBackgroundColor(Color.TRANSPARENT);
         }
-        if (activeFilter == FilterMode.OVERDUE) {
+        if (activeFilter == FilterMode.OVERDUE)
+        {
             fOverdue.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
+        } else
+        {
             fOverdue.setBackgroundColor(Color.TRANSPARENT);
         }
-        if (activeFilter == FilterMode.COMPLETED) {
+        if (activeFilter == FilterMode.COMPLETED)
+        {
             fDone.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
+        } else
+        {
             fDone.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        switch (activeFilter) {
+        switch (activeFilter)
+        {
             case ASSIGNED:
                 tvFilterTitle.setText(R.string.parent_filter_open);
                 break;
@@ -328,15 +348,128 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void showTaskOptions(int pos) {
         final AssignedTask task = visibleTasks.get(pos);
-        // לחיצה על משימה פותחת פעולות ניהול להורה, למשל מחיקה.
-        new AlertDialog.Builder(this).setTitle(task.getTitle())
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(task.getTitle())
                 .setMessage(getString(R.string.parent_task_dialog_message, task.getChildName(), task.getDueAt()))
                 .setNeutralButton(R.string.dialog_delete_task, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int w) {
                         deleteTask(task);
                     }
-                }).setNegativeButton(R.string.dialog_close, null).show();
+                }).setNegativeButton(R.string.dialog_close, null);
+
+        if (!task.getIsDone()) {
+            builder.setPositiveButton(R.string.dialog_option_edit, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface d, int w) {
+                    showEditTaskDialog(task);
+                }
+            });
+        }
+        builder.show();
+    }
+
+    private void showEditTaskDialog(final AssignedTask task) {
+        final EditText etTitle = new EditText(this);
+        etTitle.setHint(R.string.hint_task_name);
+        etTitle.setSingleLine(true);
+        etTitle.setText(task.getTitle());
+
+        final EditText etDueDate = new EditText(this);
+        etDueDate.setHint(R.string.hint_select_date);
+        etDueDate.setSingleLine(true);
+        etDueDate.setFocusable(false);
+        etDueDate.setInputType(InputType.TYPE_NULL);
+        etDueDate.setText(task.getDueAt());
+        etDueDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openEditDatePicker(etDueDate);
+            }
+        });
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
+        layout.setPadding(padding, 8, padding, 0);
+        layout.addView(etTitle);
+        layout.addView(etDueDate);
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_edit_task_title)
+                .setView(layout)
+                .setPositiveButton(R.string.dialog_save_task, null)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                Button saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newTitle = etTitle.getText().toString().trim();
+                        String newDueDate = etDueDate.getText().toString().trim();
+                        if (newTitle.isEmpty() || newDueDate.isEmpty()) {
+                            Toast.makeText(ParentDashboardActivity.this, R.string.error_task_missing_details, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        updateTask(task, newTitle, newDueDate);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    private void openEditDatePicker(final EditText etDueDate) {
+        Calendar calendar = getCalendarForDate(etDueDate.getText().toString());
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
+                etDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private Calendar getCalendarForDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        if (date == null) {
+            return calendar;
+        }
+
+        String[] parts = date.split("/");
+        if (parts.length != 3) {
+            return calendar;
+        }
+
+        try {
+            int day = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1;
+            int year = Integer.parseInt(parts[2]);
+            calendar.set(year, month, day);
+        } catch (NumberFormatException ignored) {
+        }
+        return calendar;
+    }
+
+    private void updateTask(AssignedTask task, String title, String dueAt) {
+        DatabaseReference taskReference = FirebaseDatabase.getInstance().getReference("parents")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child("children").child(task.getChildId()).child("tasks").child(task.getTaskId());
+
+        Map<String, Object> taskData = new HashMap<>();
+        taskData.put("title", title);
+        taskData.put("dueAt", dueAt);
+
+        // מעדכנים רק את שדות המשימה שנערכו, בלי לגעת בסטטוס, כוכבים או תמונה.
+        taskReference.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ParentDashboardActivity.this, R.string.toast_task_updated, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void deleteTask(AssignedTask task) {
