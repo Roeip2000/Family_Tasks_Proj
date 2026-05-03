@@ -264,6 +264,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
                 if (snapshot.exists()) {
                     for (DataSnapshot cSnap : snapshot.getChildren()) {
+
                         String cId = cSnap.getKey();
                         String cName = cSnap.child("firstName").getValue(String.class);
                         
