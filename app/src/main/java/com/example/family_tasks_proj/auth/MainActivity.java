@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         btnChildQR = findViewById(R.id.btnChildQR);
         btnChild = findViewById(R.id.btnChild);
 
+
+        //Fragment ברירית מחדל
         if (savedInstanceState == null) {
             showFragment(new ParentLoginFragment(), false);
         }

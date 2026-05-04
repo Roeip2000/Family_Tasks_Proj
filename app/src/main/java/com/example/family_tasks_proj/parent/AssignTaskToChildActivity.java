@@ -212,6 +212,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     private void updateSelectedTemplateData(int position) {
+
         if (position >= 0 && position < taskTemplateList.size()) {
             TaskTemplate template = taskTemplateList.get(position);
             etTaskTitle.setText(template.getTitle());
