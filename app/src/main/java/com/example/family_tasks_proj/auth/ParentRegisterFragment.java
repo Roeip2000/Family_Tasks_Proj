@@ -98,6 +98,9 @@ public class ParentRegisterFragment extends Fragment {
                     FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> saveTask) {
+                            if (!isAdded()) {
+                                return;
+                            }
                             if (saveTask.isSuccessful()) {
                                 Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));

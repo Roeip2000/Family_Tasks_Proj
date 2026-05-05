@@ -87,6 +87,7 @@
     <string name="error_try_again">נסה שוב</string>
     <string name="error_unknown_register">שגיאת הרשמה לא ידועה</string>
     <string name="error_parent_session_missing">ההורה לא מחובר</string>
+    <string name="error_child_session_missing">&#1492;&#1497;&#1500;&#1491; &#1500;&#1488; &#1504;&#1502;&#1510;&#1488;. &#1489;&#1495;&#1512;&#1493; &#1497;&#1500;&#1491; &#1502;&#1495;&#1491;&#1513;.</string>
     <string name="error_with_details">שגיאה: %1$s</string>
     <string name="success_parent_register">ההרשמה הצליחה!</string>
 

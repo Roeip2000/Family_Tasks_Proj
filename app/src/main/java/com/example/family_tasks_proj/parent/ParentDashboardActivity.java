@@ -348,6 +348,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void showTaskOptions(int pos) {
+        if (pos < 0 || pos >= visibleTasks.size()) {
+            return;
+        }
         final AssignedTask task = visibleTasks.get(pos);
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(task.getTitle())
                 .setMessage(getString(R.string.parent_task_dialog_message, task.getChildName(), task.getDueAt()))
@@ -490,7 +493,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface d, int w) {
                         FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(ParentDashboardActivity.this, MainActivity.class));
+                        Intent intent = new Intent(ParentDashboardActivity.this, MainActivity.class);
+                        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
+                        startActivity(intent);
                         finish();
                     }
                 }).setNegativeButton(R.string.dialog_cancel, null).show();

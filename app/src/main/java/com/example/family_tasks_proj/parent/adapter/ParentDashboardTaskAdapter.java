@@ -148,8 +148,12 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
             @Override
             public void onClick(View v) {
                 if (listener != null) {
+                    int adapterPosition = holder.getBindingAdapterPosition();
+                    if (adapterPosition == RecyclerView.NO_POSITION || adapterPosition >= items.size()) {
+                        return;
+                    }
                     // המשתמש הקליד על הפריט - פותח אפשרויות ניהול ב-Activity
-                    listener.onItemClick(task, holder.getBindingAdapterPosition());
+                    listener.onItemClick(items.get(adapterPosition), adapterPosition);
                 }
             }
         });

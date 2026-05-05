@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 /** מסך הכניסה הראשי של האפליקציה. מנתב בין כניסת הורה לילד ובודק סשנים פעילים. */
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_SKIP_AUTO_LOGIN = "skipAutoLogin";
+
     private Button btnRegister, btnLogin, btnChildQR, btnChild;
 
     @Override
@@ -32,14 +34,16 @@ public class MainActivity extends AppCompatActivity {
         // אתחול Singleton של Firebase
         FBsingleton.getInstance();
 
+        boolean skipAutoLogin = getIntent().getBooleanExtra(EXTRA_SKIP_AUTO_LOGIN, false);
+
         // FirebaseAuth שומר התחברות של הורה גם אחרי סגירת האפליקציה.
         // לכן קודם בודקים אם כבר יש הורה מחובר לפני שמציגים את מסך הבית.
-        if (openSavedParentSession()) {
+        if (!skipAutoLogin && openSavedParentSession()) {
             return;
         }
 
         // לילד אין FirebaseAuth משלו. את פרטי הילד שומרים מקומית ב-SharedPreferences.
-        if (openSavedChildSession()) {
+        if (!skipAutoLogin && openSavedChildSession()) {
             return;
         }
 

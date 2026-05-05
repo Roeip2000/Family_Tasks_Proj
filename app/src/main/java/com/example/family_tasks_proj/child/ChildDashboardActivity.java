@@ -189,6 +189,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
+                    returnToMainAfterMissingChild();
                     return;
                 }
                 String name = snapshot.child("firstName").getValue(String.class);
@@ -333,6 +334,15 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
+    private void returnToMainAfterMissingChild() {
+        getSharedPreferences("child_session", MODE_PRIVATE).edit().clear().apply();
+        Toast.makeText(this, R.string.error_child_session_missing, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
+        startActivity(intent);
+        finish();
+    }
+
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_logout_title)
@@ -341,7 +351,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         getSharedPreferences("child_session", MODE_PRIVATE).edit().clear().apply();
-                        startActivity(new Intent(ChildDashboardActivity.this, MainActivity.class));
+                        Intent intent = new Intent(ChildDashboardActivity.this, MainActivity.class);
+                        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
+                        startActivity(intent);
                         finish();
                     }
                 })
