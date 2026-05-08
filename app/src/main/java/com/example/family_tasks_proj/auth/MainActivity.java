@@ -9,11 +9,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.family_tasks_proj.auth.ChildQRLoginFragment;
-import com.example.family_tasks_proj.auth.ChildSelectionActivity;
 import com.example.family_tasks_proj.firebase.FBsingleton;
-import com.example.family_tasks_proj.auth.ParentLoginFragment;
-import com.example.family_tasks_proj.auth.ParentRegisterFragment;
 import com.example.family_tasks_proj.parent.ParentDashboardActivity;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;

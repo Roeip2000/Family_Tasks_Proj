@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- סטיילים משותפים בשימוש בלבד. כותרת מסך, טקסט עזר, ושני כפתורים. -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Widget" />
     <style name="Widget.Family" />
