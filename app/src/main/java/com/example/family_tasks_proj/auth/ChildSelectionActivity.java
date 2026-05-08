@@ -1,8 +1,6 @@
 package com.example.family_tasks_proj.auth;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
+import com.example.family_tasks_proj.utils.ChildSession;
 import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -68,12 +67,12 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     // משחזר מזהים מה-Intent או מהזיכרון המקומי
     private void resolveIds() {
-        parentId = getIntent().getStringExtra("parentId");
-        preselectedChildId = getIntent().getStringExtra("childId");
+        parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
+        preselectedChildId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
         if (parentId == null) {
-            SharedPreferences sp = getSharedPreferences("child_session", Context.MODE_PRIVATE);
-            parentId = sp.getString("parentId", null);
-            preselectedChildId = sp.getString("childId", null);
+            // אם אין מזהה ב-Intent, מנסים לשחזר מ-SharedPreferences דרך מחלקת העזר
+            parentId = ChildSession.getParentId(this);
+            preselectedChildId = ChildSession.getChildId(this);
         }
     }
 
@@ -191,13 +190,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
         }
         String childId = childItems.get(selectedPosition).id;
         // אחרי בחירת ילד שומרים session מקומי, כדי שבפעם הבאה אפשר יהיה להמשיך מהר יותר.
-        SharedPreferences.Editor editor = getSharedPreferences("child_session", MODE_PRIVATE).edit();
-        editor.putString("parentId", parentId);
-        editor.putString("childId", childId);
-        editor.apply();
+        ChildSession.save(this, parentId, childId);
         Intent intent = new Intent(this, ChildDashboardActivity.class);
-        intent.putExtra("parentId", parentId);
-        intent.putExtra("childId", childId);
+        intent.putExtra(ChildSession.KEY_PARENT, parentId);
+        intent.putExtra(ChildSession.KEY_CHILD, childId);
         startActivity(intent);
         finish();
     }

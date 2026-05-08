@@ -1,8 +1,6 @@
 package com.example.family_tasks_proj.auth;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
+import com.example.family_tasks_proj.utils.ChildSession;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,10 +26,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 /** מסך סריקת QR עבור הילד להתחברות מהירה. */
 public class ChildQRLoginFragment extends Fragment {
-
-    private static final String PREFS = "child_session";
-    private static final String KEY_PARENT = "parentId";
-    private static final String KEY_CHILD = "childId";
 
     private Button btnScanQR;
 
@@ -150,7 +145,7 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                saveSession(parentId, null);
+                // openChildSelection דואג גם לשמירת ה-session דרך ChildSession.save
                 openChildSelection(parentId, null);
             }
 
@@ -176,7 +171,7 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                saveSession(parentId, childId);
+                // openChildDashboard דואג גם לשמירת ה-session דרך ChildSession.save
                 openChildDashboard(parentId, childId);
             }
 
@@ -193,11 +188,11 @@ public class ChildQRLoginFragment extends Fragment {
     // פותח את מסך המשימות של הילד
     private void openChildDashboard(String parentId, String childId) {
         // שומר את ה-ID של ההורה והילד ב-SharedPreferences כדי שלא יצטרכו לסרוק שוב בכל כניסה
-        saveSession(parentId, childId);
+        ChildSession.save(requireContext(), parentId, childId);
         // עובר ישירות לדשבורד של הילד
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
-        intent.putExtra(KEY_PARENT, parentId);
-        intent.putExtra(KEY_CHILD, childId);
+        intent.putExtra(ChildSession.KEY_PARENT, parentId);
+        intent.putExtra(ChildSession.KEY_CHILD, childId);
         startActivity(intent);
         requireActivity().finish();
     }
@@ -205,29 +200,14 @@ public class ChildQRLoginFragment extends Fragment {
     // פותח את מסך בחירת הילד (כשנסרק רק הורה)
     private void openChildSelection(String parentId, String childId) {
         // שומר את מזהה ההורה ועובר למסך שבו הילד בוחר את השם שלו מתוך רשימת הילדים
-        saveSession(parentId, childId);
+        ChildSession.save(requireContext(), parentId, childId);
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
-        intent.putExtra(KEY_PARENT, parentId);
+        intent.putExtra(ChildSession.KEY_PARENT, parentId);
         if (!isBlank(childId)) {
-            intent.putExtra(KEY_CHILD, childId);
+            intent.putExtra(ChildSession.KEY_CHILD, childId);
         }
         startActivity(intent);
         requireActivity().finish();
-    }
-
-    // שומר את פרטי ההתחברות בזיכרון המכשיר
-    private void saveSession(String parentId, String childId) {
-        // SharedPreferences מתאים כאן כי אלה נתוני התחברות קטנים למכשיר אחד.
-        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_PARENT, parentId);
-
-        if (isBlank(childId)) {
-            editor.remove(KEY_CHILD);
-        } else {
-            editor.putString(KEY_CHILD, childId);
-        }
-        editor.apply();
     }
 
     // בודק אם מחרוזת היא ריקה

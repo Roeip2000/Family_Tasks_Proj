@@ -136,34 +136,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private void updateFilterUI() {
         // צובע את הפילטר הפעיל ברקע אפור שקוף ומאפס את השאר
-        if (activeFilter == FilterMode.ASSIGNED)
-        {
-            fOpen.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else
-        {
-            fOpen.setBackgroundColor(Color.TRANSPARENT);
-        }
-        if (activeFilter == FilterMode.URGENT)
-        {
-            fUrgent.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else
-        {
-            fUrgent.setBackgroundColor(Color.TRANSPARENT);
-        }
-        if (activeFilter == FilterMode.OVERDUE)
-        {
-            fOverdue.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else
-        {
-            fOverdue.setBackgroundColor(Color.TRANSPARENT);
-        }
-        if (activeFilter == FilterMode.COMPLETED)
-        {
-            fDone.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else
-        {
-            fDone.setBackgroundColor(Color.TRANSPARENT);
-        }
+        tintFilter(fOpen, activeFilter == FilterMode.ASSIGNED);
+        tintFilter(fUrgent, activeFilter == FilterMode.URGENT);
+        tintFilter(fOverdue, activeFilter == FilterMode.OVERDUE);
+        tintFilter(fDone, activeFilter == FilterMode.COMPLETED);
 
         switch (activeFilter)
         {
@@ -182,6 +158,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
             default:
                 tvFilterTitle.setText(R.string.parent_filter_all);
                 break;
+        }
+    }
+
+    // עוזר לצביעת רקע של כפתור פילטר: אפור שקוף כשפעיל, שקוף לחלוטין אחרת
+    private void tintFilter(View view, boolean active) {
+        if (active) {
+            view.setBackgroundColor(getColor(R.color.filter_selected_overlay));
+        } else {
+            view.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 

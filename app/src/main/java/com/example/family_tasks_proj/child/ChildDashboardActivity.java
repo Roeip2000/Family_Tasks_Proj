@@ -3,7 +3,6 @@ package com.example.family_tasks_proj.child;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -19,10 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.models.ChildTask;
+import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.child.adapter.ChildTaskAdapter;
+import com.example.family_tasks_proj.utils.ChildSession;
 import com.example.family_tasks_proj.utils.DateUtils;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -129,6 +132,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
         filterOverdue.setOnClickListener(filterClick);
     }
 
+    // מחזיר את ההפניה הבסיסית של הילד ב-Firebase: parents/{parentId}/children/{childId}.
+    // כל הקריאות והכתיבות במסך מתחילות מאותו מקום, אז שומרים את הנתיב במקום אחד.
+    private DatabaseReference childRef() {
+        return FirebaseDatabase.getInstance().getReference("parents")
+                .child(parentId).child("children").child(childId);
+    }
+
     // --- לוגיקה: סיום משימה ועדכון כוכבים ---
     private void processMarkTaskAsDone(ChildTask task) {
         // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה כבוצעה, לא מוסיפים כוכבים שוב.
@@ -138,21 +148,22 @@ public class ChildDashboardActivity extends AppCompatActivity {
         // הופכים את הסטטוס בזיכרון מיד, כדי שלחיצה מהירה נוספת לא תיכנס לבלוק הזה.
         task.setIsDone(true);
 
+        // starsReward חייב להיות final כי הוא משמש בתוך מחלקה אנונימית (OnSuccessListener) למטה.
         final long starsReward = task.getStarsWorth();
 
         // הילד משנה רק את הסטטוס של המשימה שלו ל-"בוצע".
-        FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("tasks")
-                .child(task.getTaskId()).child("isDone").setValue(true)
-                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
+        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
-                        // מוסיפים בדיוק את כמות הכוכבים שההורה הגדיר למשימה (מינימום 10 אם לא הוגדר).
+                        // מוסיפים בדיוק את כמות הכוכבים שההורה הגדיר למשימה.
+                        // אם לא הוגדר ערך, משתמשים בברירת המחדל המוגדרת ב-TaskTemplate.
                         long reward;
                         if (starsReward > 0) {
                             reward = starsReward;
                         } else {
-                            reward = 10;
+                            reward = TaskTemplate.DEFAULT_STARS_WORTH;
                         }
                         addStarToChild(reward);
                     }
@@ -162,18 +173,17 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void addStarToChild(final long rewardStars) {
         // משיכת כמות הכוכבים הנוכחית והוספת ערך המשימה.
         // הכוכבים נשמרים אצל הילד עצמו, ולכן אפשר להציג אותם גם בכניסה הבאה.
-        FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("stars")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        // שומרים את ההפניה במשתנה כדי לקרוא ולכתוב לאותו מקום בלי לבנות את הנתיב פעמיים.
+        final DatabaseReference starsRef = childRef().child("stars");
+        starsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 long currentStars = 0;
-                if (snapshot.exists()) {
-                    Long val = snapshot.getValue(Long.class);
-                    if (val != null) {
-                        currentStars = val;
-                    }
+                Long val = snapshot.getValue(Long.class);
+                if (val != null) {
+                    currentStars = val;
                 }
-                snapshot.getRef().setValue(currentStars + rewardStars);
+                starsRef.setValue(currentStars + rewardStars);
             }
 
             @Override
@@ -184,8 +194,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // --- לוגיקה: טעינת נתונים ---
     private void loadChildProfile() {
-        FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId)
-                .addValueEventListener(new ValueEventListener() {
+        childRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -219,8 +228,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     private void loadChildTasks() {
         // המשימות של הילד נמצאות מתחת להורה שלו, ולכן צריך גם parentId וגם childId.
-        FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("children").child(childId).child("tasks")
-                .addValueEventListener(new ValueEventListener() {
+        childRef().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allTasks.clear();
@@ -231,7 +239,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         if (task == null) {
                             continue;
                         }
-                        task.setTaskId(snap.getKey());
+                        task.setId(snap.getKey());
                         allTasks.add(task);
                         if (!task.getIsDone()) {
                             open++;
@@ -286,21 +294,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     private void updateFilterUI() {
         // צובע את הפילטר הפעיל עם רקע אפור שקוף ואת השאר שקופים
-        if (activeFilter == FilterMode.NOT_COMPLETED) {
-            filterOpen.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
-            filterOpen.setBackgroundColor(Color.TRANSPARENT);
-        }
-        if (activeFilter == FilterMode.URGENT) {
-            filterUrgent.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
-            filterUrgent.setBackgroundColor(Color.TRANSPARENT);
-        }
-        if (activeFilter == FilterMode.OVERDUE) {
-            filterOverdue.setBackgroundColor(getColor(R.color.filter_selected_overlay));
-        } else {
-            filterOverdue.setBackgroundColor(Color.TRANSPARENT);
-        }
+        tintFilter(filterOpen, activeFilter == FilterMode.NOT_COMPLETED);
+        tintFilter(filterUrgent, activeFilter == FilterMode.URGENT);
+        tintFilter(filterOverdue, activeFilter == FilterMode.OVERDUE);
 
         switch (activeFilter) {
             case NOT_COMPLETED:
@@ -316,6 +312,15 @@ public class ChildDashboardActivity extends AppCompatActivity {
         applyFilterAndRefresh();
     }
 
+    // עוזר לצביעת רקע של כפתור פילטר: אפור שקוף כשפעיל, שקוף לחלוטין אחרת
+    private void tintFilter(View view, boolean active) {
+        if (active) {
+            view.setBackgroundColor(getColor(R.color.filter_selected_overlay));
+        } else {
+            view.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
     private void updateCountersUI(int open, int urgent, int overdue) {
         tvTotalTasks.setText(String.valueOf(open));
         tvDueSoon.setText(String.valueOf(urgent));
@@ -323,19 +328,18 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void resolveSession() {
-        parentId = getIntent().getStringExtra("parentId");
-        childId = getIntent().getStringExtra("childId");
+        parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
+        childId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
         if (parentId == null || childId == null) {
             // --- נושא במחוון: SharedPreferences ---
             // אם המסך נפתח בלי Intent, מנסים לשחזר את הילד האחרון שנכנס מהמכשיר.
-            SharedPreferences sp = getSharedPreferences("child_session", MODE_PRIVATE);
-            parentId = sp.getString("parentId", null);
-            childId = sp.getString("childId", null);
+            parentId = ChildSession.getParentId(this);
+            childId = ChildSession.getChildId(this);
         }
     }
 
     private void returnToMainAfterMissingChild() {
-        getSharedPreferences("child_session", MODE_PRIVATE).edit().clear().apply();
+        ChildSession.clear(this);
         Toast.makeText(this, R.string.error_child_session_missing, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
@@ -350,7 +354,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getSharedPreferences("child_session", MODE_PRIVATE).edit().clear().apply();
+                        ChildSession.clear(ChildDashboardActivity.this);
                         Intent intent = new Intent(ChildDashboardActivity.this, MainActivity.class);
                         intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
                         startActivity(intent);

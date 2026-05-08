@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
+import com.example.family_tasks_proj.utils.ListUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -153,7 +154,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                 }
                 templateAdapter.notifyDataSetChanged();
-                updateHeight();
+                ListUtils.fitListHeight(listViewTemplates);
                 if (templateDataList.isEmpty()) {
                     tvNoTemplatesInfo.setVisibility(View.VISIBLE);
                 } else {
@@ -272,23 +273,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private DatabaseReference getTemplatesReference() {
         return FirebaseDatabase.getInstance().getReference("parents").child(currentParentUserId).child("task_templates");
-    }
-
-    private void updateHeight() {
-        android.widget.ListAdapter adp = listViewTemplates.getAdapter();
-        if (adp == null) {
-            return;
-        }
-        int h = 0;
-        int spec = View.MeasureSpec.makeMeasureSpec(listViewTemplates.getWidth(), View.MeasureSpec.AT_MOST);
-        for (int i = 0; i < adp.getCount(); i++) {
-            View v = adp.getView(i, null, listViewTemplates);
-            v.measure(spec, View.MeasureSpec.UNSPECIFIED);
-            h += v.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams p = listViewTemplates.getLayoutParams();
-        p.height = h + (listViewTemplates.getDividerHeight() * (adp.getCount() - 1));
-        listViewTemplates.setLayoutParams(p);
     }
 
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.models.ChildTask;
+import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.utils.DateUtils;
 import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.material.card.MaterialCardView;
@@ -62,7 +63,8 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             } else if (days < 0) {
                 bgColor = R.color.danger_light;
                 strokeColor = R.color.danger;
-            } else if (dueSoon) {
+            } else if (dueSoon)
+            {
                 bgColor = R.color.urgent_light;
                 strokeColor = R.color.urgent;
             } else {
@@ -77,12 +79,17 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         holder.tvTitle.setText(task.getTitle());
         if (task.getIsDone()) {
+            // קו מחיקה (strike-through) על שם המשימה.
+            // setPaintFlags מקבל אוסף של ביטים. הפעולה | (OR) מדליקה את הביט של STRIKE_THRU
+            // בלי לאבד שאר ביטים שכבר היו דלוקים (למשל החלקת קצוות הטקסט).
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_hint));
             holder.tvDue.setText(ctx.getString(R.string.child_due_done));
             holder.tvDue.setTextColor(ctx.getColor(R.color.success));
             holder.btnDone.setVisibility(View.GONE);
         } else {
+            // הסרת קו המחיקה אם הופעל קודם.
+            // הפעולה & ~ (AND עם NOT) מכבה רק את הביט של STRIKE_THRU ומשאירה את כל השאר כמו שהיה.
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_primary));
             holder.btnDone.setVisibility(View.VISIBLE);
@@ -140,10 +147,10 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.imgTask.setVisibility(View.GONE);
         }
 
-        // הצגת כמות כוכבים
+        // הצגת כמות כוכבים. אם המשימה נשמרה בלי ערך תקין משתמשים בברירת המחדל מהמודל.
         int stars = (int) task.getStarsWorth();
         if (stars <= 0) {
-            stars = 10; // ברירת מחדל
+            stars = TaskTemplate.DEFAULT_STARS_WORTH;
         }
         holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, stars));
         holder.tvStars.setVisibility(View.VISIBLE);

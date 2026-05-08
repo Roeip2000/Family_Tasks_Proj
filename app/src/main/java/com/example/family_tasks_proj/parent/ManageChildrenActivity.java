@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.utils.ListUtils;
 import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -178,7 +178,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
-        updateListViewHeight();
+        ListUtils.fitListHeight(lvChildren);
         if (childList.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
         } else {
@@ -248,26 +248,4 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
     }
 
-    private void updateListViewHeight() {
-        ListAdapter adapter = lvChildren.getAdapter();
-        if (adapter == null) {
-            return;
-        }
-        int totalHeight = 0;
-        int listWidth;
-        if (lvChildren.getWidth() > 0) {
-            listWidth = lvChildren.getWidth();
-        } else {
-            listWidth = 500;
-        }
-        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
-        for (int index = 0; index < adapter.getCount(); index++) {
-            View itemView = adapter.getView(index, null, lvChildren);
-            itemView.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += itemView.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = lvChildren.getLayoutParams();
-        params.height = totalHeight + (lvChildren.getDividerHeight() * (adapter.getCount() - 1));
-        lvChildren.setLayoutParams(params);
-    }
 }
