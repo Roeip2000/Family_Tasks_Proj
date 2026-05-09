@@ -164,6 +164,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת התבניות נכשלה - מציגים הודעה במקום מסך ריק בלי הסבר.
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

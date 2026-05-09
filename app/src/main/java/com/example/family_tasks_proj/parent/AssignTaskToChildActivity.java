@@ -128,6 +128,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת התבניות נכשלה - מציגים הודעה כדי שהמשתמש יידע למה הספינר ריק.
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -154,6 +156,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת הילדים נכשלה - מציגים הודעה כדי שהמשתמש יבין למה אין למי להקצות.
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

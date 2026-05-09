@@ -55,6 +55,9 @@
     <string name="child_qr_db_error">שגיאת מסד נתונים: %1$s</string>
     <string name="child_qr_connection_error">שגיאת חיבור: %1$s</string>
     <string name="child_qr_helper_card">סורקים את הקוד, בוחרים את השם שלך וממשיכים ישר למשימות.</string>
+    <string name="child_qr_camera_denied">צריך לאשר הרשאת מצלמה כדי לסרוק QR</string>
+    <string name="error_load_db">שגיאה בטעינת נתונים: %1$s</string>
+    <string name="error_save_parent_failed">שמירת פרטי ההורה נכשלה: %1$s</string>
 
     <!-- משימות - תאריכים וסטטוס -->
     <string name="child_due_done">בוצע</string>

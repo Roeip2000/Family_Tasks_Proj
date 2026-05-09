@@ -1,6 +1,8 @@
 package com.example.family_tasks_proj.auth;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,9 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
@@ -41,6 +45,22 @@ public class ChildQRLoginFragment extends Fragment {
                     }
             );
 
+    // אובייקט לבקשת הרשאת המצלמה מהמשתמש (חובה ב-Android 6+ עבור CAMERA)
+    private final ActivityResultLauncher<String> cameraPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    new ActivityResultCallback<Boolean>() {
+                        @Override
+                        public void onActivityResult(Boolean granted) {
+                            if (granted != null && granted) {
+                                launchScanner();
+                            } else {
+                                Toast.makeText(requireContext(), R.string.child_qr_camera_denied, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+            );
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
@@ -54,8 +74,19 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
-    // פותח את מסך הסריקה
+    // פותח את מסך הסריקה רק אם הרשאת המצלמה ניתנה
     private void startQrScan() {
+        // בודקים הרשאת מצלמה לפני פתיחת הסורק. אם אין הרשאה הסורק נסגר מיד.
+        int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
+        if (status == PackageManager.PERMISSION_GRANTED) {
+            launchScanner();
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    // פותח את הסורק עצמו (אחרי שאישרנו שיש הרשאת מצלמה)
+    private void launchScanner() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
         options.setPrompt(getString(R.string.child_qr_scan_prompt));

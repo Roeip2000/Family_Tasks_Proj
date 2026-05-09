@@ -188,6 +188,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם קריאת הכוכבים נכשלה לא מוסיפים כוכבים אבל מודיעים למשתמש.
+                Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -222,6 +224,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת פרופיל הילד נכשלה - מציגים הודעת שגיאה.
+                Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -257,6 +261,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת המשימות של הילד נכשלה - מציגים הודעה.
+                Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

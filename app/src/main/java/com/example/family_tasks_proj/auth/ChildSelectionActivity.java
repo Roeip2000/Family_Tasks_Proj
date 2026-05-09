@@ -66,7 +66,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
     }
 
     // משחזר מזהים מה-Intent או מהזיכרון המקומי
-    private void resolveIds() {
+    private void resolveIds()
+    {
         parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
         preselectedChildId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
         if (parentId == null) {
@@ -133,6 +134,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת ההורים נכשלה (אין רשת/הרשאה) - מציגים הודעה במקום מסך ריק.
+                Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -178,6 +181,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת הילדים נכשלה - מציגים הודעה כדי שהמשתמש יבין שיש בעיה.
+                Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

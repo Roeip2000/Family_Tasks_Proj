@@ -65,15 +65,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // פונקציה אחת מרוכזת המטפלת בכל הלחיצות במסך
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
+
         int id = view.getId();
-        if (id == R.id.btnRegister) {
+        if (id == R.id.btnRegister)
+        {
             showFragment(new ParentRegisterFragment(), true);
-        } else if (id == R.id.btnLogin) {
+        }
+        else if (id == R.id.btnLogin)
+        {
             showFragment(new ParentLoginFragment(), true);
-        } else if (id == R.id.btnChildQR) {
+        }
+        else if (id == R.id.btnChildQR)
+        {
             showFragment(new ChildQRLoginFragment(), true);
-        } else if (id == R.id.btnChild) {
+        }
+        else if (id == R.id.btnChild)
+        {
             openChildSession(false);
         }
     }
@@ -101,20 +110,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String childId = ChildSession.getChildId(this);
 
         // אם יש parentId וגם childId ב-SharedPreferences:
-        if (parentId != null && childId != null) {
+        if (parentId != null && childId != null)
+        {
             // מעבירים Intent extras כדי לדעת מאיזה נתיב ב-Firebase לטעון משימות
             Intent intent = new Intent(this, ChildDashboardActivity.class);
             intent.putExtra(ChildSession.KEY_PARENT, parentId);
             intent.putExtra(ChildSession.KEY_CHILD, childId);
             startActivity(intent);
-            if (autoLogin) {
+            if (autoLogin)
+            {
                 finish();
             }
             return true;
         }
 
         // אם זו כניסה אוטומטית ואין session מלא - לא עושים כלום
-        if (autoLogin) {
+        if (autoLogin)
+        {
             return false;
         }
 
@@ -122,15 +134,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, ChildSelectionActivity.class);
 
         // אם אין parentId שמור, נבדוק אם יש הורה מחובר כרגע ב-FirebaseAuth
-        if (parentId == null) {
+        if (parentId == null)
+        {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
+            if (user != null)
+            {
                 parentId = user.getUid();
             }
         }
 
         // מעבירים את parentId כדי שהמשתמש יבחר רק ילד, ולא יבחר שוב הורה
-        if (parentId != null) {
+        if (parentId != null)
+        {
             intent.putExtra(ChildSession.KEY_PARENT, parentId);
         }
 

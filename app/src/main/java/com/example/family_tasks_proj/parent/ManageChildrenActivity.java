@@ -121,6 +121,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת הילדים נכשלה - מודיעים למשתמש כדי שלא יחשוב שאין ילדים בכלל.
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

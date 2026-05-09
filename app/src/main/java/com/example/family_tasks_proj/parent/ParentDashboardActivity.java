@@ -233,6 +233,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת פרופיל ההורה נכשלה - מציגים הודעת שגיאה למשתמש.
+                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -293,6 +295,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // אם טעינת המשימות נכשלה (אין הרשאה/אין רשת) - מציגים הודעה.
+                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

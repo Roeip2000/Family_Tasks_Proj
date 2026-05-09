@@ -105,6 +105,16 @@ public class ParentRegisterFragment extends Fragment {
                                 Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                                 requireActivity().finish();
+                            } else {
+                                // אם השמירה ל-Database נכשלה אחרי יצירת המשתמש ב-Auth, מציגים שגיאה
+                                // ולא ממשיכים לדשבורד כדי שהמשתמש לא יישאר עם פרופיל חסר.
+                                String saveErrorMessage;
+                                if (saveTask.getException() != null) {
+                                    saveErrorMessage = saveTask.getException().getMessage();
+                                } else {
+                                    saveErrorMessage = getString(R.string.error_unknown_register);
+                                }
+                                Toast.makeText(requireContext(), getString(R.string.error_save_parent_failed, saveErrorMessage), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
