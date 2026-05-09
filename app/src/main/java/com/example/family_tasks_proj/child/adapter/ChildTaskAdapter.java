@@ -46,6 +46,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        // onBindViewHolder מחבר בין נתוני המשימה לבין השורה שמוצגת ב-RecyclerView.
         final ChildTask task = tasks.get(position);
         long days = DateUtils.daysLeft(task.getDueAt());
         boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
@@ -79,17 +80,14 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
 
         holder.tvTitle.setText(task.getTitle());
         if (task.getIsDone()) {
-            // קו מחיקה (strike-through) על שם המשימה.
-            // setPaintFlags מקבל אוסף של ביטים. הפעולה | (OR) מדליקה את הביט של STRIKE_THRU
-            // בלי לאבד שאר ביטים שכבר היו דלוקים (למשל החלקת קצוות הטקסט).
+            // מציגים קו על שם המשימה כדי שהילד יראה שהיא כבר בוצעה.
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_hint));
             holder.tvDue.setText(ctx.getString(R.string.child_due_done));
             holder.tvDue.setTextColor(ctx.getColor(R.color.success));
             holder.btnDone.setVisibility(View.GONE);
         } else {
-            // הסרת קו המחיקה אם הופעל קודם.
-            // הפעולה & ~ (AND עם NOT) מכבה רק את הביט של STRIKE_THRU ומשאירה את כל השאר כמו שהיה.
+            // מסירים קו קודם, כי RecyclerView יכול להשתמש שוב באותו כרטיס למשימה אחרת.
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ctx.getColor(R.color.text_primary));
             holder.btnDone.setVisibility(View.VISIBLE);
@@ -180,6 +178,7 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         return dueAt;
     }
 
+    // ViewHolder שומר את ה-views של שורה אחת כדי שלא נחפש אותם מחדש בכל רענון.
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         View viewStatusDot;
         View imgShell;

@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- קובץ ברירת מחדל לגיבוי. כרגע אין לפרויקט כללי include/exclude מותאמים. -->
+<!-- קובץ ברירת מחדל לגיבוי. כרגע אין לפרויקט כללי הכללה או החרגה מותאמים. -->
 <data-extraction-rules>
     <cloud-backup>
         <!-- אין כאן הגדרות גיבוי ידניות נוספות. -->
     </cloud-backup>
-    <!--
-    <device-transfer>
-        <include .../>
-        <exclude .../>
-    </device-transfer>
-    -->
 </data-extraction-rules>

@@ -22,6 +22,7 @@ import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.child.adapter.ChildTaskAdapter;
 import com.example.family_tasks_proj.utils.ChildSession;
 import com.example.family_tasks_proj.utils.DateUtils;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -93,7 +94,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        // --- נושא במחוון: RecyclerView ---
+        // RecyclerView מציג את המשימות ברשימה.
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ChildTaskAdapter(visibleTasks, new ChildTaskAdapter.OnTaskDoneListener() {
             @Override
@@ -145,7 +146,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         if (task.getIsDone()) {
             return;
         }
-        // הופכים את הסטטוס בזיכרון מיד, כדי שלחיצה מהירה נוספת לא תיכנס לבלוק הזה.
+        // Firebase עובד בצורה אסינכרונית: מסמנים בזיכרון כדי למנוע לחיצה כפולה,
+        // ואם הכתיבה תיכשל נחזיר את המשימה למצב פתוח.
         task.setIsDone(true);
 
         // starsReward חייב להיות final כי הוא משמש בתוך מחלקה אנונימית (OnSuccessListener) למטה.
@@ -167,6 +169,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         }
                         addStarToChild(reward);
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        task.setIsDone(false);
+                        applyFilterAndRefresh();
+                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 
@@ -183,7 +192,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 if (val != null) {
                     currentStars = val;
                 }
-                starsRef.setValue(currentStars + rewardStars);
+                starsRef.setValue(currentStars + rewardStars).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -337,7 +351,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
         childId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
         if (parentId == null || childId == null) {
-            // --- נושא במחוון: SharedPreferences ---
             // אם המסך נפתח בלי Intent, מנסים לשחזר את הילד האחרון שנכנס מהמכשיר.
             parentId = ChildSession.getParentId(this);
             childId = ChildSession.getChildId(this);

@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- כותרת: שם הילד + תג כוכבים קטן + כפתור התנתקות (החזרה לעיצוב הפשוט הקודם) -->
+        <!-- כותרת: שם הילד, כוכבים וכפתור התנתקות -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

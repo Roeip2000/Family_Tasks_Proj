@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Family_Tasks_Proj">
 
         <!-- מסכי הורה אחרי התחברות -->
-        <!-- מסכי הורה — adjustResize כדי שהמקלדת לא תסתיר שדות קלט -->
+        <!-- מסכי הורה: adjustResize כדי שהמקלדת לא תסתיר שדות קלט -->
         <activity
             android:name=".parent.AssignTaskToChildActivity"
             android:exported="false"
@@ -42,7 +42,7 @@
             android:name=".parent.GenerateQRActivity"
             android:exported="false" />
 
-        <!-- מסך פתיחה ראשי — adjustResize בגלל שדות login/register -->
+        <!-- מסך פתיחה ראשי: adjustResize בגלל שדות התחברות והרשמה -->
         <activity
             android:name=".auth.MainActivity"
             android:exported="true"

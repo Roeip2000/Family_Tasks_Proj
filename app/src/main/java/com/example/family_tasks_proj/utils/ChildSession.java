@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
  * מחלקת עזר לניהול ה-session של הילד ב-SharedPreferences.
  * מרכזת את שמות המפתחות ואת פעולות הקריאה/השמירה/הניקוי במקום אחד,
  * כדי שכל המסכים שצריכים את מזהי ההורה והילד ישתמשו באותו פורמט.
+ * SharedPreferences שומר את הילד האחרון במכשיר, כדי שאפשר יהיה לפתוח שוב בלי לסרוק QR בכל פעם.
  */
 public final class ChildSession {
 
@@ -18,12 +19,14 @@ public final class ChildSession {
     }
 
     // מחזיר את מזהה ההורה השמור על המכשיר (או null אם אין session)
-    public static String getParentId(Context context) {
+    public static String getParentId(Context context)
+    {
         return prefs(context).getString(KEY_PARENT, null);
     }
 
     // מחזיר את מזהה הילד השמור על המכשיר (או null אם לא נבחר ילד)
-    public static String getChildId(Context context) {
+    public static String getChildId(Context context)
+    {
         return prefs(context).getString(KEY_CHILD, null);
     }
 

@@ -26,6 +26,7 @@ import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
 import com.example.family_tasks_proj.utils.ListUtils;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +37,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 // מסך לניהול תבניות משימה (הוספה, עריכה, מחיקה)
@@ -194,19 +197,27 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
         // שומרים רק את שדות התבנית: id, כותרת, כוכבים ותמונה אופציונלית.
-        ref.child("title").setValue(title);
-        ref.child("starsWorth").setValue(starsWorth);
+        // updateChildren שומר את השדות ביחד, ולכן אין מצב שחצי תבנית נשמרת וחצי לא.
+        Map<String, Object> templateData = new HashMap<>();
+        templateData.put("id", templateId);
+        templateData.put("title", title);
+        templateData.put("starsWorth", starsWorth);
 
         if (currentSelectedBitmap != null) {
             String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
-            ref.child("imageBase64").setValue(base64);
+            templateData.put("imageBase64", base64);
         }
 
-        ref.child("id").setValue(templateId).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.updateChildren(templateData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -235,6 +246,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             public void onSuccess(Void unused) {
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_deleted, Toast.LENGTH_SHORT).show();
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -249,9 +265,15 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             public void onClick(DialogInterface d, int which) {
                 if (which == 0) {
                     currentEditTemplateId = template.getId();
+                    currentSelectedBitmap = null;
                     etTemplateTitle.setText(template.getTitle());
                     etTemplateStars.setText(String.valueOf(template.getStarsWorth()));
-                    imagePreview.setImageBitmap(ImageHelper.base64ToBitmap(template.getImageBase64()));
+                    Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+                    if (bitmap != null) {
+                        imagePreview.setImageBitmap(bitmap);
+                    } else {
+                        imagePreview.setImageResource(R.drawable.ic_image_placeholder);
+                    }
                     tvFormHeader.setText(R.string.title_edit_template);
                     btnSaveTemplate.setText(R.string.btn_update_template);
                     btnCancelTemplateEdit.setVisibility(View.VISIBLE);
@@ -293,7 +315,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 ((TextView) convertView.findViewById(R.id.tvTemplateTitle)).setText(template.getTitle());
                 ((TextView) convertView.findViewById(R.id.tvTemplateStars))
                         .setText(getString(R.string.template_stars_count, template.getStarsWorth()));
-                ((ImageView) convertView.findViewById(R.id.ivTemplateThumb)).setImageBitmap(ImageHelper.base64ToBitmap(template.getImageBase64()));
+                ImageView imageThumb = convertView.findViewById(R.id.ivTemplateThumb);
+                Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+                if (bitmap != null) {
+                    imageThumb.setImageBitmap(bitmap);
+                } else {
+                    imageThumb.setImageResource(R.drawable.ic_image_placeholder);
+                }
             }
             return convertView;
         }

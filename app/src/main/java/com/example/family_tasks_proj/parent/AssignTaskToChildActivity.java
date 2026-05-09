@@ -1,6 +1,7 @@
 package com.example.family_tasks_proj.parent;
 
 import android.app.DatePickerDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // מסך הקצאת משימה לילד מתוך תבנית
 public class AssignTaskToChildActivity extends AppCompatActivity {
@@ -186,11 +190,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             selectedTemplate = null;
         }
 
-        // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
-        newTaskRef.child("title").setValue(title);
-        newTaskRef.child("dueAt").setValue(date);
-        newTaskRef.child("isDone").setValue(false);
-        newTaskRef.child("createdAt").setValue(System.currentTimeMillis());
         // אם נבחרה תבנית - לוקחים ממנה את הכוכבים, אחרת ערך ברירת המחדל מהמודל TaskTemplate.DEFAULT_STARS_WORTH
         int starsWorth;
         if (selectedTemplate != null) {
@@ -198,7 +197,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         } else {
             starsWorth = TaskTemplate.DEFAULT_STARS_WORTH;
         }
-        newTaskRef.child("starsWorth").setValue(starsWorth);
 
         String img;
         if (selectedTemplate != null) {
@@ -206,11 +204,27 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         } else {
             img = "";
         }
-        newTaskRef.child("imageBase64").setValue(img).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
+        // updateChildren שומר את כל שדות המשימה ביחד במקום כמה כתיבות נפרדות.
+        Map<String, Object> taskData = new HashMap<>();
+        taskData.put("title", title);
+        taskData.put("dueAt", date);
+        taskData.put("isDone", false);
+        taskData.put("createdAt", System.currentTimeMillis());
+        taskData.put("starsWorth", starsWorth);
+        taskData.put("imageBase64", img);
+
+        newTaskRef.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(AssignTaskToChildActivity.this, R.string.success_task_assigned, Toast.LENGTH_SHORT).show();
                 finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -220,7 +234,12 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         if (position >= 0 && position < taskTemplateList.size()) {
             TaskTemplate template = taskTemplateList.get(position);
             etTaskTitle.setText(template.getTitle());
-            imageTaskPreview.setImageBitmap(ImageHelper.base64ToBitmap(template.getImageBase64()));
+            Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+            if (bitmap != null) {
+                imageTaskPreview.setImageBitmap(bitmap);
+            } else {
+                imageTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+            }
         }
     }
 

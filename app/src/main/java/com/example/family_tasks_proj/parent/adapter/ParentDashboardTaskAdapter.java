@@ -53,6 +53,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        // onBindViewHolder מחבר בין אובייקט משימה לבין הכרטיס שמוצג להורה.
         AssignedTask task = items.get(position);
         
         String titleText = task.getTitle();
@@ -164,6 +165,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return items.size();
     }
 
+    // ViewHolder מחזיק את ה-views של כרטיס אחד ברשימה.
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
         View viewDot, imgShell;

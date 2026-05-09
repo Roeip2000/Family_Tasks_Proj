@@ -94,7 +94,7 @@
 
 ## Recovered Open Work
 - Verify the latest parent/child flows end-to-end on device or emulator; the latest raw sessions hit rate limits before a full final verification record.
-- Review `AssignTaskToChildActivity` hardcoded `starsWorth = 10` and decide whether that is acceptable for submission.
+- `AssignTaskToChildActivity` no longer carries a literal `10`: when no template is selected the value falls back to `TaskTemplate.DEFAULT_STARS_WORTH` (the inline comment above the assignment was also updated to reference the constant by name).
 - Decide whether parent login still needs a loading indicator and any final UX polish before submission.
 - Confirm whether any remaining final-report or demo-prep docs are still needed; raw history shows repeated review requests but no finished submission packet inside the repo.
 

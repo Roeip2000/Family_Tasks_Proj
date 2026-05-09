@@ -32,7 +32,7 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Form Card -->
+        <!-- כרטיס טופס יצירת תבנית -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- List Section -->
+        <!-- רשימת התבניות הקיימות -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

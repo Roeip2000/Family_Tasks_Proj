@@ -24,6 +24,7 @@ import com.example.family_tasks_proj.parent.adapter.ParentDashboardTaskAdapter;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.utils.DateUtils;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,6 +53,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private ParentDashboardTaskAdapter taskAdapter;
     private FilterMode activeFilter = FilterMode.ALL;
+    private DatabaseReference childrenReference;
+    private ValueEventListener childrenListener;
 
     private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
 
@@ -79,6 +82,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        removeChildrenListener();
     }
 
     private void initViews() {
@@ -242,8 +251,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void loadData(FirebaseUser user) {
         // הדשבורד של ההורה עובר על כל הילדים וכל המשימות שלהם.
         // הסיכומים מחושבים מהמשימות עצמן, ולא נשמרים כמונים נפרדים ב-Firebase.
-        FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children")
-                .addValueEventListener(new ValueEventListener() {
+        // מסירים מאזין קודם כדי שלא יהיו כמה מאזינים זהים אחרי חזרה למסך.
+        removeChildrenListener();
+        childrenReference = FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children");
+        childrenListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allTasks.clear();
@@ -298,7 +309,16 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 // אם טעינת המשימות נכשלה (אין הרשאה/אין רשת) - מציגים הודעה.
                 Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        childrenReference.addValueEventListener(childrenListener);
+    }
+
+    private void removeChildrenListener() {
+        if (childrenReference != null && childrenListener != null) {
+            childrenReference.removeEventListener(childrenListener);
+        }
+        childrenReference = null;
+        childrenListener = null;
     }
 
     private void refreshTaskList() {
@@ -462,6 +482,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
             public void onSuccess(Void unused) {
                 Toast.makeText(ParentDashboardActivity.this, R.string.toast_task_updated, Toast.LENGTH_SHORT).show();
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -472,6 +497,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(ParentDashboardActivity.this, R.string.toast_deleted, Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

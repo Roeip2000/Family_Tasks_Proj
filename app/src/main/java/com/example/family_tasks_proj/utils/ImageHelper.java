@@ -37,7 +37,8 @@ public class ImageHelper {
         }
     }
 
-    // הופך Bitmap למחרוזת טקסט (Base64) כדי לשמור ב-Database
+    // הופך Bitmap למחרוזת טקסט (Base64) כדי לשמור ב-Database.
+    // Firebase Realtime Database שומר כאן טקסט, ולכן התמונה נדחסת ומומרת לטקסט.
     public static String bitmapToBase64(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
@@ -53,7 +54,7 @@ public class ImageHelper {
         }
     }
 
-    // הופך מחרוזת טקסט (Base64) חזרה לתמונה (Bitmap) להצגה במסך
+    // הופך מחרוזת טקסט (Base64) חזרה לתמונה (Bitmap) להצגה במסך.
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.trim().isEmpty()) {
             return null;

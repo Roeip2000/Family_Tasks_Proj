@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ListUtils;
 import com.example.family_tasks_proj.utils.NameUtils;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +29,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // מסך לניהול הילדים במשפחה
 public class ManageChildrenActivity extends AppCompatActivity {
@@ -150,12 +153,20 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         // שמירה של שני שדות פשוטים: שם פרטי ושם משפחה. אין כאן תמונת ילד.
         DatabaseReference currentChildRef = getChildrenReference().child(childId);
-        currentChildRef.child("firstName").setValue(firstName);
-        currentChildRef.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
+        Map<String, Object> childData = new HashMap<>();
+        childData.put("firstName", firstName);
+        childData.put("lastName", lastName);
+
+        currentChildRef.updateChildren(childData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -165,6 +176,11 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_deleted, Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

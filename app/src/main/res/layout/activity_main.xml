@@ -18,7 +18,7 @@
         android:orientation="vertical"
         android:padding="32dp">
 
-        <!-- LOGO & GREETING -->
+        <!-- כותרת וברכה -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,14 +42,14 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- FRAGMENT CONTAINER (For Login/Register forms) -->
+        <!-- אזור שבו מוצגים טפסי התחברות/הרשמה/QR -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
 
-        <!-- ROLE SELECTION: PARENT -->
+        <!-- כרטיס פעולות להורה -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardParentRole"
             android:layout_width="match_parent"
@@ -115,7 +115,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ROLE SELECTION: CHILD -->
+        <!-- כרטיס פעולות לילד -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardChildRole"
             android:layout_width="match_parent"

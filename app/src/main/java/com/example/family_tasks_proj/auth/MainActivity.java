@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnChild = findViewById(R.id.btnChild);
 
 
-        //Fragment ברירית מחדל
+        // Fragment ברירת מחדל
         if (savedInstanceState == null) {
             showFragment(new ParentLoginFragment(), false);
         }
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
 
-        // navigation: מעבר למסך בחירת ילד (ChildSelectionActivity)
+        // מעבר למסך בחירת ילד (ChildSelectionActivity)
         Intent intent = new Intent(this, ChildSelectionActivity.class);
 
         // אם אין parentId שמור, נבדוק אם יש הורה מחובר כרגע ב-FirebaseAuth
