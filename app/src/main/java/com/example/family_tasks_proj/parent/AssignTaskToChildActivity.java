@@ -191,7 +191,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTaskRef.child("dueAt").setValue(date);
         newTaskRef.child("isDone").setValue(false);
         newTaskRef.child("createdAt").setValue(System.currentTimeMillis());
-        // אם נבחרה תבנית - לוקחים ממנה את הכוכבים, אחרת ערך ברירת מחדל 10
+        // אם נבחרה תבנית - לוקחים ממנה את הכוכבים, אחרת ערך ברירת המחדל מהמודל TaskTemplate.DEFAULT_STARS_WORTH
         int starsWorth;
         if (selectedTemplate != null) {
             starsWorth = selectedTemplate.safeStarsWorth();

@@ -25,14 +25,14 @@
 - Child flow: scan QR, select child when needed, open child dashboard, mark tasks complete, view stars and urgency.
 
 ## Current Package Map
-- `auth`: entry activity and main auth shell.
-- `Parents`: parent login/register fragments.
-- `Parents_Dashbord_and_mange`: parent dashboard, child management, QR generation, task assignment, template management, parent-side adapters/models.
-- `Child_Login`: QR login and child selection flow.
-- `child`: child dashboard and child task adapter.
-- `child.model`: child-side models.
-- `FireBase`: Firebase singleton + parent model.
-- `util`: shared helpers such as `ImageHelper`, `DateUtils`, `NameUtils`.
+- `auth`: entry activity, parent login/register fragments, QR login fragment, and child-selection activity (`MainActivity`, `ParentLoginFragment`, `ParentRegisterFragment`, `ChildQRLoginFragment`, `ChildSelectionActivity`).
+- `parent`: parent dashboard, child management, QR generation, task assignment, template management (`ParentDashboardActivity`, `ManageChildrenActivity`, `GenerateQRActivity`, `AssignTaskToChildActivity`, `ParentTaskTemplateActivity`).
+- `parent.adapter`: parent-side RecyclerView adapter (`ParentDashboardTaskAdapter`).
+- `child`: child dashboard (`ChildDashboardActivity`).
+- `child.adapter`: child-side RecyclerView adapter (`ChildTaskAdapter`).
+- `models`: shared data models (`ChildTask`, `AssignedTask`, `TaskTemplate`).
+- `firebase`: Firebase singleton used by the register flow (`FBsingleton`).
+- `utils`: shared helpers (`ChildSession`, `ImageHelper`, `DateUtils`, `NameUtils`, `ListUtils`).
 
 ## Recovered Architecture Rules
 - Preserve the current package mental map. Prior history repeatedly rejected broad reorganizations.
