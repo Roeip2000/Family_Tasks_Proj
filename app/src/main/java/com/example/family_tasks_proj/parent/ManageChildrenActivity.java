@@ -150,13 +150,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
 
         // מעדכנים רק שם פרטי ושם משפחה.
-        // כך לא מוחקים בטעות את המשימות שכבר שמורות מתחת לילד.
-        DatabaseReference currentChildRef = getChildrenReference().child(childId);
-        Map<String, Object> childData = new HashMap<>();
-        childData.put("firstName", firstName);
-        childData.put("lastName", lastName);
+        // שמירה של שם פרטי ושם משפחה בנפרד תחת הילד.
+        DatabaseReference childNode = getChildrenReference().child(childId);
 
-        currentChildRef.updateChildren(childData).addOnSuccessListener(new OnSuccessListener<Void>() {
+        // במקום להשתמש ב-HashMap, אנחנו כותבים כל שדה ישירות לנתיב שלו ב-Firebase.
+        // זה קל יותר להסבר בבחינה: "אני ניגש לנתיב של השדה וקובע את הערך שלו".
+        childNode.child("firstName").setValue(firstName);
+        childNode.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
@@ -168,7 +168,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
-    }
+        }
 
     private void delete(String childId) {
         getChildrenReference().child(childId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {

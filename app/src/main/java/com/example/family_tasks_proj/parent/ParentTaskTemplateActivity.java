@@ -186,20 +186,21 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         } else {
             templateId = UUID.randomUUID().toString();
         }
-        DatabaseReference ref = getTemplatesReference().child(templateId);
+        // הפנייה לנתיב של התבנית ב-Firebase.
+        DatabaseReference templateRef = getTemplatesReference().child(templateId);
 
-        // מעדכנים רק את השדות שהשתנו בתבנית.
-        // אם עורכים שם בלי לבחור תמונה חדשה, התמונה הישנה לא נמחקת.
-        Map<String, Object> templateData = new HashMap<>();
-        templateData.put("id", templateId);
-        templateData.put("title", title);
+        // במקום להשתמש ב-HashMap, אנחנו כותבים כל שדה ישירות לנתיב שלו.
+        // זה הרבה יותר פשוט להסבר בבחינה בעל פה: "אני ניגש למיקום של הכותרת וכותב אותה".
+        templateRef.child("id").setValue(templateId);
+        templateRef.child("title").setValue(title);
 
         if (currentSelectedBitmap != null) {
             String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
-            templateData.put("imageBase64", base64);
+            templateRef.child("imageBase64").setValue(base64);
         }
 
-        ref.updateChildren(templateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+        // מוסיפים מאזין לסיום הפעולה רק על השדה האחרון או על הפנייה הכללית.
+        templateRef.child("id").setValue(templateId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();

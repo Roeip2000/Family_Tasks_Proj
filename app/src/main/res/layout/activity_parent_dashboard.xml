@@ -14,23 +14,15 @@
         android:padding="20dp">
 
         <!-- כותרת: ברכה לפי שם ההורה -->
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvParentName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:id="@+id/tvParentName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="12dp"
-                android:text="@string/parent_hello_initial"
-                android:textColor="@color/text_primary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
+            android:layout_marginBottom="20dp"
+            android:text="@string/parent_hello_initial"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <!-- כרטיס סיכום: 4 פילטרים שלוחצים עליהם להצגת קבוצת משימות -->
         <com.google.android.material.card.MaterialCardView

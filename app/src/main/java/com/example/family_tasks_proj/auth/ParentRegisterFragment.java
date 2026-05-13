@@ -116,17 +116,14 @@ public class ParentRegisterFragment extends Fragment {
         String uid = firebaseAuth.getUid();
         if (uid == null) return;
 
-        DatabaseReference parentReference = FirebaseDatabase.getInstance().getReference("parents").child(uid);
+        // הפנייה לנתיב של ההורה החדש ב-Realtime Database.
+        DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
-        // זה הורה חדש, לכן אפשר לשמור את כל פרטי ההורה בבת אחת.
-        Map<String, Object> parentData = new HashMap<>();
-        parentData.put("uid", uid);
-        parentData.put("firstName", firstName);
-        parentData.put("lastName", lastName);
-        parentData.put("email", email);
-        parentData.put("role", "parent");
-
-        parentReference.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
+        parentRef.child("uid").setValue(uid);
+        parentRef.child("firstName").setValue(firstName);
+        parentRef.child("lastName").setValue(lastName);
+        parentRef.child("email").setValue(email);
+        parentRef.child("role").setValue("parent").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
                 if (!isAdded()) {
