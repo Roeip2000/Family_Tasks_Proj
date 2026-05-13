@@ -39,21 +39,4 @@
     <color name="regular_task_dot">#2F80ED</color>
     <color name="regular_due">#6B7280</color>
     <color name="filter_selected_overlay">#1A000000</color>
-
-    <!-- מיפוי ל-Material Theme (חובה לבנייה) -->
-    <color name="md_theme_primary">@color/primary</color>
-    <color name="md_theme_onPrimary">@color/white</color>
-    <color name="md_theme_primaryContainer">@color/primary_light</color>
-    <color name="md_theme_onPrimaryContainer">@color/primary</color>
-    <color name="md_theme_secondary">@color/secondary</color>
-    <color name="md_theme_onSecondary">@color/white</color>
-    <color name="md_theme_secondaryContainer">@color/secondary_light</color>
-    <color name="md_theme_onSecondaryContainer">@color/primary</color>
-    <color name="md_theme_tertiary">@color/secondary</color>
-    <color name="md_theme_onTertiary">@color/white</color>
-    <color name="md_theme_background">@color/white</color>
-    <color name="md_theme_surface">@color/white</color>
-    <color name="md_theme_error">@color/error</color>
-    <color name="md_theme_onError">@color/white</color>
-    <color name="md_theme_surfaceVariant">@color/surface_muted</color>
 </resources>

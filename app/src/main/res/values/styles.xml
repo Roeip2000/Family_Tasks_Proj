@@ -68,16 +68,4 @@
         <item name="android:drawableTint">@color/primary_dark</item>
     </style>
 
-    <!-- סטייל ברירת מחדל ל-TextInput בערכת הנושא -->
-    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxBackgroundColor">@color/bg_card</item>
-        <item name="boxStrokeColor">@color/md_theme_primary</item>
-        <item name="boxStrokeErrorColor">@color/md_theme_error</item>
-        <item name="hintTextColor">@color/md_theme_primary</item>
-        <item name="android:textColorHint">@color/text_hint</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Family.Medium</item>
-        <item name="startIconTint">@color/text_secondary</item>
-        <item name="endIconTint">@color/text_secondary</item>
-    </style>
-
 </resources>

@@ -26,7 +26,7 @@
             android:layout_marginTop="18dp"
             android:gravity="center"
             android:text="@string/title_child_login"
-            android:textColor="@color/md_theme_primary"
+            android:textColor="@color/primary"
             android:textSize="@dimen/text_title" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            app:cardBackgroundColor="@color/md_theme_primaryContainer"
+            app:cardBackgroundColor="@color/primary_light"
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardElevation="0dp"
             app:strokeColor="@color/divider_light"
@@ -56,7 +56,7 @@
                 android:gravity="center"
                 android:padding="14dp"
                 android:text="@string/child_qr_helper_card"
-                android:textColor="@color/md_theme_onPrimaryContainer" />
+                android:textColor="@color/primary" />
         </com.google.android.material.card.MaterialCardView>
 
         <Button

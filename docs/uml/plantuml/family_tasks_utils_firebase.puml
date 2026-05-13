@@ -14,20 +14,19 @@ skinparam classBackgroundColor<<util>> #EFEFEF
 skinparam classBorderColor<<util>> #777777
 hide empty methods
 title Family Tasks - Firebase And Utility Classes
-caption Current helper dependencies and main Firebase users.
+caption Current utility classes and the screens that read or write Firebase.
 
-package "firebase / utils" #EFEFEF {
-class FBsingleton <<util>> {
-  - mAuth : FirebaseAuth
-  - mDatabase : DatabaseReference
-}
+note as SimpleFirebaseNote
+Firebase actions stay inside the screens.
+This keeps each screen simple to explain in the exam.
+end note
+
+package "utils" #EFEFEF {
 class DateUtils <<util>>
 class ImageHelper <<util>>
-class ListUtils <<util>>
-class NameUtils <<util>>
 }
 
-package "main Firebase users" #DCEEFF {
+package "Firebase screens" #DCEEFF {
 class ParentRegisterFragment <<screen>>
 class ChildQRLoginFragment <<screen>>
 class ChildSelectionActivity <<screen>>
@@ -38,33 +37,48 @@ class ParentTaskTemplateActivity <<screen>>
 class ChildDashboardActivity <<screen>>
 }
 
-ParentRegisterFragment ..> FBsingleton
-ChildQRLoginFragment ..> NameUtils
-ChildSelectionActivity ..> NameUtils
 ParentDashboardActivity ..> DateUtils
-ParentDashboardActivity ..> ImageHelper
-ParentDashboardActivity ..> NameUtils
-ManageChildrenActivity ..> ImageHelper
-ManageChildrenActivity ..> ListUtils
-ManageChildrenActivity ..> NameUtils
 AssignTaskToChildActivity ..> ImageHelper
-AssignTaskToChildActivity ..> NameUtils
 ParentTaskTemplateActivity ..> ImageHelper
-ParentTaskTemplateActivity ..> ListUtils
 ChildDashboardActivity ..> DateUtils
 
+note right of ParentRegisterFragment
+Writes a new parent profile under
+/parents/{uid}.
+end note
+
+note right of ChildQRLoginFragment
+Reads /parents/{parentId}
+to check that the QR belongs to an existing parent.
+end note
+
+note right of ChildSelectionActivity
+Reads children under
+/parents/{parentId}/children.
+end note
+
 note right of ParentDashboardActivity
-Reads children and child tasks
-under /parents/{uid}.
+Reads all children and tasks under
+/parents/{uid}/children.
+end note
+
+note right of ManageChildrenActivity
+Adds, edits and deletes child records under
+/parents/{uid}/children.
 end note
 
 note right of AssignTaskToChildActivity
-Writes new child tasks under
+Writes a new ChildTask under
 /parents/{uid}/children/{childId}/tasks.
 end note
 
 note right of ParentTaskTemplateActivity
-Writes templates under
+Reads and writes templates under
 /parents/{uid}/task_templates.
+end note
+
+note right of ChildDashboardActivity
+Reads one child's tasks and updates
+the isDone field when a task is completed.
 end note
 @enduml

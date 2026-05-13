@@ -22,32 +22,25 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_home_hero"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/Widget.Family.ScreenTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="@string/title_child_login"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_title" />
 
-                <TextView
-                    android:id="@+id/tvTitle"
-                    style="@style/Widget.Family.ScreenTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_child_login"
-                    android:textColor="@color/md_theme_primary"
-                    android:textSize="@dimen/text_title" />
-
-                <TextView
-                    android:id="@+id/tvSubtitle"
-                    style="@style/Widget.Family.ScreenSubtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/subtitle_child_login" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tvSubtitle"
+                style="@style/Widget.Family.ScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/subtitle_child_login" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView

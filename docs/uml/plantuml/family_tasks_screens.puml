@@ -14,7 +14,7 @@ skinparam classBackgroundColor<<inner>> #FFFFFF
 skinparam classBorderColor<<inner>> #666666
 hide empty methods
 title Family Tasks - Screen Classes
-caption Current screens and navigation targets.
+caption Current screens. Child flow uses QR scan, then child selection, then the child dashboard.
 
 package "auth" #DCEEFF {
 class MainActivity <<screen>>
@@ -23,7 +23,6 @@ class ParentRegisterFragment <<screen>>
 class ChildQRLoginFragment <<screen>>
 class ChildSelectionActivity <<screen>>
 class "ChildQRLoginFragment.ParsedQr" as ParsedQr <<inner>>
-class "ChildSelectionActivity.ParentItem" as ParentItem <<inner>>
 class "ChildSelectionActivity.ChildItem" as SelectionChildItem <<inner>>
 }
 
@@ -44,15 +43,14 @@ enum "ChildDashboardActivity.FilterMode" as ChildFilterMode <<inner>>
 MainActivity ..> ParentLoginFragment
 MainActivity ..> ParentRegisterFragment
 MainActivity ..> ChildQRLoginFragment
-MainActivity ..> ChildSelectionActivity
 ParentLoginFragment ..> ParentDashboardActivity
 ParentRegisterFragment ..> ParentDashboardActivity
+
 ChildQRLoginFragment ..> ChildSelectionActivity
-ChildQRLoginFragment ..> ChildDashboardActivity
 ChildQRLoginFragment +-- ParsedQr
 ChildSelectionActivity ..> ChildDashboardActivity
-ChildSelectionActivity +-- ParentItem
 ChildSelectionActivity +-- SelectionChildItem
+
 ParentDashboardActivity ..> ManageChildrenActivity
 ParentDashboardActivity ..> ParentTaskTemplateActivity
 ParentDashboardActivity ..> AssignTaskToChildActivity
