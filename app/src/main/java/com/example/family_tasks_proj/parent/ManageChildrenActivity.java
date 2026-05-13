@@ -153,8 +153,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         // שמירה של שם פרטי ושם משפחה בנפרד תחת הילד.
         DatabaseReference childNode = getChildrenReference().child(childId);
 
-        // במקום להשתמש ב-HashMap, אנחנו כותבים כל שדה ישירות לנתיב שלו ב-Firebase.
-        // זה קל יותר להסבר בבחינה: "אני ניגש לנתיב של השדה וקובע את הערך שלו".
+        // כתיבת כל שדה ישירות לנתיב שלו ב-Firebase במקום להשתמש ב-HashMap.
         childNode.child("firstName").setValue(firstName);
         childNode.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

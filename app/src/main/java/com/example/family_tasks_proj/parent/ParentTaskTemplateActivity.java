@@ -189,8 +189,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         // הפנייה לנתיב של התבנית ב-Firebase.
         DatabaseReference templateRef = getTemplatesReference().child(templateId);
 
-        // במקום להשתמש ב-HashMap, אנחנו כותבים כל שדה ישירות לנתיב שלו.
-        // זה הרבה יותר פשוט להסבר בבחינה בעל פה: "אני ניגש למיקום של הכותרת וכותב אותה".
+        // כתיבת כל שדה ישירות לנתיב שלו ב-Firebase במקום להשתמש ב-HashMap.
         templateRef.child("id").setValue(templateId);
         templateRef.child("title").setValue(title);
 
