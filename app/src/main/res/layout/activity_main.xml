@@ -157,23 +157,9 @@
                     <Button
                         android:id="@+id/btnChildQR"
                         style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
                         android:text="@string/btn_qr_login"
-                        android:textColor="@color/primary"
-                        app:cornerRadius="12dp"
-                        app:strokeColor="@color/border_strong" />
-
-                    <Button
-                        android:id="@+id/btnChild"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="54dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:text="@string/btn_direct_login"
                         android:textColor="@color/primary"
                         app:cornerRadius="12dp"
                         app:strokeColor="@color/border_strong" />

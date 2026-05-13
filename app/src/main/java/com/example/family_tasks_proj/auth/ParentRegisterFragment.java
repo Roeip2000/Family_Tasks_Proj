@@ -16,6 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.parent.ParentDashboardActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -112,6 +118,7 @@ public class ParentRegisterFragment extends Fragment {
 
         DatabaseReference parentReference = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
+        // זה הורה חדש, לכן אפשר לשמור את כל פרטי ההורה בבת אחת.
         Map<String, Object> parentData = new HashMap<>();
         parentData.put("uid", uid);
         parentData.put("firstName", firstName);
@@ -119,7 +126,7 @@ public class ParentRegisterFragment extends Fragment {
         parentData.put("email", email);
         parentData.put("role", "parent");
 
-        parentReference.updateChildren(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
+        parentReference.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
                 if (!isAdded()) {

@@ -149,7 +149,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        // שמירה של שני שדות פשוטים: שם פרטי ושם משפחה. אין כאן תמונת ילד.
+        // מעדכנים רק שם פרטי ושם משפחה.
+        // כך לא מוחקים בטעות את המשימות שכבר שמורות מתחת לילד.
         DatabaseReference currentChildRef = getChildrenReference().child(childId);
         Map<String, Object> childData = new HashMap<>();
         childData.put("firstName", firstName);

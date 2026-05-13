@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -102,26 +101,17 @@ public class ChildQRLoginFragment extends Fragment {
             Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        // קבלת QR - QR payload received
-        android.util.Log.d("ChildQRLogin", "QR payload received: " + raw);
-
         ParsedQr parsed = parseQr(raw.trim());
         if (isBlank(parsed.parentId)) {
             Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // פענוח parentId - parsed parentId
-        android.util.Log.d("ChildQRLogin", "Parsed parentId: " + parsed.parentId);
-
         checkQrTarget(parsed);
     }
 
     // בודק לאן להפנות את המשתמש לפי תוכן ה-QR
     private void checkQrTarget(ParsedQr parsed) {
-        // נתיב Firebase - Firebase path checked
-        android.util.Log.d("ChildQRLogin", "Firebase path checked");
         checkParentExists(parsed.parentId);
     }
 
@@ -183,4 +173,3 @@ public class ChildQRLoginFragment extends Fragment {
         private String parentId;
     }
 }
-

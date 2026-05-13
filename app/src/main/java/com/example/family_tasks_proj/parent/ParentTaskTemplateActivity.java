@@ -188,8 +188,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
-        // שומרים רק את שדות התבנית: id, כותרת ותמונה אופציונלית.
-        // updateChildren שומר את השדות ביחד, ולכן אין מצב שחצי תבנית נשמרת וחצי לא.
+        // מעדכנים רק את השדות שהשתנו בתבנית.
+        // אם עורכים שם בלי לבחור תמונה חדשה, התמונה הישנה לא נמחקת.
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("id", templateId);
         templateData.put("title", title);

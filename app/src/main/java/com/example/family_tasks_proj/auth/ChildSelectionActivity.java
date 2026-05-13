@@ -3,7 +3,6 @@ package com.example.family_tasks_proj.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
-import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,17 +22,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** מסך לבחירת ילד מתוך רשימה. משמש אחרי סריקת QR או בכניסה ידנית של ילד. */
+/** מסך לבחירת ילד מתוך רשימה אחרי סריקת QR. */
 public class ChildSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
     public static final String EXTRA_CHILD_ID = "childId";
 
-    private TextView tvParentLabel, tvSubtitle, tvChildLabel, tvNoChildren;
-    private Spinner spinnerParents, spinnerChildren;
+    private TextView tvSubtitle, tvNoChildren;
+    private Spinner spinnerChildren;
     private Button btnEnter;
 
-    private final List<ParentItem> parentItems = new ArrayList<>();
     private final List<ChildItem> childItems = new ArrayList<>();
     private String parentId, preselectedChildId;
 
@@ -44,15 +41,18 @@ public class ChildSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child_selection);
         bindViews();
         resolveIds();
+        if (parentId == null || parentId.isEmpty()) {
+            Toast.makeText(this, R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         bindActions();
-        openCorrectPicker();
+        tvSubtitle.setText(R.string.child_selection_subtitle_child);
+        loadChildren(parentId);
     }
 
     private void bindViews() {
         tvSubtitle = findViewById(R.id.tvSubtitle);
-        tvParentLabel = findViewById(R.id.tvParentLabel);
-        spinnerParents = findViewById(R.id.spinnerParents);
-        tvChildLabel = findViewById(R.id.tvChildLabel);
         spinnerChildren = findViewById(R.id.spinnerChildren);
         tvNoChildren = findViewById(R.id.tvNoChildren);
         btnEnter = findViewById(R.id.btnEnter);
@@ -73,66 +73,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
         preselectedChildId = getIntent().getStringExtra(EXTRA_CHILD_ID);
     }
 
-    private void openCorrectPicker() {
-        if (parentId == null || parentId.isEmpty()) {
-            tvParentLabel.setVisibility(View.VISIBLE);
-            spinnerParents.setVisibility(View.VISIBLE);
-            tvChildLabel.setVisibility(View.GONE);
-            spinnerChildren.setVisibility(View.GONE);
-            tvSubtitle.setText(R.string.child_selection_subtitle_parent);
-            loadParents();
-        } else {
-            tvParentLabel.setVisibility(View.GONE);
-            spinnerParents.setVisibility(View.GONE);
-            tvChildLabel.setVisibility(View.VISIBLE);
-            spinnerChildren.setVisibility(View.VISIBLE);
-            tvSubtitle.setText(R.string.child_selection_subtitle_child);
-            loadChildren(parentId);
-        }
-    }
-
-    // טוען את כל ההורים הרשומים במערכת מתוך ה-Database
-    private void loadParents() {
-        FirebaseDatabase.getInstance().getReference("parents").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                parentItems.clear();
-                for (DataSnapshot snap : snapshot.getChildren()) {
-                    String parentUid = snap.getKey();
-                    String firstName = snap.child("firstName").getValue(String.class);
-                    String lastName = snap.child("lastName").getValue(String.class);
-                    parentItems.add(new ParentItem(parentUid, NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_parent_name))));
-                }
-                if (parentItems.isEmpty()) {
-                    Toast.makeText(ChildSelectionActivity.this, R.string.child_selection_no_parents, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                List<String> names = new ArrayList<>();
-                for (ParentItem item : parentItems) {
-                    names.add(item.name);
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_dropdown_item, names);
-                spinnerParents.setAdapter(adapter);
-                spinnerParents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                        parentId = parentItems.get(position).id;
-                        loadChildren(parentId);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     // טוען את הילדים ששייכים להורה שנבחר
     private void loadChildren(String selectedParentId) {
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -143,7 +83,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String childId = snap.getKey();
                     String firstName = snap.child("firstName").getValue(String.class);
                     String lastName = snap.child("lastName").getValue(String.class);
-                    childItems.add(new ChildItem(childId, NameUtils.fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name_fallback))));
+                    childItems.add(new ChildItem(childId, fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name_fallback))));
                 }
                 if (childItems.isEmpty()) {
                     tvNoChildren.setVisibility(View.VISIBLE);
@@ -191,13 +131,21 @@ public class ChildSelectionActivity extends AppCompatActivity {
         finish();
     }
 
-    private static class ParentItem {
-        String id, name;
-
-        ParentItem(String id, String name) {
-            this.id = id;
-            this.name = name;
+    private String fullNameOrDefault(String firstName, String lastName, String defaultName) {
+        String fullName = "";
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            fullName = firstName.trim();
         }
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            if (!fullName.isEmpty()) {
+                fullName += " ";
+            }
+            fullName += lastName.trim();
+        }
+        if (fullName.isEmpty()) {
+            return defaultName;
+        }
+        return fullName;
     }
 
     private static class ChildItem {

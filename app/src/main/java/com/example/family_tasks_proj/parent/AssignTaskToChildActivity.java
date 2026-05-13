@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.family_tasks_proj.models.ChildTask;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
@@ -30,9 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // מסך הקצאת משימה לילד מתוך תבנית
 public class AssignTaskToChildActivity extends AppCompatActivity {
@@ -198,15 +197,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }
 
         // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
-        // updateChildren שומר את כל שדות המשימה ביחד במקום כמה כתיבות נפרדות.
-        Map<String, Object> taskData = new HashMap<>();
-        taskData.put("title", title);
-        taskData.put("dueAt", date);
-        taskData.put("isDone", false);
-        taskData.put("createdAt", System.currentTimeMillis());
-        taskData.put("imageBase64", img);
+        // זו משימה חדשה, לכן יוצרים אובייקט משימה ושומרים אותו בבת אחת.
+        ChildTask newTask = new ChildTask();
+        newTask.setTitle(title);
+        newTask.setDueAt(date);
+        newTask.setIsDone(false);
+        newTask.setCreatedAt(System.currentTimeMillis());
+        newTask.setImageBase64(img);
 
-        newTaskRef.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {
+        newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(AssignTaskToChildActivity.this, R.string.success_task_assigned, Toast.LENGTH_SHORT).show();
