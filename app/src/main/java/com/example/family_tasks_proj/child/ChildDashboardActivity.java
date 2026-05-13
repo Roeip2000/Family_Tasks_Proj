@@ -1,12 +1,9 @@
 package com.example.family_tasks_proj.child;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.models.ChildTask;
-import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.child.adapter.ChildTaskAdapter;
-import com.example.family_tasks_proj.utils.ChildSession;
 import com.example.family_tasks_proj.utils.DateUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,15 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * דשבורד הילד. מציג משימות וכוכבים.
+ * דשבורד הילד. מציג משימות פתוחות.
  * הקוד מחולק למתודות ברורות כדי שיהיה קל להוסיף כפתורים או שינויי לוגיקה בלייב.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
+    public static final String EXTRA_PARENT_ID = "parentId";
+    public static final String EXTRA_CHILD_ID = "childId";
+
     // --- 1. משתני ממשק ---
-    private TextView tvChildName, tvStars, tvTotalTasks, tvDueSoon, tvOverdue, tvNoTasks, tvTaskSectionTitle;
+    private TextView tvChildName, tvTotalTasks, tvDueSoon, tvOverdue, tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
-    private Button btnLogout;
     private View filterOpen, filterUrgent, filterOverdue;
 
     // --- 2. משתני נתונים ---
@@ -60,10 +57,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
-        // שלב א: טעינת פרטי המשתמש מהסשן
-        resolveSession();
+        // שלב א: טעינת מזהי ההורה והילד מה-Intent
+        resolveIntentIds();
         if (parentId == null || childId == null) {
-            finish();
+            returnToMainAfterMissingChild();
             return;
         }
 
@@ -79,14 +76,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     private void initViews() {
         tvChildName = findViewById(R.id.tvChildName);
-        tvStars = findViewById(R.id.tvStars);
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvDueSoon = findViewById(R.id.tvDueSoon);
         tvOverdue = findViewById(R.id.tvOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvChildTasks);
-        btnLogout = findViewById(R.id.btnChildLogout);
 
         filterOpen = findViewById(R.id.filterOpen);
         filterUrgent = findViewById(R.id.filterUrgent);
@@ -106,14 +101,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // מאזין לכפתור התנתקות
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLogoutDialog();
-            }
-        });
-
         // מאזינים לשלושת הפילטרים
         View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
@@ -140,9 +127,9 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .child(parentId).child("children").child(childId);
     }
 
-    // --- לוגיקה: סיום משימה ועדכון כוכבים ---
+    // --- לוגיקה: סיום משימה ---
     private void processMarkTaskAsDone(ChildTask task) {
-        // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה כבוצעה, לא מוסיפים כוכבים שוב.
+        // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה כבוצעה, לא כותבים שוב.
         if (task.getIsDone()) {
             return;
         }
@@ -150,24 +137,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
         // ואם הכתיבה תיכשל נחזיר את המשימה למצב פתוח.
         task.setIsDone(true);
 
-        // starsReward חייב להיות final כי הוא משמש בתוך מחלקה אנונימית (OnSuccessListener) למטה.
-        final long starsReward = task.getStarsWorth();
-
         // הילד משנה רק את הסטטוס של המשימה שלו ל-"בוצע".
         childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
-                        // מוסיפים בדיוק את כמות הכוכבים שההורה הגדיר למשימה.
-                        // אם לא הוגדר ערך, משתמשים בברירת המחדל המוגדרת ב-TaskTemplate.
-                        long reward;
-                        if (starsReward > 0) {
-                            reward = starsReward;
-                        } else {
-                            reward = TaskTemplate.DEFAULT_STARS_WORTH;
-                        }
-                        addStarToChild(reward);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -177,35 +152,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                         Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void addStarToChild(final long rewardStars) {
-        // משיכת כמות הכוכבים הנוכחית והוספת ערך המשימה.
-        // הכוכבים נשמרים אצל הילד עצמו, ולכן אפשר להציג אותם גם בכניסה הבאה.
-        // שומרים את ההפניה במשתנה כדי לקרוא ולכתוב לאותו מקום בלי לבנות את הנתיב פעמיים.
-        final DatabaseReference starsRef = childRef().child("stars");
-        starsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                long currentStars = 0;
-                Long val = snapshot.getValue(Long.class);
-                if (val != null) {
-                    currentStars = val;
-                }
-                starsRef.setValue(currentStars + rewardStars).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // אם קריאת הכוכבים נכשלה לא מוסיפים כוכבים אבל מודיעים למשתמש.
-                Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     // --- לוגיקה: טעינת נתונים ---
@@ -226,14 +172,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     displayName = getString(R.string.default_child_name_fallback);
                 }
                 tvChildName.setText(getString(R.string.child_greeting, displayName));
-                Long stars = snapshot.child("stars").getValue(Long.class);
-                long starsCount;
-                if (stars != null) {
-                    starsCount = stars;
-                } else {
-                    starsCount = 0;
-                }
-                tvStars.setText(getString(R.string.child_stars_count, starsCount));
             }
 
             @Override
@@ -347,40 +285,15 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvOverdue.setText(String.valueOf(overdue));
     }
 
-    private void resolveSession() {
-        parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
-        childId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
-        if (parentId == null || childId == null) {
-            // אם המסך נפתח בלי Intent, מנסים לשחזר את הילד האחרון שנכנס מהמכשיר.
-            parentId = ChildSession.getParentId(this);
-            childId = ChildSession.getChildId(this);
-        }
+    private void resolveIntentIds() {
+        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
+        childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
     }
 
     private void returnToMainAfterMissingChild() {
-        ChildSession.clear(this);
-        Toast.makeText(this, R.string.error_child_session_missing, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.error_child_missing, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
         startActivity(intent);
         finish();
-    }
-
-    private void showLogoutDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_logout_title)
-                .setMessage(R.string.dialog_logout_message)
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ChildSession.clear(ChildDashboardActivity.this);
-                        Intent intent = new Intent(ChildDashboardActivity.this, MainActivity.class);
-                        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
-                        startActivity(intent);
-                        finish();
-                    }
-                })
-                .setNegativeButton(R.string.dialog_no, null)
-                .show();
     }
 }

@@ -60,21 +60,6 @@
                     android:paddingHorizontal="16dp"
                     android:textSize="16sp" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="12dp" />
-
-                <EditText
-                    android:id="@+id/etStarsWorth"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:background="@drawable/bg_repository_list"
-                    android:hint="@string/hint_template_stars"
-                    android:importantForAutofill="no"
-                    android:inputType="number"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="16sp" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

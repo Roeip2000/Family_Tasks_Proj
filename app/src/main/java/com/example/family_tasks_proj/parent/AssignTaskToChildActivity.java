@@ -190,14 +190,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             selectedTemplate = null;
         }
 
-        // אם נבחרה תבנית - לוקחים ממנה את הכוכבים, אחרת ערך ברירת המחדל מהמודל TaskTemplate.DEFAULT_STARS_WORTH
-        int starsWorth;
-        if (selectedTemplate != null) {
-            starsWorth = selectedTemplate.safeStarsWorth();
-        } else {
-            starsWorth = TaskTemplate.DEFAULT_STARS_WORTH;
-        }
-
         String img;
         if (selectedTemplate != null) {
             img = selectedTemplate.getImageBase64();
@@ -212,7 +204,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         taskData.put("dueAt", date);
         taskData.put("isDone", false);
         taskData.put("createdAt", System.currentTimeMillis());
-        taskData.put("starsWorth", starsWorth);
         taskData.put("imageBase64", img);
 
         newTaskRef.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {

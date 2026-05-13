@@ -43,7 +43,7 @@ import java.util.Map;
 // דשבורד ניהול להורה - מציג את כל המשימות של כל הילדים
 public class ParentDashboardActivity extends AppCompatActivity {
 
-    private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR, btnLogout;
+    private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
     private TextView tvName, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
     private View fOpen, fUrgent, fOverdue, fDone;
     private RecyclerView rvTasks;
@@ -109,7 +109,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
         btnAssignTask = findViewById(R.id.btnAssignTaskToChild);
         btnQR = findViewById(R.id.btnShowQR);
-        btnLogout = findViewById(R.id.btnLogout);
     }
 
     private void setupFilters() {
@@ -202,12 +201,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
-            }
-        });
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLogoutDialog();
             }
         });
     }
@@ -476,7 +469,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         taskData.put("title", title);
         taskData.put("dueAt", dueAt);
 
-        // מעדכנים רק את שדות המשימה שנערכו, בלי לגעת בסטטוס, כוכבים או תמונה.
+        // מעדכנים רק את שדות המשימה שנערכו, בלי לגעת בסטטוס או בתמונה.
         taskReference.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
@@ -506,17 +499,4 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    private void showLogoutDialog() {
-        new AlertDialog.Builder(this).setTitle(R.string.dialog_logout_title).setMessage(R.string.dialog_logout_message)
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface d, int w) {
-                        FirebaseAuth.getInstance().signOut();
-                        Intent intent = new Intent(ParentDashboardActivity.this, MainActivity.class);
-                        intent.putExtra(MainActivity.EXTRA_SKIP_AUTO_LOGIN, true);
-                        startActivity(intent);
-                        finish();
-                    }
-                }).setNegativeButton(R.string.dialog_cancel, null).show();
-    }
 }

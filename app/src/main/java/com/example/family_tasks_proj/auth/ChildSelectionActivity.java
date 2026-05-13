@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
-import com.example.family_tasks_proj.utils.ChildSession;
 import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,8 +24,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** מסך לבחירת ילד מתוך רשימה. משמש כאשר הסריקה זיהתה רק את ההורה או בכניסה ידנית. */
+/** מסך לבחירת ילד מתוך רשימה. משמש אחרי סריקת QR או בכניסה ידנית של ילד. */
 public class ChildSelectionActivity extends AppCompatActivity {
+
+    public static final String EXTRA_PARENT_ID = "parentId";
+    public static final String EXTRA_CHILD_ID = "childId";
 
     private TextView tvParentLabel, tvSubtitle, tvChildLabel, tvNoChildren;
     private Spinner spinnerParents, spinnerChildren;
@@ -65,16 +67,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // משחזר מזהים מה-Intent או מהזיכרון המקומי
-    private void resolveIds()
-    {
-        parentId = getIntent().getStringExtra(ChildSession.KEY_PARENT);
-        preselectedChildId = getIntent().getStringExtra(ChildSession.KEY_CHILD);
-        if (parentId == null) {
-            // אם אין מזהה ב-Intent, מנסים לשחזר מ-SharedPreferences דרך מחלקת העזר
-            parentId = ChildSession.getParentId(this);
-            preselectedChildId = ChildSession.getChildId(this);
-        }
+    // מקבל מזהים רק מה-Intent. אין שמירה מקומית.
+    private void resolveIds() {
+        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
+        preselectedChildId = getIntent().getStringExtra(EXTRA_CHILD_ID);
     }
 
     private void openCorrectPicker() {
@@ -97,8 +93,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     // טוען את כל ההורים הרשומים במערכת מתוך ה-Database
     private void loadParents() {
-        // ניגש לתיקיית "parents" הראשית כדי להציג את כל המשפחות הקיימות
-        // זה משמש כניסה ידנית לילד כשאין QR או כשצריך לבחור משפחה.
         FirebaseDatabase.getInstance().getReference("parents").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -134,16 +128,13 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת ההורים נכשלה (אין רשת/הרשאה) - מציגים הודעה במקום מסך ריק.
                 Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // טוען את הילדים השייכים להורה שנבחר מתוך תת-התיקייה שלו
+    // טוען את הילדים ששייכים להורה שנבחר
     private void loadChildren(String selectedParentId) {
-        // ניגש לנתיב parents/{parentId}/children כדי למצוא את הילדים של אותה משפחה
-        // ה-Spinner מציג שמות, אבל הבחירה נשמרת לפי childId כדי למנוע בלבול בין שמות דומים.
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -181,7 +172,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת הילדים נכשלה - מציגים הודעה כדי שהמשתמש יבין שיש בעיה.
                 Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
@@ -194,11 +184,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
             return;
         }
         String childId = childItems.get(selectedPosition).id;
-        // אחרי בחירת ילד שומרים session מקומי, כדי שבפעם הבאה אפשר יהיה להמשיך מהר יותר.
-        ChildSession.save(this, parentId, childId);
         Intent intent = new Intent(this, ChildDashboardActivity.class);
-        intent.putExtra(ChildSession.KEY_PARENT, parentId);
-        intent.putExtra(ChildSession.KEY_CHILD, childId);
+        intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);
+        intent.putExtra(ChildDashboardActivity.EXTRA_CHILD_ID, childId);
         startActivity(intent);
         finish();
     }

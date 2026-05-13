@@ -10,7 +10,7 @@
     app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
 
-    <!-- שורת תבנית: תמונה, שם וכמות כוכבים -->
+    <!-- שורת תבנית: תמונה ושם -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,20 +58,6 @@
                 android:text="@string/template_item_hint"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvTemplateStars"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_star_pill"
-                android:paddingStart="10dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="6dp"
-                android:textColor="@color/gold"
-                android:textSize="12sp"
-                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

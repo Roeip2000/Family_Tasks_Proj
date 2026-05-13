@@ -45,7 +45,7 @@ import java.util.UUID;
 // מסך לניהול תבניות משימה (הוספה, עריכה, מחיקה)
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
-    private EditText etTemplateTitle, etTemplateStars;
+    private EditText etTemplateTitle;
     private ImageView imagePreview;
     private Button btnSaveTemplate, btnCancelTemplateEdit, btnBackToMain;
     private ListView listViewTemplates;
@@ -92,7 +92,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private void initViews() {
         etTemplateTitle = findViewById(R.id.etTitle);
-        etTemplateStars = findViewById(R.id.etStarsWorth);
         imagePreview = findViewById(R.id.imgTask);
         btnSaveTemplate = findViewById(R.id.btnSave);
         btnCancelTemplateEdit = findViewById(R.id.btnCancelEdit);
@@ -175,16 +174,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private void processSave() {
         String title = etTemplateTitle.getText().toString().trim();
-        String stars = etTemplateStars.getText().toString().trim();
 
-        // תבנית חייבת שם וכמות כוכבים, כי שני הנתונים האלה מועתקים למשימה שמקצים לילד.
-        if (title.isEmpty() || stars.isEmpty()) {
+        // תבנית חייבת שם כדי שאפשר יהיה להעתיק אותו למשימה שמקצים לילד.
+        if (title.isEmpty()) {
             Toast.makeText(this, R.string.error_template_missing_details, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Integer starsWorth = readStarsWorth(stars);
-        if (starsWorth == null) {
             return;
         }
 
@@ -196,12 +189,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
         DatabaseReference ref = getTemplatesReference().child(templateId);
 
-        // שומרים רק את שדות התבנית: id, כותרת, כוכבים ותמונה אופציונלית.
+        // שומרים רק את שדות התבנית: id, כותרת ותמונה אופציונלית.
         // updateChildren שומר את השדות ביחד, ולכן אין מצב שחצי תבנית נשמרת וחצי לא.
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("id", templateId);
         templateData.put("title", title);
-        templateData.put("starsWorth", starsWorth);
 
         if (currentSelectedBitmap != null) {
             String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
@@ -220,24 +212,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private Integer readStarsWorth(String stars) {
-        // המרה בטוחה ממחרוזת למספר, כדי שקלט לא תקין לא יפיל את האפליקציה.
-        int starsWorth;
-        try {
-            starsWorth = Integer.parseInt(stars);
-        } catch (NumberFormatException exception) {
-            Toast.makeText(this, R.string.error_template_stars_number, Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
-        if (starsWorth <= 0) {
-            Toast.makeText(this, R.string.error_template_stars_positive, Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
-        return starsWorth;
     }
 
     private void delete(String templateId) {
@@ -267,7 +241,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     currentEditTemplateId = template.getId();
                     currentSelectedBitmap = null;
                     etTemplateTitle.setText(template.getTitle());
-                    etTemplateStars.setText(String.valueOf(template.getStarsWorth()));
                     Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
                     if (bitmap != null) {
                         imagePreview.setImageBitmap(bitmap);
@@ -288,7 +261,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         currentEditTemplateId = null;
         currentSelectedBitmap = null;
         etTemplateTitle.setText("");
-        etTemplateStars.setText("");
         imagePreview.setImageResource(R.drawable.ic_image_placeholder);
         tvFormHeader.setText(R.string.title_create_template);
         btnSaveTemplate.setText(R.string.btn_save_template);
@@ -313,8 +285,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             TaskTemplate template = getItem(position);
             if (template != null) {
                 ((TextView) convertView.findViewById(R.id.tvTemplateTitle)).setText(template.getTitle());
-                ((TextView) convertView.findViewById(R.id.tvTemplateStars))
-                        .setText(getString(R.string.template_stars_count, template.getStarsWorth()));
                 ImageView imageThumb = convertView.findViewById(R.id.ivTemplateThumb);
                 Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
                 if (bitmap != null) {

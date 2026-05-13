@@ -175,8 +175,8 @@ public class GenerateFamilyTasksUml {
             }
             return Group.INNER;
         }
-        if (info.packageName.endsWith(".util") || info.simpleName.equals("FBsingleton")) return Group.UTIL;
-        if (info.packageName.contains(".model") || info.simpleName.equals("ParentInFb")) return Group.MODEL;
+        if (info.packageName.endsWith(".utils") || info.packageName.endsWith(".firebase") || info.simpleName.equals("FBsingleton")) return Group.UTIL;
+        if (info.packageName.endsWith(".models")) return Group.MODEL;
         if (info.simpleName.endsWith("Adapter")) return Group.ADAPTER;
         if (info.simpleName.endsWith("Activity") || info.simpleName.endsWith("Fragment")) return Group.SCREEN;
         return Group.INNER;

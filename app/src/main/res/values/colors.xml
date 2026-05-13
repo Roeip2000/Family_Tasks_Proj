@@ -14,7 +14,6 @@
     <color name="bg_screen">#FFFFFF</color>
     <color name="bg_card">#FFFFFF</color>
     <color name="surface_muted">#F8F9FA</color>
-    <color name="surface_soft_gold">#FFF9DB</color>
     <color name="hero_top">#FFFFFF</color>
 
     <!-- טקסט וגבולות -->
@@ -33,11 +32,8 @@
     <color name="error">#D63031</color>
     <color name="danger">#D63031</color>
     <color name="danger_light">#FFF0F0</color>
-    <color name="gold">#F1C40F</color>
-    <color name="star_gold">#F1C40F</color>
     <color name="urgent">#D35400</color>
     <color name="urgent_light">#FFF0F0</color>
-    <color name="logout_text">#D63031</color>
     <color name="regular_task_bg">#EEF2F7</color>
     <color name="regular_task_text">#52606D</color>
     <color name="regular_task_dot">#2F80ED</color>

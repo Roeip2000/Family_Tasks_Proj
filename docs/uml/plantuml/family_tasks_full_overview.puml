@@ -1,5 +1,4 @@
 @startuml
-' Auto-generated from Java source by docs/uml/tools/GenerateFamilyTasksUml.java
 !pragma layout smetana
 skinparam dpi 240
 skinparam shadowing false
@@ -20,136 +19,110 @@ skinparam classBorderColor<<util>> #777777
 skinparam classBackgroundColor<<inner>> #FFFFFF
 skinparam classBorderColor<<inner>> #666666
 hide empty methods
-title Family Tasks - Full Code-Generated Class Overview
-caption Generated from app/src/main/java with JavaParser; rendered by PlantUML.
+title Family Tasks - Current Class Overview
+caption Current Java source under app/src/main/java/com/example/family_tasks_proj.
 
-package "Screens / Activities / Fragments" #DCEEFF {
-class "AssignTaskToChildActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_AssignTaskToChildActivity <<screen>>
-class "ChildDashboardActivity" as com_example_family_tasks_proj_child_ChildDashboardActivity <<screen>>
-class "ChildQRLoginFragment" as com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment <<screen>>
-class "ChildSelectionActivity" as com_example_family_tasks_proj_Child_Login_ChildSelectionActivity <<screen>>
-class "GenerateQRActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_GenerateQRActivity <<screen>>
-class "MainActivity" as com_example_family_tasks_proj_auth_MainActivity <<screen>>
-class "ManageChildrenActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity <<screen>>
-class "ParentDashboardActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity <<screen>>
-class "ParentLoginFragment" as com_example_family_tasks_proj_Parents_ParentLoginFragment <<screen>>
-class "ParentRegisterFragment" as com_example_family_tasks_proj_Parents_ParentRegisterFragment <<screen>>
-class "ParentTaskTemplateActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity <<screen>>
+package "auth" #DCEEFF {
+class MainActivity <<screen>>
+class ParentLoginFragment <<screen>>
+class ParentRegisterFragment <<screen>>
+class ChildQRLoginFragment <<screen>>
+class ChildSelectionActivity <<screen>>
+class "ChildQRLoginFragment.ParsedQr" as ParsedQr <<inner>>
+class "ChildSelectionActivity.ParentItem" as ParentItem <<inner>>
+class "ChildSelectionActivity.ChildItem" as SelectionChildItem <<inner>>
 }
 
-package "Models" #E2F5E6 {
-class "AssignedTask" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask <<model>>
-class "Child" as com_example_family_tasks_proj_child_model_Child <<model>>
-class "ChildSummary" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary <<model>>
-class "ChildTask" as com_example_family_tasks_proj_child_model_ChildTask <<model>>
-class "TaskListItem" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem <<model>>
-class "TaskTemplate" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate <<model>>
+package "parent" #DCEEFF {
+class ParentDashboardActivity <<screen>>
+class ManageChildrenActivity <<screen>>
+class GenerateQRActivity <<screen>>
+class AssignTaskToChildActivity <<screen>>
+class ParentTaskTemplateActivity <<screen>>
+enum "ParentDashboardActivity.FilterMode" as ParentFilterMode <<inner>>
+class "ManageChildrenActivity.ChildItem" as ManageChildItem <<inner>>
+class "ManageChildrenActivity.ChildListAdapter" as ChildListAdapter <<adapter>>
+class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<adapter>>
 }
 
-package "Adapters" #FFF3BF {
-class "ManageChildrenActivity.ChildListAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter <<adapter>>
-class "ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_ChildSummaryViewHolder <<adapter>>
-class "ChildTaskAdapter" as com_example_family_tasks_proj_child_ChildTaskAdapter <<adapter>>
-interface "ParentDashboardChildSummaryAdapter.OnChildSelectedListener" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_OnChildSelectedListener <<adapter>>
-interface "ChildTaskAdapter.OnTaskDoneListener" as com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener <<adapter>>
-class "ParentDashboardChildSummaryAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter <<adapter>>
-class "ParentDashboardTaskAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter <<adapter>>
-class "ChildTaskAdapter.TaskViewHolder" as com_example_family_tasks_proj_child_ChildTaskAdapter_TaskViewHolder <<adapter>>
-class "ParentTaskTemplateActivity.TemplateListAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter <<adapter>>
+package "child" #DCEEFF {
+class ChildDashboardActivity <<screen>>
+enum "ChildDashboardActivity.FilterMode" as ChildFilterMode <<inner>>
 }
 
-package "Utils / Firebase" #EFEFEF {
-class "DateUtils" as com_example_family_tasks_proj_util_DateUtils <<util>>
-class "FBsingleton" as com_example_family_tasks_proj_FireBase_FBsingleton <<util>>
-class "ImageHelper" as com_example_family_tasks_proj_util_ImageHelper <<util>>
-class "NameUtils" as com_example_family_tasks_proj_util_NameUtils <<util>>
+package "adapters" #FFF3BF {
+class ChildTaskAdapter <<adapter>>
+interface "ChildTaskAdapter.OnTaskDoneListener" as OnTaskDoneListener <<adapter>>
+class "ChildTaskAdapter.TaskViewHolder" as ChildTaskViewHolder <<adapter>>
+class ParentDashboardTaskAdapter <<adapter>>
+interface "ParentDashboardTaskAdapter.OnItemClickListener" as OnItemClickListener <<adapter>>
+class "ParentDashboardTaskAdapter.TaskViewHolder" as ParentTaskViewHolder <<adapter>>
 }
 
-package "Inner / support classes" #FFFFFF {
-class "ChildSelectionActivity.ChildItem" as com_example_family_tasks_proj_Child_Login_ChildSelectionActivity_ChildItem <<inner>>
-class "ManageChildrenActivity.ChildItem" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildItem <<inner>>
-enum "ChildDashboardActivity.FilterMode" as com_example_family_tasks_proj_child_ChildDashboardActivity_FilterMode <<inner>>
-enum "ParentDashboardActivity.FilterMode" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity_FilterMode <<inner>>
-class "ChildSelectionActivity.ParentItem" as com_example_family_tasks_proj_Child_Login_ChildSelectionActivity_ParentItem <<inner>>
-class "ChildQRLoginFragment.ParsedQr" as com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment_ParsedQr <<inner>>
+package "models" #E2F5E6 {
+class AssignedTask <<model>>
+class ChildTask <<model>>
+class TaskTemplate <<model>>
 }
 
-package "Unconnected in this diagram" #FFFFFF {
-class "ParentInFb" as com_example_family_tasks_proj_FireBase_ParentInFb <<model>>
+package "firebase / utils" #EFEFEF {
+class FBsingleton <<util>>
+class DateUtils <<util>>
+class ImageHelper <<util>>
+class ListUtils <<util>>
+class NameUtils <<util>>
 }
 
-com_example_family_tasks_proj_auth_MainActivity ..> com_example_family_tasks_proj_Parents_ParentLoginFragment : uses
-com_example_family_tasks_proj_auth_MainActivity ..> com_example_family_tasks_proj_Parents_ParentRegisterFragment : uses
-com_example_family_tasks_proj_auth_MainActivity ..> com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment : uses
-com_example_family_tasks_proj_auth_MainActivity ..> com_example_family_tasks_proj_child_ChildDashboardActivity : uses
-com_example_family_tasks_proj_auth_MainActivity ..> com_example_family_tasks_proj_Child_Login_ChildSelectionActivity : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_child_model_ChildTask : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_child_ChildTaskAdapter : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_auth_MainActivity : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_child_ChildDashboardActivity +-- com_example_family_tasks_proj_child_ChildDashboardActivity_FilterMode : contains
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_child_model_ChildTask : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter +-- com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener : contains
-com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener ..> com_example_family_tasks_proj_child_model_ChildTask : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter +-- com_example_family_tasks_proj_child_ChildTaskAdapter_TaskViewHolder : contains
-com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment ..> com_example_family_tasks_proj_child_ChildDashboardActivity : uses
-com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment ..> com_example_family_tasks_proj_Child_Login_ChildSelectionActivity : uses
-com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment +-- com_example_family_tasks_proj_Child_Login_ChildQRLoginFragment_ParsedQr : contains
-com_example_family_tasks_proj_Child_Login_ChildSelectionActivity ..> com_example_family_tasks_proj_child_ChildDashboardActivity : uses
-com_example_family_tasks_proj_Child_Login_ChildSelectionActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_Child_Login_ChildSelectionActivity +-- com_example_family_tasks_proj_Child_Login_ChildSelectionActivity_ParentItem : contains
-com_example_family_tasks_proj_Child_Login_ChildSelectionActivity +-- com_example_family_tasks_proj_Child_Login_ChildSelectionActivity_ChildItem : contains
-com_example_family_tasks_proj_Parents_ParentLoginFragment ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity : uses
-com_example_family_tasks_proj_Parents_ParentRegisterFragment ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity : uses
-com_example_family_tasks_proj_Parents_ParentRegisterFragment ..> com_example_family_tasks_proj_FireBase_FBsingleton : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_AssignTaskToChildActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_AssignTaskToChildActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_AssignTaskToChildActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_child_model_Child : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildItem : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildItem : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_AssignTaskToChildActivity : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_GenerateQRActivity : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_auth_MainActivity : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardActivity_FilterMode : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_OnChildSelectedListener : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_ChildSummaryViewHolder : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
+MainActivity ..> ParentLoginFragment
+MainActivity ..> ParentRegisterFragment
+MainActivity ..> ChildQRLoginFragment
+MainActivity ..> ChildSelectionActivity
+ParentLoginFragment ..> ParentDashboardActivity
+ParentRegisterFragment ..> ParentDashboardActivity
+ParentRegisterFragment ..> FBsingleton
+ChildQRLoginFragment ..> ChildSelectionActivity
+ChildQRLoginFragment ..> ChildDashboardActivity
+ChildQRLoginFragment +-- ParsedQr
+ChildSelectionActivity ..> ChildDashboardActivity
+ChildSelectionActivity ..> NameUtils
+ChildSelectionActivity +-- ParentItem
+ChildSelectionActivity +-- SelectionChildItem
 
-legend right
-|=Color|=Role|
-|<#DCEEFF>|Screens / Activities / Fragments|
-|<#E2F5E6>|Models|
-|<#FFF3BF>|Adapters|
-|<#EFEFEF>|Utils / Firebase|
-|<#FFFFFF>|Inner or unconnected support|
-endlegend
+ParentDashboardActivity ..> AssignedTask
+ParentDashboardActivity ..> ParentDashboardTaskAdapter
+ParentDashboardActivity ..> ManageChildrenActivity
+ParentDashboardActivity ..> ParentTaskTemplateActivity
+ParentDashboardActivity ..> AssignTaskToChildActivity
+ParentDashboardActivity ..> GenerateQRActivity
+ParentDashboardActivity ..> DateUtils
+ParentDashboardActivity ..> ImageHelper
+ParentDashboardActivity ..> NameUtils
+ParentDashboardActivity +-- ParentFilterMode
+ManageChildrenActivity ..> ImageHelper
+ManageChildrenActivity ..> ListUtils
+ManageChildrenActivity ..> NameUtils
+ManageChildrenActivity +-- ChildListAdapter
+ManageChildrenActivity +-- ManageChildItem
+AssignTaskToChildActivity ..> TaskTemplate
+AssignTaskToChildActivity ..> ImageHelper
+AssignTaskToChildActivity ..> NameUtils
+ParentTaskTemplateActivity ..> TaskTemplate
+ParentTaskTemplateActivity ..> ImageHelper
+ParentTaskTemplateActivity ..> ListUtils
+ParentTaskTemplateActivity +-- TemplateListAdapter
+
+ChildDashboardActivity ..> ChildTask
+ChildDashboardActivity ..> ChildTaskAdapter
+ChildDashboardActivity ..> DateUtils
+ChildDashboardActivity +-- ChildFilterMode
+ChildTaskAdapter ..> ChildTask
+ChildTaskAdapter ..> DateUtils
+ChildTaskAdapter ..> ImageHelper
+ChildTaskAdapter +-- OnTaskDoneListener
+ChildTaskAdapter +-- ChildTaskViewHolder
+ParentDashboardTaskAdapter ..> AssignedTask
+ParentDashboardTaskAdapter ..> DateUtils
+ParentDashboardTaskAdapter ..> ImageHelper
+ParentDashboardTaskAdapter +-- OnItemClickListener
+ParentDashboardTaskAdapter +-- ParentTaskViewHolder
 @enduml

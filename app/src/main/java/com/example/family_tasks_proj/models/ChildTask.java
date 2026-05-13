@@ -1,12 +1,11 @@
 package com.example.family_tasks_proj.models;
 
-/** מודל המייצג משימה שהוקצתה לילד. כוללת תאריך יעד, סטטוס ביצוע וכמות כוכבים. */
+/** מודל המייצג משימה שהוקצתה לילד. כולל תאריך יעד וסטטוס ביצוע. */
 public class ChildTask {
     private String id;
     private String title;
     private String dueAt;
     private boolean isDone;
-    private long starsWorth;
     private String imageBase64;
     private long createdAt;
 
@@ -43,14 +42,6 @@ public class ChildTask {
 
     public void setIsDone(boolean isDone) {
         this.isDone = isDone;
-    }
-
-    public long getStarsWorth() {
-        return starsWorth;
-    }
-
-    public void setStarsWorth(long starsWorth) {
-        this.starsWorth = starsWorth;
     }
 
     public String getImageBase64() {

@@ -72,18 +72,6 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvTaskStars"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_star_badge"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:textColor="@color/gold"
-                android:textSize="13sp"
-                android:textStyle="bold" />
         </LinearLayout>
 
         <Button

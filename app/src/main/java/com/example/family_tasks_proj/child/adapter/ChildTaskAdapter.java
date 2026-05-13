@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.models.ChildTask;
-import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.utils.DateUtils;
 import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.material.card.MaterialCardView;
@@ -145,13 +144,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             holder.imgTask.setVisibility(View.GONE);
         }
 
-        // הצגת כמות כוכבים. אם המשימה נשמרה בלי ערך תקין משתמשים בברירת המחדל מהמודל.
-        int stars = (int) task.getStarsWorth();
-        if (stars <= 0) {
-            stars = TaskTemplate.DEFAULT_STARS_WORTH;
-        }
-        holder.tvStars.setText(ctx.getString(R.string.child_stars_worth, stars));
-        holder.tvStars.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -185,7 +177,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
         ImageView imgTask;
         TextView tvTitle;
         TextView tvDue;
-        TextView tvStars;
         Button btnDone;
 
         TaskViewHolder(@NonNull View itemView) {
@@ -195,7 +186,6 @@ public class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskAdapter.Task
             imgTask = itemView.findViewById(R.id.imgTaskImage);
             tvTitle = itemView.findViewById(R.id.tvTaskTitle);
             tvDue = itemView.findViewById(R.id.tvDueDate);
-            tvStars = itemView.findViewById(R.id.tvTaskStars);
             btnDone = itemView.findViewById(R.id.btnDone);
         }
     }

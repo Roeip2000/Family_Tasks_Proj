@@ -1,5 +1,4 @@
 @startuml
-' Auto-generated from Java source by docs/uml/tools/GenerateFamilyTasksUml.java
 !pragma layout smetana
 skinparam dpi 240
 skinparam shadowing false
@@ -9,83 +8,42 @@ skinparam defaultFontName Arial
 skinparam classFontSize 15
 skinparam packageFontSize 18
 skinparam ArrowFontSize 12
-skinparam classBackgroundColor<<screen>> #DCEEFF
-skinparam classBorderColor<<screen>> #2F6FA3
-skinparam classBackgroundColor<<model>> #E2F5E6
-skinparam classBorderColor<<model>> #3B8B4F
 skinparam classBackgroundColor<<adapter>> #FFF3BF
 skinparam classBorderColor<<adapter>> #B68A00
-skinparam classBackgroundColor<<util>> #EFEFEF
-skinparam classBorderColor<<util>> #777777
-skinparam classBackgroundColor<<inner>> #FFFFFF
-skinparam classBorderColor<<inner>> #666666
+skinparam classBackgroundColor<<model>> #E2F5E6
+skinparam classBorderColor<<model>> #3B8B4F
 hide empty methods
 title Family Tasks - Adapter Classes
-caption Generated from app/src/main/java with JavaParser; rendered by PlantUML.
+caption Current adapter classes and their model dependencies.
 
-package "Screens / Activities / Fragments" #DCEEFF {
-class "ManageChildrenActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity <<screen>>
-class "ParentTaskTemplateActivity" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity <<screen>>
+package "adapters" #FFF3BF {
+class ChildTaskAdapter <<adapter>> {
+  - tasks : List<ChildTask>
+  - doneListener : OnTaskDoneListener
+}
+interface "ChildTaskAdapter.OnTaskDoneListener" as OnTaskDoneListener <<adapter>>
+class "ChildTaskAdapter.TaskViewHolder" as ChildTaskViewHolder <<adapter>>
+class ParentDashboardTaskAdapter <<adapter>> {
+  - items : List<AssignedTask>
+  - showChildName : boolean
+}
+interface "ParentDashboardTaskAdapter.OnItemClickListener" as OnItemClickListener <<adapter>>
+class "ParentDashboardTaskAdapter.TaskViewHolder" as ParentTaskViewHolder <<adapter>>
+class "ManageChildrenActivity.ChildListAdapter" as ChildListAdapter <<adapter>>
+class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<adapter>>
 }
 
-package "Models" #E2F5E6 {
-class "AssignedTask" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask <<model>>
-class "Child" as com_example_family_tasks_proj_child_model_Child <<model>>
-class "ChildSummary" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary <<model>>
-class "ChildTask" as com_example_family_tasks_proj_child_model_ChildTask <<model>>
-class "TaskListItem" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem <<model>>
-class "TaskTemplate" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate <<model>>
+package "models" #E2F5E6 {
+class ChildTask <<model>>
+class AssignedTask <<model>>
+class TaskTemplate <<model>>
 }
 
-package "Adapters" #FFF3BF {
-class "ManageChildrenActivity.ChildListAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter <<adapter>>
-class "ParentDashboardChildSummaryAdapter.ChildSummaryViewHolder" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_ChildSummaryViewHolder <<adapter>>
-class "ChildTaskAdapter" as com_example_family_tasks_proj_child_ChildTaskAdapter <<adapter>>
-interface "ParentDashboardChildSummaryAdapter.OnChildSelectedListener" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_OnChildSelectedListener <<adapter>>
-interface "ChildTaskAdapter.OnTaskDoneListener" as com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener <<adapter>>
-class "ParentDashboardChildSummaryAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter <<adapter>>
-class "ParentDashboardTaskAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter <<adapter>>
-class "ChildTaskAdapter.TaskViewHolder" as com_example_family_tasks_proj_child_ChildTaskAdapter_TaskViewHolder <<adapter>>
-class "ParentTaskTemplateActivity.TemplateListAdapter" as com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter <<adapter>>
-}
-
-package "Utils / Firebase" #EFEFEF {
-class "DateUtils" as com_example_family_tasks_proj_util_DateUtils <<util>>
-class "ImageHelper" as com_example_family_tasks_proj_util_ImageHelper <<util>>
-class "NameUtils" as com_example_family_tasks_proj_util_NameUtils <<util>>
-}
-
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_child_model_ChildTask : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter +-- com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener : contains
-com_example_family_tasks_proj_child_ChildTaskAdapter_OnTaskDoneListener ..> com_example_family_tasks_proj_child_model_ChildTask : uses
-com_example_family_tasks_proj_child_ChildTaskAdapter +-- com_example_family_tasks_proj_child_ChildTaskAdapter_TaskViewHolder : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_child_model_Child : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity ..> com_example_family_tasks_proj_util_NameUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ManageChildrenActivity_ChildListAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_ChildSummary : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_OnChildSelectedListener : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardChildSummaryAdapter_ChildSummaryViewHolder : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskListItem : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_AssignedTask : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentDashboardTaskAdapter ..> com_example_family_tasks_proj_util_DateUtils : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity ..> com_example_family_tasks_proj_util_ImageHelper : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity +-- com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter : contains
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter ..> com_example_family_tasks_proj_Parents_Dashbord_and_mange_model_TaskTemplate : uses
-com_example_family_tasks_proj_Parents_Dashbord_and_mange_ParentTaskTemplateActivity_TemplateListAdapter ..> com_example_family_tasks_proj_util_ImageHelper : uses
-
-legend right
-|=Color|=Role|
-|<#DCEEFF>|Screens / Activities / Fragments|
-|<#E2F5E6>|Models|
-|<#FFF3BF>|Adapters|
-|<#EFEFEF>|Utils / Firebase|
-|<#FFFFFF>|Inner or unconnected support|
-endlegend
+ChildTaskAdapter ..> ChildTask
+ChildTaskAdapter +-- OnTaskDoneListener
+ChildTaskAdapter +-- ChildTaskViewHolder
+ParentDashboardTaskAdapter ..> AssignedTask
+ParentDashboardTaskAdapter +-- OnItemClickListener
+ParentDashboardTaskAdapter +-- ParentTaskViewHolder
+TemplateListAdapter ..> TaskTemplate
 @enduml

@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.child.ChildDashboardActivity;
-import com.example.family_tasks_proj.utils.ChildSession;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,7 +44,7 @@ public class ChildQRLoginFragment extends Fragment {
                     }
             );
 
-    // אובייקט לבקשת הרשאת המצלמה מהמשתמש (חובה ב-Android 6+ עבור CAMERA)
+    // אובייקט לבקשת הרשאת המצלמה מהמשתמש
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
@@ -76,7 +75,6 @@ public class ChildQRLoginFragment extends Fragment {
 
     // פותח את מסך הסריקה רק אם הרשאת המצלמה ניתנה
     private void startQrScan() {
-        // בודקים הרשאת מצלמה לפני פתיחת הסורק. אם אין הרשאה הסורק נסגר מיד.
         int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
         if (status == PackageManager.PERMISSION_GRANTED) {
             launchScanner();
@@ -85,7 +83,7 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // פותח את הסורק עצמו (אחרי שאישרנו שיש הרשאת מצלמה)
+    // פותח את הסורק עצמו
     private void launchScanner() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
@@ -117,18 +115,14 @@ public class ChildQRLoginFragment extends Fragment {
     // בודק לאן להפנות את המשתמש לפי תוכן ה-QR
     private void checkQrTarget(ParsedQr parsed) {
         if (isBlank(parsed.childId)) {
-            // אם ה-QR מכיל רק הורה, עוברים למסך בחירת ילד מתוך המשפחה
             checkParentExists(parsed.parentId);
         } else {
-            // אם ה-QR מכיל גם הורה וגם ילד, ננסה להיכנס ישירות לדשבורד של הילד
             checkChildExists(parsed.parentId, parsed.childId);
         }
     }
 
     // מפרק את הטקסט של ה-QR לנתונים
     private ParsedQr parseQr(String raw) {
-        // מפרק את המחרוזת שנסרקה מה-QR כדי להוציא את ה-ID של ההורה והילד
-        // הפורמט החדש הוא parent:{parentId}; הפורמט הישן יכול לכלול גם child:{childId}.
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {
             return parsedQr;
@@ -146,7 +140,7 @@ public class ChildQRLoginFragment extends Fragment {
         return parsedQr;
     }
 
-    // עוזר לפירוק QR מורכב המכיל גם הורה וגם ילד
+    // עוזר לפירוק QR מורכב שמכיל גם הורה וגם ילד
     private void fillParsedQrFromParts(ParsedQr parsedQr, String raw) {
         String[] parts = raw.split("\\|");
         for (String part : parts) {
@@ -165,7 +159,6 @@ public class ChildQRLoginFragment extends Fragment {
 
     // בודק מול Firebase שההורה קיים במערכת
     private void checkParentExists(final String parentId) {
-        // לא מספיק לסרוק טקסט שנראה כמו QR תקין; בודקים שבאמת קיים הורה כזה ב-Firebase.
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -176,7 +169,6 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // openChildSelection דואג גם לשמירת ה-session דרך ChildSession.save
                 openChildSelection(parentId, null);
             }
 
@@ -202,7 +194,6 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_child_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // openChildDashboard דואג גם לשמירת ה-session דרך ChildSession.save
                 openChildDashboard(parentId, childId);
             }
 
@@ -218,24 +209,19 @@ public class ChildQRLoginFragment extends Fragment {
 
     // פותח את מסך המשימות של הילד
     private void openChildDashboard(String parentId, String childId) {
-        // שומר את ה-ID של ההורה והילד ב-SharedPreferences כדי שלא יצטרכו לסרוק שוב בכל כניסה
-        ChildSession.save(requireContext(), parentId, childId);
-        // עובר ישירות לדשבורד של הילד
         Intent intent = new Intent(requireActivity(), ChildDashboardActivity.class);
-        intent.putExtra(ChildSession.KEY_PARENT, parentId);
-        intent.putExtra(ChildSession.KEY_CHILD, childId);
+        intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);
+        intent.putExtra(ChildDashboardActivity.EXTRA_CHILD_ID, childId);
         startActivity(intent);
         requireActivity().finish();
     }
 
-    // פותח את מסך בחירת הילד (כשנסרק רק הורה)
+    // פותח את מסך בחירת הילד כשנסרק QR של הורה בלבד
     private void openChildSelection(String parentId, String childId) {
-        // שומר את מזהה ההורה ועובר למסך שבו הילד בוחר את השם שלו מתוך רשימת הילדים
-        ChildSession.save(requireContext(), parentId, childId);
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
-        intent.putExtra(ChildSession.KEY_PARENT, parentId);
+        intent.putExtra(ChildSelectionActivity.EXTRA_PARENT_ID, parentId);
         if (!isBlank(childId)) {
-            intent.putExtra(ChildSession.KEY_CHILD, childId);
+            intent.putExtra(ChildSelectionActivity.EXTRA_CHILD_ID, childId);
         }
         startActivity(intent);
         requireActivity().finish();
@@ -246,7 +232,7 @@ public class ChildQRLoginFragment extends Fragment {
         return value == null || value.trim().isEmpty();
     }
 
-    // אובייקט עזר לשמירת נתוני ה-QR שפוענחו
+    // אובייקט עזר לשמירת נתוני ה-QR שפוענחו בזמן הסריקה בלבד
     private static class ParsedQr {
         private String parentId;
         private String childId;

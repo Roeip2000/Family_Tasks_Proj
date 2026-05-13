@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- כותרת: ברכה לפי שם ההורה + כפתור התנתקות -->
+        <!-- כותרת: ברכה לפי שם ההורה -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,21 +26,10 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="12dp"
-                android:layout_toStartOf="@id/btnLogout"
                 android:text="@string/parent_hello_initial"
                 android:textColor="@color/text_primary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnLogout"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="@string/btn_logout"
-                android:textColor="@color/logout_text" />
         </RelativeLayout>
 
         <!-- כרטיס סיכום: 4 פילטרים שלוחצים עליהם להצגת קבוצת משימות -->

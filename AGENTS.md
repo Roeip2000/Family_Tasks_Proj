@@ -22,7 +22,7 @@
 ## Product Summary
 - Main app purpose: parent-managed family task tracking.
 - Parent flow: register/login, manage children, generate QR, assign tasks, manage task templates, review household progress in the parent dashboard.
-- Child flow: scan QR, select child when needed, open child dashboard, mark tasks complete, view stars and urgency.
+- Child flow: scan QR, select child when needed, open child dashboard, mark tasks complete, and view task urgency.
 
 ## Current Package Map
 - `auth`: entry activity, parent login/register fragments, QR login fragment, and child-selection activity (`MainActivity`, `ParentLoginFragment`, `ParentRegisterFragment`, `ChildQRLoginFragment`, `ChildSelectionActivity`).
@@ -32,7 +32,7 @@
 - `child.adapter`: child-side RecyclerView adapter (`ChildTaskAdapter`).
 - `models`: shared data models (`ChildTask`, `AssignedTask`, `TaskTemplate`).
 - `firebase`: Firebase singleton used by the register flow (`FBsingleton`).
-- `utils`: shared helpers (`ChildSession`, `ImageHelper`, `DateUtils`, `NameUtils`, `ListUtils`).
+- `utils`: shared helpers (`ImageHelper`, `DateUtils`, `NameUtils`, `ListUtils`).
 
 ## Recovered Architecture Rules
 - Preserve the current package mental map. Prior history repeatedly rejected broad reorganizations.
@@ -54,13 +54,13 @@
 - `FBsingleton` writes parent profile fields with `updateChildren`, not `setValue`, to avoid overwriting child/template subtrees.
 - `ImageHelper` is the shared path for task image pick/load, Base64 conversion, and image preview rendering.
 - Parent dashboard summaries should be derived from task state, not from new backend counters.
-- Child session persistence uses `SharedPreferences` under `child_session`.
+- Child login now passes `parentId` and `childId` through Intent extras only. The app should not save child login data locally.
 
 ## Practical Visual Rules
 - These rules were derived from the Figma MCP design-system workflow and adapted to this Android XML project.
 - Keep visual tokens in `app/src/main/res/values/colors.xml`. Do not hardcode hex colors inside layouts when a semantic color already exists.
 - Keep shared text and button behavior in `app/src/main/res/values/styles.xml`. Prefer improving a shared style or drawable before styling one screen locally.
-- Keep the product feeling warm and family-related with soft cream backgrounds, gentle blue/green support colors, rounded cards, and simple home/family/task/star iconography.
+- Keep the product feeling warm and family-related with soft cream backgrounds, gentle blue/green support colors, rounded cards, and simple home/family/task iconography.
 - Treat each screen as one clear story:
   - header
   - short context or summary
@@ -93,8 +93,8 @@
   - preserving layout behavior already in place
 
 ## Recovered Open Work
-- Verify the latest parent/child flows end-to-end on device or emulator; the latest raw sessions hit rate limits before a full final verification record.
-- `AssignTaskToChildActivity` no longer carries a literal `10`: when no template is selected the value falls back to `TaskTemplate.DEFAULT_STARS_WORTH` (the inline comment above the assignment was also updated to reference the constant by name).
+- Verify the latest parent/child flows end-to-end on device or emulator; the latest raw runs hit rate limits before a full final verification record.
+- The reward-counter feature was removed from task templates, assigned tasks, and the child dashboard.
 - Decide whether parent login still needs a loading indicator and any final UX polish before submission.
 - Confirm whether any remaining final-report or demo-prep docs are still needed; raw history shows repeated review requests but no finished submission packet inside the repo.
 
@@ -109,10 +109,10 @@
 
 ## Exam-Critical Files
 - `ParentDashboardActivity`: most complex file; explain filters, summaries, selected child flow, and task actions.
-- `ChildDashboardActivity`: explain session resolution, task loading, filters, and mark-done flow.
+- `ChildDashboardActivity`: explain Intent parent/child ID resolution, task loading, filters, and mark-done flow.
 - `AssignTaskToChildActivity`: explain template autofill, child selection, due date, and Firebase write.
 - `ChildSelectionActivity`: explain parent resolution, spinner loading, and child handoff.
-- `ChildQRLoginFragment`: explain QR parsing, parent validation, and session save.
+- `ChildQRLoginFragment`: explain QR parsing, parent validation, and handoff to child selection or dashboard.
 - `ManageChildrenActivity`: explain add/edit/delete child flow and image handling.
 
 ## Safe Refactor Guidance
@@ -124,14 +124,14 @@
   - keep helpers private and local when possible
 - High-value examples:
   - `ParentDashboardActivity`: extract snapshot-to-task mapping and household summary calculation helpers
-  - `ChildDashboardActivity`: extract star/count summary logic and repetitive filter-UI updates
+  - `ChildDashboardActivity`: extract count summary logic and repetitive filter-UI updates
   - `AssignTaskToChildActivity`: unify repeated validation into one helper
   - `ManageChildrenActivity`: extract form-mode toggles and validation helpers
 
 ## Dangerous Refactors To Avoid
 - Do not introduce universal/generic Firebase listener abstractions.
 - Do not migrate existing flows to fragments or invent new architecture layers late in the project.
-- Do not change Firebase paths, QR payload strategy, session strategy, or model field names unless the task explicitly proves a regression.
+- Do not change Firebase paths, QR payload strategy, no-saved-child-login behavior, or model field names unless the task explicitly proves a regression.
 - Do not replace clear manual Firebase maps with clever abstractions that are harder for the student to explain.
 
 ## Memory And Documentation Rule
