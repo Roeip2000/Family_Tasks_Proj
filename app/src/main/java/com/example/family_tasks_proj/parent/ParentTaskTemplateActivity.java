@@ -25,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
-import com.example.family_tasks_proj.utils.ListUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -156,7 +155,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                 }
                 templateAdapter.notifyDataSetChanged();
-                ListUtils.fitListHeight(listViewTemplates);
+                fitListHeight(listViewTemplates);
                 if (templateDataList.isEmpty()) {
                     tvNoTemplatesInfo.setVisibility(View.VISIBLE);
                 } else {
@@ -265,6 +264,26 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         tvFormHeader.setText(R.string.title_create_template);
         btnSaveTemplate.setText(R.string.btn_save_template);
         btnCancelTemplateEdit.setVisibility(View.GONE);
+    }
+
+    private void fitListHeight(ListView listView) {
+        if (listView.getAdapter() == null) {
+            return;
+        }
+
+        int listWidth = (listView.getWidth() > 0) ? listView.getWidth() : 500;
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+
+        int totalHeight = 0;
+        for (int i = 0; i < listView.getAdapter().getCount(); i++) {
+            View itemView = listView.getAdapter().getView(i, null, listView);
+            itemView.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += itemView.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listView.getAdapter().getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
     private DatabaseReference getTemplatesReference() {

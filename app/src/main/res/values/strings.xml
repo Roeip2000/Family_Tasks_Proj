@@ -150,7 +150,7 @@
     <string name="task_due_display">%1$s%2$s</string>
 
     <!-- טקסטים למסך ילד -->
-    <string name="child_greeting">שלום %1$s!</string>
+    <string name="child_greeting">שלום!</string>
     <string name="child_hello_initial">שלום!</string>
 
     <!-- טקסטים למסכי טפסים -->

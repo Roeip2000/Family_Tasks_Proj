@@ -16,13 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.family_tasks_proj.firebase.FBsingleton;
-import com.example.family_tasks_proj.parent.ParentDashboardActivity;
-import com.example.family_tasks_proj.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** מסך הרשמת הורה חדש. יוצר משתמש ב-FirebaseAuth ושומר את פרטיו ב-Realtime Database. */
 public class ParentRegisterFragment extends Fragment {
@@ -94,30 +92,7 @@ public class ParentRegisterFragment extends Fragment {
                 }
                 if (task.isSuccessful()) {
                     // אם ההרשמה הצליחה, שומרים את שאר פרטי ההורה ב-Realtime Database
-                    FBsingleton.getInstance().setUserData(firstName, lastName, email);
-                    FBsingleton.getInstance().saveParentToFirebase(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> saveTask) {
-                            if (!isAdded()) {
-                                return;
-                            }
-                            if (saveTask.isSuccessful()) {
-                                Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
-                                requireActivity().finish();
-                            } else {
-                                // אם השמירה ל-Database נכשלה אחרי יצירת המשתמש ב-Auth, מציגים שגיאה
-                                // ולא ממשיכים לדשבורד כדי שהמשתמש לא יישאר עם פרופיל חסר.
-                                String saveErrorMessage;
-                                if (saveTask.getException() != null) {
-                                    saveErrorMessage = saveTask.getException().getMessage();
-                                } else {
-                                    saveErrorMessage = getString(R.string.error_unknown_register);
-                                }
-                                Toast.makeText(requireContext(), getString(R.string.error_save_parent_failed, saveErrorMessage), Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                    saveParentToDatabase(firstName, lastName, email);
                 } else {
                     String errorMessage;
                     if (task.getException() != null) {
@@ -126,6 +101,37 @@ public class ParentRegisterFragment extends Fragment {
                         errorMessage = getString(R.string.error_unknown_register);
                     }
                     Toast.makeText(requireContext(), getString(R.string.error_with_details, errorMessage), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void saveParentToDatabase(String firstName, String lastName, String email) {
+        String uid = firebaseAuth.getUid();
+        if (uid == null) return;
+
+        DatabaseReference parentReference = FirebaseDatabase.getInstance().getReference("parents").child(uid);
+
+        Map<String, Object> parentData = new HashMap<>();
+        parentData.put("uid", uid);
+        parentData.put("firstName", firstName);
+        parentData.put("lastName", lastName);
+        parentData.put("email", email);
+        parentData.put("role", "parent");
+
+        parentReference.updateChildren(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> saveTask) {
+                if (!isAdded()) {
+                    return;
+                }
+                if (saveTask.isSuccessful()) {
+                    Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
+                    requireActivity().finish();
+                } else {
+                    String saveErrorMessage = (saveTask.getException() != null) ? saveTask.getException().getMessage() : getString(R.string.error_unknown_register);
+                    Toast.makeText(requireContext(), getString(R.string.error_save_parent_failed, saveErrorMessage), Toast.LENGTH_LONG).show();
                 }
             }
         });

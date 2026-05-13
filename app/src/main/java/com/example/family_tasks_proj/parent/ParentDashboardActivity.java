@@ -1,16 +1,10 @@
 package com.example.family_tasks_proj.parent;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +18,6 @@ import com.example.family_tasks_proj.parent.adapter.ParentDashboardTaskAdapter;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.utils.DateUtils;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -209,36 +201,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
         taskAdapter.setShowChildName(true);
-        taskAdapter.setOnItemClickListener(new ParentDashboardTaskAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(AssignedTask task, int position) {
-                showTaskOptions(position);
-            }
-        });
         rvTasks.setAdapter(taskAdapter);
     }
 
     private void loadProfile(FirebaseUser user) {
-        // טעינת שם ההורה נפרדת מטעינת המשימות, כי זה מידע פרופיל ולא מידע של רשימת המשימות.
-        FirebaseDatabase.getInstance().getReference("parents").child(user.getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("firstName").getValue(String.class);
-                String displayName;
-                if (name != null) {
-                    displayName = name;
-                } else {
-                    displayName = getString(R.string.default_parent_name);
-                }
-                tvName.setText(getString(R.string.parent_greeting, displayName));
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת פרופיל ההורה נכשלה - מציגים הודעת שגיאה למשתמש.
-                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
-            }
-        });
+        tvName.setText(R.string.parent_greeting);
     }
 
     private void loadData(FirebaseUser user) {
@@ -348,155 +315,4 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
         taskAdapter.notifyDataSetChanged();
     }
-
-    private void showTaskOptions(int pos) {
-        if (pos < 0 || pos >= visibleTasks.size()) {
-            return;
-        }
-        final AssignedTask task = visibleTasks.get(pos);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(task.getTitle())
-                .setMessage(getString(R.string.parent_task_dialog_message, task.getChildName(), task.getDueAt()))
-                .setNeutralButton(R.string.dialog_delete_task, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface d, int w) {
-                        deleteTask(task);
-                    }
-                }).setNegativeButton(R.string.dialog_close, null);
-
-        if (!task.getIsDone()) {
-            builder.setPositiveButton(R.string.dialog_option_edit, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface d, int w) {
-                    showEditTaskDialog(task);
-                }
-            });
-        }
-        builder.show();
-    }
-
-    private void showEditTaskDialog(final AssignedTask task) {
-        final EditText etTitle = new EditText(this);
-        etTitle.setHint(R.string.hint_task_name);
-        etTitle.setSingleLine(true);
-        etTitle.setText(task.getTitle());
-
-        final EditText etDueDate = new EditText(this);
-        etDueDate.setHint(R.string.hint_select_date);
-        etDueDate.setSingleLine(true);
-        etDueDate.setFocusable(false);
-        etDueDate.setInputType(InputType.TYPE_NULL);
-        etDueDate.setText(task.getDueAt());
-        etDueDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openEditDatePicker(etDueDate);
-            }
-        });
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = (int) (20 * getResources().getDisplayMetrics().density);
-        layout.setPadding(padding, 8, padding, 0);
-        layout.addView(etTitle);
-        layout.addView(etDueDate);
-
-        final AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_edit_task_title)
-                .setView(layout)
-                .setPositiveButton(R.string.dialog_save_task, null)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface d) {
-                Button saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String newTitle = etTitle.getText().toString().trim();
-                        String newDueDate = etDueDate.getText().toString().trim();
-                        if (newTitle.isEmpty() || newDueDate.isEmpty()) {
-                            Toast.makeText(ParentDashboardActivity.this, R.string.error_task_missing_details, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        updateTask(task, newTitle, newDueDate);
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        dialog.show();
-    }
-
-    private void openEditDatePicker(final EditText etDueDate) {
-        Calendar calendar = getCalendarForDate(etDueDate.getText().toString());
-        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
-                etDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
-            }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    private Calendar getCalendarForDate(String date) {
-        Calendar calendar = Calendar.getInstance();
-        if (date == null) {
-            return calendar;
-        }
-
-        String[] parts = date.split("/");
-        if (parts.length != 3) {
-            return calendar;
-        }
-
-        try {
-            int day = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]) - 1;
-            int year = Integer.parseInt(parts[2]);
-            calendar.set(year, month, day);
-        } catch (NumberFormatException ignored) {
-        }
-        return calendar;
-    }
-
-    private void updateTask(AssignedTask task, String title, String dueAt) {
-        DatabaseReference taskReference = FirebaseDatabase.getInstance().getReference("parents")
-                .child(FirebaseAuth.getInstance().getUid())
-                .child("children").child(task.getChildId()).child("tasks").child(task.getTaskId());
-
-        Map<String, Object> taskData = new HashMap<>();
-        taskData.put("title", title);
-        taskData.put("dueAt", dueAt);
-
-        // מעדכנים רק את שדות המשימה שנערכו, בלי לגעת בסטטוס או בתמונה.
-        taskReference.updateChildren(taskData).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ParentDashboardActivity.this, R.string.toast_task_updated, Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void deleteTask(AssignedTask task) {
-        FirebaseDatabase.getInstance().getReference("parents").child(FirebaseAuth.getInstance().getUid())
-                .child("children").child(task.getChildId()).child("tasks").child(task.getTaskId()).removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(ParentDashboardActivity.this, R.string.toast_deleted, Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
 }

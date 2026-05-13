@@ -21,9 +21,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // אתחול Singleton של Firebase
-        FBsingleton.getInstance();
-
         // אין כניסה אוטומטית אחרי סגירת האפליקציה.
         FirebaseAuth.getInstance().signOut();
 

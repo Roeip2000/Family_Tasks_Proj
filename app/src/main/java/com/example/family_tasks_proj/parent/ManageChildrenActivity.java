@@ -17,8 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.utils.ListUtils;
-import com.example.family_tasks_proj.utils.NameUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -196,12 +194,32 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
-        ListUtils.fitListHeight(lvChildren);
+        fitListHeight(lvChildren);
         if (childList.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
         } else {
             tvEmpty.setVisibility(View.GONE);
         }
+    }
+
+    private void fitListHeight(ListView listView) {
+        if (listView.getAdapter() == null) {
+            return;
+        }
+
+        int listWidth = (listView.getWidth() > 0) ? listView.getWidth() : 500;
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+
+        int totalHeight = 0;
+        for (int i = 0; i < listView.getAdapter().getCount(); i++) {
+            View itemView = listView.getAdapter().getView(i, null, listView);
+            itemView.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += itemView.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listView.getAdapter().getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
     private void openOptions(int position) {
@@ -247,12 +265,26 @@ public class ManageChildrenActivity extends AppCompatActivity {
             if (item != null) {
                 // הרשימה מציגה רק שם מלא וטקסט עזר, בלי תמונה ליד הילד.
                 TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
-                tvChildFullName.setText(NameUtils.fullNameOrDefault(
-                        item.firstName,
-                        item.lastName,
-                        getString(R.string.default_child_name_fallback)));
+                tvChildFullName.setText(formatFullName(item.firstName, item.lastName));
             }
             return convertView;
+        }
+
+        private String formatFullName(String first, String last) {
+            StringBuilder sb = new StringBuilder();
+            if (first != null && !first.trim().isEmpty()) {
+                sb.append(first.trim());
+            }
+            if (last != null && !last.trim().isEmpty()) {
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append(last.trim());
+            }
+            if (sb.length() > 0) {
+                return sb.toString();
+            }
+            return getString(R.string.default_child_name_fallback);
         }
     }
 

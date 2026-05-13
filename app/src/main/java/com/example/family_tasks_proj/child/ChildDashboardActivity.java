@@ -163,15 +163,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     returnToMainAfterMissingChild();
                     return;
                 }
-                String name = snapshot.child("firstName").getValue(String.class);
-                // אם אין שם ב-Firebase מציגים "ילד" כדי שלא ייראה ריק
-                String displayName;
-                if (name != null && !name.isEmpty()) {
-                    displayName = name;
-                } else {
-                    displayName = getString(R.string.default_child_name_fallback);
-                }
-                tvChildName.setText(getString(R.string.child_greeting, displayName));
+                tvChildName.setText(R.string.child_greeting);
             }
 
             @Override
