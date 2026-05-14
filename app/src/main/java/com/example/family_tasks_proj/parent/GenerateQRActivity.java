@@ -17,7 +17,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-// מסך שמציג QR קבוע של ההורה לילדים
 public class GenerateQRActivity extends AppCompatActivity {
 
     private ImageView imageViewQrCode;
@@ -49,10 +48,8 @@ public class GenerateQRActivity extends AppCompatActivity {
         generateParentQR(user.getUid());
     }
 
-    // מייצר QR בפורמט parent:{parentId} ומציג אותו במסך
+    // מייצר QR שמכיל את מזהה ההורה (UID) כדי שהילד יוכל לסרוק ולהתחבר
     private void generateParentQR(String parentId) {
-        // יוצר קוד QR שמכיל את מזהה ההורה כדי שהילד יוכל להתחבר למשפחה
-        // זה ערוץ תקשורת חד-כיווני: ההורה מציג קוד, והילד סורק אותו מהמכשיר שלו.
         String payload = "parent:" + parentId;
 
         try {

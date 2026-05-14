@@ -38,7 +38,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-// מסך לניהול תבניות משימה (הוספה, עריכה, מחיקה)
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTemplateTitle;
@@ -53,6 +52,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private Bitmap currentSelectedBitmap = null;
     private String currentParentUserId;
 
+    // מאזין לקבלת תמונה מהגלריה
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             new ActivityResultCallback<Uri>() {
@@ -138,8 +138,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
+    // קורא את תבניות המשימה מ-Firebase ומעדכן את הרשימה בזמן אמת
     private void loadFromFirebase() {
-        // תבניות נטענות בזמן אמת מה-Firebase, כדי שכל שמירה או מחיקה תופיע מיד ברשימה.
         getTemplatesReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -162,7 +162,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת התבניות נכשלה - מציגים הודעה במקום מסך ריק בלי הסבר.
                 Toast.makeText(ParentTaskTemplateActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
@@ -171,13 +170,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private void processSave() {
         String title = etTemplateTitle.getText().toString().trim();
 
-        // תבנית חייבת שם כדי שאפשר יהיה להעתיק אותו למשימה שמקצים לילד.
         if (title.isEmpty()) {
             Toast.makeText(this, R.string.error_template_missing_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // אם זו עריכה - שומרים על אותו מזהה. אם זו תבנית חדשה - יוצרים מזהה ייחודי ע"י push().getKey().
+        // שימוש במזהה קיים לעריכה, או יצירת מזהה חדש לתבנית חדשה בעזרת push()
         String templateId;
         if (currentEditTemplateId != null) {
             templateId = currentEditTemplateId;
@@ -187,10 +185,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 return;
             }
         }
-        // הפנייה לרשומת התבנית ב-Firebase: parents/{parentId}/task_templates/{templateId}
+        
         DatabaseReference templateRef = getTemplatesReference().child(templateId);
-
-        // כותבים כל שדה לנתיב שלו ב-Firebase
         templateRef.child("title").setValue(title);
 
         if (currentSelectedBitmap != null) {
@@ -198,7 +194,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             templateRef.child("imageBase64").setValue(base64);
         }
 
-        // הכתיבה האחרונה היא של שדה ה-id, ועליה מוסיפים את מאזין הסיום שמודיע למשתמש.
         templateRef.child("id").setValue(templateId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

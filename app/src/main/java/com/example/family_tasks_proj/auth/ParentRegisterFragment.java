@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-/** מסך הרשמת הורה חדש. יוצר משתמש ב-FirebaseAuth ושומר את פרטיו ב-Realtime Database. */
 public class ParentRegisterFragment extends Fragment {
 
     private FirebaseAuth firebaseAuth;
@@ -68,14 +67,12 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
-    // מבצע הרשמה ל-Firebase ושומר פרופיל הורה
     private void registerParent() {
         final String firstName = etFirstName.getText().toString().trim();
         final String lastName = etLastName.getText().toString().trim();
         final String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // בהרשמה שומרים גם שם פרטי ומשפחה, כדי שבהמשך הדשבורד יוכל להציג ברכה אישית.
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
@@ -86,7 +83,7 @@ public class ParentRegisterFragment extends Fragment {
             return;
         }
 
-        // יוצר משתמש חדש במערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
+        // יצירת משתמש ב-Firebase Auth
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -94,7 +91,6 @@ public class ParentRegisterFragment extends Fragment {
                     return;
                 }
                 if (task.isSuccessful()) {
-                    // אם ההרשמה הצליחה, שומרים את שאר פרטי ההורה ב-Realtime Database
                     saveParentToDatabase(firstName, lastName, email);
                 } else {
                     String errorMessage;
@@ -109,11 +105,11 @@ public class ParentRegisterFragment extends Fragment {
         });
     }
 
+    // שומר את השם והאימייל של ההורה החדש ב-Realtime Database תחת העץ parents
     private void saveParentToDatabase(String firstName, String lastName, String email) {
         String uid = firebaseAuth.getUid();
         if (uid == null) return;
 
-        // הפנייה לנתיב של ההורה החדש ב-Realtime Database.
         DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
         parentRef.child("uid").setValue(uid);

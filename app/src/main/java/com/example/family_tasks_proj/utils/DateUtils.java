@@ -2,7 +2,6 @@ package com.example.family_tasks_proj.utils;
 
 import java.util.Calendar;
 
-// עוזר לנו לחשב תאריכים ודחיפות של משימות
 public final class DateUtils {
 
     private DateUtils() {}
@@ -23,19 +22,16 @@ public final class DateUtils {
             int m = Integer.parseInt(parts[1]);
             int y = Integer.parseInt(parts[2]);
             
-            // תאריך המשימה
             Calendar calTask = Calendar.getInstance();
             calTask.set(y, m - 1, d, 0, 0, 0);
             calTask.set(Calendar.MILLISECOND, 0);
 
-            // היום הנוכחי
             Calendar calToday = Calendar.getInstance();
             calToday.set(Calendar.HOUR_OF_DAY, 0);
             calToday.set(Calendar.MINUTE, 0);
             calToday.set(Calendar.SECOND, 0);
             calToday.set(Calendar.MILLISECOND, 0);
 
-            // חישוב ההפרש
             long diff = calTask.getTimeInMillis() - calToday.getTimeInMillis();
             return diff / (24L * 60L * 60L * 1000L);
             
@@ -44,8 +40,8 @@ public final class DateUtils {
         }
     }
 
+    // בפרויקט הזה משימה נחשבת "דחופה" אם תאריך היעד הוא היום, מחר או מחרתיים
     public static boolean isDueSoon(String date) {
-        // בפרויקט הזה "דחוף" אומר שהתאריך הוא היום, מחר או עוד יומיים.
         long days = daysLeft(date);
         return days >= 0 && days <= 2;
     }

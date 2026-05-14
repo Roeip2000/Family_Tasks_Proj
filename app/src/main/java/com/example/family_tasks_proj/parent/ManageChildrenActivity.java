@@ -29,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-// מסך לניהול הילדים במשפחה
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etFirstName, etLastName;
@@ -102,9 +101,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
+    // קורא את רשימת הילדים מ-Firebase ומעדכן את ה-ListView בכל פעם שיש שינוי
     private void loadFromFirebase() {
-        // מציגים את רשימת הילדים מהנתיב parents/{parentId}/children.
-        // כל שינוי ב-Firebase מעדכן את הרשימה במסך דרך ValueEventListener.
         getChildrenReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -120,7 +118,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת הילדים נכשלה - מודיעים למשתמש כדי שלא יחשוב שאין ילדים בכלל.
                 Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
@@ -130,7 +127,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         final String firstName = etFirstName.getText().toString().trim();
         final String lastName = etLastName.getText().toString().trim();
 
-        // לא שומרים ילד בלי שם מלא, כדי שלא יופיעו רשומות ריקות בדשבורדים.
+        // מוודא שהמשתמש הזין שם מלא כדי לא לשמור נתונים חסרים ב-Firebase
         if (firstName.isEmpty() || lastName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
@@ -140,17 +137,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (editChildId != null) {
             childId = editChildId;
         } else {
-            // push יוצר id ייחודי לילד חדש תחת ההורה המחובר.
+            // יוצר מזהה (ID) ייחודי לילד חדש בעזרת push()
             childId = getChildrenReference().push().getKey();
         }
         if (childId == null) {
             return;
         }
 
-        // הפניה לרשומת הילד ב-Firebase: parents/{parentId}/children/{childId}
         DatabaseReference childNode = getChildrenReference().child(childId);
 
-        // כותבים כל שדה לנתיב שלו. המאזין על שדה השם האחרון מודיע למשתמש שהשמירה הצליחה.
+        // שומר את פרטי הילד תחת ה-ID שלו
         childNode.child("firstName").setValue(firstName);
         childNode.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -229,7 +225,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    // מצב עריכה משתמש באותו טופס של הוספה, רק עם id קיים.
+                    // טוען את פרטי הילד לטופס כדי לאפשר עריכה של ילד קיים
                     editChildId = item.id;
                     etFirstName.setText(item.firstName);
                     etLastName.setText(item.lastName);
@@ -260,14 +256,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
             }
             ChildItem item = getItem(position);
             if (item != null) {
-                // הרשימה מציגה רק שם מלא וטקסט עזר, בלי תמונה ליד הילד.
                 TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
                 tvChildFullName.setText(formatFullName(item.firstName, item.lastName));
             }
             return convertView;
         }
 
-        // מחבר שם פרטי ושם משפחה. אם שניהם ריקים מחזיר ערך ברירת מחדל ("ילד" וכו').
         private String formatFullName(String first, String last) {
             String fullName = "";
             if (first != null && !first.trim().isEmpty()) {
@@ -295,5 +289,4 @@ public class ManageChildrenActivity extends AppCompatActivity {
             this.lastName = l;
         }
     }
-
 }

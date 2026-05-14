@@ -23,7 +23,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-/** מסך התחברות הורה למערכת באמצעות אימייל וסיסמה. */
 public class ParentLoginFragment extends Fragment {
 
     private EditText etEmail, etPassword;
@@ -67,7 +66,6 @@ public class ParentLoginFragment extends Fragment {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // בדיקת קלט בסיסית לפני פנייה ל-Firebase, כדי לתת למשתמש תשובה מידית.
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
@@ -78,7 +76,7 @@ public class ParentLoginFragment extends Fragment {
             return;
         }
 
-        // מבצע כניסה למערכת בעזרת אימייל וסיסמה דרך FirebaseAuth
+        // התחברות עם Firebase Auth ומעבר לדשבורד הורה במקרה של הצלחה
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -86,8 +84,6 @@ public class ParentLoginFragment extends Fragment {
                     return;
                 }
                 if (task.isSuccessful()) {
-                    // אם הכניסה הצליחה, עוברים לדשבורד של ההורה
-                    // אין צורך להעביר uid ב-Intent כי FirebaseAuth יודע מי המשתמש המחובר.
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
                 } else {

@@ -28,25 +28,21 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-// דשבורד ניהול להורה - מציג את כל המשימות של כל הילדים וסיכום נתונים
 public class ParentDashboardActivity extends AppCompatActivity {
 
-    // רכיבי ממשק המשתמש (UI)
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
     private TextView tvName, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
     private View fOpen, fUrgent, fOverdue, fDone;
     private RecyclerView rvTasks;
 
-    // רשימות לשמירת הנתונים בזיכרון
-    private final List<AssignedTask> allTasks = new ArrayList<>(); // כל המשימות שנטענו
-    private final List<AssignedTask> visibleTasks = new ArrayList<>(); // רק המשימות שמוצגות כרגע לפי הפילטר
+    private final List<AssignedTask> allTasks = new ArrayList<>();
+    private final List<AssignedTask> visibleTasks = new ArrayList<>();
 
     private ParentDashboardTaskAdapter taskAdapter;
-    private FilterMode activeFilter = FilterMode.ALL; // מצב הסינון הנוכחי
+    private FilterMode activeFilter = FilterMode.ALL;
     private DatabaseReference childrenReference;
     private ValueEventListener childrenListener;
 
-    // הגדרת סוגי הפילטרים האפשריים
     private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
 
     @Override
@@ -54,7 +50,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
         
-        // אתחול רכיבים וקישור לממשק
         initViews();
         setupActions();
         setupLists();
@@ -64,14 +59,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // בדיקה שההורה מחובר בכל פעם שחוזרים למסך
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             tvName.setText(R.string.parent_greeting);
-            loadData(user); // טעינת נתונים מ-Firebase
+            loadData(user);
         } else {
-            // אם לא מחובר, מחזירים למסך הכניסה
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -80,11 +73,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // הסרת המאזין של Firebase כדי לחסוך במשאבים כשהמסך לא גלוי
         removeChildrenListener();
     }
 
-    // קישור המשתנים לרכיבים ב-XML
     private void initViews() {
         tvName = findViewById(R.id.tvParentName);
         tvTotal = findViewById(R.id.tvParentTotalTasks);
@@ -106,7 +97,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnQR = findViewById(R.id.btnShowQR);
     }
 
-    // הגדרת לחיצות על כפתורי הסינון (פילטרים)
     private void setupFilters() {
         View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
@@ -128,10 +118,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
         fDone.setOnClickListener(filterClick);
     }
 
-    // עדכון הפילטר הנבחר וריענון הרשימה
     private void setFilter(FilterMode mode) {
         if (activeFilter == mode) {
-            activeFilter = FilterMode.ALL; // לחיצה חוזרת מבטלת את הפילטר
+            activeFilter = FilterMode.ALL;
         } else {
             activeFilter = mode;
         }
@@ -139,14 +128,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
         refreshTaskList();
     }
 
-    // עדכון המראה של הפילטרים בממשק
     private void updateFilterUI() {
         tintFilter(fOpen, activeFilter == FilterMode.ASSIGNED);
         tintFilter(fUrgent, activeFilter == FilterMode.URGENT);
         tintFilter(fOverdue, activeFilter == FilterMode.OVERDUE);
         tintFilter(fDone, activeFilter == FilterMode.COMPLETED);
 
-        // עדכון הכותרת מעל רשימת המשימות
         if (activeFilter == FilterMode.ASSIGNED) {
             tvFilterTitle.setText(R.string.parent_filter_open);
         } else if (activeFilter == FilterMode.URGENT) {
@@ -168,7 +155,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // הגדרת פעולות הכפתורים למעבר למסכים אחרים
     private void setupActions() {
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,13 +182,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // הגדרת ה-RecyclerView וה-Adapter
     private void setupLists() {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
         taskAdapter.setShowChildName(true);
 
-        // טיפול בלחיצה על משימה ברשימה
         taskAdapter.setOnItemClickListener(new ParentDashboardTaskAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(AssignedTask task, int position) {
@@ -213,35 +197,30 @@ public class ParentDashboardActivity extends AppCompatActivity {
         rvTasks.setAdapter(taskAdapter);
     }
 
-    // טעינת נתונים מ-Firebase
+    // קריאת כל הילדים והמשימות מהמסד כדי להציג בדשבורד המרכזי
     private void loadData(FirebaseUser user) {
         removeChildrenListener();
         
-        // נתיב ב-Database לילדים של ההורה הנוכחי
         childrenReference = FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children");
         
         childrenListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                allTasks.clear(); // מנקים את הרשימה הישנה
+                allTasks.clear();
                 
-                // מונים לסיכום המשימות
-                int totalCount = 0;
+                int openCount = 0;
                 int doneCount = 0;
                 int urgentCount = 0;
                 int lateCount = 0;
 
                 if (snapshot.exists()) {
-                    // עוברים על כל הילדים
                     for (DataSnapshot childSnap : snapshot.getChildren()) {
                         String childId = childSnap.getKey();
                         String childName = childSnap.child("firstName").getValue(String.class);
                         
-                        // עוברים על כל המשימות של כל ילד
                         DataSnapshot tasksSnap = childSnap.child("tasks");
                         for (DataSnapshot tSnap : tasksSnap.getChildren()) {
                             
-                            // יצירת אובייקט משימה מנתוני ה-Firebase
                             AssignedTask task = new AssignedTask();
                             task.setChildId(childId);
                             task.setChildName(childName != null ? childName : getString(R.string.default_child_name_fallback));
@@ -253,13 +232,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
                             Boolean isDone = tSnap.child("isDone").getValue(Boolean.class);
                             task.setIsDone(isDone != null && isDone);
 
-                            allTasks.add(task); // הוספה לרשימה הכללית בזיכרון
+                            allTasks.add(task);
 
-                            // עדכון המונים לפי מצב המשימה
                             if (task.getIsDone()) {
                                 doneCount++;
                             } else {
-                                totalCount++;
+                                openCount++;
                                 if (DateUtils.isOverdue(task.getDueAt())) {
                                     lateCount++;
                                 } else if (DateUtils.isDueSoon(task.getDueAt())) {
@@ -270,13 +248,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     }
                 }
                 
-                // עדכון מספרי הסיכום במסך
-                tvTotal.setText(String.valueOf(totalCount));
+                tvTotal.setText(String.valueOf(openCount));
                 tvDone.setText(String.valueOf(doneCount));
                 tvUrgent.setText(String.valueOf(urgentCount));
                 tvOverdue.setText(String.valueOf(lateCount));
 
-                // עדכון הרשימה שמוצגת לפי הפילטר
                 refreshTaskList();
             }
 
@@ -296,14 +272,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
         childrenListener = null;
     }
 
-    // ריענון הרשימה המוצגת (visibleTasks) מתוך כל הרשימה (allTasks) לפי הפילטר שנבחר
+    // סינון מקומי של הרשימה שמוצגת ב-RecyclerView
     private void refreshTaskList() {
         visibleTasks.clear();
         
         for (AssignedTask task : allTasks) {
             boolean isMatch = false;
             
-            // בדיקה האם המשימה מתאימה לפילטר הפעיל
             if (activeFilter == FilterMode.ASSIGNED) {
                 isMatch = !task.getIsDone();
             } else if (activeFilter == FilterMode.COMPLETED) {
@@ -313,7 +288,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             } else if (activeFilter == FilterMode.OVERDUE) {
                 isMatch = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt());
             } else {
-                isMatch = true; // במצב ALL מציגים הכל
+                isMatch = true;
             }
             
             if (isMatch) {
@@ -321,14 +296,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         }
         
-        // הצגה או הסתרה של הודעת "אין משימות"
         if (visibleTasks.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
         } else {
             tvNoTasks.setVisibility(View.GONE);
         }
         
-        // הודעה ל-Adapter שהנתונים השתנו וצריך לרענן את ה-RecyclerView
         taskAdapter.notifyDataSetChanged();
     }
 }
+

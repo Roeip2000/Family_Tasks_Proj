@@ -22,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** מסך לבחירת ילד מתוך רשימה אחרי סריקת QR. */
 public class ChildSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
@@ -38,40 +37,32 @@ public class ChildSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_selection);
-        bindViews();
-        resolveIds();
+        
+        tvSubtitle = findViewById(R.id.tvSubtitle);
+        spinnerChildren = findViewById(R.id.spinnerChildren);
+        tvNoChildren = findViewById(R.id.tvNoChildren);
+        btnEnter = findViewById(R.id.btnEnter);
+
+        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
+        
         if (parentId == null || parentId.isEmpty()) {
             Toast.makeText(this, R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        bindActions();
-        tvSubtitle.setText(R.string.child_selection_subtitle_child);
-        loadChildren(parentId);
-    }
 
-    private void bindViews() {
-        tvSubtitle = findViewById(R.id.tvSubtitle);
-        spinnerChildren = findViewById(R.id.spinnerChildren);
-        tvNoChildren = findViewById(R.id.tvNoChildren);
-        btnEnter = findViewById(R.id.btnEnter);
-    }
-
-    private void bindActions() {
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onEnterClicked();
             }
         });
+
+        tvSubtitle.setText(R.string.child_selection_subtitle_child);
+        loadChildren(parentId);
     }
 
-    // קריאת מזהה ההורה שהועבר ב-Intent ממסך סריקת ה-QR
-    private void resolveIds() {
-        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
-    }
-
-    // טוען את הילדים ששייכים להורה שנבחר
+    // קריאה מ-Firebase כדי למלא את ה-Spinner בשמות הילדים של ההורה
     private void loadChildren(String selectedParentId) {
         FirebaseDatabase.getInstance().getReference("parents").child(selectedParentId).child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -83,20 +74,23 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String lastName = snap.child("lastName").getValue(String.class);
                     childItems.add(new ChildItem(childId, fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name_fallback))));
                 }
+                
                 if (childItems.isEmpty()) {
                     tvNoChildren.setVisibility(View.VISIBLE);
                     spinnerChildren.setVisibility(View.GONE);
                     btnEnter.setEnabled(false);
                     return;
                 }
+                
                 tvNoChildren.setVisibility(View.GONE);
                 spinnerChildren.setVisibility(View.VISIBLE);
                 btnEnter.setEnabled(true);
+                
                 List<String> names = new ArrayList<>();
                 for (ChildItem item : childItems) {
                     names.add(item.name);
                 }
-                // בונים Adapter פשוט להצגת שמות הילדים ב-Spinner
+                
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_dropdown_item, names);
                 spinnerChildren.setAdapter(adapter);
             }
@@ -114,7 +108,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.child_selection_please_select, Toast.LENGTH_SHORT).show();
             return;
         }
-        // מעבירים לדשבורד של הילד את מזהה ההורה והילד שנבחרו, כדי שהדשבורד יידע לטעון את המשימות הנכונות
+        
+        // מעביר את ה-ID של הילד ושל ההורה לדשבורד הילד
         String childId = childItems.get(selectedPosition).id;
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);

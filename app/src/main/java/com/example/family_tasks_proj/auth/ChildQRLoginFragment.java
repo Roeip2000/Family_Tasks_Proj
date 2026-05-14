@@ -26,12 +26,11 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-/** מסך סריקת QR עבור הילד להתחברות מהירה. */
 public class ChildQRLoginFragment extends Fragment {
 
     private Button btnScanQR;
 
-    // אובייקט לניהול פתיחת המצלמה וקבלת תוצאת הסריקה
+    // מאזין לתוצאה מחלון סריקת ה-QR
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(
                     new ScanContract(),
@@ -43,7 +42,7 @@ public class ChildQRLoginFragment extends Fragment {
                     }
             );
 
-    // אובייקט לבקשת הרשאת המצלמה מהמשתמש
+    // מאזין לבקשת הרשאת גישה למצלמה
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
@@ -72,20 +71,15 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
-    // פותח את מסך הסריקה רק אם הרשאת המצלמה ניתנה
-    private void startQrScan()
-    {
+    private void startQrScan() {
         int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
-        if (status == PackageManager.PERMISSION_GRANTED)
-        {
+        if (status == PackageManager.PERMISSION_GRANTED) {
             launchScanner();
-        } else
-        {
+        } else {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
 
-    // פותח את הסורק עצמו
     private void launchScanner() {
         ScanOptions options = new ScanOptions();
         options.setOrientationLocked(false);
@@ -93,7 +87,6 @@ public class ChildQRLoginFragment extends Fragment {
         barcodeLauncher.launch(options);
     }
 
-    // מטפל בתוצאה שהתקבלה מהמצלמה
     private void handleQrScanResult(ScanIntentResult result) {
         if (!isAdded()) {
             return;
@@ -101,12 +94,11 @@ public class ChildQRLoginFragment extends Fragment {
 
         String raw = result.getContents();
         if (raw == null) {
-            // המשתמש סגר את מסך הסריקה בלי לסרוק כלום
             Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // ה-QR נוצר ב-GenerateQRActivity בפורמט "parent:{uid}". חותכים את הקידומת ומשאירים את מזהה ההורה.
+        // מחלץ את מזהה ההורה (UID) מה-QR לפי הפורמט שקבענו: parent:UID
         String parentId = parseParentId(raw.trim());
         if (parentId == null || parentId.isEmpty()) {
             Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
@@ -116,7 +108,6 @@ public class ChildQRLoginFragment extends Fragment {
         checkParentExists(parentId);
     }
 
-    // מחזיר את מזהה ההורה מתוך טקסט ה-QR. אם הטקסט לא בפורמט הצפוי - מחזיר ריק.
     private String parseParentId(String raw) {
         if (raw == null || raw.isEmpty()) {
             return "";
@@ -127,7 +118,7 @@ public class ChildQRLoginFragment extends Fragment {
         return "";
     }
 
-    // בודק מול Firebase שההורה קיים במערכת
+    // מוודא שההורה מה-QR אכן קיים ב-Firebase לפני שעוברים למסך הבחירה
     private void checkParentExists(final String parentId) {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -139,7 +130,6 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // מעבר ל־ChildSelectionActivity
                 openChildSelection(parentId);
             }
 
@@ -153,9 +143,8 @@ public class ChildQRLoginFragment extends Fragment {
         });
     }
 
-    // פותח את מסך בחירת הילד כשנסרק QR של הורה בלבד
     private void openChildSelection(String parentId) {
-        // מעבירים את מזהה ההורה ב-Intent כדי שמסך הבחירה ידע לאיזה הורה לטעון את רשימת הילדים
+        // מעביר את ה-UID של ההורה למסך הבא (בחירת ילד) בעזרת Intent
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         intent.putExtra(ChildSelectionActivity.EXTRA_PARENT_ID, parentId);
         startActivity(intent);

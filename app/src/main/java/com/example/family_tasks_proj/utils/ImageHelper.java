@@ -8,11 +8,10 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-/** מחלקת עזר לטיפול בתמונות: טעינה מהגלריה והמרה לפורמט טקסט (Base64). */
 public class ImageHelper {
 
     private static final int JPEG_QUALITY = 70;
-    private static final int MAX_SIZE = 600; // הגבלת גודל כדי לא להעמיס על ה-Database
+    private static final int MAX_SIZE = 600;
 
     // טוען תמונה מהגלריה ומקטין אותה כדי שיהיה אפשר לשמור אותה ב-Firebase
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
@@ -23,7 +22,6 @@ public class ImageHelper {
                 return null;
             }
 
-            // חישוב יחס הקטנה
             int width = originalBitmap.getWidth();
             int height = originalBitmap.getHeight();
             float ratio = Math.min((float) MAX_SIZE / width, (float) MAX_SIZE / height);
@@ -37,15 +35,13 @@ public class ImageHelper {
         }
     }
 
-    // הופך Bitmap למחרוזת טקסט (Base64) כדי לשמור ב-Database.
-    // Firebase Realtime Database שומר כאן טקסט, ולכן התמונה נדחסת ומומרת לטקסט.
+    // דוחס את התמונה וממיר אותה למחרוזת טקסט (Base64) לשמירה במסד הנתונים
     public static String bitmapToBase64(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         }
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            // דוחס את התמונה כ-JPEG כדי לחסוך מקום
             bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
             byte[] byteArray = outputStream.toByteArray();
             return Base64.encodeToString(byteArray, Base64.NO_WRAP);
@@ -54,7 +50,7 @@ public class ImageHelper {
         }
     }
 
-    // הופך מחרוזת טקסט (Base64) חזרה לתמונה (Bitmap) להצגה במסך.
+    // ממיר מחרוזת טקסט (Base64) חזרה לתמונה (Bitmap) להצגה במסך
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.trim().isEmpty()) {
             return null;

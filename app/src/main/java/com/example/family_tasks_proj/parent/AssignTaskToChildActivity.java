@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-// מסך הקצאת משימה לילד מתוך תבנית
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private EditText etTaskTitle, etTaskDueDate;
@@ -108,8 +107,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
+    // טוען את תבניות המשימה של ההורה מ-Firebase כדי להציג אותן ב-Spinner
     private void loadTemplatesFromFirebase() {
-        // תבניות משימה נשמרות אצל ההורה, כדי שיוכל להקצות שוב משימות דומות בלי להקליד הכל מחדש.
         getParentDbReference().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -131,15 +130,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת התבניות נכשלה - מציגים הודעה כדי שהמשתמש יידע למה הספינר ריק.
                 Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // טוען את רשימת הילדים מ-Firebase ושומר את ה-ID שלהם כדי לדעת לאיזה ילד להקצות את המשימה
     private void loadChildrenFromFirebase() {
-        // טוענים את ילדי המשפחה ל-Spinner, אבל שומרים בצד גם את ה-id האמיתי של כל ילד.
-        // השם מוצג למשתמש, וה-id משמש לכתיבה לנתיב הנכון ב-Firebase.
         getParentDbReference().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -159,7 +156,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת הילדים נכשלה - מציגים הודעה כדי שהמשתמש יבין למה אין למי להקצות.
                 Toast.makeText(AssignTaskToChildActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
@@ -170,13 +166,12 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String date = etTaskDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
-        // בדיקת קלט לפני כתיבה למסד הנתונים: חייבים שם משימה, תאריך וילד נבחר.
         if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
             Toast.makeText(this, R.string.error_assign_missing_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // יצירת משימה חדשה תחת הילד הנבחר
+        // יוצר מזהה (ID) למשימה חדשה תחת הילד שנבחר
         DatabaseReference newTaskRef = getParentDbReference()
                 .child("children").child(childUserIdList.get(childPosition))
                 .child("tasks").push();
@@ -196,8 +191,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             img = "";
         }
 
-        // המשימה נשמרת תחת הילד שנבחר: parents/{parent}/children/{child}/tasks/{task}.
-        // זו משימה חדשה, לכן יוצרים אובייקט משימה ושומרים אותו בבת אחת.
         ChildTask newTask = new ChildTask();
         newTask.setTitle(title);
         newTask.setDueAt(date);
@@ -205,6 +198,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTask.setCreatedAt(System.currentTimeMillis());
         newTask.setImageBase64(img);
 
+        // שומר את המשימה למסד הנתונים
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
@@ -220,7 +214,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     private void updateSelectedTemplateData(int position) {
-
         if (position >= 0 && position < taskTemplateList.size()) {
             TaskTemplate template = taskTemplateList.get(position);
             etTaskTitle.setText(template.getTitle());
@@ -239,7 +232,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        // DatePicker נותן בחירת תאריך נוחה ומונע מהמשתמש להקליד תאריך בפורמט שגוי.
         new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {

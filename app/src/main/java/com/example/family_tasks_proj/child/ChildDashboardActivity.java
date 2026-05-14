@@ -31,20 +31,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * דשבורד הילד. מציג את המשימות הפתוחות של הילד ומאפשר לסמן משימה כבוצעה.
- * המסך פשוט במכוון: רשימה אחת של משימות פתוחות, בלי פילטרים.
- */
 public class ChildDashboardActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
     public static final String EXTRA_CHILD_ID = "childId";
 
-    // משתני ממשק
     private TextView tvChildName, tvTotalTasks, tvNoTasks;
     private LinearLayout tasksContainer;
 
-    // משתני נתונים
     private final List<ChildTask> openTasks = new ArrayList<>();
     private String parentId, childId;
 
@@ -53,34 +47,28 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
-        // שלב א: קבלת מזהי ההורה והילד דרך Intent extras
         parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
         childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
+        
         if (parentId == null || childId == null) {
             returnToMainAfterMissingChild();
             return;
         }
 
-        // שלב ב: אתחול תצוגה וטעינת נתונים מ-Firebase
-        initViews();
-        loadChildProfile();
-        loadChildTasks();
-    }
-
-    private void initViews() {
         tvChildName = findViewById(R.id.tvChildName);
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tasksContainer = findViewById(R.id.tasksContainer);
+        
+        loadChildProfile();
+        loadChildTasks();
     }
 
-    // ההפניה הבסיסית של הילד ב-Firebase: parents/{parentId}/children/{childId}
     private DatabaseReference childRef() {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    // טעינת פרטי הילד: בודקים שהילד עדיין קיים ב-Firebase ומציגים ברכה
     private void loadChildProfile() {
         childRef().addValueEventListener(new ValueEventListener() {
             @Override
@@ -99,7 +87,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // טעינת המשימות של הילד מ-Firebase ועדכון המסך בכל שינוי
+    // טוען את המשימות של הילד ומסנן רק את המשימות הפתוחות
     private void loadChildTasks() {
         childRef().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
@@ -112,7 +100,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
                             continue;
                         }
                         task.setId(snap.getKey());
-                        // הילד רואה רק משימות פתוחות. אחרי סימון "בוצע" המשימה נעלמת מהמסך.
                         if (!task.getIsDone()) {
                             openTasks.add(task);
                         }
@@ -129,7 +116,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // לולאה פשוטה: עבור כל משימה פתוחה יוצרים כרטיס מתוך item_child_task.xml ומוסיפים למסך
+    // בונה את רשימת המשימות בקוד עם LayoutInflater במקום להשתמש ב-RecyclerView
     private void renderTasks() {
         tasksContainer.removeAllViews();
         if (openTasks.isEmpty()) {
@@ -145,7 +132,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // ממלא את שדות הכרטיס בנתוני המשימה ומחבר את כפתור "בוצע"
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDue = card.findViewById(R.id.tvDueDate);
@@ -156,7 +142,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         tvTitle.setText(task.getTitle());
 
-        // טקסט תאריך בעברית לפי המצב: היום, מחר, עוד X ימים, באיחור, או ללא תאריך
         long days = DateUtils.daysLeft(task.getDueAt());
         boolean overdue = DateUtils.isOverdue(task.getDueAt());
         boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
@@ -177,7 +162,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         tvDue.setText(dueText);
 
-        // צבע טקסט וצבע נקודת סטטוס לפי דחיפות המשימה
         int dueColor;
         int dotColor;
         if (overdue) {
@@ -192,13 +176,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         tvDue.setTextColor(getColor(dueColor));
 
-        // יצירת נקודת סטטוס עגולה צבעונית בקוד (במקום XML נפרד לכל צבע)
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setColor(getColor(dotColor));
         dotView.setBackground(dot);
 
-        // הצגת תמונת המשימה אם קיימת (התמונה נשמרה ב-Firebase כמחרוזת Base64)
         String imageBase64 = task.getImageBase64();
         if (imageBase64 != null && !imageBase64.trim().isEmpty()) {
             Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
@@ -215,7 +197,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
             imgTask.setVisibility(View.GONE);
         }
 
-        // לחיצה על "בוצע" - מסמנת את המשימה ככבוצעה ב-Firebase
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,13 +205,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // סימון משימה כבוצעה: כתיבת isDone=true ל-Firebase. המאזין יטען מחדש את הרשימה.
+    // מעדכן את הסטטוס ב-Firebase ל-isDone=true כשילד מסיים משימה
     private void processMarkTaskAsDone(final ChildTask task) {
-        // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה - לא נכתוב שוב
         if (task.getIsDone()) {
             return;
         }
-        // סימון מקומי מיד כדי שלחיצה נוספת תיחסם. אם הכתיבה נכשלת - מחזירים את הסטטוס.
         task.setIsDone(true);
 
         childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
