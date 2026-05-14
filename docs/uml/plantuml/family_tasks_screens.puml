@@ -37,7 +37,6 @@ enum "ParentDashboardActivity.FilterMode" as ParentFilterMode <<inner>>
 
 package "child" #DCEEFF {
 class ChildDashboardActivity <<screen>>
-enum "ChildDashboardActivity.FilterMode" as ChildFilterMode <<inner>>
 }
 
 MainActivity ..> ParentLoginFragment
@@ -56,5 +55,4 @@ ParentDashboardActivity ..> ParentTaskTemplateActivity
 ParentDashboardActivity ..> AssignTaskToChildActivity
 ParentDashboardActivity ..> GenerateQRActivity
 ParentDashboardActivity +-- ParentFilterMode
-ChildDashboardActivity +-- ChildFilterMode
 @enduml

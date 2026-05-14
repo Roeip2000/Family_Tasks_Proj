@@ -53,7 +53,6 @@
     <string name="error_save_parent_failed">שמירת פרטי ההורה נכשלה: %1$s</string>
 
     <!-- משימות - תאריכים וסטטוס -->
-    <string name="child_due_done">בוצע</string>
     <string name="child_due_no_date">ללא תאריך</string>
     <string name="child_due_late">איחור (%1$d ימים)</string>
     <string name="child_due_today">היום</string>
@@ -104,8 +103,6 @@
 
     <!-- תוויות סינון משימות -->
     <string name="filter_label_open">משימות פתוחות</string>
-    <string name="filter_label_urgent">משימות דחופות</string>
-    <string name="filter_label_overdue">משימות באיחור</string>
 
     <!-- טקסטים למסכי הורה -->
     <string name="parent_greeting">שלום הורה</string>

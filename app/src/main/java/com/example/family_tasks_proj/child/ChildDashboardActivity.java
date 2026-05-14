@@ -1,22 +1,25 @@
 package com.example.family_tasks_proj.child;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.models.ChildTask;
-import com.example.family_tasks_proj.child.adapter.ChildTaskAdapter;
 import com.example.family_tasks_proj.utils.DateUtils;
+import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,173 +32,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * דשבורד הילד. מציג משימות פתוחות.
- * הקוד מחולק למתודות ברורות כדי שיהיה קל להוסיף כפתורים או שינויי לוגיקה בלייב.
+ * דשבורד הילד. מציג את המשימות הפתוחות של הילד ומאפשר לסמן משימה כבוצעה.
+ * המסך פשוט במכוון: רשימה אחת של משימות פתוחות, בלי פילטרים.
  */
 public class ChildDashboardActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
     public static final String EXTRA_CHILD_ID = "childId";
 
-    // --- 1. משתני ממשק ---
-    private TextView tvChildName, tvTotalTasks, tvDueSoon, tvOverdue, tvNoTasks, tvTaskSectionTitle;
-    private RecyclerView rvTasks;
-    private View filterOpen, filterUrgent, filterOverdue;
+    // משתני ממשק
+    private TextView tvChildName, tvTotalTasks, tvNoTasks;
+    private LinearLayout tasksContainer;
 
-    // --- 2. משתני נתונים ---
-    private final List<ChildTask> allTasks = new ArrayList<>();
-    private final List<ChildTask> visibleTasks = new ArrayList<>();
-    private ChildTaskAdapter taskAdapter;
+    // משתני נתונים
+    private final List<ChildTask> openTasks = new ArrayList<>();
     private String parentId, childId;
-    private FilterMode activeFilter = FilterMode.NOT_COMPLETED;
-
-    // --- 3. שמירת מאזיני Firebase כדי שנוכל להסיר אותם כשהמסך לא גלוי ---
-    private DatabaseReference profileRef;
-    private ValueEventListener profileListener;
-    private DatabaseReference tasksRef;
-    private ValueEventListener tasksListener;
-
-    // הילד רואה רק משימות פתוחות, דחופות או באיחור. אין סינון "סיימתי".
-    private enum FilterMode { NOT_COMPLETED, URGENT, OVERDUE }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
-        // שלב א: טעינת מזהי ההורה והילד מה-Intent
-        resolveIntentIds();
+        // שלב א: קבלת מזהי ההורה והילד דרך Intent extras
+        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
+        childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
         if (parentId == null || childId == null) {
             returnToMainAfterMissingChild();
             return;
         }
 
-        // שלב ב: אתחול מסך
+        // שלב ב: אתחול תצוגה וטעינת נתונים מ-Firebase
         initViews();
-        setupRecyclerView();
-        setupListeners();
-
-        // טעינת הנתונים מועברת ל-onResume כדי שנוכל להוסיף ולהסיר מאזינים לפי מחזור החיים של המסך
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (parentId == null || childId == null) {
-            return;
-        }
         loadChildProfile();
         loadChildTasks();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // כשהמסך לא גלוי - מסירים את המאזינים כדי שלא יישארו פעילים ברקע
-        removeChildListeners();
-    }
-
-    private void removeChildListeners() {
-        if (profileRef != null && profileListener != null) {
-            profileRef.removeEventListener(profileListener);
-        }
-        if (tasksRef != null && tasksListener != null) {
-            tasksRef.removeEventListener(tasksListener);
-        }
-        profileRef = null;
-        profileListener = null;
-        tasksRef = null;
-        tasksListener = null;
     }
 
     private void initViews() {
         tvChildName = findViewById(R.id.tvChildName);
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
-        tvDueSoon = findViewById(R.id.tvDueSoon);
-        tvOverdue = findViewById(R.id.tvOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
-        tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
-        rvTasks = findViewById(R.id.rvChildTasks);
-
-        filterOpen = findViewById(R.id.filterOpen);
-        filterUrgent = findViewById(R.id.filterUrgent);
-        filterOverdue = findViewById(R.id.filterOverdue);
+        tasksContainer = findViewById(R.id.tasksContainer);
     }
 
-    private void setupRecyclerView() {
-        // RecyclerView מציג את המשימות ברשימה.
-        rvTasks.setLayoutManager(new LinearLayoutManager(this));
-        taskAdapter = new ChildTaskAdapter(visibleTasks, new ChildTaskAdapter.OnTaskDoneListener() {
-            @Override
-            public void onTaskDone(ChildTask task) {
-                processMarkTaskAsDone(task); // לוגיקה לסיום משימה
-            }
-        });
-        rvTasks.setAdapter(taskAdapter);
-    }
-
-    private void setupListeners() {
-        // מאזינים לשלושת הפילטרים
-        View.OnClickListener filterClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v == filterOpen) {
-                    activeFilter = FilterMode.NOT_COMPLETED;
-                } else if (v == filterUrgent) {
-                    activeFilter = FilterMode.URGENT;
-                } else if (v == filterOverdue) {
-                    activeFilter = FilterMode.OVERDUE;
-                }
-                updateFilterUI();
-            }
-        };
-        filterOpen.setOnClickListener(filterClick);
-        filterUrgent.setOnClickListener(filterClick);
-        filterOverdue.setOnClickListener(filterClick);
-    }
-
-    // מחזיר את ההפניה הבסיסית של הילד ב-Firebase: parents/{parentId}/children/{childId}.
-    // כל הקריאות והכתיבות במסך מתחילות מאותו מקום, אז שומרים את הנתיב במקום אחד.
+    // ההפניה הבסיסית של הילד ב-Firebase: parents/{parentId}/children/{childId}
     private DatabaseReference childRef() {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    // --- לוגיקה: סיום משימה ---
-    private void processMarkTaskAsDone(ChildTask task) {
-        // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה כבוצעה, לא כותבים שוב.
-        if (task.getIsDone()) {
-            return;
-        }
-        // Firebase עובד בצורה אסינכרונית: מסמנים בזיכרון כדי למנוע לחיצה כפולה,
-        // ואם הכתיבה תיכשל נחזיר את המשימה למצב פתוח.
-        task.setIsDone(true);
-
-        // הילד משנה רק את הסטטוס של המשימה שלו ל-"בוצע".
-        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        task.setIsDone(false);
-                        applyFilterAndRefresh();
-                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    // --- לוגיקה: טעינת נתונים ---
+    // טעינת פרטי הילד: בודקים שהילד עדיין קיים ב-Firebase ומציגים ברכה
     private void loadChildProfile() {
-        // מסירים מאזין קודם אם קיים, כדי שלא יהיו כפילויות אחרי חזרה למסך
-        if (profileRef != null && profileListener != null) {
-            profileRef.removeEventListener(profileListener);
-        }
-        profileRef = childRef();
-        profileListener = new ValueEventListener() {
+        childRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -207,25 +94,17 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת פרופיל הילד נכשלה - מציגים הודעת שגיאה.
                 Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
-        };
-        profileRef.addValueEventListener(profileListener);
+        });
     }
 
+    // טעינת המשימות של הילד מ-Firebase ועדכון המסך בכל שינוי
     private void loadChildTasks() {
-        // מסירים מאזין קודם אם קיים, כדי שלא יהיו כפילויות אחרי חזרה למסך
-        if (tasksRef != null && tasksListener != null) {
-            tasksRef.removeEventListener(tasksListener);
-        }
-        // המשימות של הילד נמצאות מתחת להורה שלו, ולכן צריך גם parentId וגם childId.
-        tasksRef = childRef().child("tasks");
-        tasksListener = new ValueEventListener() {
+        childRef().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                allTasks.clear();
-                int open = 0, urgent = 0, overdue = 0;
+                openTasks.clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         ChildTask task = snap.getValue(ChildTask.class);
@@ -233,99 +112,140 @@ public class ChildDashboardActivity extends AppCompatActivity {
                             continue;
                         }
                         task.setId(snap.getKey());
-                        allTasks.add(task);
+                        // הילד רואה רק משימות פתוחות. אחרי סימון "בוצע" המשימה נעלמת מהמסך.
                         if (!task.getIsDone()) {
-                            open++;
-                            if (DateUtils.isOverdue(task.getDueAt())) {
-                                overdue++;
-                            } else if (DateUtils.isDueSoon(task.getDueAt())) {
-                                urgent++;
-                            }
+                            openTasks.add(task);
                         }
                     }
                 }
-                updateCountersUI(open, urgent, overdue);
-                applyFilterAndRefresh();
+                tvTotalTasks.setText(String.valueOf(openTasks.size()));
+                renderTasks();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // אם טעינת המשימות של הילד נכשלה - מציגים הודעה.
                 Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
-        };
-        tasksRef.addValueEventListener(tasksListener);
+        });
     }
 
-    private void applyFilterAndRefresh() {
-        visibleTasks.clear();
-        for (ChildTask task : allTasks) {
-            // משימות שסומנו כבוצעו לעולם לא יופיעו לילד - הוא רואה רק משימות פתוחות.
-            if (task.getIsDone()) {
-                continue;
-            }
-            boolean match = false;
-            switch (activeFilter) {
-                case NOT_COMPLETED:
-                    match = true;
-                    break;
-                case URGENT:
-                    match = DateUtils.isDueSoon(task.getDueAt());
-                    break;
-                case OVERDUE:
-                    match = DateUtils.isOverdue(task.getDueAt());
-                    break;
-            }
-            if (match) {
-                visibleTasks.add(task);
-            }
-        }
-        if (visibleTasks.isEmpty()) {
+    // לולאה פשוטה: עבור כל משימה פתוחה יוצרים כרטיס מתוך item_child_task.xml ומוסיפים למסך
+    private void renderTasks() {
+        tasksContainer.removeAllViews();
+        if (openTasks.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
+            return;
+        }
+        tvNoTasks.setVisibility(View.GONE);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (ChildTask task : openTasks) {
+            View card = inflater.inflate(R.layout.item_child_task, tasksContainer, false);
+            bindTaskView(card, task);
+            tasksContainer.addView(card);
+        }
+    }
+
+    // ממלא את שדות הכרטיס בנתוני המשימה ומחבר את כפתור "בוצע"
+    private void bindTaskView(View card, final ChildTask task) {
+        TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
+        TextView tvDue = card.findViewById(R.id.tvDueDate);
+        Button btnDone = card.findViewById(R.id.btnDone);
+        View dotView = card.findViewById(R.id.viewStatusDot);
+        View imgShell = card.findViewById(R.id.imgTaskImageShell);
+        ImageView imgTask = card.findViewById(R.id.imgTaskImage);
+
+        tvTitle.setText(task.getTitle());
+
+        // טקסט תאריך בעברית לפי המצב: היום, מחר, עוד X ימים, באיחור, או ללא תאריך
+        long days = DateUtils.daysLeft(task.getDueAt());
+        boolean overdue = DateUtils.isOverdue(task.getDueAt());
+        boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
+
+        String dueText;
+        if (days == Long.MAX_VALUE) {
+            dueText = getString(R.string.child_due_no_date);
+        } else if (overdue) {
+            dueText = getString(R.string.child_due_late, (int) Math.abs(days));
+        } else if (days == 0) {
+            dueText = getString(R.string.child_due_today);
+        } else if (days == 1) {
+            dueText = getString(R.string.child_due_tomorrow);
+        } else if (days <= 7) {
+            dueText = getString(R.string.child_due_days_left, (int) days);
         } else {
-            tvNoTasks.setVisibility(View.GONE);
+            dueText = task.getDueAt();
         }
-        taskAdapter.notifyDataSetChanged();
-    }
+        tvDue.setText(dueText);
 
-    private void updateFilterUI() {
-        // צובע את הפילטר הפעיל עם רקע אפור שקוף ואת השאר שקופים
-        tintFilter(filterOpen, activeFilter == FilterMode.NOT_COMPLETED);
-        tintFilter(filterUrgent, activeFilter == FilterMode.URGENT);
-        tintFilter(filterOverdue, activeFilter == FilterMode.OVERDUE);
-
-        switch (activeFilter) {
-            case NOT_COMPLETED:
-                tvTaskSectionTitle.setText(R.string.filter_label_open);
-                break;
-            case URGENT:
-                tvTaskSectionTitle.setText(R.string.filter_label_urgent);
-                break;
-            case OVERDUE:
-                tvTaskSectionTitle.setText(R.string.filter_label_overdue);
-                break;
-        }
-        applyFilterAndRefresh();
-    }
-
-    // עוזר לצביעת רקע של כפתור פילטר: אפור שקוף כשפעיל, שקוף לחלוטין אחרת
-    private void tintFilter(View view, boolean active) {
-        if (active) {
-            view.setBackgroundColor(getColor(R.color.filter_selected_overlay));
+        // צבע טקסט וצבע נקודת סטטוס לפי דחיפות המשימה
+        int dueColor;
+        int dotColor;
+        if (overdue) {
+            dueColor = R.color.danger;
+            dotColor = R.color.danger;
+        } else if (dueSoon) {
+            dueColor = R.color.urgent;
+            dotColor = R.color.urgent;
         } else {
-            view.setBackgroundColor(Color.TRANSPARENT);
+            dueColor = R.color.text_secondary;
+            dotColor = R.color.text_hint;
         }
+        tvDue.setTextColor(getColor(dueColor));
+
+        // יצירת נקודת סטטוס עגולה צבעונית בקוד (במקום XML נפרד לכל צבע)
+        GradientDrawable dot = new GradientDrawable();
+        dot.setShape(GradientDrawable.OVAL);
+        dot.setColor(getColor(dotColor));
+        dotView.setBackground(dot);
+
+        // הצגת תמונת המשימה אם קיימת (התמונה נשמרה ב-Firebase כמחרוזת Base64)
+        String imageBase64 = task.getImageBase64();
+        if (imageBase64 != null && !imageBase64.trim().isEmpty()) {
+            Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
+            if (bitmap != null) {
+                imgShell.setVisibility(View.VISIBLE);
+                imgTask.setVisibility(View.VISIBLE);
+                imgTask.setImageBitmap(bitmap);
+            } else {
+                imgShell.setVisibility(View.GONE);
+                imgTask.setVisibility(View.GONE);
+            }
+        } else {
+            imgShell.setVisibility(View.GONE);
+            imgTask.setVisibility(View.GONE);
+        }
+
+        // לחיצה על "בוצע" - מסמנת את המשימה ככבוצעה ב-Firebase
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processMarkTaskAsDone(task);
+            }
+        });
     }
 
-    private void updateCountersUI(int open, int urgent, int overdue) {
-        tvTotalTasks.setText(String.valueOf(open));
-        tvDueSoon.setText(String.valueOf(urgent));
-        tvOverdue.setText(String.valueOf(overdue));
-    }
+    // סימון משימה כבוצעה: כתיבת isDone=true ל-Firebase. המאזין יטען מחדש את הרשימה.
+    private void processMarkTaskAsDone(final ChildTask task) {
+        // הגנה מפני לחיצה כפולה: אם המשימה כבר סומנה - לא נכתוב שוב
+        if (task.getIsDone()) {
+            return;
+        }
+        // סימון מקומי מיד כדי שלחיצה נוספת תיחסם. אם הכתיבה נכשלת - מחזירים את הסטטוס.
+        task.setIsDone(true);
 
-    private void resolveIntentIds() {
-        parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
-        childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
+        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        task.setIsDone(false);
+                        Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void returnToMainAfterMissingChild() {

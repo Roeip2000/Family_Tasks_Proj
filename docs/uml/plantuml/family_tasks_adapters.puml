@@ -17,12 +17,6 @@ title Family Tasks - Adapter Classes
 caption Current adapter classes and their model dependencies.
 
 package "adapters" #FFF3BF {
-class ChildTaskAdapter <<adapter>> {
-  - tasks : List<ChildTask>
-  - doneListener : OnTaskDoneListener
-}
-interface "ChildTaskAdapter.OnTaskDoneListener" as OnTaskDoneListener <<adapter>>
-class "ChildTaskAdapter.TaskViewHolder" as ChildTaskViewHolder <<adapter>>
 class ParentDashboardTaskAdapter <<adapter>> {
   - items : List<AssignedTask>
   - showChildName : boolean
@@ -34,14 +28,10 @@ class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<
 }
 
 package "models" #E2F5E6 {
-class ChildTask <<model>>
 class AssignedTask <<model>>
 class TaskTemplate <<model>>
 }
 
-ChildTaskAdapter ..> ChildTask
-ChildTaskAdapter +-- OnTaskDoneListener
-ChildTaskAdapter +-- ChildTaskViewHolder
 ParentDashboardTaskAdapter ..> AssignedTask
 ParentDashboardTaskAdapter +-- OnItemClickListener
 ParentDashboardTaskAdapter +-- ParentTaskViewHolder

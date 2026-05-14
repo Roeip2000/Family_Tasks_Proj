@@ -46,13 +46,9 @@ class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<
 
 package "child" #DCEEFF {
 class ChildDashboardActivity <<screen>>
-enum "ChildDashboardActivity.FilterMode" as ChildFilterMode <<inner>>
 }
 
 package "adapters" #FFF3BF {
-class ChildTaskAdapter <<adapter>>
-interface "ChildTaskAdapter.OnTaskDoneListener" as OnTaskDoneListener <<adapter>>
-class "ChildTaskAdapter.TaskViewHolder" as ChildTaskViewHolder <<adapter>>
 class ParentDashboardTaskAdapter <<adapter>>
 interface "ParentDashboardTaskAdapter.OnItemClickListener" as OnItemClickListener <<adapter>>
 class "ParentDashboardTaskAdapter.TaskViewHolder" as ParentTaskViewHolder <<adapter>>
@@ -101,15 +97,8 @@ ParentTaskTemplateActivity ..> ImageHelper
 ParentTaskTemplateActivity +-- TemplateListAdapter
 
 ChildDashboardActivity ..> ChildTask
-ChildDashboardActivity ..> ChildTaskAdapter
 ChildDashboardActivity ..> DateUtils
-ChildDashboardActivity +-- ChildFilterMode
-
-ChildTaskAdapter ..> ChildTask
-ChildTaskAdapter ..> DateUtils
-ChildTaskAdapter ..> ImageHelper
-ChildTaskAdapter +-- OnTaskDoneListener
-ChildTaskAdapter +-- ChildTaskViewHolder
+ChildDashboardActivity ..> ImageHelper
 
 ParentDashboardTaskAdapter ..> AssignedTask
 ParentDashboardTaskAdapter ..> DateUtils
