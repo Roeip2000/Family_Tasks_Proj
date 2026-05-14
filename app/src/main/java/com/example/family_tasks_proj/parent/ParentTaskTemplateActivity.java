@@ -170,6 +170,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         String title = etTemplateTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 

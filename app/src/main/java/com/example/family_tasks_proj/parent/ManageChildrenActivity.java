@@ -128,6 +128,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         // מוודא שהמשתמש הזין שם מלא כדי לא לשמור נתונים חסרים ב-Firebase
         if (firstName.isEmpty() || lastName.isEmpty()) {
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 

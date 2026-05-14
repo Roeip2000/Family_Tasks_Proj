@@ -106,7 +106,6 @@
     <string name="btn_update">עדכן</string>
     <string name="title_add_child">הוספת ילד</string>
     <string name="title_edit_child">עריכת ילד</string>
-    <string name="error_assign_missing_details">חסרים פרטים להקצאה</string>
     <string name="success_task_assigned">המשימה הוקצתה!</string>
     <string name="date_slash_format">%1$d/%2$d/%3$d</string>
 

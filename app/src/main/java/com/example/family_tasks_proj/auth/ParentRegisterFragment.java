@@ -60,10 +60,12 @@ public class ParentRegisterFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (password.length() < 6) {
+            Toast.makeText(requireContext(), "הסיסמה חייבת להכיל לפחות 6 תווים", Toast.LENGTH_SHORT).show();
             return;
         }
 

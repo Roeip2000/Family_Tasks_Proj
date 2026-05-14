@@ -165,6 +165,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
         if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
+            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
