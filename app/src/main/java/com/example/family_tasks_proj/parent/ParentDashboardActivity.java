@@ -59,14 +59,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // בכל חזרה לדשבורד בודקים שהמשתמש עדיין מחובר ל-FirebaseAuth.
+        // אם לא - חוזרים למסך הראשי במקום להציג מסך ריק עם שגיאות.
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null)
-        {
-            loadProfile(user);
+        if (user != null) {
+            tvName.setText(R.string.parent_greeting);
             loadData(user);
-        }
-        else {
+        } else {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -208,10 +208,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
         rvTasks.setAdapter(taskAdapter);
-    }
-
-    private void loadProfile(FirebaseUser user) {
-        tvName.setText(R.string.parent_greeting);
     }
 
     private void loadData(FirebaseUser user) {

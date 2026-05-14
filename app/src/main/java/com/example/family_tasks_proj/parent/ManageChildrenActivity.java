@@ -27,9 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // מסך לניהול הילדים במשפחה
 public class ManageChildrenActivity extends AppCompatActivity {
@@ -149,11 +147,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
-        // מעדכנים רק שם פרטי ושם משפחה.
-        // שמירה של שם פרטי ושם משפחה בנפרד תחת הילד.
+        // הפניה לרשומת הילד ב-Firebase: parents/{parentId}/children/{childId}
         DatabaseReference childNode = getChildrenReference().child(childId);
 
-        // כתיבת כל שדה ישירות לנתיב שלו ב-Firebase במקום להשתמש ב-HashMap.
+        // כותבים כל שדה לנתיב שלו. המאזין על שדה השם האחרון מודיע למשתמש שהשמירה הצליחה.
         childNode.child("firstName").setValue(firstName);
         childNode.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -167,7 +164,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
-        }
+    }
 
     private void delete(String childId) {
         getChildrenReference().child(childId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -270,21 +267,22 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return convertView;
         }
 
+        // מחבר שם פרטי ושם משפחה. אם שניהם ריקים מחזיר ערך ברירת מחדל ("ילד" וכו').
         private String formatFullName(String first, String last) {
-            StringBuilder sb = new StringBuilder();
+            String fullName = "";
             if (first != null && !first.trim().isEmpty()) {
-                sb.append(first.trim());
+                fullName = first.trim();
             }
             if (last != null && !last.trim().isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(" ");
+                if (!fullName.isEmpty()) {
+                    fullName += " ";
                 }
-                sb.append(last.trim());
+                fullName += last.trim();
             }
-            if (sb.length() > 0) {
-                return sb.toString();
+            if (fullName.isEmpty()) {
+                return getString(R.string.default_child_name_fallback);
             }
-            return getString(R.string.default_child_name_fallback);
+            return fullName;
         }
     }
 

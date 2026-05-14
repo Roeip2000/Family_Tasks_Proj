@@ -37,7 +37,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 // מסך לניהול תבניות משימה (הוספה, עריכה, מחיקה)
 public class ParentTaskTemplateActivity extends AppCompatActivity {
@@ -178,16 +177,20 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             return;
         }
 
+        // אם זו עריכה - שומרים על אותו מזהה. אם זו תבנית חדשה - יוצרים מזהה ייחודי ע"י push().getKey().
         String templateId;
         if (currentEditTemplateId != null) {
             templateId = currentEditTemplateId;
         } else {
-            templateId = UUID.randomUUID().toString();
+            templateId = getTemplatesReference().push().getKey();
+            if (templateId == null) {
+                return;
+            }
         }
-        // הפנייה לנתיב של התבנית ב-Firebase.
+        // הפנייה לרשומת התבנית ב-Firebase: parents/{parentId}/task_templates/{templateId}
         DatabaseReference templateRef = getTemplatesReference().child(templateId);
 
-        // כתיבת כל שדה ישירות לנתיב שלו ב-Firebase במקום להשתמש ב-HashMap.
+        // כותבים כל שדה לנתיב שלו ב-Firebase
         templateRef.child("title").setValue(title);
 
         if (currentSelectedBitmap != null) {

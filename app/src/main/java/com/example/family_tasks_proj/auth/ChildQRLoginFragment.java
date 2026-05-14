@@ -101,35 +101,30 @@ public class ChildQRLoginFragment extends Fragment {
 
         String raw = result.getContents();
         if (raw == null) {
+            // המשתמש סגר את מסך הסריקה בלי לסרוק כלום
             Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
             return;
         }
-        ParsedQr parsed = parseQr(raw.trim());
-        if (isBlank(parsed.parentId)) {
+
+        // ה-QR נוצר ב-GenerateQRActivity בפורמט "parent:{uid}". חותכים את הקידומת ומשאירים את מזהה ההורה.
+        String parentId = parseParentId(raw.trim());
+        if (parentId == null || parentId.isEmpty()) {
             Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        checkQrTarget(parsed);
+        checkParentExists(parentId);
     }
 
-    // בודק לאן להפנות את המשתמש לפי תוכן ה-QR
-    private void checkQrTarget(ParsedQr parsed) {
-        checkParentExists(parsed.parentId);
-    }
-
-    // ה-QR נוצר ב-GenerateQRActivity בפורמט "parent:{uid}". כאן חותכים את הקידומת ומחזירים את מזהה ההורה.
-    private ParsedQr parseQr(String raw) {
-        ParsedQr parsedQr = new ParsedQr();
-        if (isBlank(raw)) {
-            return parsedQr;
+    // מחזיר את מזהה ההורה מתוך טקסט ה-QR. אם הטקסט לא בפורמט הצפוי - מחזיר ריק.
+    private String parseParentId(String raw) {
+        if (raw == null || raw.isEmpty()) {
+            return "";
         }
-
         if (raw.startsWith("parent:")) {
-            parsedQr.parentId = raw.substring("parent:".length()).trim();
+            return raw.substring("parent:".length()).trim();
         }
-
-        return parsedQr;
+        return "";
     }
 
     // בודק מול Firebase שההורה קיים במערכת
@@ -160,19 +155,10 @@ public class ChildQRLoginFragment extends Fragment {
 
     // פותח את מסך בחירת הילד כשנסרק QR של הורה בלבד
     private void openChildSelection(String parentId) {
+        // מעבירים את מזהה ההורה ב-Intent כדי שמסך הבחירה ידע לאיזה הורה לטעון את רשימת הילדים
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         intent.putExtra(ChildSelectionActivity.EXTRA_PARENT_ID, parentId);
         startActivity(intent);
         requireActivity().finish();
-    }
-
-    // בודק אם מחרוזת היא ריקה
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
-    // אובייקט עזר לשמירת נתוני ה-QR שפוענחו בזמן הסריקה בלבד
-    private static class ParsedQr {
-        private String parentId;
     }
 }

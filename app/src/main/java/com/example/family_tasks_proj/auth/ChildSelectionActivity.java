@@ -26,14 +26,13 @@ import java.util.List;
 public class ChildSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
-    public static final String EXTRA_CHILD_ID = "childId";
 
     private TextView tvSubtitle, tvNoChildren;
     private Spinner spinnerChildren;
     private Button btnEnter;
 
     private final List<ChildItem> childItems = new ArrayList<>();
-    private String parentId, preselectedChildId;
+    private String parentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +66,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
         });
     }
 
-    // מקבל מזהים רק מה-Intent. אין שמירה מקומית.
+    // קריאת מזהה ההורה שהועבר ב-Intent ממסך סריקת ה-QR
     private void resolveIds() {
         parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
-        preselectedChildId = getIntent().getStringExtra(EXTRA_CHILD_ID);
     }
 
     // טוען את הילדים ששייכים להורה שנבחר
@@ -98,16 +96,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 for (ChildItem item : childItems) {
                     names.add(item.name);
                 }
+                // בונים Adapter פשוט להצגת שמות הילדים ב-Spinner
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildSelectionActivity.this, android.R.layout.simple_spinner_dropdown_item, names);
                 spinnerChildren.setAdapter(adapter);
-                if (preselectedChildId != null) {
-                    for (int i = 0; i < childItems.size(); i++) {
-                        if (preselectedChildId.equals(childItems.get(i).id)) {
-                            spinnerChildren.setSelection(i);
-                            break;
-                        }
-                    }
-                }
             }
 
             @Override
@@ -123,6 +114,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.child_selection_please_select, Toast.LENGTH_SHORT).show();
             return;
         }
+        // מעבירים לדשבורד של הילד את מזהה ההורה והילד שנבחרו, כדי שהדשבורד יידע לטעון את המשימות הנכונות
         String childId = childItems.get(selectedPosition).id;
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);
