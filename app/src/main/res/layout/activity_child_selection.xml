@@ -12,37 +12,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingStart="@dimen/screen_padding_compact"
+        android:paddingTop="@dimen/screen_padding_top"
+        android:paddingEnd="@dimen/screen_padding_compact"
+        android:paddingBottom="48dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_child_login"
-            android:textSize="24sp" />
+            android:background="@drawable/bg_home_hero"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            style="@style/Widget.Family.ScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/child_selection_subtitle_child" />
+            <TextView
+                style="@style/Widget.Family.ScreenTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_child_login"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_title" />
+
+            <TextView
+                style="@style/Widget.Family.ScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/child_selection_subtitle_child" />
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/divider"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="@dimen/card_corner_radius_large"
+            app:cardElevation="@dimen/card_elevation"
+            app:strokeColor="@color/divider_light"
             app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="20dp">
 
                 <TextView
                     style="@style/Widget.Family.FieldLabel"
@@ -53,17 +66,21 @@
                 <Spinner
                     android:id="@+id/spinnerChildren"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_repository_list" />
+                    android:layout_height="52dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_spinner"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:spinnerMode="dropdown" />
 
                 <TextView
                     android:id="@+id/tvNoChildren"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_empty_state"
                     android:gravity="center"
-                    android:padding="24dp"
+                    android:padding="20dp"
                     android:text="@string/empty_no_children_selection"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp"
@@ -73,10 +90,10 @@
                     android:id="@+id/btnEnter"
                     style="@style/Widget.Family.PrimaryButton"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/btn_enter"
-                    app:cornerRadius="12dp" />
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="18dp"
+                    android:drawableStart="@drawable/ic_login"
+                    android:text="@string/btn_enter" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

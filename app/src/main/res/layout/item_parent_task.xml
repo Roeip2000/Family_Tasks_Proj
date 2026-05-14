@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/divider"
+    app:cardBackgroundColor="@color/bg_card"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,11 +22,12 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <!-- תמונת משימה קטנה גם להורה -->
             <FrameLayout
                 android:id="@+id/imgTaskParentShell"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/bg_preview_shell"
                 android:visibility="gone">
 
@@ -77,7 +78,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 

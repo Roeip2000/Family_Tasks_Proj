@@ -15,21 +15,23 @@
 
         <!-- כותרת ברכה לילד -->
         <TextView
-            style="@style/Widget.Family.ScreenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="@string/child_hello_initial" />
+            android:text="@string/child_hello_initial"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-        <!-- מונה אחד -->
+        <!-- מונה אחד: כמה משימות פתוחות יש כרגע -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/divider"
+            app:cardElevation="1dp"
+            app:strokeColor="@color/divider_light"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -68,7 +70,7 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <!-- מצב ריק -->
+        <!-- מצב ריק: מוצג כשאין משימות פתוחות -->
         <TextView
             android:id="@+id/tvNoTasksChild"
             android:layout_width="match_parent"
@@ -80,6 +82,7 @@
             android:textColor="@color/text_secondary"
             android:visibility="gone" />
 
+        <!-- מכל המשימות. הקוד ב-Java מנפח (inflate) כרטיס משימה לכל משימה פתוחה ומוסיף אותו לכאן. -->
         <LinearLayout
             android:id="@+id/tasksContainer"
             android:layout_width="match_parent"

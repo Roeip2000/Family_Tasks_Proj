@@ -14,19 +14,21 @@
         android:padding="24dp">
 
         <TextView
-            style="@style/Widget.Family.ScreenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/title_assign_task"
-            android:textSize="24sp" />
+            android:textColor="@color/primary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
         <TextView
-            style="@style/Widget.Family.ScreenSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/subtitle_assign_task" />
+            android:text="@string/subtitle_assign_task"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
 
         <!-- כרטיס טופס הקצאת משימה -->
         <com.google.android.material.card.MaterialCardView
@@ -34,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="2dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp">
@@ -46,10 +48,12 @@
                 android:padding="24dp">
 
                 <TextView
-                    style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_choose_template" />
+                    android:text="@string/label_choose_template"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <Spinner
                     android:id="@+id/spTemplates"
@@ -58,22 +62,30 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_repository_list" />
 
-                <ImageView
-                    android:id="@+id/imgTaskPreview"
+                <FrameLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="24dp"
-                    android:contentDescription="@string/cd_task_image"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_image_placeholder" />
+                    android:background="@drawable/bg_preview_shell">
+
+                    <ImageView
+                        android:id="@+id/imgTaskPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/cd_task_image"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_image_placeholder" />
+                </FrameLayout>
 
                 <TextView
-                    style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="@string/label_task_name" />
+                    android:text="@string/label_task_name"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/etTitle"
@@ -88,11 +100,13 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="@string/label_assign_to" />
+                    android:text="@string/label_assign_to"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <Spinner
                     android:id="@+id/spAssignee"
@@ -102,11 +116,13 @@
                     android:background="@drawable/bg_repository_list" />
 
                 <TextView
-                    style="@style/Widget.Family.FieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="@string/label_due_date" />
+                    android:text="@string/label_due_date"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/etDueDate"
@@ -123,12 +139,15 @@
 
                 <Button
                     android:id="@+id/btnAssign"
-                    style="@style/Widget.Family.PrimaryButton"
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:layout_marginTop="32dp"
+                    android:backgroundTint="@color/primary"
                     android:text="@string/btn_confirm_assign"
-                    app:cornerRadius="12dp" />
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

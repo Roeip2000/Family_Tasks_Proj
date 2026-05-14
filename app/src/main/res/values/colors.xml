@@ -24,6 +24,8 @@
     <color name="border_light">#F1F2F6</color>
     <color name="border_strong">#DFE4EA</color>
     <color name="divider">#F1F2F6</color>
+    <color name="divider_light">#F1F2F6</color>
+
     <!-- סטטוס והתראות -->
     <color name="success">#2ECC71</color>
     <color name="success_light">#E8F5E9</color>

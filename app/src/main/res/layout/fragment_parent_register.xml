@@ -10,12 +10,13 @@
     android:layoutDirection="rtl">
 
     <TextView
-        style="@style/Widget.Family.ScreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="@string/title_parent_register"
-        android:textSize="22sp" />
+        android:textColor="@color/primary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etFirstName"
@@ -28,11 +29,12 @@
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
 
+    <View android:layout_width="1dp" android:layout_height="10dp" />
+
     <EditText
         android:id="@+id/etLastName"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="10dp"
         android:autofillHints="familyName"
         android:background="@drawable/bg_repository_list"
         android:hint="@string/hint_last_name"
@@ -40,11 +42,12 @@
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
 
+    <View android:layout_width="1dp" android:layout_height="10dp" />
+
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="10dp"
         android:autofillHints="emailAddress"
         android:background="@drawable/bg_repository_list"
         android:hint="@string/hint_email"
@@ -52,11 +55,12 @@
         android:paddingHorizontal="16dp"
         android:textSize="15sp" />
 
+    <View android:layout_width="1dp" android:layout_height="10dp" />
+
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginTop="10dp"
         android:autofillHints="newPassword"
         android:background="@drawable/bg_repository_list"
         android:hint="@string/hint_password"
