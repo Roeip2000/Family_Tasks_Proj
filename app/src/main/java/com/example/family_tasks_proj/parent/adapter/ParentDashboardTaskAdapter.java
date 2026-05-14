@@ -122,9 +122,10 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         holder.tvStatus.setText(statusText);
         holder.tvStatus.setTextColor(context.getColor(statusTextColor));
         
+        float chipCornerRadius = 28f; // קביעת מידת העיגול של הפינות עבור תג הסטטוס
         GradientDrawable shape = new GradientDrawable();
         shape.setColor(context.getColor(statusBgColor));
-        shape.setCornerRadius(28f);
+        shape.setCornerRadius(chipCornerRadius);
         holder.tvStatus.setBackground(shape);
 
         GradientDrawable dot = new GradientDrawable();

@@ -123,7 +123,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         tvNoTasks.setVisibility(View.GONE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        for (ChildTask task : openTasks) {
+        for (int i = 0; i < openTasks.size(); i++) {
+            ChildTask task = openTasks.get(i);
             View card = inflater.inflate(R.layout.item_child_task, tasksContainer, false);
             bindTaskView(card, task);
             tasksContainer.addView(card);
@@ -150,7 +151,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
         if (days == Long.MAX_VALUE) {
             dueText = getString(R.string.child_due_no_date);
         } else if (overdue) {
-            dueText = getString(R.string.child_due_late, (int) Math.abs(days));
+            int absoluteDays;
+            if (days < 0) {
+                absoluteDays = (int)(-days);
+            } else {
+                absoluteDays = (int)days;
+            }
+            dueText = getString(R.string.child_due_late, absoluteDays);
         } else if (days == 0) {
             dueText = getString(R.string.child_due_today);
         } else if (days == 1) {

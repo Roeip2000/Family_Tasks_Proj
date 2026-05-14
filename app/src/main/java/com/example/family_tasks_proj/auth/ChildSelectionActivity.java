@@ -70,7 +70,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     String childId = snap.getKey();
                     String firstName = snap.child("firstName").getValue(String.class);
                     String lastName = snap.child("lastName").getValue(String.class);
-                    childItems.add(new ChildItem(childId, fullNameOrDefault(firstName, lastName, getString(R.string.default_child_name_fallback))));
+                    childItems.add(new ChildItem(childId, getFullName(firstName, lastName, getString(R.string.default_child_name_fallback))));
                 }
                 
                 if (childItems.isEmpty()) {
@@ -85,7 +85,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
                 btnEnter.setEnabled(true);
                 
                 List<String> names = new ArrayList<>();
-                for (ChildItem item : childItems) {
+                for (int i = 0; i < childItems.size(); i++) {
+                    ChildItem item = childItems.get(i);
                     names.add(item.name);
                 }
                 
@@ -118,7 +119,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         finish();
     }
 
-    private String fullNameOrDefault(String firstName, String lastName, String defaultName) {
+    private String getFullName(String firstName, String lastName, String defaultName) {
         String fullName = "";
         if (firstName != null && !firstName.trim().isEmpty()) {
             fullName = firstName.trim();

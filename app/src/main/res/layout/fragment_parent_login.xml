@@ -11,13 +11,12 @@
     android:layoutDirection="rtl">
 
     <TextView
+        style="@style/Widget.Family.ScreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="@string/title_parent_login"
-        android:textColor="@color/primary"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textSize="22sp" />
 
     <EditText
         android:id="@+id/etEmail"
@@ -31,14 +30,11 @@
         android:textColor="@color/primary"
         android:textSize="16sp" />
 
-    <View
-        android:layout_width="1dp"
-        android:layout_height="12dp" />
-
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="54dp"
+        android:layout_marginTop="12dp"
         android:autofillHints="password"
         android:background="@drawable/bg_repository_list"
         android:hint="@string/hint_password"

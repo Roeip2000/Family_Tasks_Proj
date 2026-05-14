@@ -275,7 +275,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void refreshTaskList() {
         visibleTasks.clear();
         
-        for (AssignedTask task : allTasks) {
+        for (int i = 0; i < allTasks.size(); i++) {
+            AssignedTask task = allTasks.get(i);
             boolean isMatch = false;
             
             if (activeFilter == FilterMode.ASSIGNED) {
