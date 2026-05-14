@@ -26,7 +26,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     private boolean showChildName = false;
     private OnItemClickListener listener;
 
-    // ממשק לטיפול בלחיצות על משימה מתוך ה-RecyclerView
     public interface OnItemClickListener {
         void onItemClick(AssignedTask task, int position);
     }
@@ -53,7 +52,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        // מחבר את נתוני המשימה לרכיבי התצוגה (ViewHolder)
         AssignedTask task = items.get(position);
         
         String title = task.getTitle();
@@ -157,7 +155,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return items.size();
     }
 
-    // מחזיק את רכיבי הממשק של פריט בודד כדי לחסוך קריאות חוזרות ל-findViewById
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
         View viewDot, imgShell;
