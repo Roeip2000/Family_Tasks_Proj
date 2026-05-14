@@ -26,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 // דשבורד ניהול להורה - מציג את כל המשימות של כל הילדים
@@ -76,6 +75,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // כשהמסך לא גלוי - מסירים את המאזין כדי שלא יישאר פעיל ברקע ויקרא נתונים מ-Firebase לחינם
         removeChildrenListener();
     }
 
@@ -198,6 +198,15 @@ public class ParentDashboardActivity extends AppCompatActivity {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
         taskAdapter.setShowChildName(true);
+
+        // לחיצה על כרטיס משימה מציגה את שם הילד והמשימה ב-Toast (סקירה מהירה להורה)
+        taskAdapter.setOnItemClickListener(new ParentDashboardTaskAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(AssignedTask task, int position) {
+                String message = getString(R.string.parent_task_click_toast, task.getChildName(), task.getTitle());
+                Toast.makeText(ParentDashboardActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
         rvTasks.setAdapter(taskAdapter);
     }
 
@@ -262,7 +271,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 refreshTaskList();
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error)
+            {
                 // אם טעינת המשימות נכשלה (אין הרשאה/אין רשת) - מציגים הודעה.
                 Toast.makeText(ParentDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }

@@ -36,9 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 // מסך לניהול תבניות משימה (הוספה, עריכה, מחיקה)
@@ -190,7 +188,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         DatabaseReference templateRef = getTemplatesReference().child(templateId);
 
         // כתיבת כל שדה ישירות לנתיב שלו ב-Firebase במקום להשתמש ב-HashMap.
-        templateRef.child("id").setValue(templateId);
         templateRef.child("title").setValue(title);
 
         if (currentSelectedBitmap != null) {
@@ -198,7 +195,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             templateRef.child("imageBase64").setValue(base64);
         }
 
-        // מוסיפים מאזין לסיום הפעולה רק על השדה האחרון או על הפנייה הכללית.
+        // הכתיבה האחרונה היא של שדה ה-id, ועליה מוסיפים את מאזין הסיום שמודיע למשתמש.
         templateRef.child("id").setValue(templateId).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

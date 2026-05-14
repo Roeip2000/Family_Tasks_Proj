@@ -25,9 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /** מסך הרשמת הורה חדש. יוצר משתמש ב-FirebaseAuth ושומר את פרטיו ב-Realtime Database. */
 public class ParentRegisterFragment extends Fragment {
 

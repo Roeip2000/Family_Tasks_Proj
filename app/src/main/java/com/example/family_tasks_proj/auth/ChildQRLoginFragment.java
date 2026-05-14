@@ -118,7 +118,7 @@ public class ChildQRLoginFragment extends Fragment {
         checkParentExists(parsed.parentId);
     }
 
-    // מפרק את הטקסט של ה-QR לנתונים
+    // ה-QR נוצר ב-GenerateQRActivity בפורמט "parent:{uid}". כאן חותכים את הקידומת ומחזירים את מזהה ההורה.
     private ParsedQr parseQr(String raw) {
         ParsedQr parsedQr = new ParsedQr();
         if (isBlank(raw)) {

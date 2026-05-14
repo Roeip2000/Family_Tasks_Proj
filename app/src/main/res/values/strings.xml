@@ -164,4 +164,5 @@
     <string name="stat_done_short">בוצעו</string>
     <string name="empty_tasks_filter">אין משימות בקטגוריה זו</string>
     <string name="manage_child_hint">לחץ לניהול ועריכה</string>
+    <string name="parent_task_click_toast">%1$s — %2$s</string>
 </resources>

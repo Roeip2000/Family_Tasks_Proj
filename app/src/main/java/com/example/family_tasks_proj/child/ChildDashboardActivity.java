@@ -49,6 +49,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private String parentId, childId;
     private FilterMode activeFilter = FilterMode.NOT_COMPLETED;
 
+    // --- 3. שמירת מאזיני Firebase כדי שנוכל להסיר אותם כשהמסך לא גלוי ---
+    private DatabaseReference profileRef;
+    private ValueEventListener profileListener;
+    private DatabaseReference tasksRef;
+    private ValueEventListener tasksListener;
+
     // הילד רואה רק משימות פתוחות, דחופות או באיחור. אין סינון "סיימתי".
     private enum FilterMode { NOT_COMPLETED, URGENT, OVERDUE }
 
@@ -69,9 +75,37 @@ public class ChildDashboardActivity extends AppCompatActivity {
         setupRecyclerView();
         setupListeners();
 
-        // שלב ג: טעינת נתונים
+        // טעינת הנתונים מועברת ל-onResume כדי שנוכל להוסיף ולהסיר מאזינים לפי מחזור החיים של המסך
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (parentId == null || childId == null) {
+            return;
+        }
         loadChildProfile();
         loadChildTasks();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // כשהמסך לא גלוי - מסירים את המאזינים כדי שלא יישארו פעילים ברקע
+        removeChildListeners();
+    }
+
+    private void removeChildListeners() {
+        if (profileRef != null && profileListener != null) {
+            profileRef.removeEventListener(profileListener);
+        }
+        if (tasksRef != null && tasksListener != null) {
+            tasksRef.removeEventListener(tasksListener);
+        }
+        profileRef = null;
+        profileListener = null;
+        tasksRef = null;
+        tasksListener = null;
     }
 
     private void initViews() {
@@ -156,7 +190,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // --- לוגיקה: טעינת נתונים ---
     private void loadChildProfile() {
-        childRef().addValueEventListener(new ValueEventListener() {
+        // מסירים מאזין קודם אם קיים, כדי שלא יהיו כפילויות אחרי חזרה למסך
+        if (profileRef != null && profileListener != null) {
+            profileRef.removeEventListener(profileListener);
+        }
+        profileRef = childRef();
+        profileListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -171,12 +210,18 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 // אם טעינת פרופיל הילד נכשלה - מציגים הודעת שגיאה.
                 Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        profileRef.addValueEventListener(profileListener);
     }
 
     private void loadChildTasks() {
+        // מסירים מאזין קודם אם קיים, כדי שלא יהיו כפילויות אחרי חזרה למסך
+        if (tasksRef != null && tasksListener != null) {
+            tasksRef.removeEventListener(tasksListener);
+        }
         // המשימות של הילד נמצאות מתחת להורה שלו, ולכן צריך גם parentId וגם childId.
-        childRef().child("tasks").addValueEventListener(new ValueEventListener() {
+        tasksRef = childRef().child("tasks");
+        tasksListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allTasks.clear();
@@ -208,7 +253,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 // אם טעינת המשימות של הילד נכשלה - מציגים הודעה.
                 Toast.makeText(ChildDashboardActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        tasksRef.addValueEventListener(tasksListener);
     }
 
     private void applyFilterAndRefresh() {
