@@ -59,8 +59,10 @@ public class ParentLoginFragment extends Fragment {
         // התחברות ישירה מול Firebase ומעבר לדשבורד במקרה של הצלחה
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded()) {
+            public void onComplete(@NonNull Task<AuthResult> task)
+            {
+                if (!isAdded())
+                {
                     return;
                 }
                 if (task.isSuccessful()) {
