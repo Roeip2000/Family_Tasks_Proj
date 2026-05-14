@@ -98,14 +98,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void setupFilters() {
         View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (v == fOpen) {
+            public void onClick(View view) {
+                if (view == fOpen) {
                     setFilter(FilterMode.ASSIGNED);
-                } else if (v == fUrgent) {
+                } else if (view == fUrgent) {
                     setFilter(FilterMode.URGENT);
-                } else if (v == fOverdue) {
+                } else if (view == fOverdue) {
                     setFilter(FilterMode.OVERDUE);
-                } else if (v == fDone) {
+                } else if (view == fDone) {
                     setFilter(FilterMode.COMPLETED);
                 }
             }
@@ -156,25 +156,25 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void setupActions() {
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, ManageChildrenActivity.class));
             }
         });
         btnManageTemplates.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, ParentTaskTemplateActivity.class));
             }
         });
         btnAssignTask.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, AssignTaskToChildActivity.class));
             }
         });
         btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
             }
         });
@@ -213,14 +213,24 @@ public class ParentDashboardActivity extends AppCompatActivity {
                             
                             AssignedTask task = new AssignedTask();
                             task.setChildId(childId);
-                            task.setChildName(childName != null ? childName : getString(R.string.default_child_name_fallback));
+
+                            if (childName != null) {
+                                task.setChildName(childName);
+                            } else {
+                                task.setChildName(getString(R.string.default_child_name_fallback));
+                            }
+
                             task.setTaskId(tSnap.getKey());
                             task.setTitle(tSnap.child("title").getValue(String.class));
                             task.setDueAt(tSnap.child("dueAt").getValue(String.class));
                             task.setImageBase64(tSnap.child("imageBase64").getValue(String.class));
                             
                             Boolean isDone = tSnap.child("isDone").getValue(Boolean.class);
-                            task.setIsDone(isDone != null && isDone);
+                            if (isDone != null && isDone) {
+                                task.setIsDone(true);
+                            } else {
+                                task.setIsDone(false);
+                            }
 
                             allTasks.add(task);
 

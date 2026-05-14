@@ -132,7 +132,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         listViewTemplates.setAdapter(templateAdapter);
         listViewTemplates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> p, View v, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showOptions(position);
             }
         });
@@ -170,7 +170,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         String title = etTemplateTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
-            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -227,7 +227,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         };
         new AlertDialog.Builder(this).setTitle(template.getTitle()).setItems(options, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface d, int which) {
+            public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
                     currentEditTemplateId = template.getId();
                     currentSelectedBitmap = null;
@@ -258,12 +258,18 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnCancelTemplateEdit.setVisibility(View.GONE);
     }
 
+    private static final int DEFAULT_LIST_WIDTH = 500; // רוחב ברירת מחדל למדידת ListView לפני שהמסך נטען
+
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
         }
 
-        int listWidth = (listView.getWidth() > 0) ? listView.getWidth() : 500;
+        int listWidth = listView.getWidth();
+        if (listWidth <= 0) {
+            listWidth = DEFAULT_LIST_WIDTH;
+        }
+        
         int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
 
         int totalHeight = 0;

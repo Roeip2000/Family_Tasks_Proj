@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ParentRegisterFragment extends Fragment {
 
+    private static final int MIN_PASSWORD_LENGTH = 6;
     private FirebaseAuth firebaseAuth;
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
@@ -54,9 +55,10 @@ public class ParentRegisterFragment extends Fragment {
     }
 
     private void registerParent() {
-        final String firstName = etFirstName.getText().toString().trim();
-        final String lastName = etLastName.getText().toString().trim();
-        final String email = etEmail.getText().toString().trim();
+        // קבלת הפרטים מהשדות ומחיקת רווחים מיותרים בעזרת trim
+        String firstName = etFirstName.getText().toString().trim();
+        String lastName = etLastName.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -64,8 +66,8 @@ public class ParentRegisterFragment extends Fragment {
             return;
         }
 
-        if (password.length() < 6) {
-            Toast.makeText(requireContext(), "הסיסמה חייבת להכיל לפחות 6 תווים", Toast.LENGTH_SHORT).show();
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
         }
 

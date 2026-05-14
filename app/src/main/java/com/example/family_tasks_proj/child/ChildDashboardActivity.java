@@ -130,6 +130,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
+    private static final int DAYS_IN_WEEK = 7;
+
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDue = card.findViewById(R.id.tvDueDate);
@@ -153,7 +155,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             dueText = getString(R.string.child_due_today);
         } else if (days == 1) {
             dueText = getString(R.string.child_due_tomorrow);
-        } else if (days <= 7) {
+        } else if (days <= DAYS_IN_WEEK) {
             dueText = getString(R.string.child_due_days_left, (int) days);
         } else {
             dueText = task.getDueAt();
@@ -194,7 +196,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 processMarkTaskAsDone(task);
             }
         });

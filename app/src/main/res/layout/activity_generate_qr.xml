@@ -79,8 +79,7 @@
                     android:layout_width="272dp"
                     android:layout_height="272dp"
                     android:layout_marginTop="14dp"
-                    android:background="@android:color/white"
-                    android:padding="16dp">
+                    android:background="@android:color/white">
 
                     <ImageView
                         android:id="@+id/imageViewQrCode"
@@ -90,27 +89,6 @@
                         android:scaleType="fitCenter"
                         android:visibility="gone" />
                 </FrameLayout>
-
-                <TextView
-                    style="@style/Widget.Family.HelperText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:gravity="center"
-                    android:text="@string/qr_share_hint" />
-
-                <TextView
-                    android:id="@+id/tvError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_empty_state"
-                    android:gravity="center"
-                    android:padding="12dp"
-                    android:text="@string/error_qr_creation"
-                    android:textColor="@color/error"
-                    android:textSize="15sp"
-                    android:visibility="gone" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

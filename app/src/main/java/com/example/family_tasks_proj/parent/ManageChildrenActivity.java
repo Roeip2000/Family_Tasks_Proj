@@ -123,12 +123,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void saveChildData() {
-        final String firstName = etFirstName.getText().toString().trim();
-        final String lastName = etLastName.getText().toString().trim();
+        // קבלת הטקסט מהשדות ומחיקת רווחים מיותרים מהתחלה ומהסוף בעזרת trim
+        String firstName = etFirstName.getText().toString().trim();
+        String lastName = etLastName.getText().toString().trim();
 
         // מוודא שהמשתמש הזין שם מלא כדי לא לשמור נתונים חסרים ב-Firebase
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -192,12 +193,18 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
     }
 
+    private static final int DEFAULT_LIST_WIDTH = 500; // רוחב ברירת מחדל למדידת רשימה אם הרוחב עוד לא נקבע
+
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
         }
 
-        int listWidth = (listView.getWidth() > 0) ? listView.getWidth() : 500;
+        int listWidth = listView.getWidth();
+        if (listWidth <= 0) {
+            listWidth = DEFAULT_LIST_WIDTH;
+        }
+        
         int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
 
         int totalHeight = 0;
@@ -213,24 +220,24 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void openOptions(int position) {
-        final ChildItem item = childList.get(position);
+        final ChildItem selectedChild = childList.get(position);
         String[] options = {
                 getString(R.string.dialog_option_edit),
                 getString(R.string.dialog_option_delete)
         };
-        new AlertDialog.Builder(this).setTitle(item.firstName).setItems(options, new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(selectedChild.firstName).setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
                     // טוען את פרטי הילד לטופס כדי לאפשר עריכה של ילד קיים
-                    editChildId = item.id;
-                    etFirstName.setText(item.firstName);
-                    etLastName.setText(item.lastName);
+                    editChildId = selectedChild.id;
+                    etFirstName.setText(selectedChild.firstName);
+                    etLastName.setText(selectedChild.lastName);
                     btnAdd.setText(R.string.btn_update);
                     btnCancel.setVisibility(View.VISIBLE);
                     tvTitle.setText(R.string.title_edit_child);
                 } else {
-                    delete(item.id);
+                    delete(selectedChild.id);
                 }
             }
         }).setNegativeButton(R.string.dialog_cancel, null).show();
@@ -251,10 +258,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
             }
-            ChildItem item = getItem(position);
-            if (item != null) {
+            ChildItem childItem = getItem(position);
+            if (childItem != null) {
                 TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
-                tvChildFullName.setText(formatFullName(item.firstName, item.lastName));
+                tvChildFullName.setText(formatFullName(childItem.firstName, childItem.lastName));
             }
             return convertView;
         }

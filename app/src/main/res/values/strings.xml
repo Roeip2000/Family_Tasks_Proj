@@ -36,8 +36,6 @@
     <string name="child_selection_please_select">אנא בחר ילד</string>
 
     <!-- QR -->
-    <string name="error_qr_creation">שגיאה ביצירת QR</string>
-    <string name="qr_share_hint">מראים לילדים את הקוד, והם בוחרים את השם שלהם במסך הבא.</string>
     <string name="qr_card_title">הקוד של המשפחה</string>
     <string name="cd_qr_code">קוד QR לכניסת ילד</string>
     <string name="cd_task_image">תמונת משימה</string>

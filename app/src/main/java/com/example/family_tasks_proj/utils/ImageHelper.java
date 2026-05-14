@@ -13,6 +13,8 @@ public class ImageHelper {
     private static final int JPEG_QUALITY = 70;
     private static final int MAX_SIZE = 600;
 
+    private static final float SCALE_THRESHOLD = 1.0f;
+
     // טוען תמונה מהגלריה ומקטין אותה כדי שיהיה אפשר לשמור אותה ב-Firebase
     public static Bitmap loadCorrectedBitmap(ContentResolver resolver, Uri uri) {
         try {
@@ -26,11 +28,11 @@ public class ImageHelper {
             int height = originalBitmap.getHeight();
             float ratio = Math.min((float) MAX_SIZE / width, (float) MAX_SIZE / height);
             
-            if (ratio < 1.0) {
+            if (ratio < SCALE_THRESHOLD) {
                 return Bitmap.createScaledBitmap(originalBitmap, Math.round(width * ratio), Math.round(height * ratio), true);
             }
             return originalBitmap;
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
             return null;
         }
     }
@@ -45,7 +47,7 @@ public class ImageHelper {
             bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
             byte[] byteArray = outputStream.toByteArray();
             return Base64.encodeToString(byteArray, Base64.NO_WRAP);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
             return null;
         }
     }
@@ -58,7 +60,7 @@ public class ImageHelper {
         try {
             byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
             return null;
         }
     }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +18,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 public class GenerateQRActivity extends AppCompatActivity {
 
     private ImageView imageViewQrCode;
-    private TextView tvError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +25,6 @@ public class GenerateQRActivity extends AppCompatActivity {
         setContentView(R.layout.activity_generate_qr);
 
         imageViewQrCode = findViewById(R.id.imageViewQrCode);
-        tvError = findViewById(R.id.tvError);
         Button btnBack = findViewById(R.id.btnBackToDashboard);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +43,8 @@ public class GenerateQRActivity extends AppCompatActivity {
         generateParentQR(user.getUid());
     }
 
+    private static final int QR_CODE_SIZE = 800;
+
     // מייצר QR שמכיל את מזהה ההורה (UID) כדי שהילד יוכל לסרוק ולהתחבר
     private void generateParentQR(String parentId) {
         String payload = "parent:" + parentId;
@@ -53,7 +52,7 @@ public class GenerateQRActivity extends AppCompatActivity {
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(
-                    payload, BarcodeFormat.QR_CODE, 800, 800);
+                    payload, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
