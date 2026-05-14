@@ -135,7 +135,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // טוען את רשימת הילדים מ-Firebase ושומר את ה-ID שלהם כדי לדעת לאיזה ילד להקצות את המשימה
+    // טוען ילדים מ-Firebase ושומר את ה-ID של כל אחד לצורך ההקצאה
     private void loadChildrenFromFirebase() {
         getParentDbReference().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -198,7 +198,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTask.setCreatedAt(System.currentTimeMillis());
         newTask.setImageBase64(img);
 
-        // שומר את המשימה למסד הנתונים
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
