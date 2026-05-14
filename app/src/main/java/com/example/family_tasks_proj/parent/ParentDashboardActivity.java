@@ -184,14 +184,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
         taskAdapter.setShowChildName(true);
-
-        taskAdapter.setOnItemClickListener(new ParentDashboardTaskAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(AssignedTask task, int position) {
-                String message = getString(R.string.parent_task_click_toast, task.getChildName(), task.getTitle());
-                Toast.makeText(ParentDashboardActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
         rvTasks.setAdapter(taskAdapter);
     }
 

@@ -184,15 +184,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
             Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
             if (bitmap != null) {
                 imgShell.setVisibility(View.VISIBLE);
-                imgTask.setVisibility(View.VISIBLE);
                 imgTask.setImageBitmap(bitmap);
             } else {
                 imgShell.setVisibility(View.GONE);
-                imgTask.setVisibility(View.GONE);
             }
         } else {
             imgShell.setVisibility(View.GONE);
-            imgTask.setVisibility(View.GONE);
         }
 
         btnDone.setOnClickListener(new View.OnClickListener() {

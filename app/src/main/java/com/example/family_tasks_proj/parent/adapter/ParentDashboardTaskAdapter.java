@@ -24,11 +24,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     private final Context context;
     private final List<AssignedTask> items;
     private boolean showChildName = false;
-    private OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(AssignedTask task, int position);
-    }
 
     public ParentDashboardTaskAdapter(Context context, List<AssignedTask> items) {
         this.context = context;
@@ -37,10 +32,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
     public void setShowChildName(boolean showChildName) {
         this.showChildName = showChildName;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
     }
 
     @NonNull
@@ -140,18 +131,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         dot.setShape(GradientDrawable.OVAL);
         dot.setColor(context.getColor(dotColor));
         holder.viewDot.setBackground(dot);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    int adapterPosition = holder.getAdapterPosition();
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(items.get(adapterPosition), adapterPosition);
-                    }
-                }
-            }
-        });
     }
 
     @Override
