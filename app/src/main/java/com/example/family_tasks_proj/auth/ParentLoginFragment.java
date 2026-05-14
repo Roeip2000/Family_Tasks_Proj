@@ -2,14 +2,11 @@ package com.example.family_tasks_proj.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,17 +44,6 @@ public class ParentLoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 loginUser();
-            }
-        });
-
-        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginUser();
-                    return true;
-                }
-                return false;
             }
         });
     }
