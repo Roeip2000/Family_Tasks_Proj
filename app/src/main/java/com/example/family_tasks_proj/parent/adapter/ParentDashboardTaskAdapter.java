@@ -19,14 +19,15 @@ import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
-/** מתאם עבור רשימת המשימות בדשבורד ההורה (RecyclerView). */
+/** מתאם (Adapter) עבור רשימת המשימות בדשבורד ההורה. */
 public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
     private final Context context;
-    private final List<AssignedTask> items;
+    private final List<AssignedTask> items; // רשימת המשימות להצגה
     private boolean showChildName = false;
     private OnItemClickListener listener;
 
+    // ממשק לטיפול בלחיצות על פריט ברשימה
     public interface OnItemClickListener {
         void onItemClick(AssignedTask task, int position);
     }
@@ -47,35 +48,39 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // ניפוח (Inflate) של ה-Layout עבור פריט בודד ברשימה
         View view = LayoutInflater.from(context).inflate(R.layout.item_parent_task, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        // onBindViewHolder מחבר בין אובייקט משימה לבין הכרטיס שמוצג להורה.
+        // חיבור הנתונים של משימה ספציפית לרכיבי התצוגה (ViewHolder)
         AssignedTask task = items.get(position);
         
-        String titleText = task.getTitle();
-        if (titleText == null || titleText.isEmpty()) {
-            titleText = context.getString(R.string.task_default_title);
+        // הגדרת כותרת המשימה
+        String title = task.getTitle();
+        if (title == null || title.isEmpty()) {
+            title = context.getString(R.string.task_default_title);
         }
-        holder.tvTitle.setText(titleText);
+        holder.tvTitle.setText(title);
 
+        // הצגת שם הילד אם הוגדר
         if (showChildName) {
-            String ownerName = task.getChildName();
-            if (ownerName == null || ownerName.trim().isEmpty()) {
-                ownerName = context.getString(R.string.default_child_name);
+            String childName = task.getChildName();
+            if (childName == null || childName.isEmpty()) {
+                childName = context.getString(R.string.default_child_name);
             }
-            holder.tvOwner.setText(context.getString(R.string.task_assigned_to, ownerName));
+            holder.tvOwner.setText(context.getString(R.string.task_assigned_to, childName));
             holder.tvOwner.setVisibility(View.VISIBLE);
         } else {
             holder.tvOwner.setVisibility(View.GONE);
         }
         
-        String base64 = task.getImageBase64();
-        if (base64 != null && !base64.trim().isEmpty()) {
-            Bitmap bitmap = ImageHelper.base64ToBitmap(base64);
+        // הצגת תמונה אם קיימת (Base64)
+        String base64Image = task.getImageBase64();
+        if (base64Image != null && !base64Image.isEmpty()) {
+            Bitmap bitmap = ImageHelper.base64ToBitmap(base64Image);
             if (bitmap != null) {
                 holder.imgShell.setVisibility(View.VISIBLE);
                 holder.imgTask.setImageBitmap(bitmap);
@@ -86,75 +91,79 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
             holder.imgShell.setVisibility(View.GONE);
         }
 
-        long days = DateUtils.daysLeft(task.getDueAt());
-        boolean urgent = DateUtils.isDueSoon(task.getDueAt());
+        // חישוב ימים שנותרו וסטטוס המשימה
+        long daysLeft = DateUtils.daysLeft(task.getDueAt());
+        boolean isUrgent = DateUtils.isDueSoon(task.getDueAt());
 
-        String duePrefix;
-        int dueTextColor;
+        // קביעת טקסט התאריך וצבעו
+        String datePrefix;
+        int dateColor;
+
         if (task.getIsDone()) {
-            duePrefix = context.getString(R.string.task_due_done_prefix);
-            dueTextColor = R.color.success;
-        } else if (days < 0) {
-            duePrefix = context.getString(R.string.task_due_overdue_prefix);
-            dueTextColor = R.color.danger;
-        } else if (urgent) {
-            duePrefix = context.getString(R.string.task_due_urgent_prefix);
-            dueTextColor = R.color.urgent;
+            datePrefix = context.getString(R.string.task_due_done_prefix);
+            dateColor = R.color.success;
+        } else if (daysLeft < 0) {
+            datePrefix = context.getString(R.string.task_due_overdue_prefix);
+            dateColor = R.color.danger;
+        } else if (isUrgent) {
+            datePrefix = context.getString(R.string.task_due_urgent_prefix);
+            dateColor = R.color.urgent;
         } else {
-            duePrefix = context.getString(R.string.task_due_regular_prefix);
-            dueTextColor = R.color.regular_due;
+            datePrefix = context.getString(R.string.task_due_regular_prefix);
+            dateColor = R.color.regular_due;
         }
-        holder.tvDue.setText(context.getString(R.string.task_due_display, duePrefix, task.getDueAt()));
-        holder.tvDue.setTextColor(context.getColor(dueTextColor));
 
-        int bg, text, dotColor;
+        holder.tvDue.setText(context.getString(R.string.task_due_display, datePrefix, task.getDueAt()));
+        holder.tvDue.setTextColor(context.getColor(dateColor));
+
+        // קביעת עיצוב הסטטוס (Status Chip)
+        int statusBgColor, statusTextColor, dotColor;
         String statusText;
 
         if (task.getIsDone()) {
-            bg = R.color.success_light;
-            text = R.color.success;
+            statusBgColor = R.color.success_light;
+            statusTextColor = R.color.success;
             dotColor = R.color.success;
             statusText = context.getString(R.string.parent_dashboard_task_status_done);
-        } else if (days < 0) {
-            bg = R.color.danger_light;
-            text = R.color.danger;
+        } else if (daysLeft < 0) {
+            statusBgColor = R.color.danger_light;
+            statusTextColor = R.color.danger;
             dotColor = R.color.danger;
             statusText = context.getString(R.string.parent_dashboard_task_status_late);
-        } else if (urgent) {
-            bg = R.color.urgent_light;
-            text = R.color.urgent;
+        } else if (isUrgent) {
+            statusBgColor = R.color.urgent_light;
+            statusTextColor = R.color.urgent;
             dotColor = R.color.urgent;
             statusText = context.getString(R.string.parent_dashboard_task_status_urgent);
         } else {
-            bg = R.color.regular_task_bg;
-            text = R.color.regular_task_text;
+            statusBgColor = R.color.regular_task_bg;
+            statusTextColor = R.color.regular_task_text;
             dotColor = R.color.regular_task_dot;
             statusText = context.getString(R.string.parent_dashboard_task_status_waiting);
         }
 
+        // עדכון התצוגה של הסטטוס
         holder.tvStatus.setText(statusText);
-        holder.tvStatus.setTextColor(context.getColor(text));
+        holder.tvStatus.setTextColor(context.getColor(statusTextColor));
         
-        GradientDrawable chip = new GradientDrawable();
-        chip.setColor(context.getColor(bg));
-        chip.setCornerRadius(context.getResources().getDisplayMetrics().density * 14);
-        holder.tvStatus.setBackground(chip);
+        // יצירת רקע מעוגל לסטטוס בצורה דינמית
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(context.getColor(statusBgColor));
+        shape.setCornerRadius(28f); // עיגול פינות
+        holder.tvStatus.setBackground(shape);
 
-        GradientDrawable dotBg = new GradientDrawable();
-        dotBg.setShape(GradientDrawable.OVAL);
-        dotBg.setColor(context.getColor(dotColor));
-        holder.viewDot.setBackground(dotBg);
+        // עדכון צבע הנקודה
+        GradientDrawable dot = new GradientDrawable();
+        dot.setShape(GradientDrawable.OVAL);
+        dot.setColor(context.getColor(dotColor));
+        holder.viewDot.setBackground(dot);
 
+        // הגדרת מאזין ללחיצה על כל הפריט
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    int adapterPosition = holder.getBindingAdapterPosition();
-                    if (adapterPosition == RecyclerView.NO_POSITION || adapterPosition >= items.size()) {
-                        return;
-                    }
-                    // המשתמש הקליד על הפריט - פותח אפשרויות ניהול ב-Activity
-                    listener.onItemClick(items.get(adapterPosition), adapterPosition);
+                    listener.onItemClick(task, position);
                 }
             }
         });
@@ -165,7 +174,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return items.size();
     }
 
-    // ViewHolder מחזיק את ה-views של כרטיס אחד ברשימה.
+    // ViewHolder - מחלקה שמחזיקה את כל רכיבי ה-View של פריט אחד
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
         View viewDot, imgShell;
