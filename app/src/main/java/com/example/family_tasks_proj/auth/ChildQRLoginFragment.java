@@ -73,11 +73,14 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     // פותח את מסך הסריקה רק אם הרשאת המצלמה ניתנה
-    private void startQrScan() {
+    private void startQrScan()
+    {
         int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
-        if (status == PackageManager.PERMISSION_GRANTED) {
+        if (status == PackageManager.PERMISSION_GRANTED)
+        {
             launchScanner();
-        } else {
+        } else
+        {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }

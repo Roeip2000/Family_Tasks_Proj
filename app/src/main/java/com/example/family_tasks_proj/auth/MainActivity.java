@@ -19,9 +19,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // אין כניסה אוטומטית אחרי סגירת האפליקציה.
-        FirebaseAuth.getInstance().signOut();
-
         setContentView(R.layout.activity_main);
 
         btnRegister = findViewById(R.id.btnRegister);
@@ -41,19 +38,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // פונקציה אחת מרכזת שמטפלת בכל הלחיצות במסך
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
         int id = view.getId();
-        if (id == R.id.btnRegister) {
+
+        if (id == R.id.btnRegister)
+        {
             showFragment(new ParentRegisterFragment(), true);
-        } else if (id == R.id.btnLogin) {
+        }
+        else if (id == R.id.btnLogin)
+        {
             showFragment(new ParentLoginFragment(), true);
-        } else if (id == R.id.btnChildQR) {
+        }
+        else if (id == R.id.btnChildQR)
+        {
             showFragment(new ChildQRLoginFragment(), true);
         }
     }
 
     // הפונקציה הזו מחליפה בין המסכים השונים (כניסה, הרשמה, סריקת QR)
-    private void showFragment(Fragment fragment, boolean addToBackStack) {
+    private void showFragment(Fragment fragment, boolean addToBackStack)
+    {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
         if (addToBackStack) {
             transaction.addToBackStack(fragment.getClass().getSimpleName());
