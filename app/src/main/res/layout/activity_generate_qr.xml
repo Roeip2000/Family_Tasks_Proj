@@ -30,7 +30,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvTitle"
                 style="@style/Widget.Family.ScreenTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +37,6 @@
                 android:textSize="22sp" />
 
             <TextView
-                android:id="@+id/tvExplanation"
                 style="@style/Widget.Family.ScreenSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -36,7 +36,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     public static final String EXTRA_PARENT_ID = "parentId";
     public static final String EXTRA_CHILD_ID = "childId";
 
-    private TextView tvChildName, tvTotalTasks, tvNoTasks;
+    private TextView tvTotalTasks, tvNoTasks;
     private LinearLayout tasksContainer;
 
     private final List<ChildTask> openTasks = new ArrayList<>();
@@ -55,7 +55,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
             return;
         }
 
-        tvChildName = findViewById(R.id.tvChildName);
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tasksContainer = findViewById(R.id.tasksContainer);
@@ -69,15 +68,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 .child(parentId).child("children").child(childId);
     }
 
+    // מאזין שבודק שהילד עדיין קיים ב-Firebase. אם הילד נמחק - חוזרים למסך הראשי.
     private void loadChildProfile() {
         childRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     returnToMainAfterMissingChild();
-                    return;
                 }
-                tvChildName.setText(R.string.child_greeting);
             }
 
             @Override

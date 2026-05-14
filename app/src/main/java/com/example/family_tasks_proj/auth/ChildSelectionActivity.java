@@ -26,7 +26,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_PARENT_ID = "parentId";
 
-    private TextView tvSubtitle, tvNoChildren;
+    private TextView tvNoChildren;
     private Spinner spinnerChildren;
     private Button btnEnter;
 
@@ -37,8 +37,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_selection);
-        
-        tvSubtitle = findViewById(R.id.tvSubtitle);
+
         spinnerChildren = findViewById(R.id.spinnerChildren);
         tvNoChildren = findViewById(R.id.tvNoChildren);
         btnEnter = findViewById(R.id.btnEnter);
@@ -58,7 +57,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
             }
         });
 
-        tvSubtitle.setText(R.string.child_selection_subtitle_child);
         loadChildren(parentId);
     }
 

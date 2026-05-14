@@ -26,7 +26,6 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvTitle"
                 style="@style/Widget.Family.ScreenTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,16 +34,14 @@
                 android:textSize="@dimen/text_title" />
 
             <TextView
-                android:id="@+id/tvSubtitle"
                 style="@style/Widget.Family.ScreenSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="@string/subtitle_child_login" />
+                android:text="@string/child_selection_subtitle_child" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/selectionCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -61,7 +58,6 @@
                 android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/tvChildLabel"
                     style="@style/Widget.Family.FieldLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

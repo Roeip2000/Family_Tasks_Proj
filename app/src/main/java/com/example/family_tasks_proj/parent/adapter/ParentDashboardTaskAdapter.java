@@ -62,8 +62,9 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
         if (showChildName) {
             String childName = task.getChildName();
+            // אם אין שם לילד, מציגים מילת ברירת מחדל בעברית כדי שהטקסט לא יהיה ריק
             if (childName == null || childName.isEmpty()) {
-                childName = context.getString(R.string.default_child_name);
+                childName = context.getString(R.string.default_child_name_fallback);
             }
             holder.tvOwner.setText(context.getString(R.string.task_assigned_to, childName));
             holder.tvOwner.setVisibility(View.VISIBLE);

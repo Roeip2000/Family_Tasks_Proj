@@ -31,7 +31,7 @@ import java.util.List;
 public class ParentDashboardActivity extends AppCompatActivity {
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
-    private TextView tvName, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
+    private TextView tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
     private View fOpen, fUrgent, fOverdue, fDone;
     private RecyclerView rvTasks;
 
@@ -62,7 +62,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            tvName.setText(R.string.parent_greeting);
             loadData(user);
         } else {
             startActivity(new Intent(this, MainActivity.class));
@@ -77,7 +76,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvName = findViewById(R.id.tvParentName);
         tvTotal = findViewById(R.id.tvParentTotalTasks);
         tvDone = findViewById(R.id.tvParentCompleted);
         tvUrgent = findViewById(R.id.tvParentDueSoon);

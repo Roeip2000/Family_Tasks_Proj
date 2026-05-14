@@ -19,7 +19,6 @@
         android:paddingBottom="@dimen/screen_padding">
 
         <TextView
-            android:id="@+id/tvQrTitle"
             style="@style/Widget.Family.ScreenTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
             android:textSize="@dimen/text_title" />
 
         <TextView
-            android:id="@+id/tvQrHint"
             style="@style/Widget.Family.ScreenSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +37,6 @@
             android:text="@string/child_qr_scan_prompt" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/qrCallout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"

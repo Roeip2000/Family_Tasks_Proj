@@ -13,9 +13,8 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- כותרת: שם/ברכת הילד -->
+        <!-- כותרת ברכה לילד -->
         <TextView
-            android:id="@+id/tvChildName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

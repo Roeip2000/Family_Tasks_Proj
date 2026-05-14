@@ -28,7 +28,6 @@
     <string name="role_children">ילדים</string>
     <string name="role_children_desc">צפייה במשימות וסימון ביצוע</string>
     <string name="subtitle_qr_family">הילדים סורקים את הקוד ובוחרים את השם שלהם.</string>
-    <string name="subtitle_child_login">בוחרים את הילד שנכנס וממשיכים ישר למשימות.</string>
 
     <!-- בחירת הורה/ילד -->
     <string name="label_choose_child">בחר את הילד שנכנס למערכת:</string>
@@ -87,7 +86,6 @@
 
     <!-- ערכי ברירת מחדל -->
     <string name="default_task_name">שם המשימה</string>
-    <string name="default_child_name">שם הילד</string>
     <string name="default_child_name_fallback">ילד</string>
     <string name="default_today">היום</string>
     <string name="zero_count">0</string>
@@ -105,7 +103,6 @@
     <string name="filter_label_open">משימות פתוחות</string>
 
     <!-- טקסטים למסכי הורה -->
-    <string name="parent_greeting">שלום הורה</string>
     <string name="parent_filter_all">כל המשימות</string>
     <string name="parent_filter_open">משימות פתוחות</string>
     <string name="parent_filter_urgent">משימות דחופות</string>
@@ -132,7 +129,6 @@
     <string name="task_due_display">%1$s%2$s</string>
 
     <!-- טקסטים למסך ילד -->
-    <string name="child_greeting">שלום</string>
     <string name="child_hello_initial">שלום</string>
 
     <!-- טקסטים למסכי טפסים -->
