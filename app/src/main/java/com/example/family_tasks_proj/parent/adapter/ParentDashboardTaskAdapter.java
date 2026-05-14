@@ -145,7 +145,10 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onItemClick(task, position);
+                    int adapterPosition = holder.getAdapterPosition();
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(items.get(adapterPosition), adapterPosition);
+                    }
                 }
             }
         });
