@@ -107,6 +107,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
             return;
         }
         
+        Toast.makeText(this, "התחברות הצליחה!", Toast.LENGTH_SHORT).show();
+        
         // מעביר את ה-ID של הילד ושל ההורה לדשבורד הילד
         String childId = childItems.get(selectedPosition).id;
         Intent intent = new Intent(this, ChildDashboardActivity.class);

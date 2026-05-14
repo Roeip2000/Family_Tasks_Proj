@@ -14,7 +14,6 @@ import com.example.family_tasks_proj.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class GenerateQRActivity extends AppCompatActivity {
@@ -40,7 +39,6 @@ public class GenerateQRActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, R.string.error_parent_not_connected, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -61,7 +59,6 @@ public class GenerateQRActivity extends AppCompatActivity {
             imageViewQrCode.setImageBitmap(bitmap);
         } catch (Exception exception) {
             imageViewQrCode.setVisibility(View.GONE);
-            Toast.makeText(this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
         }
     }
 }

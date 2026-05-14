@@ -130,7 +130,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AssignTaskToChildActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -156,7 +155,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AssignTaskToChildActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -167,7 +165,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
         if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
-            Toast.makeText(this, R.string.error_assign_missing_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -207,7 +204,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(AssignTaskToChildActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

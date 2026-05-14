@@ -75,12 +75,10 @@ public class ParentRegisterFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (password.length() < 6) {
-            Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -93,8 +91,6 @@ public class ParentRegisterFragment extends Fragment {
                 }
                 if (task.isSuccessful()) {
                     saveParentToDatabase(firstName, lastName, email);
-                } else {
-                    Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -121,8 +117,6 @@ public class ParentRegisterFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
-                } else {
-                    Toast.makeText(requireContext(), "שמירת ההורה נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });

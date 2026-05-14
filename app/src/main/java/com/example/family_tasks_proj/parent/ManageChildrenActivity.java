@@ -118,7 +118,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -129,7 +128,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         // מוודא שהמשתמש הזין שם מלא כדי לא לשמור נתונים חסרים ב-Firebase
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -157,7 +155,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -171,7 +168,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

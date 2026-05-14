@@ -130,6 +130,7 @@ public class ChildQRLoginFragment extends Fragment {
                     Toast.makeText(requireContext(), R.string.child_qr_parent_not_found, Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Toast.makeText(requireContext(), "סריקת QR תקינה", Toast.LENGTH_SHORT).show();
                 openChildSelection(parentId);
             }
 

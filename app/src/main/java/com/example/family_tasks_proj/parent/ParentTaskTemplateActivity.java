@@ -162,7 +162,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -171,7 +170,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         String title = etTemplateTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
-            Toast.makeText(this, R.string.error_template_missing_details, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -203,7 +201,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -217,7 +214,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ParentTaskTemplateActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

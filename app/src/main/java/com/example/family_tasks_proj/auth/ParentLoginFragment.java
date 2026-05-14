@@ -67,25 +67,20 @@ public class ParentLoginFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // התחברות ישירה מול Firebase ומעבר לדשבורד במקרה של הצלחה
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task)
-            {
+            public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!isAdded()) {
                     return;
                 }
-                if (task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
+                    Toast.makeText(requireContext(), "התחברות הצליחה!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
-                } else
-                {
-                    Toast.makeText(requireContext(), "התחברות נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });

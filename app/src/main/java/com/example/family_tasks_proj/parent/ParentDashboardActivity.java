@@ -248,7 +248,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ParentDashboardActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         };
         childrenReference.addValueEventListener(childrenListener);
