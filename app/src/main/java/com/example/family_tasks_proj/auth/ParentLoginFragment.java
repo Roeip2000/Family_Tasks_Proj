@@ -71,29 +71,21 @@ public class ParentLoginFragment extends Fragment {
             return;
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // התחברות עם Firebase Auth ומעבר לדשבורד הורה במקרה של הצלחה
+        // התחברות ישירה מול Firebase ומעבר לדשבורד במקרה של הצלחה
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+            public void onComplete(@NonNull Task<AuthResult> task)
+            {
                 if (!isAdded()) {
                     return;
                 }
-                if (task.isSuccessful()) {
+                if (task.isSuccessful())
+                {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
-                } else {
-                    String errorMessage;
-                    if (task.getException() != null) {
-                        errorMessage = task.getException().getMessage();
-                    } else {
-                        errorMessage = getString(R.string.error_try_again);
-                    }
-                    Toast.makeText(requireContext(), getString(R.string.error_login_failed, errorMessage), Toast.LENGTH_LONG).show();
+                } else
+                {
+                    Toast.makeText(requireContext(), "התחברות נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });

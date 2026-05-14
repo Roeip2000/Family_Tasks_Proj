@@ -138,7 +138,7 @@ public class ChildQRLoginFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-                Toast.makeText(requireContext(), getString(R.string.child_qr_db_error, error.getMessage()), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -95,7 +95,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChildSelectionActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChildSelectionActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

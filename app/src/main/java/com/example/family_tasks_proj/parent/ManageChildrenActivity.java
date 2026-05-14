@@ -118,7 +118,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_load_db, error.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -157,7 +157,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -171,7 +171,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ManageChildrenActivity.this, getString(R.string.error_with_details, exception.getMessage()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageChildrenActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }

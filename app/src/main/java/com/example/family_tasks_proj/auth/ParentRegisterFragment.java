@@ -57,7 +57,8 @@ public class ParentRegisterFragment extends Fragment {
 
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event)
+            {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     registerParent();
                     return true;
@@ -93,13 +94,7 @@ public class ParentRegisterFragment extends Fragment {
                 if (task.isSuccessful()) {
                     saveParentToDatabase(firstName, lastName, email);
                 } else {
-                    String errorMessage;
-                    if (task.getException() != null) {
-                        errorMessage = task.getException().getMessage();
-                    } else {
-                        errorMessage = getString(R.string.error_unknown_register);
-                    }
-                    Toast.makeText(requireContext(), getString(R.string.error_with_details, errorMessage), Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -127,8 +122,7 @@ public class ParentRegisterFragment extends Fragment {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
                 } else {
-                    String saveErrorMessage = (saveTask.getException() != null) ? saveTask.getException().getMessage() : getString(R.string.error_unknown_register);
-                    Toast.makeText(requireContext(), getString(R.string.error_save_parent_failed, saveErrorMessage), Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), "שמירת ההורה נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });

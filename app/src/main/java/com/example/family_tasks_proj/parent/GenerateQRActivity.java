@@ -59,10 +59,9 @@ public class GenerateQRActivity extends AppCompatActivity {
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
-            tvError.setVisibility(View.GONE);
-        } catch (WriterException exception) {
+        } catch (Exception exception) {
             imageViewQrCode.setVisibility(View.GONE);
-            tvError.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
         }
     }
 }
