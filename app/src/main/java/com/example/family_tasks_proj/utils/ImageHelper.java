@@ -13,6 +13,7 @@ public class ImageHelper {
     private static final int JPEG_QUALITY = 70;
     private static final int MAX_SIZE = 600;
 
+    // אם יחס ההקטנה קטן מ-1, התמונה גדולה מהמותר וצריך להקטין אותה
     private static final float SCALE_THRESHOLD = 1.0f;
 
     // טוען תמונה מהגלריה ומקטין אותה כדי שיהיה אפשר לשמור אותה ב-Firebase

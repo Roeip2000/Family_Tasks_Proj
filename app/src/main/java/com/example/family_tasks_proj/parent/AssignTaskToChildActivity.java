@@ -107,7 +107,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     // טוען את תבניות המשימה של ההורה מ-Firebase כדי להציג אותן ב-Spinner
-    private void loadTemplatesFromFirebase() {
+    private void loadTemplatesFromFirebase()
+    {
         getParentDbReference().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -167,7 +168,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         String date = etTaskDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
-        if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
+        // בודקים שכל השדות מולאו ושנבחר ילד מהרשימה
+        boolean missingFields = title.isEmpty() || date.isEmpty();
+        boolean noChildSelected = childPosition < 0 || childPosition >= childUserIdList.size();
+        if (missingFields || noChildSelected) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }

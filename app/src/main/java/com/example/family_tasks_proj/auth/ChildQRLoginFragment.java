@@ -119,7 +119,8 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     // מוודא שההורה מה-QR אכן קיים ב-Firebase לפני שעוברים למסך הבחירה
-    private void checkParentExists(final String parentId) {
+    private void checkParentExists(final String parentId)
+    {
         FirebaseDatabase.getInstance().getReference("parents").child(parentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
