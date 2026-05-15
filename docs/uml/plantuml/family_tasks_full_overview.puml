@@ -37,7 +37,6 @@ class ManageChildrenActivity <<screen>>
 class GenerateQRActivity <<screen>>
 class AssignTaskToChildActivity <<screen>>
 class ParentTaskTemplateActivity <<screen>>
-enum "ParentDashboardActivity.FilterMode" as ParentFilterMode <<inner>>
 class "ManageChildrenActivity.ChildItem" as ManageChildItem <<inner>>
 class "ManageChildrenActivity.ChildListAdapter" as ChildListAdapter <<adapter>>
 class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<adapter>>
@@ -80,7 +79,6 @@ ParentDashboardActivity ..> ParentTaskTemplateActivity
 ParentDashboardActivity ..> AssignTaskToChildActivity
 ParentDashboardActivity ..> GenerateQRActivity
 ParentDashboardActivity ..> DateUtils
-ParentDashboardActivity +-- ParentFilterMode
 
 ManageChildrenActivity +-- ChildListAdapter
 ManageChildrenActivity +-- ManageChildItem

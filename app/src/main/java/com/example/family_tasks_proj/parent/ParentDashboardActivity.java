@@ -38,12 +38,16 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private final List<AssignedTask> visibleTasks = new ArrayList<>();
 
     private ParentDashboardTaskAdapter taskAdapter;
-    private FilterMode activeFilter = FilterMode.ALL;
     private DatabaseReference childrenReference;
     private ValueEventListener childrenListener;
 
     // מצבי הסינון האפשריים בדשבורד ההורה
-    private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
+    private static final int FILTER_ALL = 0;
+    private static final int FILTER_ASSIGNED = 1;
+    private static final int FILTER_COMPLETED = 2;
+    private static final int FILTER_URGENT = 3;
+    private static final int FILTER_OVERDUE = 4;
+    private int activeFilter = FILTER_ALL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +104,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (view == fOpen) {
-                    setFilter(FilterMode.ASSIGNED);
+                    setFilter(FILTER_ASSIGNED);
                 } else if (view == fUrgent) {
-                    setFilter(FilterMode.URGENT);
+                    setFilter(FILTER_URGENT);
                 } else if (view == fOverdue) {
-                    setFilter(FilterMode.OVERDUE);
+                    setFilter(FILTER_OVERDUE);
                 } else if (view == fDone) {
-                    setFilter(FilterMode.COMPLETED);
+                    setFilter(FILTER_COMPLETED);
                 }
             }
         };
@@ -116,9 +120,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
         fDone.setOnClickListener(filterClick);
     }
 
-    private void setFilter(FilterMode mode) {
+    private void setFilter(int mode) {
         if (activeFilter == mode) {
-            activeFilter = FilterMode.ALL;
+            activeFilter = FILTER_ALL;
         } else {
             activeFilter = mode;
         }
@@ -127,18 +131,18 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void updateFilterUI() {
-        tintFilter(fOpen, activeFilter == FilterMode.ASSIGNED);
-        tintFilter(fUrgent, activeFilter == FilterMode.URGENT);
-        tintFilter(fOverdue, activeFilter == FilterMode.OVERDUE);
-        tintFilter(fDone, activeFilter == FilterMode.COMPLETED);
+        tintFilter(fOpen, activeFilter == FILTER_ASSIGNED);
+        tintFilter(fUrgent, activeFilter == FILTER_URGENT);
+        tintFilter(fOverdue, activeFilter == FILTER_OVERDUE);
+        tintFilter(fDone, activeFilter == FILTER_COMPLETED);
 
-        if (activeFilter == FilterMode.ASSIGNED) {
+        if (activeFilter == FILTER_ASSIGNED) {
             tvFilterTitle.setText(R.string.parent_filter_open);
-        } else if (activeFilter == FilterMode.URGENT) {
+        } else if (activeFilter == FILTER_URGENT) {
             tvFilterTitle.setText(R.string.parent_filter_urgent);
-        } else if (activeFilter == FilterMode.OVERDUE) {
+        } else if (activeFilter == FILTER_OVERDUE) {
             tvFilterTitle.setText(R.string.parent_filter_overdue);
-        } else if (activeFilter == FilterMode.COMPLETED) {
+        } else if (activeFilter == FILTER_COMPLETED) {
             tvFilterTitle.setText(R.string.parent_filter_completed);
         } else {
             tvFilterTitle.setText(R.string.parent_filter_all);
@@ -279,13 +283,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
             AssignedTask task = allTasks.get(i);
             boolean isMatch = false;
             
-            if (activeFilter == FilterMode.ASSIGNED) {
+            if (activeFilter == FILTER_ASSIGNED) {
                 isMatch = !task.getIsDone();
-            } else if (activeFilter == FilterMode.COMPLETED) {
+            } else if (activeFilter == FILTER_COMPLETED) {
                 isMatch = task.getIsDone();
-            } else if (activeFilter == FilterMode.URGENT) {
+            } else if (activeFilter == FILTER_URGENT) {
                 isMatch = !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt());
-            } else if (activeFilter == FilterMode.OVERDUE) {
+            } else if (activeFilter == FILTER_OVERDUE) {
                 isMatch = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt());
             } else {
                 isMatch = true;

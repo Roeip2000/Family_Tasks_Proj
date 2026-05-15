@@ -169,9 +169,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
         // בודקים שכל השדות מולאו ושנבחר ילד מהרשימה
-        boolean missingFields = title.isEmpty() || date.isEmpty();
-        boolean noChildSelected = childPosition < 0 || childPosition >= childUserIdList.size();
-        if (missingFields || noChildSelected) {
+        if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
