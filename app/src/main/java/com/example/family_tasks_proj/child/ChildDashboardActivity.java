@@ -125,12 +125,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         if (days == DateUtils.NO_VALID_DATE) {
             dueText = getString(R.string.child_due_no_date);
         } else if (overdue) {
-            int absoluteDays;
-            if (days < 0) {
-                absoluteDays = (int)(-days);
-            } else {
-                absoluteDays = (int)days;
-            }
+            // overdue פירושו שמספר הימים שלילי, לכן מספר ימי האיחור הוא הערך ההפוך
+            int absoluteDays = (int)(-days);
             dueText = getString(R.string.child_due_late, absoluteDays);
         } else if (days == 0) {
             dueText = getString(R.string.child_due_today);

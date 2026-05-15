@@ -49,7 +49,6 @@ public class ChildQRLoginFragment extends Fragment {
             });
 
 
-    // 1. טעינת המסך וחיבור כפתור הסריקה
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
@@ -65,7 +64,6 @@ public class ChildQRLoginFragment extends Fragment {
         return view;
     }
 
-    // 2. לחיצה על הכפתור מפעילה את הפעולה הזו לבדיקת הרשאת מצלמה
     private void startQrScan() {
         int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
         if (status == PackageManager.PERMISSION_GRANTED) {
@@ -75,13 +73,11 @@ public class ChildQRLoginFragment extends Fragment {
         }
     }
 
-    // 3. אם יש הרשאה, נפתח סורק ה-QR
     private void launchScanner() {
         ScanOptions options = new ScanOptions();
         barcodeLauncher.launch(options);
     }
 
-    // 4. לאחר הסריקה מתקבל טקסט ואנו בודקים אותו
     private void handleQrScanResult(ScanIntentResult result) {
         String raw = result.getContents();
         if (raw == null) {
@@ -97,7 +93,7 @@ public class ChildQRLoginFragment extends Fragment {
         openChildSelection(parentId);
     }
 
-    // 5. פעולת עזר שמחלצת את מזהה ההורה מתוך פורמט parent:{uid}
+    // מחלץ את מזהה ההורה מהפורמט parent:{uid}
     private String parseParentId(String raw) {
         if (raw.isEmpty()) {
             return "";
@@ -108,7 +104,6 @@ public class ChildQRLoginFragment extends Fragment {
         return "";
     }
 
-    // 6. מעבר למסך הבא (בחירת ילד) תוך העברת מזהה ההורה
     private void openChildSelection(String parentId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         intent.putExtra("parentId", parentId);
