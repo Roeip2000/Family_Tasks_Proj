@@ -36,7 +36,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        int id = view.getId();
+
+       int id = view.getId();
+
 
         if (id == R.id.btnRegister) {
             showFragment(new ParentRegisterFragment(), true);
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showFragment(Fragment fragment, boolean addToBackStack)
     {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
+
         if (addToBackStack)
         {
             transaction.addToBackStack(fragment.getClass().getSimpleName());

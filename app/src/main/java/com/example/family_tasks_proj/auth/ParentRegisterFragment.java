@@ -22,14 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 public class ParentRegisterFragment extends Fragment {
 
-    private static final int MIN_PASSWORD_LENGTH = 6;
     private FirebaseAuth firebaseAuth;
     private EditText etFirstName, etLastName, etEmail, etPassword;
     private Button btnRegister;
-
-    public ParentRegisterFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,73 +38,103 @@ public class ParentRegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        firebaseAuth = FirebaseAuth.getInstance();
+        
+        firebaseAuth = FirebaseAuth.getInstance();//
+        
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnRegister = view.findViewById(R.id.btnRegister);
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+
+        btnRegister.setOnClickListener(new View.OnClickListener()
+        {
+            @Override public void onClick(View view) {
                 registerParent();
             }
         });
+
     }
 
     private void registerParent() {
-        // קבלת הפרטים מהשדות ומחיקת רווחים מיותרים בעזרת trim
+
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty())
+        {
             Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (password.length() < MIN_PASSWORD_LENGTH) {
+        if (password.length() < 6) {
             Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // יצירת משתמש ב-Firebase Auth
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded()) {
+        btnRegister.setEnabled(false);// נעילת הכפתור כדי למנוע כמה בקשות במקביל
+
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
+                new OnCompleteListener<AuthResult>() {@Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!isAdded())
+                {
                     return;
                 }
-                if (task.isSuccessful()) {
+                
+                if (task.isSuccessful())
+                {
                     saveParentToDatabase(firstName, lastName, email);
+                }
+                else
+                {
+                    btnRegister.setEnabled(true);
+                    Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    // שומר את השם והאימייל של ההורה החדש ב-Realtime Database תחת העץ parents
     private void saveParentToDatabase(String firstName, String lastName, String email) {
         String uid = firebaseAuth.getUid();
-        if (uid == null) return;
+        
+        if (uid == null)
+        {
+            btnRegister.setEnabled(true);
+            Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
-        parentRef.child("uid").setValue(uid);
-        parentRef.child("firstName").setValue(firstName);
-        parentRef.child("lastName").setValue(lastName);
-        parentRef.child("email").setValue(email);
-        parentRef.child("role").setValue("parent").addOnCompleteListener(new OnCompleteListener<Void>() {
+        // שימוש במבנה נתונים פשוט (מילון) כדי לשמור את כל הפרטים ביחד בפעולה אחת
+        HashMap<String, Object> parentData = new HashMap<>();
+        parentData.put("uid", uid);
+        parentData.put("firstName", firstName);
+        parentData.put("lastName", lastName);
+        parentData.put("email", email);
+        parentData.put("role", "parent");
+
+        parentRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>()
+        {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
                 if (!isAdded()) {
                     return;
                 }
-                if (saveTask.isSuccessful()) {
-                    Toast.makeText(requireContext(), R.string.success_parent_register, Toast.LENGTH_SHORT).show();
+
+                if (saveTask.isSuccessful())
+                {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
+                }
+                else
+                {
+                    btnRegister.setEnabled(true);
+                    Toast.makeText(requireContext(), "שמירת נתונים נכשלה", Toast.LENGTH_SHORT).show();
                 }
             }
         });
