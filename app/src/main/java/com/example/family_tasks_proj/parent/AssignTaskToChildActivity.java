@@ -19,7 +19,6 @@ import com.example.family_tasks_proj.models.ChildTask;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -130,6 +129,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ב-Spinner
             }
         });
     }
@@ -155,6 +155,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ב-Spinner
             }
         });
     }
@@ -201,10 +202,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 Toast.makeText(AssignTaskToChildActivity.this, R.string.success_task_assigned, Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-            }
         });
     }
 
@@ -227,6 +224,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
+        // פותח לוח שנה, וכשהמשתמש בוחר תאריך הוא נכתב בשדה התאריך
         new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {

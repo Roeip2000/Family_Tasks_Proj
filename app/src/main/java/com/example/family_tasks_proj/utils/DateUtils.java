@@ -2,25 +2,24 @@ package com.example.family_tasks_proj.utils;
 
 import java.util.Calendar;
 
-public final class DateUtils {
+public class DateUtils {
 
     private static final int HOURS_IN_DAY = 24;
     private static final int MINUTES_IN_HOUR = 60;
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int MILLIS_IN_SECOND = 1000;
     private static final int URGENT_THRESHOLD_DAYS = 2; // מספר הימים שמעליהם משימה נחשבת דחופה
-
-    private DateUtils() {}
+    public static final long NO_VALID_DATE = Long.MAX_VALUE; // מספר מיוחד שמסמן שלא התקבל תאריך תקין
 
     // מחזיר כמה ימים נשארו עד התאריך שקיבלנו (או מספר שלילי אם התאריך עבר)
     public static long daysLeft(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) {
-            return Long.MAX_VALUE;
+            return NO_VALID_DATE;
         }
 
         String[] parts = dateStr.split("/");
         if (parts.length != 3) {
-            return Long.MAX_VALUE;
+            return NO_VALID_DATE;
         }
 
         try {
@@ -43,7 +42,7 @@ public final class DateUtils {
             return diff / millisInDay;
             
         } catch (Exception exception) {
-            return Long.MAX_VALUE;
+            return NO_VALID_DATE;
         }
     }
 

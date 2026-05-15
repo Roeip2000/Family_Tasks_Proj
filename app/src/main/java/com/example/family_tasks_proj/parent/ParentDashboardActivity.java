@@ -42,6 +42,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private DatabaseReference childrenReference;
     private ValueEventListener childrenListener;
 
+    // מצבי הסינון האפשריים בדשבורד ההורה
     private enum FilterMode { ALL, ASSIGNED, COMPLETED, URGENT, OVERDUE }
 
     @Override
@@ -202,10 +203,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 int lateCount = 0;
 
                 if (snapshot.exists()) {
+                    // עוברים על כל הילדים שהתקבלו מ-Firebase
                     for (DataSnapshot childSnap : snapshot.getChildren()) {
                         String childName = childSnap.child("firstName").getValue(String.class);
                         
                         DataSnapshot tasksSnap = childSnap.child("tasks");
+                        // לכל ילד עוברים על כל המשימות שלו
                         for (DataSnapshot tSnap : tasksSnap.getChildren()) {
                             
                             AssignedTask task = new AssignedTask();
@@ -253,11 +256,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Firebase דורש את הפעולה הזאת; במקרה של כישלון הדשבורד נשאר כפי שהוא
             }
         };
         childrenReference.addValueEventListener(childrenListener);
     }
 
+    // מפסיקים להאזין ל-Firebase כשהמסך לא מוצג, כדי לא לבזבז משאבים
     private void removeChildrenListener() {
         if (childrenReference != null && childrenListener != null) {
             childrenReference.removeEventListener(childrenListener);

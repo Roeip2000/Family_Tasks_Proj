@@ -25,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.family_tasks_proj.models.TaskTemplate;
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -162,6 +161,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ברשימה
             }
         });
     }
@@ -199,10 +199,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-            }
         });
     }
 
@@ -211,10 +207,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_deleted, Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
             }
         });
     }
@@ -260,6 +252,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private static final int DEFAULT_LIST_WIDTH = 500; // רוחב ברירת מחדל למדידת ListView לפני שהמסך נטען
 
+    // מחשבים גובה ל-ListView כדי שכל השורות ייכנסו בתוך הגלילה של המסך
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -288,6 +281,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         return FirebaseDatabase.getInstance().getReference("parents").child(currentParentUserId).child("task_templates");
     }
 
+    // Adapter פשוט שמתרגם כל תבנית משימה לשורה ב-ListView
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
         TemplateListAdapter() {
             super(ParentTaskTemplateActivity.this, 0, templateDataList);

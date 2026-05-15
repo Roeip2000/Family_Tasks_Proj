@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -118,6 +117,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ברשימה
             }
         });
     }
@@ -154,22 +154,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
                 clearForm();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-            }
         });
     }
 
     private void delete(String childId) {
         getChildrenReference().child(childId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(Void unused) {
+            public void onSuccess(Void unused)
+            {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_deleted, Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
             }
         });
     }
@@ -195,6 +188,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private static final int DEFAULT_LIST_WIDTH = 500; // רוחב ברירת מחדל למדידת רשימה אם הרוחב עוד לא נקבע
 
+    // מחשבים גובה ל-ListView כדי שכל השורות ייכנסו בתוך הגלילה של המסך
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -247,6 +241,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         return FirebaseDatabase.getInstance().getReference("parents").child(parentUserId).child("children");
     }
 
+    // Adapter פשוט שמתרגם כל ילד לשורה ב-ListView
     private class ChildListAdapter extends ArrayAdapter<ChildItem> {
         ChildListAdapter() {
             super(ManageChildrenActivity.this, 0, childList);
@@ -284,6 +279,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         }
     }
 
+    // מחלקת עזר קטנה לשמירת פרטי ילד ברשימה
     private static class ChildItem {
         String id, firstName, lastName;
 

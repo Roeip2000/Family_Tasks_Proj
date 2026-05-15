@@ -66,6 +66,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childItems.clear();
+                // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String childId = snap.getKey();
                     String firstName = snap.child("firstName").getValue(String.class);
@@ -136,6 +137,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         return fullName;
     }
 
+    // מחלקת עזר קטנה לשמירת id ושם של ילד
     private static class ChildItem {
         String id, name;
 

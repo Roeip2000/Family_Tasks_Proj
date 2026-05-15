@@ -113,11 +113,13 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         holder.tvStatus.setTextColor(context.getColor(statusTextColor));
         
         float chipCornerRadius = 28f; // קביעת מידת העיגול של הפינות עבור תג הסטטוס
+        // יוצר רקע צבעוני לתג הסטטוס
         GradientDrawable shape = new GradientDrawable();
         shape.setColor(context.getColor(statusBgColor));
         shape.setCornerRadius(chipCornerRadius);
         holder.tvStatus.setBackground(shape);
 
+        // יוצר נקודה צבעונית קטנה ליד המשימה
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setColor(context.getColor(dotColor));
@@ -129,6 +131,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return items.size();
     }
 
+    // ViewHolder שומר הפניות לרכיבים של שורת משימה אחת
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
         View viewDot, imgShell;

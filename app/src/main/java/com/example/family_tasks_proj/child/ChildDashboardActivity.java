@@ -148,7 +148,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
 
         String dueText;
-        if (days == Long.MAX_VALUE) {
+        // אם DateUtils מחזיר NO_VALID_DATE, אין תאריך תקין להצגה
+        if (days == DateUtils.NO_VALID_DATE) {
             dueText = getString(R.string.child_due_no_date);
         } else if (overdue) {
             int absoluteDays;
@@ -183,6 +184,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         tvDue.setTextColor(getColor(dueColor));
 
+        // יוצר עיגול צבעוני קטן שמראה את מצב התאריך
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setColor(getColor(dotColor));
