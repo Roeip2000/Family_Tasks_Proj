@@ -92,6 +92,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 openTasks.clear();
                 if (snapshot.exists()) {
+                    // עוברים על כל המשימות שהתקבלו מ-Firebase
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         ChildTask task = snap.getValue(ChildTask.class);
                         if (task == null) {

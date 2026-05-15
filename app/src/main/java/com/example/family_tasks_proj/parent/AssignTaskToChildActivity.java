@@ -113,6 +113,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskTemplateList.clear();
                 List<String> titles = new ArrayList<>();
+                // עוברים על כל התבניות שהתקבלו מ-Firebase
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
@@ -141,6 +142,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childUserIdList.clear();
                 List<String> childNames = new ArrayList<>();
+                // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childUserIdList.add(childSnapshot.getKey());
                     String firstName = childSnapshot.child("firstName").getValue(String.class);

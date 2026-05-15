@@ -106,6 +106,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childList.clear();
+                // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String id = childSnapshot.getKey();
                     String first = childSnapshot.child("firstName").getValue(String.class);

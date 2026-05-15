@@ -41,16 +41,21 @@ public class DateUtils {
             long millisInDay = (long) HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLIS_IN_SECOND;
             return diff / millisInDay;
             
-        } catch (Exception exception) {
+        } catch (Exception exception)
+        {
             return NO_VALID_DATE;
         }
     }
 
     // בפרויקט הזה משימה נחשבת "דחופה" אם תאריך היעד הוא היום, מחר או מחרתיים
-    public static boolean isDueSoon(String date) {
+    public static boolean isDueSoon(String date)
+    {
         long days = daysLeft(date);
-        if (days >= 0 && days <= URGENT_THRESHOLD_DAYS) {
+
+        if (days >= 0 && days <= URGENT_THRESHOLD_DAYS)
+        {
             return true;
+
         }
         return false;
     }

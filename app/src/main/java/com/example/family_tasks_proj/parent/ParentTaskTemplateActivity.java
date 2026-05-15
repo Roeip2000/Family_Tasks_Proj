@@ -143,6 +143,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 templateDataList.clear();
+                // עוברים על כל התבניות שהתקבלו מ-Firebase
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     TaskTemplate template = snap.getValue(TaskTemplate.class);
                     if (template != null) {
