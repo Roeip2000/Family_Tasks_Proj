@@ -92,15 +92,15 @@ public class ChildQRLoginFragment extends Fragment {
             return;
         }
 
-        String qrContent = result.getContents();
-        if (qrContent == null) {
+        String raw = result.getContents();
+        if (raw == null) {
             Toast.makeText(requireContext(), R.string.child_qr_scan_cancelled, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // מחלץ את מזהה ההורה (UID) מה-QR לפי הפורמט שקבענו: parent:UID
-        String parentId = parseParentId(qrContent.trim());
-        if (parentId == null || parentId.isEmpty()) {
+        // ה-QR מכיל רק את מזהה ההורה בפורמט parent:{uid}
+        String parentId = parseParentId(raw.trim());
+        if (parentId.isEmpty()) {
             Toast.makeText(requireContext(), R.string.child_qr_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -108,12 +108,12 @@ public class ChildQRLoginFragment extends Fragment {
         checkParentExists(parentId);
     }
 
-    private String parseParentId(String qrContent) {
-        if (qrContent == null || qrContent.isEmpty()) {
+    private String parseParentId(String raw) {
+        if (raw == null || raw.isEmpty()) {
             return "";
         }
-        if (qrContent.startsWith("parent:")) {
-            return qrContent.substring("parent:".length()).trim();
+        if (raw.startsWith("parent:")) {
+            return raw.substring("parent:".length()).trim();
         }
         return "";
     }
