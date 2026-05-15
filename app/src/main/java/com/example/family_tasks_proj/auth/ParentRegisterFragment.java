@@ -39,7 +39,7 @@ public class ParentRegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        firebaseAuth = FirebaseAuth.getInstance();//
+        firebaseAuth = FirebaseAuth.getInstance();
         
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);

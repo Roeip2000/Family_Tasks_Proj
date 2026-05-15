@@ -26,10 +26,6 @@ public class ChildQRLoginFragment extends Fragment {
 
     private Button btnScanQR;
 
-    // =========================================================
-    // אזור ההגדרות: כלים שממתינים לתשובות מהמערכת (חובה להגדיר בראש המחלקה)
-    // =========================================================
-
     // מאזין שמחכה לתשובה - האם המשתמש אישר את הרשאת המצלמה?
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
@@ -52,10 +48,6 @@ public class ChildQRLoginFragment extends Fragment {
                 }
             });
 
-
-    // =========================================================
-    // אזור הפעולות: מסודר בדיוק לפי סדר הזרימה באפליקציה (מלמעלה למטה)
-    // =========================================================
 
     // 1. טעינת המסך וחיבור כפתור הסריקה
     @Override

@@ -200,10 +200,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTask.setIsDone(false);
         newTask.setImageBase64(img);
 
+        // אחרי שהמשימה נשמרה ב-Firebase סוגרים את המסך וחוזרים לדשבורד
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(AssignTaskToChildActivity.this, R.string.success_task_assigned, Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

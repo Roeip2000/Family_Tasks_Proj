@@ -1,6 +1,5 @@
 package com.example.family_tasks_proj.child;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -10,18 +9,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.example.family_tasks_proj.auth.MainActivity;
 import com.example.family_tasks_proj.models.ChildTask;
 import com.example.family_tasks_proj.utils.DateUtils;
 import com.example.family_tasks_proj.utils.ImageHelper;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,17 +44,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
         childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
-        
-        if (parentId == null || childId == null) {
-            returnToMainAfterMissingChild();
-            return;
-        }
 
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tasksContainer = findViewById(R.id.tasksContainer);
         
-        loadChildProfile();
         loadChildTasks();
     }
 
@@ -67,24 +56,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
     {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
-    }
-
-    // מאזין שבודק שהילד עדיין קיים ב-Firebase. אם הילד נמחק - חוזרים למסך הראשי.
-    private void loadChildProfile() {
-
-        childRef().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    returnToMainAfterMissingChild();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChildDashboardActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     // טוען את המשימות של הילד ומסנן רק את המשימות הפתוחות
@@ -112,12 +83,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChildDashboardActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // בונה את רשימת המשימות בקוד עם LayoutInflater במקום להשתמש ב-RecyclerView
+    // בונה את רשימת המשימות בקוד עם LayoutInflater
     private void renderTasks() {
         tasksContainer.removeAllViews();
         if (openTasks.isEmpty()) {
@@ -214,32 +184,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // מעדכן את הסטטוס ב-Firebase ל-isDone=true כשילד מסיים משימה
+    // מעדכן את הסטטוס ב-Firebase ל-isDone=true כשהילד מסיים משימה
     private void processMarkTaskAsDone(final ChildTask task) {
-        if (task.getIsDone()) {
-            return;
-        }
-        task.setIsDone(true);
-
-        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(ChildDashboardActivity.this, R.string.child_task_mark_done_success, Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        task.setIsDone(false);
-                        Toast.makeText(ChildDashboardActivity.this, "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void returnToMainAfterMissingChild() {
-        Toast.makeText(this, R.string.error_child_missing, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true);
     }
 }
