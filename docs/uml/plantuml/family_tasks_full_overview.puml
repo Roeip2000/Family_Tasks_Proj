@@ -28,7 +28,6 @@ class ParentLoginFragment <<screen>>
 class ParentRegisterFragment <<screen>>
 class ChildQRLoginFragment <<screen>>
 class ChildSelectionActivity <<screen>>
-class "ChildQRLoginFragment.ParsedQr" as ParsedQr <<inner>>
 class "ChildSelectionActivity.ChildItem" as SelectionChildItem <<inner>>
 }
 
@@ -50,7 +49,6 @@ class ChildDashboardActivity <<screen>>
 
 package "adapters" #FFF3BF {
 class ParentDashboardTaskAdapter <<adapter>>
-interface "ParentDashboardTaskAdapter.OnItemClickListener" as OnItemClickListener <<adapter>>
 class "ParentDashboardTaskAdapter.TaskViewHolder" as ParentTaskViewHolder <<adapter>>
 }
 
@@ -72,7 +70,6 @@ ParentLoginFragment ..> ParentDashboardActivity
 ParentRegisterFragment ..> ParentDashboardActivity
 
 ChildQRLoginFragment ..> ChildSelectionActivity
-ChildQRLoginFragment +-- ParsedQr
 ChildSelectionActivity ..> ChildDashboardActivity
 ChildSelectionActivity +-- SelectionChildItem
 
@@ -103,7 +100,6 @@ ChildDashboardActivity ..> ImageHelper
 ParentDashboardTaskAdapter ..> AssignedTask
 ParentDashboardTaskAdapter ..> DateUtils
 ParentDashboardTaskAdapter ..> ImageHelper
-ParentDashboardTaskAdapter +-- OnItemClickListener
 ParentDashboardTaskAdapter +-- ParentTaskViewHolder
 
 TemplateListAdapter ..> TaskTemplate

@@ -22,7 +22,6 @@ class ParentLoginFragment <<screen>>
 class ParentRegisterFragment <<screen>>
 class ChildQRLoginFragment <<screen>>
 class ChildSelectionActivity <<screen>>
-class "ChildQRLoginFragment.ParsedQr" as ParsedQr <<inner>>
 class "ChildSelectionActivity.ChildItem" as SelectionChildItem <<inner>>
 }
 
@@ -46,7 +45,6 @@ ParentLoginFragment ..> ParentDashboardActivity
 ParentRegisterFragment ..> ParentDashboardActivity
 
 ChildQRLoginFragment ..> ChildSelectionActivity
-ChildQRLoginFragment +-- ParsedQr
 ChildSelectionActivity ..> ChildDashboardActivity
 ChildSelectionActivity +-- SelectionChildItem
 

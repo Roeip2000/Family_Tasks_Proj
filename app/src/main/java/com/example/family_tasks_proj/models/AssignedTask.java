@@ -2,21 +2,11 @@ package com.example.family_tasks_proj.models;
 
 /** מודל משימה מוקצית להצגה בדשבורד ההורה. כולל את פרטי הילד והמשימה. */
 public class AssignedTask {
-    private String childId;
     private String childName;
-    private String taskId;
     private String title;
     private String dueAt;
     private String imageBase64;
     private boolean isDone;
-
-    public String getChildId() {
-        return childId;
-    }
-
-    public void setChildId(String childId) {
-        this.childId = childId;
-    }
 
     public String getChildName() {
         return childName;
@@ -24,14 +14,6 @@ public class AssignedTask {
 
     public void setChildName(String childName) {
         this.childName = childName;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
     }
 
     public String getTitle() {

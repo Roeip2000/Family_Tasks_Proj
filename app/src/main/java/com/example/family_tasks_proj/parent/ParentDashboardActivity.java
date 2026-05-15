@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -183,7 +182,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void setupLists() {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, visibleTasks);
-        taskAdapter.setShowChildName(true);
         rvTasks.setAdapter(taskAdapter);
     }
 
@@ -205,14 +203,12 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
                 if (snapshot.exists()) {
                     for (DataSnapshot childSnap : snapshot.getChildren()) {
-                        String childId = childSnap.getKey();
                         String childName = childSnap.child("firstName").getValue(String.class);
                         
                         DataSnapshot tasksSnap = childSnap.child("tasks");
                         for (DataSnapshot tSnap : tasksSnap.getChildren()) {
                             
                             AssignedTask task = new AssignedTask();
-                            task.setChildId(childId);
 
                             if (childName != null) {
                                 task.setChildName(childName);
@@ -220,7 +216,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
                                 task.setChildName(getString(R.string.default_child_name_fallback));
                             }
 
-                            task.setTaskId(tSnap.getKey());
                             task.setTitle(tSnap.child("title").getValue(String.class));
                             task.setDueAt(tSnap.child("dueAt").getValue(String.class));
                             task.setImageBase64(tSnap.child("imageBase64").getValue(String.class));

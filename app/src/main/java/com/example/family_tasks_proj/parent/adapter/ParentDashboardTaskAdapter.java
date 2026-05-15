@@ -23,15 +23,10 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
     private final Context context;
     private final List<AssignedTask> items;
-    private boolean showChildName = false;
 
     public ParentDashboardTaskAdapter(Context context, List<AssignedTask> items) {
         this.context = context;
         this.items = items;
-    }
-
-    public void setShowChildName(boolean showChildName) {
-        this.showChildName = showChildName;
     }
 
     @NonNull
@@ -51,17 +46,12 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         }
         holder.tvTitle.setText(title);
 
-        if (showChildName) {
-            String childName = task.getChildName();
-            // אם אין שם לילד, מציגים מילת ברירת מחדל בעברית כדי שהטקסט לא יהיה ריק
-            if (childName == null || childName.isEmpty()) {
-                childName = context.getString(R.string.default_child_name_fallback);
-            }
-            holder.tvOwner.setText(context.getString(R.string.task_assigned_to, childName));
-            holder.tvOwner.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvOwner.setVisibility(View.GONE);
+        String childName = task.getChildName();
+        // אם אין שם לילד, מציגים מילת ברירת מחדל בעברית כדי שהטקסט לא יהיה ריק
+        if (childName == null || childName.isEmpty()) {
+            childName = context.getString(R.string.default_child_name_fallback);
         }
+        holder.tvOwner.setText(context.getString(R.string.task_assigned_to, childName));
         
         // מציג את תמונת המשימה אם היא קיימת ב-Firebase (בפורמט Base64)
         String base64Image = task.getImageBase64();

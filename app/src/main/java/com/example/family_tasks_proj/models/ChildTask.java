@@ -7,7 +7,6 @@ public class ChildTask {
     private String dueAt;
     private boolean isDone;
     private String imageBase64;
-    private long createdAt;
 
     public ChildTask() {
     }
@@ -50,13 +49,5 @@ public class ChildTask {
 
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
     }
 }

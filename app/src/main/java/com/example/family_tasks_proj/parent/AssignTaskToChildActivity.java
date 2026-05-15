@@ -193,8 +193,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         newTask.setTitle(title);
         newTask.setDueAt(date);
         newTask.setIsDone(false);
-        // שמירת זמן היצירה של המשימה במילישניות כדי שנוכל לדעת מתי היא נוצרה
-        newTask.setCreatedAt(System.currentTimeMillis());
         newTask.setImageBase64(img);
 
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {

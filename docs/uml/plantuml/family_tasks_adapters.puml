@@ -19,9 +19,7 @@ caption Current adapter classes and their model dependencies.
 package "adapters" #FFF3BF {
 class ParentDashboardTaskAdapter <<adapter>> {
   - items : List<AssignedTask>
-  - showChildName : boolean
 }
-interface "ParentDashboardTaskAdapter.OnItemClickListener" as OnItemClickListener <<adapter>>
 class "ParentDashboardTaskAdapter.TaskViewHolder" as ParentTaskViewHolder <<adapter>>
 class "ManageChildrenActivity.ChildListAdapter" as ChildListAdapter <<adapter>>
 class "ParentTaskTemplateActivity.TemplateListAdapter" as TemplateListAdapter <<adapter>>
@@ -33,7 +31,6 @@ class TaskTemplate <<model>>
 }
 
 ParentDashboardTaskAdapter ..> AssignedTask
-ParentDashboardTaskAdapter +-- OnItemClickListener
 ParentDashboardTaskAdapter +-- ParentTaskViewHolder
 TemplateListAdapter ..> TaskTemplate
 @enduml

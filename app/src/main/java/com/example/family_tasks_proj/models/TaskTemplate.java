@@ -9,12 +9,6 @@ public class TaskTemplate {
     public TaskTemplate() {
     }
 
-    public TaskTemplate(String id, String title, String imageBase64) {
-        this.id = id;
-        this.title = title;
-        this.imageBase64 = imageBase64;
-    }
-
     public String getId() {
         return id;
     }
@@ -37,13 +31,5 @@ public class TaskTemplate {
 
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
-    }
-
-    @Override
-    public String toString() {
-        if (title != null) {
-            return title;
-        }
-        return "";
     }
 }

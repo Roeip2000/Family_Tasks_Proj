@@ -15,9 +15,7 @@ caption Current model classes from app/src/main/java/com/example/family_tasks_pr
 
 package "models" #E2F5E6 {
 class "AssignedTask" as AssignedTask <<model>> {
-  - childId : String
   - childName : String
-  - taskId : String
   - title : String
   - dueAt : String
   - imageBase64 : String
@@ -30,7 +28,6 @@ class "ChildTask" as ChildTask <<model>> {
   - dueAt : String
   - isDone : boolean
   - imageBase64 : String
-  - createdAt : long
 }
 
 class "TaskTemplate" as TaskTemplate <<model>> {
