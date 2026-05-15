@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnChildQR = findViewById(R.id.btnChildQR);
 
         // טוען את מסך ההתחברות כברירת מחדל
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
+        {
             showFragment(new ParentLoginFragment(), false);
         }
 
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showFragment(Fragment fragment, boolean addToBackStack)
     {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
-        if (addToBackStack) {
+        if (addToBackStack)
+        {
             transaction.addToBackStack(fragment.getClass().getSimpleName());
         }
         transaction.commit();

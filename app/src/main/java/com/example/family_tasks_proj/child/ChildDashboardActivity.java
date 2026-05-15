@@ -63,13 +63,15 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadChildTasks();
     }
 
-    private DatabaseReference childRef() {
+    private DatabaseReference childRef()
+    {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
     // מאזין שבודק שהילד עדיין קיים ב-Firebase. אם הילד נמחק - חוזרים למסך הראשי.
     private void loadChildProfile() {
+
         childRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
