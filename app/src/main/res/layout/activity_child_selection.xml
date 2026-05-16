@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen"
@@ -12,91 +11,68 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/screen_padding_compact"
-        android:paddingTop="@dimen/screen_padding_top"
-        android:paddingEnd="@dimen/screen_padding_compact"
-        android:paddingBottom="48dp">
+        android:padding="24dp">
 
-        <LinearLayout
+        <!-- כותרת המסך -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_child_login"
+            android:textColor="@color/primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- הסבר קצר -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/child_selection_subtitle_child"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <!-- בחירת הילד -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/label_choose_child"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerChildren"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_spinner"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown" />
+
+        <!-- מצב ריק: מוצג כשאין ילדים רשומים -->
+        <TextView
+            android:id="@+id/tvNoChildren"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_home_hero"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="@string/empty_no_children_selection"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
-            <TextView
-                style="@style/Widget.Family.ScreenTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/title_child_login"
-                android:textColor="@color/primary"
-                android:textSize="@dimen/text_title" />
-
-            <TextView
-                style="@style/Widget.Family.ScreenSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/child_selection_subtitle_child" />
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
+        <Button
+            android:id="@+id/btnEnter"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/bg_card"
-            app:cardCornerRadius="@dimen/card_corner_radius_large"
-            app:cardElevation="@dimen/card_elevation"
-            app:strokeColor="@color/divider_light"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    style="@style/Widget.Family.FieldLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_choose_child" />
-
-                <Spinner
-                    android:id="@+id/spinnerChildren"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_spinner"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:spinnerMode="dropdown" />
-
-                <TextView
-                    android:id="@+id/tvNoChildren"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_empty_state"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="@string/empty_no_children_selection"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/btnEnter"
-                    style="@style/Widget.Family.PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginTop="18dp"
-                    android:drawableStart="@drawable/ic_login"
-                    android:text="@string/btn_enter" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primary"
+            android:text="@string/btn_enter"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </ScrollView>

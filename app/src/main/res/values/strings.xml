@@ -130,6 +130,7 @@
     <string name="label_task_name">שם המשימה</string>
     <string name="hint_task_name">הכנס שם משימה</string>
     <string name="label_assign_to">למי להקצות?</string>
+    <string name="hint_select_child">לחץ כדי לבחור ילד מהרשימה</string>
     <string name="label_due_date">תאריך יעד</string>
     <string name="hint_select_date">לחץ לבחירת תאריך</string>
     <string name="title_manage_children">ניהול ילדים</string>
