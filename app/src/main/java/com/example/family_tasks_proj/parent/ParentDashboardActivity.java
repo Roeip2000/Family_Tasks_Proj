@@ -31,29 +31,27 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
     private TextView tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvFilterTitle;
-    private View fOpen, fUrgent, fOverdue, fDone;
+    private View filterOpen, filterUrgent, filterOverdue, filterDone;
     private RecyclerView rvTasks;
 
     private final List<AssignedTask> allTasks = new ArrayList<>();
     private final List<AssignedTask> visibleTasks = new ArrayList<>();
 
     private ParentDashboardTaskAdapter taskAdapter;
-    private DatabaseReference childrenReference;
-    private ValueEventListener childrenListener;
 
     // מצבי הסינון האפשריים בדשבורד ההורה
-    private static final int FILTER_ALL = 0;
-    private static final int FILTER_ASSIGNED = 1;
+    private static final int FILTER_NONE = 0;
+    private static final int FILTER_OPEN = 1;
     private static final int FILTER_COMPLETED = 2;
     private static final int FILTER_URGENT = 3;
     private static final int FILTER_OVERDUE = 4;
-    private int activeFilter = FILTER_ALL;
+    private int activeFilter = FILTER_NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
-        
+
         initViews();
         setupActions();
         setupLists();
@@ -73,12 +71,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        removeChildrenListener();
-    }
-
     private void initViews() {
         tvTotal = findViewById(R.id.tvParentTotalTasks);
         tvDone = findViewById(R.id.tvParentCompleted);
@@ -88,10 +80,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
         tvFilterTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvTasks);
 
-        fOpen = findViewById(R.id.containerFilterOpen);
-        fUrgent = findViewById(R.id.containerFilterUrgent);
-        fOverdue = findViewById(R.id.containerFilterOverdue);
-        fDone = findViewById(R.id.containerFilterCompleted);
+        filterOpen = findViewById(R.id.containerFilterOpen);
+        filterUrgent = findViewById(R.id.containerFilterUrgent);
+        filterOverdue = findViewById(R.id.containerFilterOverdue);
+        filterDone = findViewById(R.id.containerFilterCompleted);
 
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
@@ -102,41 +94,43 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private void setupFilters() {
         View.OnClickListener filterClick = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (view == fOpen) {
-                    setFilter(FILTER_ASSIGNED);
-                } else if (view == fUrgent) {
+            public void onClick(View view)
+            {
+                if (view == filterOpen)
+                {
+                    setFilter(FILTER_OPEN);
+                } else if (view == filterUrgent)
+                {
                     setFilter(FILTER_URGENT);
-                } else if (view == fOverdue) {
+                } else if (view == filterOverdue)
+                {
                     setFilter(FILTER_OVERDUE);
-                } else if (view == fDone) {
+                }
+                else if (view == filterDone)
+                {
                     setFilter(FILTER_COMPLETED);
                 }
             }
         };
-        fOpen.setOnClickListener(filterClick);
-        fUrgent.setOnClickListener(filterClick);
-        fOverdue.setOnClickListener(filterClick);
-        fDone.setOnClickListener(filterClick);
+        filterOpen.setOnClickListener(filterClick);
+        filterUrgent.setOnClickListener(filterClick);
+        filterOverdue.setOnClickListener(filterClick);
+        filterDone.setOnClickListener(filterClick);
     }
 
     private void setFilter(int mode) {
-        if (activeFilter == mode) {
-            activeFilter = FILTER_ALL;
-        } else {
-            activeFilter = mode;
-        }
+        activeFilter = mode;
         updateFilterUI();
         refreshTaskList();
     }
 
     private void updateFilterUI() {
-        tintFilter(fOpen, activeFilter == FILTER_ASSIGNED);
-        tintFilter(fUrgent, activeFilter == FILTER_URGENT);
-        tintFilter(fOverdue, activeFilter == FILTER_OVERDUE);
-        tintFilter(fDone, activeFilter == FILTER_COMPLETED);
+        tintFilter(filterOpen, activeFilter == FILTER_OPEN);
+        tintFilter(filterUrgent, activeFilter == FILTER_URGENT);
+        tintFilter(filterOverdue, activeFilter == FILTER_OVERDUE);
+        tintFilter(filterDone, activeFilter == FILTER_COMPLETED);
 
-        if (activeFilter == FILTER_ASSIGNED) {
+        if (activeFilter == FILTER_OPEN) {
             tvFilterTitle.setText(R.string.parent_filter_open);
         } else if (activeFilter == FILTER_URGENT) {
             tvFilterTitle.setText(R.string.parent_filter_urgent);
@@ -145,7 +139,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         } else if (activeFilter == FILTER_COMPLETED) {
             tvFilterTitle.setText(R.string.parent_filter_completed);
         } else {
-            tvFilterTitle.setText(R.string.parent_filter_all);
+            tvFilterTitle.setText("");
         }
     }
 
@@ -192,19 +186,17 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     // קריאת כל הילדים והמשימות מהמסד כדי להציג בדשבורד המרכזי
     private void loadData(FirebaseUser user) {
-        removeChildrenListener();
-        
-        childrenReference = FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children");
-        
-        childrenListener = new ValueEventListener() {
+        DatabaseReference childrenReference = FirebaseDatabase.getInstance().getReference("parents").child(user.getUid()).child("children");
+
+        childrenReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allTasks.clear();
-                
+
                 int openCount = 0;
                 int doneCount = 0;
                 int urgentCount = 0;
-                int lateCount = 0;
+                int overdueCount = 0;
 
                 // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot childSnap : snapshot.getChildren()) {
@@ -215,12 +207,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     for (DataSnapshot tSnap : tasksSnap.getChildren()) {
 
                         AssignedTask task = new AssignedTask();
-
-                        if (childName != null) {
-                            task.setChildName(childName);
-                        } else {
-                            task.setChildName(getString(R.string.default_child_name_fallback));
-                        }
+                        task.setChildName(childName);
 
                         task.setTitle(tSnap.child("title").getValue(String.class));
                         task.setDueAt(tSnap.child("dueAt").getValue(String.class));
@@ -240,7 +227,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         } else {
                             openCount++;
                             if (DateUtils.isOverdue(task.getDueAt())) {
-                                lateCount++;
+                                overdueCount++;
                             } else if (DateUtils.isDueSoon(task.getDueAt())) {
                                 urgentCount++;
                             }
@@ -250,7 +237,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 tvTotal.setText(String.valueOf(openCount));
                 tvDone.setText(String.valueOf(doneCount));
                 tvUrgent.setText(String.valueOf(urgentCount));
-                tvOverdue.setText(String.valueOf(lateCount));
+                tvOverdue.setText(String.valueOf(overdueCount));
 
                 refreshTaskList();
             }
@@ -259,28 +246,24 @@ public class ParentDashboardActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 // Firebase דורש את הפעולה הזאת; במקרה של כישלון הדשבורד נשאר כפי שהוא
             }
-        };
-        childrenReference.addValueEventListener(childrenListener);
-    }
-
-    // מפסיקים להאזין ל-Firebase כשהמסך לא מוצג, כדי לא לבזבז משאבים
-    private void removeChildrenListener() {
-        if (childrenReference != null && childrenListener != null) {
-            childrenReference.removeEventListener(childrenListener);
-        }
-        childrenReference = null;
-        childrenListener = null;
+        });
     }
 
     // סינון מקומי של הרשימה שמוצגת ב-RecyclerView
     private void refreshTaskList() {
         visibleTasks.clear();
-        
+
+        if (activeFilter == FILTER_NONE) {
+            tvNoTasks.setVisibility(View.GONE);
+            taskAdapter.notifyDataSetChanged();
+            return;
+        }
+
         for (int i = 0; i < allTasks.size(); i++) {
             AssignedTask task = allTasks.get(i);
             boolean isMatch = false;
-            
-            if (activeFilter == FILTER_ASSIGNED) {
+
+            if (activeFilter == FILTER_OPEN) {
                 isMatch = !task.getIsDone();
             } else if (activeFilter == FILTER_COMPLETED) {
                 isMatch = task.getIsDone();
@@ -288,22 +271,19 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 isMatch = !task.getIsDone() && DateUtils.isDueSoon(task.getDueAt());
             } else if (activeFilter == FILTER_OVERDUE) {
                 isMatch = !task.getIsDone() && DateUtils.isOverdue(task.getDueAt());
-            } else {
-                isMatch = true;
             }
-            
+
             if (isMatch) {
                 visibleTasks.add(task);
             }
         }
-        
+
         if (visibleTasks.isEmpty()) {
             tvNoTasks.setVisibility(View.VISIBLE);
         } else {
             tvNoTasks.setVisibility(View.GONE);
         }
-        
+
         taskAdapter.notifyDataSetChanged();
     }
 }
-
