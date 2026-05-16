@@ -256,16 +256,17 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         private String formatFullName(String first, String last) {
             String fullName = "";
-            if (first != null && !first.trim().isEmpty()) {
-                fullName = first.trim();
+            if (first != null && !first.isEmpty()) {
+                fullName = first;
             }
-            if (last != null && !last.trim().isEmpty()) {
+            if (last != null && !last.isEmpty()) {
                 if (!fullName.isEmpty()) {
                     fullName += " ";
                 }
-                fullName += last.trim();
+                fullName += last;
             }
-            if (fullName.isEmpty()) {
+            if (fullName.isEmpty())
+            {
                 return getString(R.string.default_child_name_fallback);
             }
             return fullName;

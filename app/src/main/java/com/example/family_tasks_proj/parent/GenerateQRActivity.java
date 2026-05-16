@@ -41,13 +41,11 @@ public class GenerateQRActivity extends AppCompatActivity {
     // ה-QR מכיל את מזהה ההורה המחובר
     private void generateParentQR(String parentId)
     {
-        String payload = parentId;
-
         try {
 
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
 
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(payload, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(parentId, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);

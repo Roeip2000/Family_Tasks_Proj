@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +22,6 @@ import java.util.List;
 
 public class ChildSelectionActivity extends AppCompatActivity {
 
-    private TextView tvNoChildren;
     private Spinner spinnerChildren;
     private Button btnEnter;
 
@@ -34,12 +32,12 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private String parentId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_selection);
 
         spinnerChildren = findViewById(R.id.spinnerChildren);
-        tvNoChildren = findViewById(R.id.tvNoChildren);
         btnEnter = findViewById(R.id.btnEnter);
 
         parentId = getIntent().getStringExtra("parentId");
@@ -51,10 +49,14 @@ public class ChildSelectionActivity extends AppCompatActivity {
             }
         });
 
+        // הכפתור לא פעיל עד שהילדים נטענים
+        btnEnter.setEnabled(false);
+
         loadChildren();
     }
 
-    private void loadChildren() {
+    private void loadChildren()
+    {
         FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
@@ -75,14 +77,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         }
 
                         if (childIds.isEmpty()) {
-                            tvNoChildren.setVisibility(View.VISIBLE);
-                            spinnerChildren.setVisibility(View.GONE);
-                            btnEnter.setEnabled(false);
                             return;
                         }
 
-                        tvNoChildren.setVisibility(View.GONE);
-                        spinnerChildren.setVisibility(View.VISIBLE);
                         btnEnter.setEnabled(true);
 
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -106,23 +103,18 @@ public class ChildSelectionActivity extends AppCompatActivity {
         String fullName = "";
 
         if (firstName != null) {
-            fullName += firstName.trim();
+            fullName += firstName;
         }
 
         if (lastName != null) {
-            fullName += " " + lastName.trim();
-        }
-
-        fullName = fullName.trim();
-
-        if (fullName.isEmpty()) {
-            fullName = getString(R.string.default_child_name_fallback);
+            fullName += " " + lastName;
         }
 
         return fullName;
     }
 
-    private void onEnterClicked() {
+    private void onEnterClicked()
+    {
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
 
         String childId = childIds.get(selectedPosition);
