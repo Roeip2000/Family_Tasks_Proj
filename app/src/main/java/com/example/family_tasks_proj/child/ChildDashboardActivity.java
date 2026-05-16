@@ -1,13 +1,16 @@
 package com.example.family_tasks_proj.child;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
@@ -102,9 +105,27 @@ public class ChildDashboardActivity extends AppCompatActivity {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                processMarkTaskAsDone(task);
+                showDoneDialog(task);
             }
         });
+    }
+
+    // מציג דיאלוג אישור לפני סימון המשימה כבוצעה.
+    private void showDoneDialog(final ChildTask task) {
+        new AlertDialog.Builder(this)
+                .setTitle("סיום משימה")
+                .setMessage("האם אתה בטוח שסיימת את המשימה?")
+                .setPositiveButton("כן", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        processMarkTaskAsDone(task);
+                        Toast.makeText(ChildDashboardActivity.this,
+                                "סיימת את המשימה, כל הכבוד!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("לא", null)
+                .show();
     }
 
     // מסמן את המשימה כבוצעה: מעדכן ב-Firebase את isDone ל-true.
