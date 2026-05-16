@@ -206,50 +206,47 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 int urgentCount = 0;
                 int lateCount = 0;
 
-                if (snapshot.exists()) {
-                    // עוברים על כל הילדים שהתקבלו מ-Firebase
-                    for (DataSnapshot childSnap : snapshot.getChildren()) {
-                        String childName = childSnap.child("firstName").getValue(String.class);
-                        
-                        DataSnapshot tasksSnap = childSnap.child("tasks");
-                        // לכל ילד עוברים על כל המשימות שלו
-                        for (DataSnapshot tSnap : tasksSnap.getChildren()) {
-                            
-                            AssignedTask task = new AssignedTask();
+                // עוברים על כל הילדים שהתקבלו מ-Firebase
+                for (DataSnapshot childSnap : snapshot.getChildren()) {
+                    String childName = childSnap.child("firstName").getValue(String.class);
 
-                            if (childName != null) {
-                                task.setChildName(childName);
-                            } else {
-                                task.setChildName(getString(R.string.default_child_name_fallback));
-                            }
+                    DataSnapshot tasksSnap = childSnap.child("tasks");
+                    // לכל ילד עוברים על כל המשימות שלו
+                    for (DataSnapshot tSnap : tasksSnap.getChildren()) {
 
-                            task.setTitle(tSnap.child("title").getValue(String.class));
-                            task.setDueAt(tSnap.child("dueAt").getValue(String.class));
-                            task.setImageBase64(tSnap.child("imageBase64").getValue(String.class));
-                            
-                            Boolean isDone = tSnap.child("isDone").getValue(Boolean.class);
-                            if (isDone != null && isDone) {
-                                task.setIsDone(true);
-                            } else {
-                                task.setIsDone(false);
-                            }
+                        AssignedTask task = new AssignedTask();
 
-                            allTasks.add(task);
+                        if (childName != null) {
+                            task.setChildName(childName);
+                        } else {
+                            task.setChildName(getString(R.string.default_child_name_fallback));
+                        }
 
-                            if (task.getIsDone()) {
-                                doneCount++;
-                            } else {
-                                openCount++;
-                                if (DateUtils.isOverdue(task.getDueAt())) {
-                                    lateCount++;
-                                } else if (DateUtils.isDueSoon(task.getDueAt())) {
-                                    urgentCount++;
-                                }
+                        task.setTitle(tSnap.child("title").getValue(String.class));
+                        task.setDueAt(tSnap.child("dueAt").getValue(String.class));
+                        task.setImageBase64(tSnap.child("imageBase64").getValue(String.class));
+
+                        Boolean isDone = tSnap.child("isDone").getValue(Boolean.class);
+                        if (isDone != null && isDone) {
+                            task.setIsDone(true);
+                        } else {
+                            task.setIsDone(false);
+                        }
+
+                        allTasks.add(task);
+
+                        if (task.getIsDone()) {
+                            doneCount++;
+                        } else {
+                            openCount++;
+                            if (DateUtils.isOverdue(task.getDueAt())) {
+                                lateCount++;
+                            } else if (DateUtils.isDueSoon(task.getDueAt())) {
+                                urgentCount++;
                             }
                         }
                     }
                 }
-                
                 tvTotal.setText(String.valueOf(openCount));
                 tvDone.setText(String.valueOf(doneCount));
                 tvUrgent.setText(String.valueOf(urgentCount));

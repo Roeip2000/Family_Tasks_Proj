@@ -46,10 +46,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_children);
 
         parentUserId = FirebaseAuth.getInstance().getUid();
-        if (parentUserId == null) {
-            finish();
-            return;
-        }
 
         initViews();
         setupEvents();
@@ -141,10 +137,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
             // יוצר מזהה (ID) ייחודי לילד חדש בעזרת push()
             childId = getChildrenReference().push().getKey();
         }
-        if (childId == null) {
-            return;
-        }
-
         DatabaseReference childNode = getChildrenReference().child(childId);
 
         // שומר את פרטי הילד תחת ה-ID שלו

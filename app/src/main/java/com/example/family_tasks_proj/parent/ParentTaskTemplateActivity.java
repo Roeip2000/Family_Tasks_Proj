@@ -27,7 +27,6 @@ import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,12 +71,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_task_template);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            finish();
-            return;
-        }
-        currentParentUserId = user.getUid();
+        currentParentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         initViews();
         setupEvents();
@@ -181,9 +175,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             templateId = currentEditTemplateId;
         } else {
             templateId = getTemplatesReference().push().getKey();
-            if (templateId == null) {
-                return;
-            }
         }
         
         DatabaseReference templateRef = getTemplatesReference().child(templateId);

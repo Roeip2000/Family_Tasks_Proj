@@ -48,33 +48,26 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTotalTasks = findViewById(R.id.tvTotalTasks);
         tvNoTasks = findViewById(R.id.tvNoTasksChild);
         tasksContainer = findViewById(R.id.tasksContainer);
-        
+
         loadChildTasks();
     }
 
-    private DatabaseReference childRef()
-    {
+    private DatabaseReference childRef() {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    // טוען את המשימות של הילד ומסנן רק את המשימות הפתוחות
+    // טוען את המשימות של הילד ומציג רק משימות פתוחות.
     private void loadChildTasks() {
         childRef().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 openTasks.clear();
-                if (snapshot.exists()) {
-                    // עוברים על כל המשימות שהתקבלו מ-Firebase
-                    for (DataSnapshot snap : snapshot.getChildren()) {
-                        ChildTask task = snap.getValue(ChildTask.class);
-                        if (task == null) {
-                            continue;
-                        }
-                        task.setId(snap.getKey());
-                        if (!task.getIsDone()) {
-                            openTasks.add(task);
-                        }
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    ChildTask task = snap.getValue(ChildTask.class);
+                    task.setId(snap.getKey());
+                    if (!task.getIsDone()) {
+                        openTasks.add(task);
                     }
                 }
                 tvTotalTasks.setText(String.valueOf(openTasks.size()));
@@ -87,7 +80,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // בונה את רשימת המשימות בקוד עם LayoutInflater
     private void renderTasks() {
         tasksContainer.removeAllViews();
         if (openTasks.isEmpty()) {
@@ -121,12 +113,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
         boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
 
         String dueText;
-        // אם DateUtils מחזיר NO_VALID_DATE, אין תאריך תקין להצגה
-        if (days == DateUtils.NO_VALID_DATE) {
-            dueText = getString(R.string.child_due_no_date);
-        } else if (overdue) {
-            // overdue פירושו שמספר הימים שלילי, לכן מספר ימי האיחור הוא הערך ההפוך
-            int absoluteDays = (int)(-days);
+        if (overdue) {
+            int absoluteDays = (int) (-days);
             dueText = getString(R.string.child_due_late, absoluteDays);
         } else if (days == 0) {
             dueText = getString(R.string.child_due_today);
@@ -153,7 +141,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
         tvDue.setTextColor(getColor(dueColor));
 
-        // יוצר עיגול צבעוני קטן שמראה את מצב התאריך
         GradientDrawable dot = new GradientDrawable();
         dot.setShape(GradientDrawable.OVAL);
         dot.setColor(getColor(dotColor));
@@ -180,7 +167,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // מעדכן את הסטטוס ב-Firebase ל-isDone=true כשהילד מסיים משימה
     private void processMarkTaskAsDone(final ChildTask task) {
         childRef().child("tasks").child(task.getId()).child("isDone").setValue(true);
     }

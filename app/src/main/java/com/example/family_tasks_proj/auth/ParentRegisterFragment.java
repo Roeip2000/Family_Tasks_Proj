@@ -38,34 +38,30 @@ public class ParentRegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         firebaseAuth = FirebaseAuth.getInstance();
-        
+
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnRegister = view.findViewById(R.id.btnRegister);
 
-
-        btnRegister.setOnClickListener(new View.OnClickListener()
-        {
-            @Override public void onClick(View view) {
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 registerParent();
             }
         });
-
     }
 
     private void registerParent() {
-
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty())
-        {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -75,38 +71,26 @@ public class ParentRegisterFragment extends Fragment {
             return;
         }
 
-        btnRegister.setEnabled(false);// נעילת הכפתור כדי למנוע כמה בקשות במקביל
+        btnRegister.setEnabled(false);
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
-                new OnCompleteListener<AuthResult>() {@Override
-                public void onComplete(@NonNull Task<AuthResult> task)
-                {
-                if (task.isSuccessful())
-                {
-                    saveParentToDatabase(firstName, lastName, email);
-                }
-                else
-                {
-                    btnRegister.setEnabled(true);
-                    Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            saveParentToDatabase(firstName, lastName, email);
+                        } else {
+                            btnRegister.setEnabled(true);
+                            Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void saveParentToDatabase(String firstName, String lastName, String email) {
         String uid = firebaseAuth.getUid();
-        
-        if (uid == null)
-        {
-            btnRegister.setEnabled(true);
-            Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
-        // שימוש במבנה נתונים פשוט (מילון) כדי לשמור את כל הפרטים ביחד בפעולה אחת
         HashMap<String, Object> parentData = new HashMap<>();
         parentData.put("uid", uid);
         parentData.put("firstName", firstName);
@@ -114,16 +98,13 @@ public class ParentRegisterFragment extends Fragment {
         parentData.put("email", email);
         parentData.put("role", "parent");
 
-        parentRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>()
-        {
+        parentRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
-                if (saveTask.isSuccessful())
-                {
+                if (saveTask.isSuccessful()) {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
-                }
-                else
+                } else
                 {
                     btnRegister.setEnabled(true);
                     Toast.makeText(requireContext(), "שמירת נתונים נכשלה", Toast.LENGTH_SHORT).show();
