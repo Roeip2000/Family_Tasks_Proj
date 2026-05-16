@@ -52,7 +52,7 @@
 
     <!-- משימות - תצוגה אצל ההורה -->
     <string name="task_default_title">משימה</string>
-    <string name="task_assigned_to">מיועד ל: %1$s</string>
+    <string name="task_assigned_to">משויך ל: %1$s</string>
     <string name="task_due_done_prefix">בוצע בתאריך: </string>
     <string name="task_due_overdue_prefix">באיחור: </string>
     <string name="task_due_urgent_prefix">דחוף: </string>
