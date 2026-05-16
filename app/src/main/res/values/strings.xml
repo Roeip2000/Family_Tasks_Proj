@@ -124,9 +124,9 @@
 
     <!-- טקסטים למסכי טפסים -->
     <string name="title_assign_task">הקצאת משימה</string>
-    <string name="subtitle_assign_task">בחר תבנית והקצה לילד המתאים</string>
+    <string name="subtitle_assign_task">בחר משימה והקצה לילד המתאים</string>
     <string name="label_choose_template">בחר תבנית משימה</string>
-    <string name="hint_change_template">לחץ כדי להחליף בין התבניות</string>
+    <string name="hint_change_template">לחץ כדי להחליף בין המשימות</string>
     <string name="label_task_name">שם המשימה</string>
     <string name="hint_task_name">הכנס שם משימה</string>
     <string name="label_assign_to">למי להקצות?</string>
