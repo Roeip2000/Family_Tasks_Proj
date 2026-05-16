@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // חיבור רכיבי המסך מה-XML לקוד
         btnRegister = findViewById(R.id.btnRegister);
         btnLogin = findViewById(R.id.btnLogin);
         btnChildQR = findViewById(R.id.btnChildQR);
@@ -49,13 +50,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+
+    // מחליף את ה-Fragment שמוצג בתוך מסך הפתיחה
     private void showFragment(Fragment fragment, boolean addToBackStack)
     {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment);
+
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, fragment);
 
         if (addToBackStack)
         {
-            transaction.addToBackStack(fragment.getClass().getSimpleName());
+            transaction.addToBackStack(null);
         }
         transaction.commit();
     }

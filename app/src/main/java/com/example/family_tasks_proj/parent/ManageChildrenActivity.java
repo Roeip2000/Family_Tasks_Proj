@@ -33,25 +33,29 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private ListView lvChildren;
     private TextView tvTitle;
 
+    // שתי הרשימות נבנות באותו סדר: שם להצגה ומזהה אמיתי ב-Firebase
     private final List<String> childIds = new ArrayList<>();
     private final List<String> childNames = new ArrayList<>();
+
     private ArrayAdapter<String> listAdapter;
-    private String parentUserId;
-    private String editChildId = null;
+    private String parentId;
+    private String editingChildId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
 
-        parentUserId = FirebaseAuth.getInstance().getUid();
+        // קבלת מזהה ההורה המחובר
+        parentId = FirebaseAuth.getInstance().getUid();
 
         initViews();
         setupEvents();
         setupList();
-        loadFromFirebase();
+        loadChildrenFromFirebase();
     }
 
+    // חיבור רכיבי המסך מה-XML לקוד
     private void initViews() {
         etFirstName = findViewById(R.id.etFirstName);
         btnAdd = findViewById(R.id.btnAddChild);
@@ -60,13 +64,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         tvTitle = findViewById(R.id.tvFormTitle);
     }
 
+    // הגדרת פעולות הכפתורים במסך
     private void setupEvents() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveChildData();
+                saveChild();
             }
         });
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +81,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
+    // הכנת רשימת הילדים ולחיצה על ילד לעריכה
     private void setupList() {
         listAdapter = new ArrayAdapter<>(
                 this,
@@ -82,7 +89,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 R.id.tvChildFullName,
                 childNames
         );
+
         lvChildren.setAdapter(listAdapter);
+
         lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -92,19 +101,21 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     // טעינת הילדים של ההורה מ-Firebase
-    private void loadFromFirebase() {
+    private void loadChildrenFromFirebase() {
         getChildrenReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
                 childNames.clear();
-                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                    String id = childSnapshot.getKey();
-                    String first = childSnapshot.child("firstName").getValue(String.class);
 
-                    childIds.add(id);
-                    childNames.add(first);
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String childId = childSnapshot.getKey();
+                    String firstName = childSnapshot.child("firstName").getValue(String.class);
+
+                    childIds.add(childId);
+                    childNames.add(firstName);
                 }
+
                 updateUI();
             }
 
@@ -115,7 +126,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    private void saveChildData() {
+    // שמירת ילד חדש או עדכון ילד קיים
+    private void saveChild() {
         String firstName = etFirstName.getText().toString().trim();
 
         if (firstName.isEmpty()) {
@@ -123,18 +135,17 @@ public class ManageChildrenActivity extends AppCompatActivity {
             return;
         }
 
+        // אם יש editingChildId מעדכנים ילד קיים, אחרת יוצרים ילד חדש
         String childId;
-        if (editChildId != null)
-        {
-            childId = editChildId;
-        } else
-        {
-            // מזהה חדש לילד חדש
+        if (editingChildId != null) {
+            childId = editingChildId;
+        } else {
             childId = getChildrenReference().push().getKey();
         }
-        DatabaseReference childNode = getChildrenReference().child(childId);
 
-        childNode.child("firstName").setValue(firstName).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DatabaseReference childReference = getChildrenReference().child(childId);
+
+        childReference.child("firstName").setValue(firstName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
@@ -143,13 +154,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
+    // ניקוי הטופס וחזרה למצב הוספת ילד חדש
     private void clearForm() {
-        editChildId = null;
+        editingChildId = null;
         etFirstName.setText("");
         btnAdd.setText(R.string.btn_add_child);
         tvTitle.setText(R.string.title_add_child);
     }
 
+    // עדכון הרשימה במסך אחרי טעינה מ-Firebase
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
         fitListHeight(lvChildren);
@@ -184,13 +197,17 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // לחיצה על ילד ברשימה טוענת את פרטיו לטופס לצורך עריכה
     private void startEditChild(int position) {
-        editChildId = childIds.get(position);
+        editingChildId = childIds.get(position);
         etFirstName.setText(childNames.get(position));
         btnAdd.setText(R.string.btn_update);
         tvTitle.setText(R.string.title_edit_child);
     }
 
+    // מחזיר את מיקום הילדים של ההורה ב-Firebase
     private DatabaseReference getChildrenReference() {
-        return FirebaseDatabase.getInstance().getReference("parents").child(parentUserId).child("children");
+        return FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(parentId)
+                .child("children");
     }
 }

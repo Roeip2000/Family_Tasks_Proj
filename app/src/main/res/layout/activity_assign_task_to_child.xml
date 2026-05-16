@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_muted"
+    android:background="@android:color/white"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -13,15 +12,16 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- כותרת המסך -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/title_assign_task"
             android:textColor="@color/primary"
-            android:textSize="28sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- הסבר קצר -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,134 +30,110 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- כרטיס טופס הקצאת משימה -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- בחירת תבנית משימה -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/label_choose_template"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spTemplates"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_repository_list" />
+
+        <!-- אזור קבוע לתמונת התבנית -->
+        <ImageView
+            android:id="@+id/imgTaskPreview"
+            android:layout_width="150dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/cd_task_image"
+            android:scaleType="centerCrop" />
+
+        <!-- שם המשימה -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_task_name"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_repository_list"
+            android:hint="@string/hint_task_name"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp" />
+
+        <!-- בחירת ילד -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_assign_to"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spAssignee"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_repository_list" />
+
+        <!-- תאריך יעד -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_due_date"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etDueDate"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_repository_list"
+            android:focusable="false"
+            android:hint="@string/hint_select_date"
+            android:importantForAutofill="no"
+            android:inputType="date"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnAssign"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/divider"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_choose_template"
-                    android:textColor="@color/primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <Spinner
-                    android:id="@+id/spTemplates"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_repository_list" />
-
-                <FrameLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/bg_preview_shell">
-
-                    <ImageView
-                        android:id="@+id/imgTaskPreview"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/cd_task_image"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_image_placeholder" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/label_task_name"
-                    android:textColor="@color/primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_repository_list"
-                    android:hint="@string/hint_task_name"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/label_assign_to"
-                    android:textColor="@color/primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <Spinner
-                    android:id="@+id/spAssignee"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_repository_list" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/label_due_date"
-                    android:textColor="@color/primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etDueDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_repository_list"
-                    android:focusable="false"
-                    android:hint="@string/hint_select_date"
-                    android:importantForAutofill="no"
-                    android:inputType="date"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/btnAssign"
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="32dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="@string/btn_confirm_assign"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="16dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_marginTop="28dp"
+            android:backgroundTint="@color/primary"
+            android:text="@string/btn_confirm_assign"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btnBackToDashboard"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/btn_cancel_back"
             android:textColor="@color/text_secondary" />
 

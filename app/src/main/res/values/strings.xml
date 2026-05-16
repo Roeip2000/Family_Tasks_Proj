@@ -61,11 +61,22 @@
     <string name="parent_dashboard_task_status_waiting">ממתין</string>
     <string name="parent_dashboard_task_status_late">באיחור</string>
     <string name="parent_dashboard_task_status_urgent">דחוף</string>
-    <string name="template_item_hint">לחצו לעריכה או למחיקה</string>
+    <string name="template_item_hint">לחץ לעריכה</string>
 
     <!-- שגיאות וצליחות -->
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
     <string name="error_short_password">הסיסמה חייבת להכיל לפחות 6 תווים</string>
+    <string name="register_failed">הרשמה נכשלה</string>
+    <string name="save_parent_failed">שמירת נתונים נכשלה</string>
+    <string name="error_action_failed">הפעולה נכשלה</string>
+    <string name="error_login_failed">התחברות נכשלה</string>
+
+    <!-- דיאלוג סיום משימה -->
+    <string name="dialog_task_done_title">סיום משימה</string>
+    <string name="dialog_task_done_message">האם אתה בטוח שסיימת את המשימה?</string>
+    <string name="dialog_yes">כן</string>
+    <string name="dialog_no">לא</string>
+    <string name="toast_task_done">סיימת את המשימה, כל הכבוד!</string>
 
     <!-- ערכי ברירת מחדל -->
     <string name="default_task_name">שם המשימה</string>

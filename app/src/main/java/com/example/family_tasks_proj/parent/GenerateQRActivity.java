@@ -33,6 +33,7 @@ public class GenerateQRActivity extends AppCompatActivity {
             }
         });
 
+        // קבלת מזהה ההורה המחובר ויצירת QR ממנו
         generateParentQR(FirebaseAuth.getInstance().getCurrentUser().getUid());
     }
 
@@ -45,6 +46,7 @@ public class GenerateQRActivity extends AppCompatActivity {
 
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
 
+            // יצירת תמונת QR שמכילה את מזהה ההורה
             Bitmap bitmap = barcodeEncoder.encodeBitmap(parentId, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
 
             imageViewQrCode.setVisibility(View.VISIBLE);

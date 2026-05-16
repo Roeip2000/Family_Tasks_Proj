@@ -40,6 +40,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         spinnerChildren = findViewById(R.id.spinnerChildren);
         btnEnter = findViewById(R.id.btnEnter);
 
+        // קבלת מזהה ההורה שהגיע ממסך סריקת ה-QR
         parentId = getIntent().getStringExtra("parentId");
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +56,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
         loadChildren();
     }
 
-    private void loadChildren()
+    // טעינת הילדים של ההורה מתוך Firebase
+    private
+    void loadChildren()
     {
         FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -68,9 +71,9 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         childIds.clear();
                         childNames.clear();
 
-                        for (DataSnapshot snap : snapshot.getChildren()) {
-                            String id = snap.getKey();
-                            String childName = snap.child("firstName").getValue(String.class);
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            String id = childSnapshot.getKey();
+                            String childName = childSnapshot.child("firstName").getValue(String.class);
 
                             childIds.add(id);
                             childNames.add(childName);
@@ -82,6 +85,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
                         btnEnter.setEnabled(true);
 
+                        // הצגת שמות הילדים ב-Spinner
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                                 ChildSelectionActivity.this,
                                 android.R.layout.simple_spinner_dropdown_item,
@@ -92,14 +96,18 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        // Firebase מחייב לממש את הפעולה הזאת
                     }
                 });
     }
 
+    // מעבר לדשבורד של הילד שנבחר
     private void onEnterClicked()
     {
+
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
 
+        // לפי המיקום שנבחר ב-Spinner מוצאים את ה-id של הילד
         String childId = childIds.get(selectedPosition);
 
         Intent intent = new Intent(this, ChildDashboardActivity.class);

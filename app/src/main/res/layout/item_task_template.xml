@@ -1,64 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- שורת תבנית: תמונה קטנה ושם -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/bg_card"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/border_light"
-    app:strokeWidth="1dp">
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp">
 
-    <!-- שורת תבנית: תמונה ושם -->
+    <ImageView
+        android:id="@+id/ivTemplateThumb"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:contentDescription="@string/cd_task_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_image_placeholder" />
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:gravity="center_vertical"
-        android:minHeight="88dp"
-        android:orientation="horizontal"
-        android:padding="12dp">
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_preview_shell"
-            android:padding="6dp">
-
-            <ImageView
-                android:id="@+id/ivTemplateThumb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/cd_task_image"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_image_placeholder" />
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvTemplateTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvTemplateTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/template_item_hint"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/template_item_hint"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

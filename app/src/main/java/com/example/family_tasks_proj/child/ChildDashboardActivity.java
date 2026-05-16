@@ -42,6 +42,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
+        // קבלת מזהה ההורה והילד שהגיעו ממסך בחירת הילד
         parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
         childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
 
@@ -52,21 +53,28 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadChildTasks();
     }
 
-    private DatabaseReference childRef() {
+    // מחזיר את המיקום של הילד ב-Firebase
+    private DatabaseReference getChildReference() {
+
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    // טוען את המשימות של הילד ומציג רק משימות פתוחות.
+    // טעינת המשימות של הילד מ-Firebase
     private void loadChildTasks() {
-        childRef().child("tasks").addValueEventListener(new ValueEventListener() {
+
+        getChildReference().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 openTasks.clear();
-                for (DataSnapshot snap : snapshot.getChildren()) {
-                    ChildTask task = snap.getValue(ChildTask.class);
-                    task.setId(snap.getKey());
-                    if (!task.getIsDone()) {
+
+                // מעבר על כל המשימות ושמירת רק המשימות שעדיין פתוחות
+                for (DataSnapshot taskSnapshot : snapshot.getChildren()) {
+                    ChildTask task = taskSnapshot.getValue(ChildTask.class);
+                    task.setId(taskSnapshot.getKey());
+
+                    if (!task.getIsDone())
+                    {
                         openTasks.add(task);
                     }
                 }
@@ -80,6 +88,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
+    // הצגת המשימות הפתוחות במסך
     private void renderTasks() {
         tasksContainer.removeAllViews();
         if (openTasks.isEmpty()) {
@@ -96,6 +105,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
+    // הכנסת נתוני משימה אחת לתוך כרטיס במסך
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDue = card.findViewById(R.id.tvDueDate);
@@ -105,11 +115,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTitle.setText(task.getTitle());
         tvDue.setText(task.getDueAt());
 
-        // קביעת סטטוס המשימה (באיחור, דחוף או ממתין) לפי תאריך היעד
-        if (DateUtils.isOverdue(task.getDueAt())) {
+        // קביעת סטטוס המשימה לפי תאריך היעד
+        if (DateUtils.isOverdue(task.getDueAt()))
+        {
             tvStatus.setText(getString(R.string.parent_dashboard_task_status_late));
             tvStatus.setTextColor(getColor(R.color.danger));
-        } else if (DateUtils.isDueSoon(task.getDueAt())) {
+        } else if (DateUtils.isDueSoon(task.getDueAt()))
+        {
             tvStatus.setText(getString(R.string.parent_dashboard_task_status_urgent));
             tvStatus.setTextColor(getColor(R.color.urgent));
         } else {
@@ -125,26 +137,27 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // מציג דיאלוג אישור לפני סימון המשימה כבוצעה.
+    // הצגת אישור לפני סימון משימה כבוצעה
     private void showDoneDialog(final ChildTask task) {
         new AlertDialog.Builder(this)
-                .setTitle("סיום משימה")
-                .setMessage("האם אתה בטוח שסיימת את המשימה?")
-                .setPositiveButton("כן", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.dialog_task_done_title)
+                .setMessage(R.string.dialog_task_done_message)
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        processMarkTaskAsDone(task);
+                        markTaskAsDone(task);
                         Toast.makeText(ChildDashboardActivity.this,
-                                "סיימת את המשימה, כל הכבוד!",
+                                R.string.toast_task_done,
                                 Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("לא", null)
+                .setNegativeButton(R.string.dialog_no, null)
                 .show();
     }
 
-    // מסמן את המשימה כבוצעה: מעדכן ב-Firebase את isDone ל-true.
-    private void processMarkTaskAsDone(final ChildTask task) {
-        childRef().child("tasks").child(task.getId()).child("isDone").setValue(true);
+    // עדכון המשימה ב-Firebase כמשימה שבוצעה
+    private void markTaskAsDone(final ChildTask task)
+    {
+        getChildReference().child("tasks").child(task.getId()).child("isDone").setValue(true);
     }
 }

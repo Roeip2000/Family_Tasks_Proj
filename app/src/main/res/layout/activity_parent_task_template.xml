@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_muted"
+    android:background="@android:color/white"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -14,16 +13,17 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- כותרת המסך -->
         <TextView
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/title_task_templates"
             android:textColor="@color/primary"
-            android:textSize="28sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- הסבר קצר -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,95 +32,67 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- כרטיס טופס יצירת תבנית -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- שם התבנית -->
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_repository_list"
+            android:hint="@string/hint_template_title"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp" />
+
+        <!-- תמונת התבנית -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_task_image"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- שורת תמונה: מקום קבוע לתמונה וכפתור בחירה לידו -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/divider"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/imgTask"
+                android:layout_width="110dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/cd_task_image"
+                android:scaleType="centerCrop" />
+
+            <Button
+                android:id="@+id/btnPickImage"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
+                android:layout_marginStart="16dp"
+                android:text="@string/btn_pick_image" />
+        </LinearLayout>
 
-                <EditText
-                    android:id="@+id/etTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:background="@drawable/bg_repository_list"
-                    android:hint="@string/hint_template_title"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/label_task_image"
-                    android:textColor="@color/primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
-
-                    <FrameLayout
-                        android:id="@+id/layoutImgPreview"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_preview_shell">
-
-                        <ImageView
-                            android:id="@+id/imgTask"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:contentDescription="@string/cd_task_image"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_image_placeholder" />
-                    </FrameLayout>
-
-                    <Button
-                        android:id="@+id/btnPickImage"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="16dp"
-                        android:layout_toEndOf="@id/layoutImgPreview"
-                        android:text="@string/btn_pick_image"
-                        app:cornerRadius="12dp" />
-                </RelativeLayout>
-
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="32dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="@string/btn_save_template"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    app:cornerRadius="16dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primary"
+            android:text="@string/btn_save_template"
+            android:textColor="@color/white" />
 
         <!-- רשימת התבניות הקיימות -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/title_existing_templates"
             android:textColor="@color/primary"
             android:textSize="18sp"
@@ -130,19 +102,17 @@
             android:id="@+id/lvTemplates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp"
             android:nestedScrollingEnabled="false"
             tools:ignore="NestedScrolling" />
 
+        <!-- כפתור משני: חזרה לדשבורד -->
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
             android:text="@string/btn_back_to_dashboard"
-            android:textColor="@color/secondary" />
+            android:textAllCaps="false" />
 
     </LinearLayout>
 </ScrollView>

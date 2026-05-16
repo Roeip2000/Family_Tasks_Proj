@@ -26,11 +26,13 @@ public class ChildQRLoginFragment extends Fragment {
 
     private Button btnScanQR;
 
+    // בקשת הרשאת מצלמה לפני פתיחת סורק ה-QR
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
                 @Override
                 public void onActivityResult(Boolean granted) {
-                    if (granted) {
+                    if (granted)
+                    {
                         launchScanner();
                     } else
                     {
@@ -39,7 +41,8 @@ public class ChildQRLoginFragment extends Fragment {
                 }
             });
 
-    private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
+    // הפעלת סורק QR וקבלת תוצאת הסריקה
+    private final ActivityResultLauncher<ScanOptions> qrScannerLauncher =
             registerForActivityResult(new ScanContract(), new ActivityResultCallback<ScanIntentResult>() {
                 @Override
                 public void onActivityResult(ScanIntentResult result) {
@@ -48,10 +51,14 @@ public class ChildQRLoginFragment extends Fragment {
             });
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+
+        // יצירת מסך ה-QR וחיבור כפתור הסריקה
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
         btnScanQR = view.findViewById(R.id.btnScanQR);
 
+        // לחיצה על הכפתור מתחילה את תהליך הסריקה
         btnScanQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +70,7 @@ public class ChildQRLoginFragment extends Fragment {
     }
 
     private void startQrScan() {
+        // בודקים אם כבר יש הרשאת מצלמה
         int status = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA);
 
         if (status == PackageManager.PERMISSION_GRANTED) {
@@ -74,20 +82,24 @@ public class ChildQRLoginFragment extends Fragment {
 
     private void launchScanner()
     {
+        // פתיחת מסך סריקת ה-QR
         ScanOptions options = new ScanOptions();
-        barcodeLauncher.launch(options);
+        qrScannerLauncher.launch(options);
     }
 
     private void handleQrScanResult(ScanIntentResult result) {
-        String raw = result.getContents();
-        if (raw == null) {
+        String qrText = result.getContents();
+
+
+        // אם המשתמש ביטל את הסריקה לא ממשיכים
+        if (qrText == null) {
             return;
         }
 
-        // הטקסט שנסרק הוא מזהה ההורה
-        String parentId = raw.trim();
+        // הטקסט שנסרק מה-QR הוא מזהה ההורה
+        String parentId = qrText.trim();
         if (parentId.isEmpty()) {
-            Toast.makeText(requireContext(), "הפעולה נכשלה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.error_action_failed, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -96,6 +108,7 @@ public class ChildQRLoginFragment extends Fragment {
 
     private void openChildSelection(String parentId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
+        // מעבירים את מזהה ההורה למסך בחירת הילד
         intent.putExtra("parentId", parentId);
         startActivity(intent);
         requireActivity().finish();

@@ -2,42 +2,52 @@ package com.example.family_tasks_proj.utils;
 
 import java.util.Calendar;
 
+// מחלקת עזר לחישוב מצב משימות לפי תאריך יעד
 public class DateUtils {
 
-    private static final int HOURS_IN_DAY = 24;
-    private static final int MINUTES_IN_HOUR = 60;
-    private static final int SECONDS_IN_MINUTE = 60;
-    private static final int MILLIS_IN_SECOND = 1000;
+    private static final long MILLIS_IN_DAY = 24L * 60 * 60 * 1000;
     private static final int URGENT_THRESHOLD_DAYS = 2;
 
-    // מחזיר כמה ימים נשארו עד תאריך היעד של המשימה.
-    public static long daysLeft(String dateStr) {
-        String[] parts = dateStr.split("/");
-        int day = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]);
-        int year = Integer.parseInt(parts[2]);
+    // מחזיר כמה ימים נשארו עד תאריך היעד
+    public static long getDaysLeft(String dueDate)
+    {
+        // התאריך נשמר כמחרוזת בפורמט יום/חודש/שנה
+        String[] dateParts = dueDate.split("/");
+        int day = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]);
+        int year = Integer.parseInt(dateParts[2]);
 
-        Calendar calTask = Calendar.getInstance();
-        calTask.set(year, month - 1, day, 0, 0, 0);
-        calTask.set(Calendar.MILLISECOND, 0);
+        Calendar taskDate = Calendar.getInstance();
 
-        Calendar calToday = Calendar.getInstance();
-        calToday.set(Calendar.HOUR_OF_DAY, 0);
-        calToday.set(Calendar.MINUTE, 0);
-        calToday.set(Calendar.SECOND, 0);
-        calToday.set(Calendar.MILLISECOND, 0);
+        // ב-Calendar חודשים מתחילים מ-0, לכן ממירים חודש רגיל לחודש של Calendar
+        int calendarMonth = month - 1;
+        taskDate.set(year, calendarMonth, day, 0, 0, 0);
+        taskDate.set(Calendar.MILLISECOND, 0);
 
-        long diff = calTask.getTimeInMillis() - calToday.getTimeInMillis();
-        long millisInDay = (long) HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLIS_IN_SECOND;
-        return diff / millisInDay;
+        Calendar today = Calendar.getInstance();
+
+        // מאפסים את השעה כדי להשוות לפי תאריך בלבד
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        // מחשבים את ההפרש בין תאריך המשימה לבין היום במילישניות
+        long differenceMillis = taskDate.getTimeInMillis() - today.getTimeInMillis();
+
+        // מספר הימים שנשארו עד תאריך היעד
+        long daysLeft = differenceMillis / MILLIS_IN_DAY;
+        return daysLeft;
     }
 
-    public static boolean isDueSoon(String date) {
-        long days = daysLeft(date);
+    // משימה נחשבת דחופה אם נשארו לה עד יומיים
+    public static boolean isDueSoon(String dueDate) {
+        long days = getDaysLeft(dueDate);
         return days >= 0 && days <= URGENT_THRESHOLD_DAYS;
     }
 
-    public static boolean isOverdue(String date) {
-        return daysLeft(date) < 0;
+    // משימה באיחור אם תאריך היעד כבר עבר
+    public static boolean isOverdue(String dueDate) {
+        return getDaysLeft(dueDate) < 0;
     }
 }

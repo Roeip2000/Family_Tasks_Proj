@@ -28,19 +28,28 @@ public class ParentLoginFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        // יצירת התצוגה של Fragment ההתחברות מתוך קובץ ה-XML
         return inflater.inflate(R.layout.fragment_parent_login, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+
+        // חיבור רכיבי המסך מה-XML לקוד
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
 
+
+        // קבלת אובייקט FirebaseAuth לצורך התחברות ההורה
         firebaseAuth = FirebaseAuth.getInstance();
 
+        // לחיצה על הכפתור מפעילה ניסיון התחברות
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,7 +58,9 @@ public class ParentLoginFragment extends Fragment {
         });
     }
 
-    private void loginUser() {
+    private void loginUser()
+    {
+        // קבלת האימייל והסיסמה מהשדות
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
@@ -58,18 +69,26 @@ public class ParentLoginFragment extends Fragment {
             return;
         }
 
+        // מניעת לחיצה כפולה בזמן שההתחברות מתבצעת
         btnLogin.setEnabled(false);
 
+        // התחברות מול Firebase בעזרת אימייל וסיסמה
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
                 new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+
+                        if (task.isSuccessful())
+                        {
+                            // במקרה של הצלחה עוברים לדשבורד ההורה וסוגרים את מסך הכניסה
                             startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                             requireActivity().finish();
-                        } else {
+                        }
+                        else
+                        {
+                            // במקרה של כישלון מחזירים את הכפתור לפעיל ומציגים הודעה
                             btnLogin.setEnabled(true);
-                            Toast.makeText(requireContext(), "התחברות נכשלה", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.error_login_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

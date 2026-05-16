@@ -94,14 +94,14 @@
             android:nestedScrollingEnabled="false"
             tools:ignore="NestedScrolling" />
 
+        <!-- כפתור משני: חזרה לדשבורד -->
         <Button
             android:id="@+id/btnBackToDashboard"
-            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
             android:text="@string/btn_back_to_dashboard"
-            android:textColor="@color/secondary" />
+            android:textAllCaps="false" />
 
     </LinearLayout>
 </ScrollView>

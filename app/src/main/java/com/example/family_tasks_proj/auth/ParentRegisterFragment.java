@@ -39,8 +39,10 @@ public class ParentRegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // קבלת אובייקט FirebaseAuth לצורך הרשמת הורה
         firebaseAuth = FirebaseAuth.getInstance();
 
+        // חיבור רכיבי המסך מה-XML לקוד
         etFirstName = view.findViewById(R.id.etFirstName);
         etLastName = view.findViewById(R.id.etLastName);
         etEmail = view.findViewById(R.id.etEmail);
@@ -56,16 +58,19 @@ public class ParentRegisterFragment extends Fragment {
     }
 
     private void registerParent() {
+        // קבלת הנתונים שההורה כתב בטופס
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // בדיקה שלא נשלחים ל-Firebase שדות ריקים
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // בדיקה בסיסית לאורך הסיסמה לפני יצירת המשתמש
         if (password.length() < 6) {
             Toast.makeText(requireContext(), R.string.error_short_password, Toast.LENGTH_SHORT).show();
             return;
@@ -73,24 +78,31 @@ public class ParentRegisterFragment extends Fragment {
 
         btnRegister.setEnabled(false);
 
+        // יצירת חשבון התחברות ב-FirebaseAuth
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
                 new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //  אחרי יצירת המשתמש שומרים את פרטי ההורה במסד הנתונים
                             saveParentToDatabase(firstName, lastName, email);
                         } else {
                             btnRegister.setEnabled(true);
-                            Toast.makeText(requireContext(), "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.register_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void saveParentToDatabase(String firstName, String lastName, String email) {
+    private void saveParentToDatabase(String firstName, String lastName, String email)
+    {
+        // uid הוא המזהה הייחודי ש-FirebaseAuth נתן להורה החדש
         String uid = firebaseAuth.getUid();
+
+        // שמירת פרטי ההורה תחת parents/{uid}
         DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
 
+        // אריזת פרטי ההורה לשמירה אחת ב-Firebase
         HashMap<String, Object> parentData = new HashMap<>();
         parentData.put("uid", uid);
         parentData.put("firstName", firstName);
@@ -102,12 +114,12 @@ public class ParentRegisterFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
                 if (saveTask.isSuccessful()) {
+                    // אם השמירה הצליחה עוברים לדשבורד ההורה
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
                     requireActivity().finish();
-                } else
-                {
+                } else {
                     btnRegister.setEnabled(true);
-                    Toast.makeText(requireContext(), "שמירת נתונים נכשלה", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.save_parent_failed, Toast.LENGTH_SHORT).show();
                 }
             }
         });

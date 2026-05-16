@@ -40,22 +40,23 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     private final List<String> childIds = new ArrayList<>();
     private final List<TaskTemplate> taskTemplateList = new ArrayList<>();
-    private String currentParentUid;
+    private String parentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assign_task_to_child);
 
-        currentParentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        parentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         initViews();
         setupEvents();
-        
+
         loadTemplatesFromFirebase();
         loadChildrenFromFirebase();
     }
 
+    // חיבור רכיבי המסך מה-XML לקוד
     private void initViews() {
         etTaskTitle = findViewById(R.id.etTitle);
         etTaskDueDate = findViewById(R.id.etDueDate);
@@ -66,6 +67,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         btnGoBack = findViewById(R.id.btnBackToDashboard);
     }
 
+    // הגדרת הפעולות של הבחירות והכפתורים במסך
     private void setupEvents() {
         spinnerTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -100,15 +102,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // טוען את תבניות המשימה של ההורה מ-Firebase כדי להציג אותן ב-Spinner
+    // טעינת תבניות המשימה של ההורה מ-Firebase
     private void loadTemplatesFromFirebase()
     {
         getParentDbReference().child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskTemplateList.clear();
+                // titles מוצג ב-Spinner, והאובייקטים עצמם נשמרים ב-taskTemplateList
                 List<String> titles = new ArrayList<>();
-                // עוברים על כל התבניות שהתקבלו מ-Firebase
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
@@ -125,19 +127,19 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ב-Spinner
+                // Firebase מחייב מימוש, גם אם ריק
             }
         });
     }
 
-    // טוען ילדים מ-Firebase ושומר את ה-ID של כל אחד לצורך ההקצאה
+    // טעינת הילדים של ההורה מ-Firebase
     private void loadChildrenFromFirebase() {
         getParentDbReference().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
+                // childNames מוצג ב-Spinner, ו-childIds שומר את המזהים האמיתיים ל-Firebase
                 List<String> childNames = new ArrayList<>();
-                // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childIds.add(childSnapshot.getKey());
                     String firstName = childSnapshot.child("firstName").getValue(String.class);
@@ -148,11 +150,12 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ב-Spinner
+                // Firebase מחייב מימוש, גם אם ריק
             }
         });
     }
 
+    // יצירת משימה חדשה ושמירתה תחת הילד שנבחר
     private void assignTask() {
         String title = etTaskTitle.getText().toString().trim();
         String date = etTaskDueDate.getText().toString().trim();
@@ -164,20 +167,21 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
-        // יוצר מזהה (ID) למשימה חדשה תחת הילד שנבחר
+        // יצירת מיקום חדש למשימה תחת הילד שנבחר
         DatabaseReference newTaskRef = getParentDbReference()
                 .child("children").child(childIds.get(childPosition))
                 .child("tasks").push();
 
         int templatePosition = spinnerTemplates.getSelectedItemPosition();
         TaskTemplate selectedTemplate = taskTemplateList.get(templatePosition);
-        String img = selectedTemplate.getImageBase64();
+        String imageBase64 = selectedTemplate.getImageBase64();
 
+        // בניית אובייקט המשימה שנשמר ב-Firebase
         ChildTask newTask = new ChildTask();
         newTask.setTitle(title);
         newTask.setDueAt(date);
         newTask.setIsDone(false);
-        newTask.setImageBase64(img);
+        newTask.setImageBase64(imageBase64);
 
         // אחרי שהמשימה נשמרה ב-Firebase סוגרים את המסך וחוזרים לדשבורד
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -188,15 +192,19 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
+    // הצגת פרטי התבנית שנבחרה בטופס
     private void updateSelectedTemplateData(int position) {
         if (position >= 0 && position < taskTemplateList.size()) {
             TaskTemplate template = taskTemplateList.get(position);
             etTaskTitle.setText(template.getTitle());
+
+            // המרת תמונת Base64 חזרה ל-Bitmap כדי להציג אותה במסך
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
             if (bitmap != null) {
                 imageTaskPreview.setImageBitmap(bitmap);
             } else {
-                imageTaskPreview.setImageResource(R.drawable.ic_image_placeholder);
+                // אם אין תמונה אמיתית, משאירים את אזור התמונה ריק
+                imageTaskPreview.setImageDrawable(null);
             }
         }
     }
@@ -205,18 +213,21 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items));
     }
 
+    // פתיחת לוח שנה לבחירת תאריך יעד
     private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
         // פותח לוח שנה, וכשהמשתמש בוחר תאריך הוא נכתב בשדה התאריך
         new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
+                // DatePicker מחזיר חודש מ-0, לכן מוסיפים 1 לפני ההצגה
                 etTaskDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
+    // מחזיר את מיקום ההורה המחובר ב-Firebase
     private DatabaseReference getParentDbReference() {
-        return FirebaseDatabase.getInstance().getReference("parents").child(currentParentUid);
+        return FirebaseDatabase.getInstance().getReference("parents").child(parentId);
     }
 }
