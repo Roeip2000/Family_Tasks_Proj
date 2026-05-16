@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.models.ChildTask;
+import com.example.family_tasks_proj.utils.DateUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -98,10 +99,23 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDue = card.findViewById(R.id.tvDueDate);
+        TextView tvStatus = card.findViewById(R.id.tvStatus);
         Button btnDone = card.findViewById(R.id.btnDone);
 
         tvTitle.setText(task.getTitle());
         tvDue.setText(task.getDueAt());
+
+        // קביעת סטטוס המשימה (באיחור, דחוף או ממתין) לפי תאריך היעד
+        if (DateUtils.isOverdue(task.getDueAt())) {
+            tvStatus.setText(getString(R.string.parent_dashboard_task_status_late));
+            tvStatus.setTextColor(getColor(R.color.danger));
+        } else if (DateUtils.isDueSoon(task.getDueAt())) {
+            tvStatus.setText(getString(R.string.parent_dashboard_task_status_urgent));
+            tvStatus.setTextColor(getColor(R.color.urgent));
+        } else {
+            tvStatus.setText(getString(R.string.parent_dashboard_task_status_waiting));
+            tvStatus.setTextColor(getColor(R.color.text_secondary));
+        }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
