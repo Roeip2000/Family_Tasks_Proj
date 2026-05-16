@@ -34,7 +34,8 @@ public class ParentLoginFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
@@ -67,10 +68,6 @@ public class ParentLoginFragment extends Fragment {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
                 new OnCompleteListener<AuthResult>() {@Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded())
-                {
-                    return;
-                }
                 if (task.isSuccessful())
                 {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));

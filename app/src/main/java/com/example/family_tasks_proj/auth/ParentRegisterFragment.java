@@ -79,12 +79,8 @@ public class ParentRegisterFragment extends Fragment {
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
                 new OnCompleteListener<AuthResult>() {@Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!isAdded())
+                public void onComplete(@NonNull Task<AuthResult> task)
                 {
-                    return;
-                }
-                
                 if (task.isSuccessful())
                 {
                     saveParentToDatabase(firstName, lastName, email);
@@ -122,10 +118,6 @@ public class ParentRegisterFragment extends Fragment {
         {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask) {
-                if (!isAdded()) {
-                    return;
-                }
-
                 if (saveTask.isSuccessful())
                 {
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));
