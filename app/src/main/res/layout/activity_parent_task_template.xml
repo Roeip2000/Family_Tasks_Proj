@@ -112,16 +112,6 @@
                     android:textStyle="bold"
                     app:cornerRadius="16dp" />
 
-                <Button
-                    android:id="@+id/btnCancelEdit"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/btn_cancel_edit"
-                    android:visibility="gone"
-                    android:textColor="@color/error" />
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -144,17 +134,6 @@
             android:dividerHeight="0dp"
             android:nestedScrollingEnabled="false"
             tools:ignore="NestedScrolling" />
-
-        <TextView
-            android:id="@+id/tvNoTemplates"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:gravity="center"
-            android:text="@string/empty_no_templates"
-            android:textColor="@color/text_hint"
-            android:textSize="16sp"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnBackToDashboard"

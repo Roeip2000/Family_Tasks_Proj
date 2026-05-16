@@ -28,13 +28,14 @@ import java.util.List;
 
 public class ManageChildrenActivity extends AppCompatActivity {
 
-    private EditText etFirstName, etLastName;
-    private Button btnAdd, btnCancel, btnBack;
+    private EditText etFirstName;
+    private Button btnAdd, btnBack;
     private ListView lvChildren;
-    private TextView tvEmpty, tvTitle;
+    private TextView tvTitle;
 
-    private final List<ChildItem> childList = new ArrayList<>();
-    private ChildListAdapter listAdapter;
+    private final List<String> childIds = new ArrayList<>();
+    private final List<String> childNames = new ArrayList<>();
+    private ArrayAdapter<String> listAdapter;
     private String parentUserId;
     private String editChildId = null;
 
@@ -53,12 +54,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void initViews() {
         etFirstName = findViewById(R.id.etFirstName);
-        etLastName = findViewById(R.id.etLastName);
         btnAdd = findViewById(R.id.btnAddChild);
-        btnCancel = findViewById(R.id.btnCancelEdit);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvChildren = findViewById(R.id.lvChildren);
-        tvEmpty = findViewById(R.id.tvNoChildren);
         tvTitle = findViewById(R.id.tvFormTitle);
     }
 
@@ -67,12 +65,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveChildData();
-            }
-        });
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clearForm();
             }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +76,12 @@ public class ManageChildrenActivity extends AppCompatActivity {
     }
 
     private void setupList() {
-        listAdapter = new ChildListAdapter();
+        listAdapter = new ArrayAdapter<>(
+                this,
+                R.layout.item_manage_child,
+                R.id.tvChildFullName,
+                childNames
+        );
         lvChildren.setAdapter(listAdapter);
         lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,52 +91,50 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // קורא את רשימת הילדים מ-Firebase ומעדכן את ה-ListView בכל פעם שיש שינוי
+    // טעינת הילדים של ההורה מ-Firebase
     private void loadFromFirebase() {
         getChildrenReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                childList.clear();
-                // עוברים על כל הילדים שהתקבלו מ-Firebase
+                childIds.clear();
+                childNames.clear();
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String id = childSnapshot.getKey();
                     String first = childSnapshot.child("firstName").getValue(String.class);
-                    String last = childSnapshot.child("lastName").getValue(String.class);
-                    childList.add(new ChildItem(id, first, last));
+
+                    childIds.add(id);
+                    childNames.add(first);
                 }
                 updateUI();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Firebase דורש את הפעולה הזאת; במקרה של כישלון אין שינוי ברשימה
+                // Firebase מחייב מימוש, גם אם ריק
             }
         });
     }
 
     private void saveChildData() {
-        // קבלת הטקסט מהשדות ומחיקת רווחים מיותרים מהתחלה ומהסוף בעזרת trim
         String firstName = etFirstName.getText().toString().trim();
-        String lastName = etLastName.getText().toString().trim();
 
-        // מוודא שהמשתמש הזין שם מלא כדי לא לשמור נתונים חסרים ב-Firebase
-        if (firstName.isEmpty() || lastName.isEmpty()) {
+        if (firstName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         String childId;
-        if (editChildId != null) {
+        if (editChildId != null)
+        {
             childId = editChildId;
-        } else {
-            // יוצר מזהה (ID) ייחודי לילד חדש בעזרת push()
+        } else
+        {
+            // מזהה חדש לילד חדש
             childId = getChildrenReference().push().getKey();
         }
         DatabaseReference childNode = getChildrenReference().child(childId);
 
-        // שומר את פרטי הילד תחת ה-ID שלו
-        childNode.child("firstName").setValue(firstName);
-        childNode.child("lastName").setValue(lastName).addOnSuccessListener(new OnSuccessListener<Void>() {
+        childNode.child("firstName").setValue(firstName).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
@@ -151,25 +146,18 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private void clearForm() {
         editChildId = null;
         etFirstName.setText("");
-        etLastName.setText("");
         btnAdd.setText(R.string.btn_add_child);
-        btnCancel.setVisibility(View.GONE);
         tvTitle.setText(R.string.title_add_child);
     }
 
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
         fitListHeight(lvChildren);
-        if (childList.isEmpty()) {
-            tvEmpty.setVisibility(View.VISIBLE);
-        } else {
-            tvEmpty.setVisibility(View.GONE);
-        }
     }
 
-    private static final int DEFAULT_LIST_WIDTH = 500; // רוחב ברירת מחדל למדידת רשימה אם הרוחב עוד לא נקבע
+    private static final int DEFAULT_LIST_WIDTH = 500;
 
-    // מחשבים גובה ל-ListView כדי שכל השורות ייכנסו בתוך הגלילה של המסך
+    // מחשב גובה ל-ListView כדי שכל השורות יוצגו בתוך ה-ScrollView
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -179,7 +167,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         if (listWidth <= 0) {
             listWidth = DEFAULT_LIST_WIDTH;
         }
-        
+
         int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
 
         int totalHeight = 0;
@@ -196,67 +184,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     // לחיצה על ילד ברשימה טוענת את פרטיו לטופס לצורך עריכה
     private void startEditChild(int position) {
-        ChildItem selectedChild = childList.get(position);
-
-        editChildId = selectedChild.id;
-        etFirstName.setText(selectedChild.firstName);
-        etLastName.setText(selectedChild.lastName);
+        editChildId = childIds.get(position);
+        etFirstName.setText(childNames.get(position));
         btnAdd.setText(R.string.btn_update);
-        btnCancel.setVisibility(View.VISIBLE);
         tvTitle.setText(R.string.title_edit_child);
     }
 
     private DatabaseReference getChildrenReference() {
         return FirebaseDatabase.getInstance().getReference("parents").child(parentUserId).child("children");
-    }
-
-    // Adapter פשוט שמתרגם כל ילד לשורה ב-ListView
-    private class ChildListAdapter extends ArrayAdapter<ChildItem> {
-        ChildListAdapter() {
-            super(ManageChildrenActivity.this, 0, childList);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.item_manage_child, parent, false);
-            }
-            ChildItem childItem = getItem(position);
-            if (childItem != null) {
-                TextView tvChildFullName = convertView.findViewById(R.id.tvChildFullName);
-                tvChildFullName.setText(formatFullName(childItem.firstName, childItem.lastName));
-            }
-            return convertView;
-        }
-
-        private String formatFullName(String first, String last) {
-            String fullName = "";
-            if (first != null && !first.isEmpty()) {
-                fullName = first;
-            }
-            if (last != null && !last.isEmpty()) {
-                if (!fullName.isEmpty()) {
-                    fullName += " ";
-                }
-                fullName += last;
-            }
-            if (fullName.isEmpty())
-            {
-                return getString(R.string.default_child_name_fallback);
-            }
-            return fullName;
-        }
-    }
-
-    // מחלקת עזר קטנה לשמירת פרטי ילד ברשימה
-    private static class ChildItem {
-        String id, firstName, lastName;
-
-        ChildItem(String id, String f, String l) {
-            this.id = id;
-            this.firstName = f;
-            this.lastName = l;
-        }
     }
 }

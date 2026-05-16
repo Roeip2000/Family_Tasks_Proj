@@ -70,10 +70,10 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
                         for (DataSnapshot snap : snapshot.getChildren()) {
                             String id = snap.getKey();
-                            String fullName = buildFullName(snap);
+                            String childName = snap.child("firstName").getValue(String.class);
 
                             childIds.add(id);
-                            childNames.add(fullName);
+                            childNames.add(childName);
                         }
 
                         if (childIds.isEmpty()) {
@@ -94,23 +94,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
-    }
-
-    private String buildFullName(DataSnapshot snap) {
-        String firstName = snap.child("firstName").getValue(String.class);
-        String lastName = snap.child("lastName").getValue(String.class);
-
-        String fullName = "";
-
-        if (firstName != null) {
-            fullName += firstName;
-        }
-
-        if (lastName != null) {
-            fullName += " " + lastName;
-        }
-
-        return fullName;
     }
 
     private void onEnterClicked()

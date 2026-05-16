@@ -121,7 +121,7 @@
     <string name="label_due_date">תאריך יעד</string>
     <string name="hint_select_date">לחץ לבחירת תאריך</string>
     <string name="title_manage_children">ניהול ילדים</string>
-    <string name="subtitle_manage_children">הוסף, ערוך או מחק ילדים מהמשפחה</string>
+    <string name="subtitle_manage_children">הוסף או ערוך ילדים מהמשפחה</string>
     <string name="title_children_list">רשימת הילדים</string>
     <string name="empty_no_children_management">טרם נוספו ילדים למשפחה</string>
     <string name="title_task_templates">תבניות משימה</string>
