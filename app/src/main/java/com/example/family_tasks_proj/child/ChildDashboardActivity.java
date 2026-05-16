@@ -36,7 +36,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private String parentId, childId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 

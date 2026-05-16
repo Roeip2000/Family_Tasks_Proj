@@ -1,6 +1,5 @@
 package com.example.family_tasks_proj.parent;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
@@ -91,7 +89,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                openOptions(position);
+                startEditChild(position);
             }
         });
     }
@@ -150,16 +148,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    private void delete(String childId) {
-        getChildrenReference().child(childId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused)
-            {
-                Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_deleted, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void clearForm() {
         editChildId = null;
         etFirstName.setText("");
@@ -206,28 +194,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
     }
 
-    private void openOptions(int position) {
-        final ChildItem selectedChild = childList.get(position);
-        String[] options = {
-                getString(R.string.dialog_option_edit),
-                getString(R.string.dialog_option_delete)
-        };
-        new AlertDialog.Builder(this).setTitle(selectedChild.firstName).setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    // טוען את פרטי הילד לטופס כדי לאפשר עריכה של ילד קיים
-                    editChildId = selectedChild.id;
-                    etFirstName.setText(selectedChild.firstName);
-                    etLastName.setText(selectedChild.lastName);
-                    btnAdd.setText(R.string.btn_update);
-                    btnCancel.setVisibility(View.VISIBLE);
-                    tvTitle.setText(R.string.title_edit_child);
-                } else {
-                    delete(selectedChild.id);
-                }
-            }
-        }).setNegativeButton(R.string.dialog_cancel, null).show();
+    // לחיצה על ילד ברשימה טוענת את פרטיו לטופס לצורך עריכה
+    private void startEditChild(int position) {
+        ChildItem selectedChild = childList.get(position);
+
+        editChildId = selectedChild.id;
+        etFirstName.setText(selectedChild.firstName);
+        etLastName.setText(selectedChild.lastName);
+        btnAdd.setText(R.string.btn_update);
+        btnCancel.setVisibility(View.VISIBLE);
+        tvTitle.setText(R.string.title_edit_child);
     }
 
     private DatabaseReference getChildrenReference() {
