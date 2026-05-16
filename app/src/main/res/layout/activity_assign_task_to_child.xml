@@ -40,12 +40,24 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
+        <!-- הסבר קצר: ה-Spinner מאפשר להחליף בין התבניות -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/hint_change_template"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
         <Spinner
             android:id="@+id/spTemplates"
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_repository_list" />
+            android:background="@drawable/bg_spinner"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown" />
 
         <!-- אזור קבוע לתמונת התבנית -->
         <ImageView
@@ -94,7 +106,10 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_repository_list" />
+            android:background="@drawable/bg_spinner"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown" />
 
         <!-- תאריך יעד -->
         <TextView
