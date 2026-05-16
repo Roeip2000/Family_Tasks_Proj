@@ -1,12 +1,9 @@
 package com.example.family_tasks_proj.child;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
 import com.example.family_tasks_proj.models.ChildTask;
-import com.example.family_tasks_proj.utils.DateUtils;
-import com.example.family_tasks_proj.utils.ImageHelper;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,68 +91,13 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private static final int DAYS_IN_WEEK = 7;
-
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDue = card.findViewById(R.id.tvDueDate);
         Button btnDone = card.findViewById(R.id.btnDone);
-        View dotView = card.findViewById(R.id.viewStatusDot);
-        View imgShell = card.findViewById(R.id.imgTaskImageShell);
-        ImageView imgTask = card.findViewById(R.id.imgTaskImage);
 
         tvTitle.setText(task.getTitle());
-
-        long days = DateUtils.daysLeft(task.getDueAt());
-        boolean overdue = DateUtils.isOverdue(task.getDueAt());
-        boolean dueSoon = DateUtils.isDueSoon(task.getDueAt());
-
-        String dueText;
-        if (overdue) {
-            int absoluteDays = (int) (-days);
-            dueText = getString(R.string.child_due_late, absoluteDays);
-        } else if (days == 0) {
-            dueText = getString(R.string.child_due_today);
-        } else if (days == 1) {
-            dueText = getString(R.string.child_due_tomorrow);
-        } else if (days <= DAYS_IN_WEEK) {
-            dueText = getString(R.string.child_due_days_left, (int) days);
-        } else {
-            dueText = task.getDueAt();
-        }
-        tvDue.setText(dueText);
-
-        int dueColor;
-        int dotColor;
-        if (overdue) {
-            dueColor = R.color.danger;
-            dotColor = R.color.danger;
-        } else if (dueSoon) {
-            dueColor = R.color.urgent;
-            dotColor = R.color.urgent;
-        } else {
-            dueColor = R.color.text_secondary;
-            dotColor = R.color.text_hint;
-        }
-        tvDue.setTextColor(getColor(dueColor));
-
-        GradientDrawable dot = new GradientDrawable();
-        dot.setShape(GradientDrawable.OVAL);
-        dot.setColor(getColor(dotColor));
-        dotView.setBackground(dot);
-
-        String imageBase64 = task.getImageBase64();
-        if (imageBase64 != null && !imageBase64.trim().isEmpty()) {
-            Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
-            if (bitmap != null) {
-                imgShell.setVisibility(View.VISIBLE);
-                imgTask.setImageBitmap(bitmap);
-            } else {
-                imgShell.setVisibility(View.GONE);
-            }
-        } else {
-            imgShell.setVisibility(View.GONE);
-        }
+        tvDue.setText(task.getDueAt());
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +107,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         });
     }
 
+    // מסמן את המשימה כבוצעה: מעדכן ב-Firebase את isDone ל-true.
     private void processMarkTaskAsDone(final ChildTask task) {
         childRef().child("tasks").child(task.getId()).child("isDone").setValue(true);
     }
