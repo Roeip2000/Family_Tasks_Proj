@@ -38,7 +38,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private ImageView imageTaskPreview;
     private Button btnAssignTask, btnGoBack;
 
-    private final List<String> childUserIdList = new ArrayList<>();
+    private final List<String> childIds = new ArrayList<>();
     private final List<TaskTemplate> taskTemplateList = new ArrayList<>();
     private String currentParentUid;
 
@@ -88,7 +88,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         btnAssignTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                confirmAndAssign();
+                assignTask();
             }
         });
 
@@ -135,17 +135,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         getParentDbReference().child("children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                childUserIdList.clear();
+                childIds.clear();
                 List<String> childNames = new ArrayList<>();
                 // עוברים על כל הילדים שהתקבלו מ-Firebase
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                    childUserIdList.add(childSnapshot.getKey());
+                    childIds.add(childSnapshot.getKey());
                     String firstName = childSnapshot.child("firstName").getValue(String.class);
-                    if (firstName != null) {
-                        childNames.add(firstName);
-                    } else {
-                        childNames.add(getString(R.string.default_child_name_fallback));
-                    }
+                    childNames.add(firstName);
                 }
                 fillSpinner(spinnerChildren, childNames);
             }
@@ -157,36 +153,25 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    private void confirmAndAssign() {
+    private void assignTask() {
         String title = etTaskTitle.getText().toString().trim();
         String date = etTaskDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
-        // בודקים שכל השדות מולאו ושנבחר ילד מהרשימה
-        if (title.isEmpty() || date.isEmpty() || childPosition < 0 || childPosition >= childUserIdList.size()) {
+        // בודקים שהוזנו כותרת ותאריך
+        if (title.isEmpty() || date.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // יוצר מזהה (ID) למשימה חדשה תחת הילד שנבחר
         DatabaseReference newTaskRef = getParentDbReference()
-                .child("children").child(childUserIdList.get(childPosition))
+                .child("children").child(childIds.get(childPosition))
                 .child("tasks").push();
 
-        TaskTemplate selectedTemplate;
         int templatePosition = spinnerTemplates.getSelectedItemPosition();
-        if (templatePosition >= 0 && templatePosition < taskTemplateList.size()) {
-            selectedTemplate = taskTemplateList.get(templatePosition);
-        } else {
-            selectedTemplate = null;
-        }
-
-        String img;
-        if (selectedTemplate != null) {
-            img = selectedTemplate.getImageBase64();
-        } else {
-            img = "";
-        }
+        TaskTemplate selectedTemplate = taskTemplateList.get(templatePosition);
+        String img = selectedTemplate.getImageBase64();
 
         ChildTask newTask = new ChildTask();
         newTask.setTitle(title);
