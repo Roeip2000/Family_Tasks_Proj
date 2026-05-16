@@ -32,7 +32,8 @@ public class ChildQRLoginFragment extends Fragment {
                 public void onActivityResult(Boolean granted) {
                     if (granted) {
                         launchScanner();
-                    } else {
+                    } else
+                    {
                         Toast.makeText(requireContext(), R.string.child_qr_camera_denied, Toast.LENGTH_LONG).show();
                     }
                 }

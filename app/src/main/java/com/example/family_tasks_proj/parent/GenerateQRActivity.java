@@ -18,7 +18,8 @@ public class GenerateQRActivity extends AppCompatActivity {
     private ImageView imageViewQrCode;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_qr);
 
@@ -38,16 +39,19 @@ public class GenerateQRActivity extends AppCompatActivity {
     private static final int QR_CODE_SIZE = 800;
 
     // ה-QR מכיל את מזהה ההורה המחובר
-    private void generateParentQR(String parentId) {
+    private void generateParentQR(String parentId)
+    {
         String payload = parentId;
 
         try {
+
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(
-                    payload, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
+
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(payload, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE);
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
+
         } catch (Exception exception) {
             imageViewQrCode.setVisibility(View.GONE);
         }
