@@ -37,9 +37,9 @@ public class GenerateQRActivity extends AppCompatActivity {
 
     private static final int QR_CODE_SIZE = 800;
 
-    // מייצר QR שמכיל את מזהה ההורה (UID) כדי שהילד יוכל לסרוק ולהתחבר
+    // ה-QR מכיל את מזהה ההורה המחובר
     private void generateParentQR(String parentId) {
-        String payload = "parent:" + parentId;
+        String payload = parentId;
 
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
