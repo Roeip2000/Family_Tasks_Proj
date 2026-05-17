@@ -164,8 +164,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         task.setChildName(childName);
                         task.setTitle(taskSnapshot.child("title").getValue(String.class));
                         task.setDueAt(taskSnapshot.child("dueAt").getValue(String.class));
+                        // קריאת תמונת המשימה כדי להציג אותה רק בדשבורד של ההורה
                         task.setImageBase64(taskSnapshot.child("imageBase64").getValue(String.class));
-
                         Boolean isDone = taskSnapshot.child("isDone").getValue(Boolean.class);
                         task.setIsDone(isDone != null && isDone);
 

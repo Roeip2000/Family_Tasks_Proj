@@ -22,7 +22,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- תמונת משימה קטנה גם להורה -->
             <FrameLayout
                 android:id="@+id/imgTaskParentShell"
                 android:layout_width="50dp"

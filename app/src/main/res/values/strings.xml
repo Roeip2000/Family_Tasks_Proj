@@ -70,6 +70,8 @@
     <string name="save_parent_failed">שמירת נתונים נכשלה</string>
     <string name="error_action_failed">הפעולה נכשלה</string>
     <string name="error_login_failed">התחברות נכשלה</string>
+    <string name="empty_no_children_assign">אין ילדים רשומים. הוסף ילד לפני הקצאת משימה</string>
+    <string name="empty_no_templates_assign">אין תבניות משימה. צור תבנית לפני הקצאת משימה</string>
 
     <!-- דיאלוג סיום משימה -->
     <string name="dialog_task_done_title">סיום משימה</string>
@@ -148,7 +150,7 @@
     <string name="stat_urgent_short">דחופות</string>
     <string name="stat_overdue_short">באיחור</string>
     <string name="stat_done_short">בוצעו</string>
-    <string name="empty_tasks_filter">אין משימות בקטגוריה זו</string>
+    <string name="empty_tasks_filter">אין משימות פתוחות כרגע</string>
     <string name="empty_parent_open_tasks">אין משימות פתוחות כרגע</string>
     <string name="manage_child_hint">לחץ לניהול ועריכה</string>
 </resources>

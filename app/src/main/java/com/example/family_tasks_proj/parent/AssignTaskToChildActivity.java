@@ -65,6 +65,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         imageTaskPreview = findViewById(R.id.imgTaskPreview);
         btnAssignTask = findViewById(R.id.btnAssign);
         btnGoBack = findViewById(R.id.btnBackToDashboard);
+
+        // הכפתור לא פעיל עד שיש גם ילדים וגם תבניות
+        btnAssignTask.setEnabled(false);
+    }
+
+    // מפעיל את כפתור ההקצאה רק אם נטענו גם ילדים וגם תבניות
+    private void refreshAssignButtonState() {
+        btnAssignTask.setEnabled(!childIds.isEmpty() && !taskTemplateList.isEmpty());
     }
 
     // הגדרת הפעולות של הבחירות והכפתורים במסך
@@ -123,6 +131,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 if (!taskTemplateList.isEmpty()) {
                     updateSelectedTemplateData(0);
                 }
+                refreshAssignButtonState();
             }
 
             @Override
@@ -146,6 +155,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     childNames.add(firstName);
                 }
                 fillSpinner(spinnerChildren, childNames);
+                refreshAssignButtonState();
             }
 
             @Override
@@ -167,22 +177,33 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             return;
         }
 
+        // אם אין ילדים רשומים אי אפשר להקצות משימה
+        if (childIds.isEmpty()) {
+            Toast.makeText(this, R.string.empty_no_children_assign, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // אם אין תבניות משימה אי אפשר להקצות משימה
+        if (taskTemplateList.isEmpty()) {
+            Toast.makeText(this, R.string.empty_no_templates_assign, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // יצירת מיקום חדש למשימה תחת הילד שנבחר
         DatabaseReference newTaskRef = getParentDbReference()
                 .child("children").child(childIds.get(childPosition))
                 .child("tasks").push();
 
-        int templatePosition = spinnerTemplates.getSelectedItemPosition();
-        TaskTemplate selectedTemplate = taskTemplateList.get(templatePosition);
+        TaskTemplate selectedTemplate = taskTemplateList.get(spinnerTemplates.getSelectedItemPosition());
         String imageBase64 = selectedTemplate.getImageBase64();
 
         // בניית אובייקט המשימה שנשמר ב-Firebase
         ChildTask newTask = new ChildTask();
         newTask.setTitle(title);
         newTask.setDueAt(date);
-        newTask.setIsDone(false);
+        // שמירת תמונת התבנית במשימה כדי שההורה יוכל לראות אותה בדשבורד
         newTask.setImageBase64(imageBase64);
-
+        newTask.setIsDone(false);
         // אחרי שהמשימה נשמרה ב-Firebase סוגרים את המסך וחוזרים לדשבורד
         newTaskRef.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

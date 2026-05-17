@@ -18,19 +18,16 @@ import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
-// Adapter שמציג את משימות ההורה בתוך RecyclerView
 public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
     private final Context context;
     private final List<AssignedTask> items;
 
-    // קבלת רשימת המשימות שתוצג בדשבורד
     public ParentDashboardTaskAdapter(Context context, List<AssignedTask> items) {
         this.context = context;
         this.items = items;
     }
 
-    // יצירת כרטיס משימה מתוך קובץ XML
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,40 +35,37 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return new TaskViewHolder(view);
     }
 
-    // הכנסת נתוני משימה אחת לתוך הכרטיס
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         AssignedTask task = items.get(position);
 
         holder.tvTitle.setText(task.getTitle());
         holder.tvOwner.setText(context.getString(R.string.task_assigned_to, task.getChildName()));
-
         showTaskImage(holder, task);
-
         holder.tvDue.setText(task.getDueAt());
         holder.tvStatus.setText(getStatusText(task));
     }
 
-    // הצגת תמונת המשימה אם קיימת
+    // הצגת תמונת המשימה רק בכרטיסי הדשבורד של ההורה
     private void showTaskImage(TaskViewHolder holder, AssignedTask task) {
-        String base64Image = task.getImageBase64();
-        if (base64Image != null && !base64Image.isEmpty()) {
-            // התמונה נשמרת כ-Base64 ולכן ממירים אותה חזרה ל-Bitmap להצגה
-            Bitmap bitmap = ImageHelper.base64ToBitmap(base64Image);
-            if (bitmap != null) {
-                holder.imgShell.setVisibility(View.VISIBLE);
-                holder.imgTask.setImageBitmap(bitmap);
-            } else {
-                holder.imgShell.setVisibility(View.GONE);
-            }
-        } else {
+        String imageBase64 = task.getImageBase64();
+
+        if (imageBase64 == null || imageBase64.isEmpty()) {
             holder.imgShell.setVisibility(View.GONE);
+            return;
         }
+
+        Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
+        if (bitmap == null) {
+            holder.imgShell.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.imgShell.setVisibility(View.VISIBLE);
+        holder.imgTask.setImageBitmap(bitmap);
     }
 
-    // קביעת סטטוס המשימה לפי ביצוע ותאריך יעד
     private String getStatusText(AssignedTask task) {
-        // קודם בודקים אם המשימה בוצעה, ורק אחר כך בודקים תאריך
         if (task.getIsDone()) {
             return context.getString(R.string.parent_dashboard_task_status_done);
         } else if (DateUtils.isOverdue(task.getDueAt())) {
@@ -83,13 +77,11 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         }
     }
 
-    // מחזיר כמה משימות יש ברשימה
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-    // ViewHolder שומר הפניות לרכיבים של כרטיס משימה אחד
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
         View imgShell;

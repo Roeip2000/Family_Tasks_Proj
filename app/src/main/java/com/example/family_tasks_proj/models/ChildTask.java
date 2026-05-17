@@ -5,8 +5,8 @@ public class ChildTask {
     private String id;
     private String title;
     private String dueAt;
-    private boolean isDone;
     private String imageBase64;
+    private boolean isDone;
 
     public ChildTask() {
     }
@@ -35,6 +35,14 @@ public class ChildTask {
         this.dueAt = dueAt;
     }
 
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
     public boolean getIsDone() {
         return isDone;
     }
@@ -43,11 +51,4 @@ public class ChildTask {
         this.isDone = isDone;
     }
 
-    public String getImageBase64() {
-        return imageBase64;
-    }
-
-    public void setImageBase64(String imageBase64) {
-        this.imageBase64 = imageBase64;
-    }
 }

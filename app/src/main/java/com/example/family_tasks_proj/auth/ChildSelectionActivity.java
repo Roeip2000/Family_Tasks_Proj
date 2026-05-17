@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     private Spinner spinnerChildren;
     private Button btnEnter;
+    private TextView tvNoChildren;
 
     // שתי הרשימות נבנות באותו סדר: שם להצגה ומזהה אמיתי
     private final List<String> childIds = new ArrayList<>();
@@ -39,6 +42,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
         spinnerChildren = findViewById(R.id.spinnerChildren);
         btnEnter = findViewById(R.id.btnEnter);
+        tvNoChildren = findViewById(R.id.tvNoChildren);
 
         // קבלת מזהה ההורה שהגיע ממסך סריקת ה-QR
         parentId = getIntent().getStringExtra("parentId");
@@ -79,10 +83,16 @@ public class ChildSelectionActivity extends AppCompatActivity {
                             childNames.add(childName);
                         }
 
+                        // אם אין ילדים תחת ההורה הזה: מציגים הודעה ומסתירים את הבחירה
                         if (childIds.isEmpty()) {
+                            tvNoChildren.setVisibility(View.VISIBLE);
+                            spinnerChildren.setVisibility(View.GONE);
+                            btnEnter.setEnabled(false);
                             return;
                         }
 
+                        tvNoChildren.setVisibility(View.GONE);
+                        spinnerChildren.setVisibility(View.VISIBLE);
                         btnEnter.setEnabled(true);
 
                         // הצגת שמות הילדים ב-Spinner
@@ -106,6 +116,12 @@ public class ChildSelectionActivity extends AppCompatActivity {
     {
 
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
+
+        // לא ממשיכים בלי ילד נבחר תקין
+        if (selectedPosition < 0 || selectedPosition >= childIds.size()) {
+            Toast.makeText(this, R.string.empty_no_children_selection, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // לפי המיקום שנבחר ב-Spinner מוצאים את ה-id של הילד
         String childId = childIds.get(selectedPosition);
