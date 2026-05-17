@@ -8,14 +8,28 @@ public class DateUtils {
     private static final long MILLIS_IN_DAY = 24L * 60 * 60 * 1000;
     private static final int URGENT_THRESHOLD_DAYS = 2;
 
+    // ערך בטוח לתאריך לא תקין: גדול מ-URGENT_THRESHOLD_DAYS כדי שהמשימה לא תיחשב דחופה/באיחור
+    private static final long SAFE_DAYS_LEFT = Long.MAX_VALUE;
+
     // מחזיר כמה ימים נשארו עד תאריך היעד
     public static long getDaysLeft(String dueDate)
     {
-        // התאריך נשמר כמחרוזת בפורמט יום/חודש/שנה
-        String[] dateParts = dueDate.split("/");
-        int day = Integer.parseInt(dateParts[0]);
-        int month = Integer.parseInt(dateParts[1]);
-        int year = Integer.parseInt(dateParts[2]);
+        // בדיקת הגנה: תאריך חסר או לא תקין לא יגרום לקריסה
+        if (dueDate == null || dueDate.trim().isEmpty()) {
+            return SAFE_DAYS_LEFT;
+        }
+
+        int day, month, year;
+        try {
+            // התאריך נשמר כמחרוזת בפורמט יום/חודש/שנה
+            String[] dateParts = dueDate.split("/");
+            day = Integer.parseInt(dateParts[0].trim());
+            month = Integer.parseInt(dateParts[1].trim());
+            year = Integer.parseInt(dateParts[2].trim());
+        } catch (Exception exception) {
+            // בדיקת הגנה: תאריך חסר או לא תקין לא יגרום לקריסה
+            return SAFE_DAYS_LEFT;
+        }
 
         Calendar taskDate = Calendar.getInstance();
 

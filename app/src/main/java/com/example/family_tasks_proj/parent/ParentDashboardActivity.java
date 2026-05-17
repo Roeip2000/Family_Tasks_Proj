@@ -42,51 +42,24 @@ public class ParentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
 
-        initViews();
-        setupActions();
-        setupLists();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-
-        // מחזור חיים: בכל חזרה למסך בודקים אם ההורה עדיין מחובר.
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null)
-        {
-            loadData(user);
-        }
-        else
-        {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
-    }
-
-    // חיבור רכיבי המסך מה-XML לקוד.
-    private void initViews()
-    {
+        // חיבור רכיבי המסך מה-XML לקוד
         tvTotal = findViewById(R.id.tvParentTotalTasks);
         tvDone = findViewById(R.id.tvParentCompleted);
         tvUrgent = findViewById(R.id.tvParentDueSoon);
         tvOverdue = findViewById(R.id.tvParentOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasks);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
-        tvTaskSectionTitle.setText(R.string.parent_filter_open);
         rvTasks = findViewById(R.id.rvTasks);
 
         btnManageChildren = findViewById(R.id.btnManageChildren);
         btnManageTemplates = findViewById(R.id.btnManageTemplates);
         btnAssignTask = findViewById(R.id.btnAssignTaskToChild);
         btnQR = findViewById(R.id.btnShowQR);
-    }
 
-    // הגדרת כפתורי המעבר למסכים האחרים.
-    private void setupActions()
-    {
+        // קביעת כותרת מקטע המשימות
+        tvTaskSectionTitle.setText(R.string.parent_filter_open);
+
+        // הגדרת כפתורי המעבר למסכי ההורה
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -118,14 +91,30 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
             }
         });
-    }
 
-    // הכנת RecyclerView להצגת המשימות הפתוחות.
-    private void setupLists()
-    {
+        // הכנת רשימת המשימות הפתוחות
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, openTasks);
         rvTasks.setAdapter(taskAdapter);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // מחזור חיים: בכל חזרה למסך בודקים אם ההורה עדיין מחובר.
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null)
+        {
+            loadData(user);
+        }
+        else
+        {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 
     private void loadData(FirebaseUser user)

@@ -71,6 +71,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 // מעבר על כל המשימות ושמירת רק המשימות שעדיין פתוחות
                 for (DataSnapshot taskSnapshot : snapshot.getChildren()) {
                     ChildTask task = taskSnapshot.getValue(ChildTask.class);
+                    // בדיקת הגנה: אם Firebase החזיר משימה לא תקינה, מדלגים כדי למנוע קריסה
+                    if (task == null) {
+                        continue;
+                    }
                     task.setId(taskSnapshot.getKey());
 
                     if (!task.getIsDone())
