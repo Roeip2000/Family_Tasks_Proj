@@ -31,7 +31,8 @@ public class ParentRegisterFragment extends Fragment {
     private Button btnRegister;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         return inflater.inflate(R.layout.fragment_parent_register, container, false);
     }
 
@@ -51,9 +52,7 @@ public class ParentRegisterFragment extends Fragment {
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                registerParent();
-            }
+            public void onClick(View view) {registerParent();}
         });
     }
 
@@ -112,7 +111,8 @@ public class ParentRegisterFragment extends Fragment {
 
         parentRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> saveTask) {
+            public void onComplete(@NonNull Task<Void> saveTask)
+            {
                 if (saveTask.isSuccessful()) {
                     // אם השמירה הצליחה עוברים לדשבורד ההורה
                     startActivity(new Intent(requireActivity(), ParentDashboardActivity.class));

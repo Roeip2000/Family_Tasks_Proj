@@ -23,7 +23,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- כרטיס סיכום: 4 פילטרים שלוחצים עליהם להצגת קבוצת משימות -->
+        <!-- כרטיס סיכום: מונים של המשימות בכל המצבים -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:orientation="horizontal"
                 android:padding="8dp">
 
-                <!-- פילטר: משימות פתוחות -->
+                <!-- מונה: משימות פתוחות -->
                 <LinearLayout
                     android:id="@+id/containerFilterOpen"
                     android:layout_width="0dp"
@@ -64,7 +64,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- פילטר: משימות דחופות -->
+                <!-- מונה: משימות דחופות -->
                 <LinearLayout
                     android:id="@+id/containerFilterUrgent"
                     android:layout_width="0dp"
@@ -89,7 +89,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- פילטר: משימות באיחור -->
+                <!-- מונה: משימות באיחור -->
                 <LinearLayout
                     android:id="@+id/containerFilterOverdue"
                     android:layout_width="0dp"
@@ -114,7 +114,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- פילטר: משימות שבוצעו -->
+                <!-- מונה: משימות שבוצעו -->
                 <LinearLayout
                     android:id="@+id/containerFilterCompleted"
                     android:layout_width="0dp"
@@ -193,7 +193,7 @@
                 app:strokeColor="@color/border_strong" />
         </GridLayout>
 
-        <!-- רשימת משימות עם כותרת שמשתנה לפי הפילטר הפעיל -->
+        <!-- רשימת המשימות הפתוחות למעקב -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -204,7 +204,7 @@
                 android:id="@+id/tvTaskSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/parent_filter_all"
+                android:text="@string/parent_filter_open"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -216,7 +216,7 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:padding="40dp"
-                android:text="@string/empty_tasks_filter"
+                android:text="@string/empty_parent_open_tasks"
                 android:textColor="@color/text_secondary"
                 android:visibility="gone" />
 

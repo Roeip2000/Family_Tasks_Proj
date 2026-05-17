@@ -97,8 +97,8 @@
     <string name="filter_label_open">משימות פתוחות</string>
 
     <!-- טקסטים למסכי הורה -->
-    <string name="parent_filter_all">כל המשימות</string>
-    <string name="parent_filter_open">משימות פתוחות</string>
+    <string name="parent_filter_all">משימות פתוחות למעקב</string>
+    <string name="parent_filter_open">משימות פתוחות למעקב</string>
     <string name="parent_filter_urgent">משימות דחופות</string>
     <string name="parent_filter_overdue">משימות באיחור</string>
     <string name="parent_filter_completed">משימות שהושלמו</string>
@@ -149,5 +149,6 @@
     <string name="stat_overdue_short">באיחור</string>
     <string name="stat_done_short">בוצעו</string>
     <string name="empty_tasks_filter">אין משימות בקטגוריה זו</string>
+    <string name="empty_parent_open_tasks">אין משימות פתוחות כרגע</string>
     <string name="manage_child_hint">לחץ לניהול ועריכה</string>
 </resources>

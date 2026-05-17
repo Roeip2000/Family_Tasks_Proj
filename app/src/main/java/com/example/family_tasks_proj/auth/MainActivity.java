@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        int id = view.getId();
 
 
-        if (id == R.id.btnRegister) {
+        if (id == R.id.btnRegister)
+        {
             showFragment(new ParentRegisterFragment(), true);
         } else if (id == R.id.btnLogin) {
             showFragment(new ParentLoginFragment(), true);
