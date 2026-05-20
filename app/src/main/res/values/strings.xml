@@ -101,7 +101,7 @@
 
     <!-- טקסטים למסכי הורה -->
     <string name="parent_filter_all">משימות פתוחות למעקב</string>
-    <string name="parent_filter_open">משימות פתוחות למעקב</string>
+    <string name="parent_open_tasks_title">משימות פתוחות למעקב</string>
     <string name="parent_filter_urgent">משימות דחופות</string>
     <string name="parent_filter_overdue">משימות באיחור</string>
     <string name="parent_filter_completed">משימות שהושלמו</string>

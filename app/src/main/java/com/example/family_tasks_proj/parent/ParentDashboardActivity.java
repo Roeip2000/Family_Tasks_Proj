@@ -42,7 +42,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parent_dashboard);
 
         // חיבור רכיבי המסך מה-XML לקוד
-        tvParentGreeting = findViewById(R.id.tvParentGreeting);
+        tvParentGreeting = findViewById(R.id.tvParentName);
+        tvParentGreeting.setText(R.string.parent_greeting);
         tvTotal = findViewById(R.id.tvParentTotalTasks);
         tvDone = findViewById(R.id.tvParentCompleted);
         tvUrgent = findViewById(R.id.tvParentDueSoon);
@@ -57,7 +58,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnQR = findViewById(R.id.btnShowQR);
 
         // קביעת כותרת מקטע המשימות
-        tvTaskSectionTitle.setText(R.string.parent_filter_open);
+        tvTaskSectionTitle.setText(R.string.parent_open_tasks_title);
 
         // הגדרת כפתורי המעבר למסכי ההורה
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +109,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         if (user != null)
         {
-            loadProfile(user);
+            // טעינת נתוני המשימות בכל חזרה למסך
             loadData(user);
         }
         else
@@ -116,36 +117,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
-    }
-
-    private void loadProfile(FirebaseUser user)
-    {
-        tvParentGreeting.setText(R.string.parent_greeting);
-
-        // טעינת השם הפרטי מתוך profile
-        FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(user.getUid())
-                .child("profile")
-                .child("firstName")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot)
-                    {
-                        String firstName = snapshot.getValue(String.class);
-
-                        if (firstName != null && !firstName.trim().isEmpty())
-                        {
-                            tvParentGreeting.setText(getString(R.string.parent_greeting_with_name, firstName));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error)
-                    {
-                        tvParentGreeting.setText(R.string.parent_greeting);
-                    }
-                });
     }
 
     private void loadData(FirebaseUser user)

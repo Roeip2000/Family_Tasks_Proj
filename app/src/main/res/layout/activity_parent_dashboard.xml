@@ -15,7 +15,7 @@
 
         <!-- כותרת ברכה להורה -->
         <TextView
-            android:id="@+id/tvParentGreeting"
+            android:id="@+id/tvParentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -42,7 +42,7 @@
 
                 <!-- מונה: משימות פתוחות -->
                 <LinearLayout
-                    android:id="@+id/containerFilterOpen"
+                    android:id="@+id/containerSummaryOpen"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -67,7 +67,7 @@
 
                 <!-- מונה: משימות דחופות -->
                 <LinearLayout
-                    android:id="@+id/containerFilterUrgent"
+                    android:id="@+id/containerSummaryUrgent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -92,7 +92,7 @@
 
                 <!-- מונה: משימות באיחור -->
                 <LinearLayout
-                    android:id="@+id/containerFilterOverdue"
+                    android:id="@+id/containerSummaryOverdue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -117,7 +117,7 @@
 
                 <!-- מונה: משימות שבוצעו -->
                 <LinearLayout
-                    android:id="@+id/containerFilterCompleted"
+                    android:id="@+id/containerSummaryCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -205,7 +205,7 @@
                 android:id="@+id/tvTaskSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/parent_filter_open"
+                android:text="@string/parent_open_tasks_title"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
