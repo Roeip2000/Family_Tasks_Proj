@@ -31,7 +31,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     // רכיבי ממשק המשתמש (UI Elements)
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
-    private TextView tvParentGreeting, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvTaskSectionTitle;
+    private TextView tvParentGreeting, tvOpenTasksCount, tvDoneTasksCount, tvUrgentTasksCount, tvOverdueTasksCount, tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
 
     // רשימה שתכיל רק את המשימות הפתוחות (שטרם בוצעו) להצגה במסך
@@ -48,10 +48,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // חיבור רכיבי הדשבורד מה-XML לקוד (Binding)
         tvParentGreeting = findViewById(R.id.tvParentName);
         tvParentGreeting.setText(R.string.parent_greeting);
-        tvTotal = findViewById(R.id.tvParentTotalTasks);
-        tvDone = findViewById(R.id.tvParentCompleted);
-        tvUrgent = findViewById(R.id.tvParentDueSoon);
-        tvOverdue = findViewById(R.id.tvParentOverdue);
+        tvOpenTasksCount = findViewById(R.id.tvParentTotalTasks);
+        tvDoneTasksCount = findViewById(R.id.tvParentCompleted);
+        tvUrgentTasksCount = findViewById(R.id.tvParentDueSoon);
+        tvOverdueTasksCount = findViewById(R.id.tvParentOverdue);
         tvNoTasks = findViewById(R.id.tvNoTasks);
         tvTaskSectionTitle = findViewById(R.id.tvTaskSectionTitle);
         rvTasks = findViewById(R.id.rvTasks);
@@ -64,7 +64,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // קביעת כותרת למקטע המשימות הפתוחות
         tvTaskSectionTitle.setText(R.string.parent_open_tasks_title);
 
-        // כפתור למעבר למסך ניהול הילדים (הוספה ומחיקה של ילדים מהמשפחה)
+        // כפתור למעבר למסך ניהול הילדים (הוספה ועריכה של ילדים)
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -202,10 +202,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 }
 
                 // עדכון מספרי הסיכום בטקסטים שבראש המסך
-                tvTotal.setText(String.valueOf(openTasksCount));
-                tvDone.setText(String.valueOf(doneTasksCount));
-                tvUrgent.setText(String.valueOf(urgentTasksCount));
-                tvOverdue.setText(String.valueOf(overdueTasksCount));
+                tvOpenTasksCount.setText(String.valueOf(openTasksCount));
+                tvDoneTasksCount.setText(String.valueOf(doneTasksCount));
+                tvUrgentTasksCount.setText(String.valueOf(urgentTasksCount));
+                tvOverdueTasksCount.setText(String.valueOf(overdueTasksCount));
 
                 // אם אין משימות פתוחות בכלל, נציג הודעה מתאימה למשתמש
                 if (openTasks.isEmpty())

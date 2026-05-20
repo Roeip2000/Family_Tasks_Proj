@@ -28,8 +28,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 public class ChildQRLoginFragment extends Fragment {
 
-    private Button btnScanQR;
-
     // בקשת הרשאת מצלמה לפני פתיחת סורק ה-QR
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
@@ -60,7 +58,7 @@ public class ChildQRLoginFragment extends Fragment {
 
         // יצירת מסך ה-QR וחיבור כפתור הסריקה
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
-        btnScanQR = view.findViewById(R.id.btnScanQR);
+        Button btnScanQR = view.findViewById(R.id.btnScanQR);
 
         // לחיצה על הכפתור מתחילה את תהליך הסריקה
         btnScanQR.setOnClickListener(new View.OnClickListener() {

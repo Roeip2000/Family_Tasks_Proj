@@ -12,17 +12,15 @@ import com.example.family_tasks_proj.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnRegister, btnLogin, btnChildQR;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // חיבור רכיבי המסך מה-XML לקוד
-        btnRegister = findViewById(R.id.btnRegister);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnChildQR = findViewById(R.id.btnChildQR);
+        Button btnRegister = findViewById(R.id.btnRegister);
+        Button btnLogin = findViewById(R.id.btnLogin);
+        Button btnChildQR = findViewById(R.id.btnChildQR);
 
         // טוען את מסך ההתחברות כברירת מחדל
         if (savedInstanceState == null)
@@ -38,9 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view)
     {
-
-       int id = view.getId();
-
+        int id = view.getId();
 
         if (id == R.id.btnRegister)
         {
@@ -52,12 +48,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
-
     // מחליף את ה-Fragment שמוצג בתוך מסך הפתיחה
     private void showFragment(Fragment fragment, boolean addToBackStack)
     {
-
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, fragment);
