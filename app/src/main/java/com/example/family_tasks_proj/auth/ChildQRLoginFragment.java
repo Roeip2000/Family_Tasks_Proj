@@ -55,7 +55,6 @@ public class ChildQRLoginFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
         // יצירת מסך ה-QR וחיבור כפתור הסריקה
         View view = inflater.inflate(R.layout.fragment_child_q_r_login, container, false);
         Button btnScanQR = view.findViewById(R.id.btnScanQR);
@@ -91,7 +90,6 @@ public class ChildQRLoginFragment extends Fragment {
 
     private void handleQrScanResult(ScanIntentResult result) {
         String qrText = result.getContents();
-
 
         // אם המשתמש ביטל את הסריקה לא ממשיכים
         if (qrText == null) {

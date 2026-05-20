@@ -55,14 +55,12 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
     // מחזיר את המיקום של הילד ב-Firebase
     private DatabaseReference getChildReference() {
-
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
     // טעינת המשימות של הילד מ-Firebase
     private void loadChildTasks() {
-
         getChildReference().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

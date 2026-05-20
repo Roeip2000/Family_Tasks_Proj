@@ -43,7 +43,6 @@ public class GenerateQRActivity extends AppCompatActivity {
     private void generateParentQR(String parentId)
     {
         try {
-
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
 
             // יצירת תמונת QR שמכילה את מזהה ההורה
@@ -51,7 +50,6 @@ public class GenerateQRActivity extends AppCompatActivity {
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
-
         } catch (Exception exception) {
             imageViewQrCode.setVisibility(View.GONE);
         }

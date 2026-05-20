@@ -38,13 +38,10 @@ public class ParentLoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
         // חיבור רכיבי המסך מה-XML לקוד
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
-
 
         // קבלת אובייקט FirebaseAuth לצורך התחברות ההורה
         firebaseAuth = FirebaseAuth.getInstance();
@@ -77,7 +74,6 @@ public class ParentLoginFragment extends Fragment {
                 new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful())
                         {
                             // במקרה של הצלחה עוברים לדשבורד ההורה וסוגרים את מסך הכניסה
