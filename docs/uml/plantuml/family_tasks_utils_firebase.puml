@@ -44,7 +44,7 @@ ChildDashboardActivity ..> DateUtils
 
 note right of ParentRegisterFragment
 Writes the parent profile under
-/parents/{uid}:
+/parents/{uid}/profile:
 uid, firstName, lastName, email,
 role.
 end note
@@ -60,6 +60,8 @@ Reads children under
 end note
 
 note right of ParentDashboardActivity
+Reads /parents/{uid}/profile/firstName
+for the greeting.
 Reads all children and tasks under
 /parents/{uid}/children.
 end note

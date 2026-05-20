@@ -100,6 +100,7 @@ public class ParentRegisterFragment extends Fragment {
     {
         // uid הוא המזהה הייחודי ש-FirebaseAuth נתן להורה החדש
         String uid = firebaseAuth.getUid();
+
         if (uid == null) {
             btnRegister.setEnabled(true);
             Toast.makeText(requireContext(), R.string.save_parent_failed, Toast.LENGTH_SHORT).show();
@@ -107,9 +108,10 @@ public class ParentRegisterFragment extends Fragment {
         }
 
         // מיקום פרופיל ההורה במסד הנתונים
-        DatabaseReference parentRef = FirebaseDatabase.getInstance()
+        DatabaseReference profileRef = FirebaseDatabase.getInstance()
                 .getReference("parents")
-                .child(uid);
+                .child(uid)
+                .child("profile");
 
         // לא שומרים סיסמה ב-Realtime Database
         HashMap<String, Object> parentData = new HashMap<>();
@@ -119,7 +121,7 @@ public class ParentRegisterFragment extends Fragment {
         parentData.put("email", email);
         parentData.put("role", "parent");
 
-        parentRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
+        profileRef.setValue(parentData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> saveTask)
             {

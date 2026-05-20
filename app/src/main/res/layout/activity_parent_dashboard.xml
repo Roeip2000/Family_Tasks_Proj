@@ -15,10 +15,11 @@
 
         <!-- כותרת ברכה להורה -->
         <TextView
+            android:id="@+id/tvParentGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="@string/parent_hello_initial"
+            android:text="@string/parent_greeting"
             android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />

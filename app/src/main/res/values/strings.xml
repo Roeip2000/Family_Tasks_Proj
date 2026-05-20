@@ -147,6 +147,8 @@
     <string name="title_existing_templates">תבניות קיימות</string>
     <string name="empty_no_templates">טרם יצרת תבניות</string>
     <string name="parent_hello_initial">שלום הורה</string>
+    <string name="parent_greeting">שלום הורה</string>
+    <string name="parent_greeting_with_name">שלום %1$s</string>
     <string name="stat_open_short">פתוחות</string>
     <string name="stat_urgent_short">דחופות</string>
     <string name="stat_overdue_short">באיחור</string>

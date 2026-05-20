@@ -30,7 +30,7 @@ import java.util.List;
 public class ParentDashboardActivity extends AppCompatActivity {
 
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
-    private TextView tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvTaskSectionTitle;
+    private TextView tvParentGreeting, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
 
     private final List<AssignedTask> openTasks = new ArrayList<>();
@@ -42,6 +42,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parent_dashboard);
 
         // חיבור רכיבי המסך מה-XML לקוד
+        tvParentGreeting = findViewById(R.id.tvParentGreeting);
         tvTotal = findViewById(R.id.tvParentTotalTasks);
         tvDone = findViewById(R.id.tvParentCompleted);
         tvUrgent = findViewById(R.id.tvParentDueSoon);
@@ -107,6 +108,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         if (user != null)
         {
+            loadProfile(user);
             loadData(user);
         }
         else
@@ -114,6 +116,36 @@ public class ParentDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+    }
+
+    private void loadProfile(FirebaseUser user)
+    {
+        tvParentGreeting.setText(R.string.parent_greeting);
+
+        // טעינת השם הפרטי מתוך profile
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(user.getUid())
+                .child("profile")
+                .child("firstName")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        String firstName = snapshot.getValue(String.class);
+
+                        if (firstName != null && !firstName.trim().isEmpty())
+                        {
+                            tvParentGreeting.setText(getString(R.string.parent_greeting_with_name, firstName));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        tvParentGreeting.setText(R.string.parent_greeting);
+                    }
+                });
     }
 
     private void loadData(FirebaseUser user)
