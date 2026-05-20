@@ -18,6 +18,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -103,7 +107,28 @@ public class ChildQRLoginFragment extends Fragment {
             return;
         }
 
-        openChildSelection(parentId);
+        checkParentExists(parentId);
+    }
+
+    private void checkParentExists(String parentId) {
+        FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(parentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            openChildSelection(parentId);
+                        } else {
+                            Toast.makeText(requireContext(), R.string.error_action_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(requireContext(), R.string.error_action_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void openChildSelection(String parentId) {

@@ -28,7 +28,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private Button btnEnter;
     private TextView tvNoChildren;
 
-    // שתי הרשימות נבנות באותו סדר: שם להצגה ומזהה אמיתי
+    // שתי הרשימות נשמרות באותו סדר
     private final List<String> childIds = new ArrayList<>();
     private final List<String> childNames = new ArrayList<>();
 
@@ -44,25 +44,23 @@ public class ChildSelectionActivity extends AppCompatActivity {
         btnEnter = findViewById(R.id.btnEnter);
         tvNoChildren = findViewById(R.id.tvNoChildren);
 
-        // קבלת מזהה ההורה שהגיע ממסך סריקת ה-QR
+        // מזהה ההורה מגיע מסריקת ה-QR
         parentId = getIntent().getStringExtra("parentId");
-
-        btnEnter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onEnterClicked();
-            }
-        });
+        if (parentId == null || parentId.trim().isEmpty()) {
+            Toast.makeText(this, R.string.error_action_failed, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // הכפתור לא פעיל עד שהילדים נטענים
         btnEnter.setEnabled(false);
 
         loadChildren();
+        btnEnter.setOnClickListener(view -> onEnterClicked());
     }
 
-    // טעינת הילדים של ההורה מתוך Firebase
-    private
-    void loadChildren()
+    // טעינת הילדים של ההורה
+    private void loadChildren()
     {
         FirebaseDatabase.getInstance()
                 .getReference("parents")
@@ -76,14 +74,18 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         childNames.clear();
 
                         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                            String id = childSnapshot.getKey();
-                            String childName = childSnapshot.child("firstName").getValue(String.class);
+                            String childId = childSnapshot.getKey();
+                            String firstName = childSnapshot.child("firstName").getValue(String.class);
 
-                            childIds.add(id);
-                            childNames.add(childName);
+                            if (firstName == null || firstName.trim().isEmpty()) {
+                                firstName = getString(R.string.default_child_name_fallback);
+                            }
+
+                            childIds.add(childId);
+                            childNames.add(firstName);
                         }
 
-                        // אם אין ילדים תחת ההורה הזה: מציגים הודעה ומסתירים את הבחירה
+                        // אין ילדים להצגה
                         if (childIds.isEmpty()) {
                             tvNoChildren.setVisibility(View.VISIBLE);
                             spinnerChildren.setVisibility(View.GONE);
@@ -95,35 +97,36 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         spinnerChildren.setVisibility(View.VISIBLE);
                         btnEnter.setEnabled(true);
 
-                        // הצגת שמות הילדים ב-Spinner
+                        // הצגת שמות הילדים
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                                 ChildSelectionActivity.this,
-                                android.R.layout.simple_spinner_dropdown_item,
+                                android.R.layout.simple_spinner_item,
                                 childNames
                         );
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinnerChildren.setAdapter(adapter);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // Firebase מחייב לממש את הפעולה הזאת
+                        Toast.makeText(ChildSelectionActivity.this, R.string.error_load_db, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // מעבר לדשבורד של הילד שנבחר
+    // מעבר לדשבורד של הילד
     private void onEnterClicked()
     {
 
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
 
-        // לא ממשיכים בלי ילד נבחר תקין
+        // בדיקה שנבחר ילד תקין
         if (selectedPosition < 0 || selectedPosition >= childIds.size()) {
             Toast.makeText(this, R.string.empty_no_children_selection, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // לפי המיקום שנבחר ב-Spinner מוצאים את ה-id של הילד
+        // לפי המיקום ב-Spinner מוצאים את ה-id של הילד
         String childId = childIds.get(selectedPosition);
 
         Intent intent = new Intent(this, ChildDashboardActivity.class);

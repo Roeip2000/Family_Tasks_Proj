@@ -69,6 +69,7 @@
     <string name="register_failed">הרשמה נכשלה</string>
     <string name="save_parent_failed">שמירת נתונים נכשלה</string>
     <string name="error_action_failed">הפעולה נכשלה</string>
+    <string name="error_load_db">טעינת הנתונים נכשלה</string>
     <string name="error_login_failed">התחברות נכשלה</string>
     <string name="empty_no_children_assign">אין ילדים רשומים. הוסף ילד לפני הקצאת משימה</string>
     <string name="empty_no_templates_assign">אין תבניות משימה. צור תבנית לפני הקצאת משימה</string>

@@ -43,13 +43,15 @@ ParentTaskTemplateActivity ..> ImageHelper
 ChildDashboardActivity ..> DateUtils
 
 note right of ParentRegisterFragment
-Writes a new parent profile under
-/parents/{uid}.
+Writes the parent profile under
+/parents/{uid}:
+uid, firstName, lastName, email,
+role.
 end note
 
 note right of ChildQRLoginFragment
 Reads /parents/{parentId}
-to check that the QR belongs to an existing parent.
+and checks snapshot.exists() after QR scan.
 end note
 
 note right of ChildSelectionActivity

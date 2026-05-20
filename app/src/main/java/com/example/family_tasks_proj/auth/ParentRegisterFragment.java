@@ -82,11 +82,13 @@ public class ParentRegisterFragment extends Fragment {
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity(),
                 new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
                         if (task.isSuccessful()) {
-                            //  אחרי יצירת המשתמש שומרים את פרטי ההורה במסד הנתונים
+                            // אחרי יצירת המשתמש שומרים פרופיל הורה במסד הנתונים
                             saveParentToDatabase(firstName, lastName, email);
-                        } else {
+                        } else
+                        {
                             btnRegister.setEnabled(true);
                             Toast.makeText(requireContext(), R.string.register_failed, Toast.LENGTH_SHORT).show();
                         }
@@ -98,11 +100,18 @@ public class ParentRegisterFragment extends Fragment {
     {
         // uid הוא המזהה הייחודי ש-FirebaseAuth נתן להורה החדש
         String uid = firebaseAuth.getUid();
+        if (uid == null) {
+            btnRegister.setEnabled(true);
+            Toast.makeText(requireContext(), R.string.save_parent_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // שמירת פרטי ההורה תחת parents/{uid}
-        DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference("parents").child(uid);
+        // מיקום פרופיל ההורה במסד הנתונים
+        DatabaseReference parentRef = FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(uid);
 
-        // אריזת פרטי ההורה לשמירה אחת ב-Firebase
+        // לא שומרים סיסמה ב-Realtime Database
         HashMap<String, Object> parentData = new HashMap<>();
         parentData.put("uid", uid);
         parentData.put("firstName", firstName);
