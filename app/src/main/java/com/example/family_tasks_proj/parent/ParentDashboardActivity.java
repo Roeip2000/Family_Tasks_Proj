@@ -31,10 +31,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     // רכיבי ממשק המשתמש (UI Elements)
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
-    private TextView tvParentGreeting, tvOpenTasksCount, tvDoneTasksCount, tvUrgentTasksCount, tvOverdueTasksCount, tvNoTasks, tvTaskSectionTitle;
+    private TextView tvGreeting, tvOpenTasksCount, tvDoneTasksCount, tvUrgentTasksCount, tvOverdueTasksCount, tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
 
-    // רשימה שתכיל רק את המשימות הפתוחות (שטרם בוצעו) להצגה במסך
+    // רשימה שתכיל רק את המשימות הפתוחות להצגה במסך
     private final List<AssignedTask> openTasks = new ArrayList<>();
 
     // מתאם (Adapter) לקישור בין רשימת המשימות ל-RecyclerView
@@ -45,9 +45,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
 
-        // חיבור רכיבי הדשבורד מה-XML לקוד (Binding)
-        tvParentGreeting = findViewById(R.id.tvParentName);
-        tvParentGreeting.setText(R.string.parent_greeting);
+        // חיבור רכיבי הדשבורד מה-XML (Binding)
+        tvGreeting = findViewById(R.id.tvParentName);
+        tvGreeting.setText(R.string.parent_greeting);
         tvOpenTasksCount = findViewById(R.id.tvParentTotalTasks);
         tvDoneTasksCount = findViewById(R.id.tvParentCompleted);
         tvUrgentTasksCount = findViewById(R.id.tvParentDueSoon);
@@ -64,167 +64,136 @@ public class ParentDashboardActivity extends AppCompatActivity {
         // קביעת כותרת למקטע המשימות הפתוחות
         tvTaskSectionTitle.setText(R.string.parent_open_tasks_title);
 
-        // כפתור למעבר למסך ניהול הילדים (הוספה ועריכה של ילדים)
+        // כפתור למעבר למסך ניהול הילדים
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, ManageChildrenActivity.class));
             }
         });
 
-        // כפתור למעבר למסך ניהול תבניות (יצירת משימות קבועות מראש)
+        // כפתור למעבר למסך ניהול תבניות
         btnManageTemplates.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, ParentTaskTemplateActivity.class));
             }
         });
 
-        // כפתור למעבר למסך שיוך משימה (בחירת ילד ושליחת משימה אליו)
+        // כפתור למעבר למסך שיוך משימה לילד
         btnAssignTask.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, AssignTaskToChildActivity.class));
             }
         });
 
-        // כפתור למעבר למסך הפקת קוד QR (מאפשר לילד להתחבר לאפליקציה על ידי סריקה)
+        // כפתור למעבר למסך הפקת קוד QR
         btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
             }
         });
 
-        // הגדרת ה-RecyclerView: קביעת פריסה אנכית וחיבור המתאם (Adapter)
+        // הגדרת ה-RecyclerView וחיבור המתאם (Adapter)
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, openTasks);
         rvTasks.setAdapter(taskAdapter);
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
 
-        // בדיקה האם יש משתמש (הורה) מחובר כעת
+        // בדיקה האם ההורה מחובר
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null)
-        {
-            // אם המשתמש מחובר, נטען את הנתונים שלו מ-Firebase
-            loadData(user);
-        }
-        else
-        {
-            // אם אף אחד לא מחובר, נחזיר את המשתמש למסך הראשי/התחברות
+        if (user != null) {
+            loadData(user); // טעינת נתונים מה-Firebase
+        } else {
+            // אם לא מחובר, חזרה למסך הראשי
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
     }
 
     /**
-     * פונקציה הטוענת את כל נתוני הילדים והמשימות שלהם מה-Firebase
-     * ומעדכנת את רכיבי המסך בהתאם.
+     * טעינת נתוני הילדים והמשימות שלהם מה-Firebase
      */
-    private void loadData(FirebaseUser user)
-    {
-        // איפוס הרשימה והסתרת הודעת ה-"אין משימות" לפני טעינה חדשה
+    private void loadData(FirebaseUser user) {
+        // איפוס הרשימה לפני טעינה חדשה
         openTasks.clear();
         tvNoTasks.setVisibility(View.GONE);
         taskAdapter.notifyDataSetChanged();
 
-        // הפניה לנתיב ב-Firebase שבו שמורים הילדים של ההורה הנוכחי
+        // הפניה לנתיב הילדים של ההורה ב-Firebase
         DatabaseReference childrenReference = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(user.getUid())
                 .child("children");
 
-        // האזנה לשינויים בנתונים (קריאה חד פעמית של כל ענף הילדים)
+        // קריאה חד פעמית של נתוני הילדים
         childrenReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot)
-            {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 openTasks.clear();
 
-                // משתנים לספירת סטטיסטיקות עבור כרטיסי הסיכום בראש המסך
+                // מונים לסטטיסטיקות שמוצגות בראש המסך
                 int openTasksCount = 0;
                 int doneTasksCount = 0;
                 int urgentTasksCount = 0;
                 int overdueTasksCount = 0;
 
-                // מעבר על כל הילדים שנמצאו בנתיב
-                for (DataSnapshot childSnapshot : snapshot.getChildren())
-                {
+                // מעבר על כל הילדים
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String childName = childSnapshot.child("firstName").getValue(String.class);
                     DataSnapshot tasksSnapshot = childSnapshot.child("tasks");
 
-                    // מעבר על כל המשימות של כל ילד
-                    for (DataSnapshot taskSnapshot : tasksSnapshot.getChildren())
-                    {
+                    // מעבר על כל המשימות של הילד
+                    for (DataSnapshot taskSnapshot : tasksSnapshot.getChildren()) {
                         AssignedTask task = new AssignedTask();
 
                         task.setChildName(childName);
                         task.setTitle(taskSnapshot.child("title").getValue(String.class));
                         task.setDueAt(taskSnapshot.child("dueAt").getValue(String.class));
-
-                        // קריאת תמונת המשימה (בפורמט Base64) להצגה בדשבורד
                         task.setImageBase64(taskSnapshot.child("imageBase64").getValue(String.class));
                         
                         Boolean isDone = taskSnapshot.child("isDone").getValue(Boolean.class);
                         task.setIsDone(isDone != null && isDone);
 
-                        // בדיקה האם המשימה בוצעה או שהיא עדיין פתוחה
-                        if (task.getIsDone())
-                        {
+                        // ספירה ומיון המשימות
+                        if (task.getIsDone()) {
                             doneTasksCount++;
-                        }
-                        else
-                        {
+                        } else {
                             openTasksCount++;
-                            openTasks.add(task); // הוספה לרשימת התצוגה רק אם המשימה פתוחה
+                            openTasks.add(task); // הצגת משימות פתוחות בלבד
 
-                            // בדיקה האם המשימה באיחור או דחופה (לפי תאריך היעד)
-                            if (DateUtils.isOverdue(task.getDueAt()))
-                            {
+                            if (DateUtils.isOverdue(task.getDueAt())) {
                                 overdueTasksCount++;
-                            }
-                            else if (DateUtils.isDueSoon(task.getDueAt()))
-                            {
+                            } else if (DateUtils.isDueSoon(task.getDueAt())) {
                                 urgentTasksCount++;
                             }
                         }
                     }
                 }
 
-                // עדכון מספרי הסיכום בטקסטים שבראש המסך
+                // עדכון המספרים בתצוגה
                 tvOpenTasksCount.setText(String.valueOf(openTasksCount));
                 tvDoneTasksCount.setText(String.valueOf(doneTasksCount));
                 tvUrgentTasksCount.setText(String.valueOf(urgentTasksCount));
                 tvOverdueTasksCount.setText(String.valueOf(overdueTasksCount));
 
-                // אם אין משימות פתוחות בכלל, נציג הודעה מתאימה למשתמש
-                if (openTasks.isEmpty())
-                {
-                    tvNoTasks.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    tvNoTasks.setVisibility(View.GONE);
-                }
+                // הצגת הודעה אם אין משימות פתוחות
+                tvNoTasks.setVisibility(openTasks.isEmpty() ? View.VISIBLE : View.GONE);
 
-                // עדכון המתאם שהנתונים השתנו כדי שירענן את ה-RecyclerView
+                // רענון הרשימה (RecyclerView)
                 taskAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error)
-            {
-                // טיפול במקרה של שגיאה בגישה ל-Firebase (כרגע ללא שינוי במסך)
+            public void onCancelled(@NonNull DatabaseError error) {
+                // טיפול בשגיאה (לא נדרש למימוש כרגע)
             }
         });
     }

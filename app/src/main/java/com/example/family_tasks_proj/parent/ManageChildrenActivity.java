@@ -28,12 +28,12 @@ import java.util.List;
 
 public class ManageChildrenActivity extends AppCompatActivity {
 
-    private EditText etFirstName;
+    private EditText etChildName;
     private Button btnAdd, btnBack;
     private ListView lvChildren;
     private TextView tvTitle;
 
-    // שתי הרשימות נבנות באותו סדר: שם להצגה ומזהה אמיתי ב-Firebase
+    // רשימות למזהי הילדים ולשמות שלהם
     private final List<String> childIds = new ArrayList<>();
     private final List<String> childNames = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
 
-        // קבלת מזהה ההורה המחובר
+        // מזהה ההורה המחובר
         parentId = FirebaseAuth.getInstance().getUid();
 
         initViews();
@@ -55,16 +55,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
         loadChildrenFromFirebase();
     }
 
-    // חיבור רכיבי המסך מה-XML לקוד
+    // חיבור רכיבי המסך מה-XML
     private void initViews() {
-        etFirstName = findViewById(R.id.etFirstName);
+        etChildName = findViewById(R.id.etFirstName);
         btnAdd = findViewById(R.id.btnAddChild);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvChildren = findViewById(R.id.lvChildren);
         tvTitle = findViewById(R.id.tvFormTitle);
     }
 
-    // הגדרת פעולות הכפתורים במסך
+    // הגדרת פעולות הכפתורים
     private void setupEvents() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +81,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // הכנת רשימת הילדים ולחיצה על ילד לעריכה
+    // הכנת רשימת הילדים
     private void setupList() {
         listAdapter = new ArrayAdapter<>(
                 this,
@@ -92,6 +92,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
         lvChildren.setAdapter(listAdapter);
 
+        // לחיצה על ילד ברשימה כדי לערוך אותו
         lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -121,21 +122,19 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Firebase מחייב מימוש, גם אם ריק
             }
         });
     }
 
-    // שמירת ילד חדש או עדכון ילד קיים
+    // שמירת ילד חדש או עדכון קיים
     private void saveChild() {
-        String firstName = etFirstName.getText().toString().trim();
+        String firstName = etChildName.getText().toString().trim();
 
         if (firstName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // אם יש editingChildId מעדכנים ילד קיים, אחרת יוצרים ילד חדש
         String childId;
         if (editingChildId != null) {
             childId = editingChildId;
@@ -154,15 +153,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // ניקוי הטופס וחזרה למצב הוספת ילד חדש
+    // ניקוי הטופס וחזרה למצב הוספה
     private void clearForm() {
         editingChildId = null;
-        etFirstName.setText("");
+        etChildName.setText("");
         btnAdd.setText(R.string.btn_add_child);
         tvTitle.setText(R.string.title_add_child);
     }
 
-    // עדכון הרשימה במסך אחרי טעינה מ-Firebase
+    // עדכון הרשימה במסך
     private void updateUI() {
         listAdapter.notifyDataSetChanged();
         fitListHeight(lvChildren);
@@ -170,7 +169,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private static final int DEFAULT_LIST_WIDTH = 500;
 
-    // מחשב גובה ל-ListView כדי שכל השורות יוצגו בתוך ה-ScrollView
+    // חישוב גובה ל-ListView כדי שיוצג בתוך ScrollView
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -195,15 +194,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
     }
 
-    // לחיצה על ילד ברשימה טוענת את פרטיו לטופס לצורך עריכה
+    // טעינת פרטי ילד לטופס לצורך עריכה
     private void startEditChild(int position) {
         editingChildId = childIds.get(position);
-        etFirstName.setText(childNames.get(position));
+        etChildName.setText(childNames.get(position));
         btnAdd.setText(R.string.btn_update);
         tvTitle.setText(R.string.title_edit_child);
     }
 
-    // מחזיר את מיקום הילדים של ההורה ב-Firebase
+    // מחזיר את הנתיב לילדים ב-Firebase
     private DatabaseReference getChildrenReference() {
         return FirebaseDatabase.getInstance()
                 .getReference("parents")

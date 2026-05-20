@@ -36,10 +36,10 @@ import java.util.List;
 
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
-    private EditText etTemplateTitle;
+    private EditText etTitle;
     private ImageView imagePreview;
-    private Button btnSaveTemplate, btnBackToMain;
-    private ListView listViewTemplates;
+    private Button btnSave, btnBack;
+    private ListView lvTemplates;
     private TextView tvFormHeader;
 
     private final List<TaskTemplate> taskTemplates = new ArrayList<>();
@@ -48,14 +48,14 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     private Bitmap currentSelectedBitmap = null;
     private String parentId;
 
-    // פתיחת הגלריה וקבלת התמונה שנבחרה לתבנית
+    // פתיחת גלריה לבחירת תמונה לתבנית
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             new ActivityResultCallback<Uri>() {
                 @Override
                 public void onActivityResult(Uri uri) {
                     if (uri != null) {
-                        // טעינת התמונה מהגלריה והקטנתה לפני שמירה
+                        // הקטנת התמונה לפני שמירה כדי לא להכביד על ה-Database
                         currentSelectedBitmap = ImageHelper.loadResizedBitmap(getContentResolver(), uri);
                         if (currentSelectedBitmap != null) {
                             imagePreview.setImageBitmap(currentSelectedBitmap);
@@ -78,17 +78,17 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         loadTemplatesFromFirebase();
     }
 
-    // חיבור רכיבי המסך מה-XML לקוד
+    // חיבור רכיבי המסך מה-XML
     private void initViews() {
-        etTemplateTitle = findViewById(R.id.etTitle);
+        etTitle = findViewById(R.id.etTitle);
         imagePreview = findViewById(R.id.imgTask);
-        btnSaveTemplate = findViewById(R.id.btnSave);
-        btnBackToMain = findViewById(R.id.btnBackToDashboard);
-        listViewTemplates = findViewById(R.id.lvTemplates);
+        btnSave = findViewById(R.id.btnSave);
+        btnBack = findViewById(R.id.btnBackToDashboard);
+        lvTemplates = findViewById(R.id.lvTemplates);
         tvFormHeader = findViewById(R.id.tvFormTitle);
     }
 
-    // הגדרת פעולות הכפתורים במסך
+    // הגדרת פעולות
     private void setupEvents() {
         findViewById(R.id.btnPickImage).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,14 +97,14 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             }
         });
 
-        btnSaveTemplate.setOnClickListener(new View.OnClickListener() {
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveTemplate();
             }
         });
 
-        btnBackToMain.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -112,11 +112,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
-    // הכנת רשימת התבניות ולחיצה על תבנית לעריכה
+    // הכנת רשימת התבניות
     private void setupList() {
         templateAdapter = new TemplateListAdapter();
-        listViewTemplates.setAdapter(templateAdapter);
-        listViewTemplates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvTemplates.setAdapter(templateAdapter);
+        lvTemplates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 startEditTemplate(position);
@@ -124,7 +124,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
-    // טעינת תבניות המשימה של ההורה מ-Firebase
+    // טעינת תבניות מה-Firebase
     private void loadTemplatesFromFirebase() {
         getTemplatesReference().addValueEventListener(new ValueEventListener() {
             @Override
@@ -138,19 +138,18 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     }
                 }
                 templateAdapter.notifyDataSetChanged();
-                fitListHeight(listViewTemplates);
+                fitListHeight(lvTemplates);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Firebase מחייב מימוש, גם אם ריק
             }
         });
     }
 
-    // שמירת תבנית חדשה או עדכון תבנית קיימת
+    // שמירה או עדכון של תבנית
     private void saveTemplate() {
-        String title = etTemplateTitle.getText().toString().trim();
+        String title = etTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
@@ -166,7 +165,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
         DatabaseReference templateRef = getTemplatesReference().child(templateId);
 
-        // אם נבחרה תמונה חדשה, ממירים אותה ל-Base64 ושומרים ב-Firebase
+        // אם נבחרה תמונה, ממירים ל-Base64 ושומרים
         if (currentSelectedBitmap != null) {
             String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
             templateRef.child("imageBase64").setValue(base64);
@@ -181,16 +180,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
-    // לחיצה על תבנית ברשימה טוענת אותה לטופס לעריכה
+    // טעינת תבנית לטופס לצורך עריכה
     private void startEditTemplate(int position) {
         TaskTemplate template = taskTemplates.get(position);
-
         editingTemplateId = template.getId();
-
-        // אין תמונה חדשה שנבחרה כרגע, כדי לא לדרוס תמונה קיימת בשמירה
         currentSelectedBitmap = null;
 
-        etTemplateTitle.setText(template.getTitle());
+        etTitle.setText(template.getTitle());
 
         Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
         if (bitmap != null) {
@@ -200,23 +196,22 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
 
         tvFormHeader.setText(R.string.title_edit_template);
-        btnSaveTemplate.setText(R.string.btn_update_template);
+        btnSave.setText(R.string.btn_update_template);
     }
 
-    // ניקוי הטופס אחרי שמירה או חזרה למצב יצירת תבנית חדשה
+    // ניקוי הטופס אחרי שמירה
     private void clearForm() {
         editingTemplateId = null;
         currentSelectedBitmap = null;
-        etTemplateTitle.setText("");
-        // אם אין תמונה שנבחרה, אזור התמונה נשאר ריק
+        etTitle.setText("");
         imagePreview.setImageDrawable(null);
         tvFormHeader.setText(R.string.title_create_template);
-        btnSaveTemplate.setText(R.string.btn_save_template);
+        btnSave.setText(R.string.btn_save_template);
     }
 
     private static final int DEFAULT_LIST_WIDTH = 500;
 
-    // מחשב גובה ל-ListView כדי שכל התבניות יוצגו בתוך המסך
+    // חישוב גובה ל-ListView בתוך ScrollView
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -241,12 +236,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
     }
 
-    // מחזיר את מיקום תבניות המשימה של ההורה ב-Firebase
+    // נתיב התבניות ב-Firebase
     private DatabaseReference getTemplatesReference() {
         return FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("task_templates");
     }
 
-    // Adapter שמציג כל תבנית כשורה עם כותרת ותמונה
+    // אדפטר פנימי להצגת רשימת התבניות
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
         TemplateListAdapter() {
             super(ParentTaskTemplateActivity.this, 0, taskTemplates);
@@ -261,10 +256,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
             TaskTemplate template = getItem(position);
             if (template != null) {
-                TextView tvTitle = convertView.findViewById(R.id.tvTemplateTitle);
+                TextView tvTemplateTitle = convertView.findViewById(R.id.tvTemplateTitle);
                 ImageView imageThumb = convertView.findViewById(R.id.ivTemplateThumb);
 
-                tvTitle.setText(template.getTitle());
+                tvTemplateTitle.setText(template.getTitle());
 
                 Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
                 if (bitmap != null) {
@@ -273,7 +268,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                     imageThumb.setImageResource(R.drawable.ic_image_placeholder);
                 }
             }
-
             return convertView;
         }
     }
