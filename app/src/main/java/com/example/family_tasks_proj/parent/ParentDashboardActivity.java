@@ -29,19 +29,23 @@ import java.util.List;
 
 public class ParentDashboardActivity extends AppCompatActivity {
 
+    // רכיבי ממשק המשתמש (UI Elements)
     private Button btnManageChildren, btnManageTemplates, btnAssignTask, btnQR;
     private TextView tvParentGreeting, tvTotal, tvDone, tvUrgent, tvOverdue, tvNoTasks, tvTaskSectionTitle;
     private RecyclerView rvTasks;
 
+    // רשימה שתכיל רק את המשימות הפתוחות (שטרם בוצעו) להצגה במסך
     private final List<AssignedTask> openTasks = new ArrayList<>();
 
+    // מתאם (Adapter) לקישור בין רשימת המשימות ל-RecyclerView
     private ParentDashboardTaskAdapter taskAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_dashboard);
 
-        // חיבור רכיבי המסך מה-XML לקוד
+        // חיבור רכיבי הדשבורד מה-XML לקוד (Binding)
         tvParentGreeting = findViewById(R.id.tvParentName);
         tvParentGreeting.setText(R.string.parent_greeting);
         tvTotal = findViewById(R.id.tvParentTotalTasks);
@@ -57,10 +61,10 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnAssignTask = findViewById(R.id.btnAssignTaskToChild);
         btnQR = findViewById(R.id.btnShowQR);
 
-        // קביעת כותרת מקטע המשימות
+        // קביעת כותרת למקטע המשימות הפתוחות
         tvTaskSectionTitle.setText(R.string.parent_open_tasks_title);
 
-        // הגדרת כפתורי המעבר למסכי ההורה
+        // כפתור למעבר למסך ניהול הילדים (הוספה ומחיקה של ילדים מהמשפחה)
         btnManageChildren.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -69,6 +73,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
 
+        // כפתור למעבר למסך ניהול תבניות (יצירת משימות קבועות מראש)
         btnManageTemplates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -77,6 +82,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
 
+        // כפתור למעבר למסך שיוך משימה (בחירת ילד ושליחת משימה אליו)
         btnAssignTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -85,6 +91,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
 
+        // כפתור למעבר למסך הפקת קוד QR (מאפשר לילד להתחבר לאפליקציה על ידי סריקה)
         btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -93,7 +100,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
 
-        // הכנת רשימת המשימות הפתוחות
+        // הגדרת ה-RecyclerView: קביעת פריסה אנכית וחיבור המתאם (Adapter)
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, openTasks);
         rvTasks.setAdapter(taskAdapter);
@@ -104,62 +111,74 @@ public class ParentDashboardActivity extends AppCompatActivity {
     {
         super.onResume();
 
-        // מחזור חיים: בכל חזרה למסך בודקים אם ההורה עדיין מחובר.
+        // בדיקה האם יש משתמש (הורה) מחובר כעת
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null)
         {
-            // טעינת פרופיל ההורה ונתוני המשימות בכל חזרה למסך
+            // אם המשתמש מחובר, נטען את הנתונים שלו מ-Firebase
             loadData(user);
         }
         else
         {
+            // אם אף אחד לא מחובר, נחזיר את המשתמש למסך הראשי/התחברות
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
     }
 
+    /**
+     * פונקציה הטוענת את כל נתוני הילדים והמשימות שלהם מה-Firebase
+     * ומעדכנת את רכיבי המסך בהתאם.
+     */
     private void loadData(FirebaseUser user)
     {
+        // איפוס הרשימה והסתרת הודעת ה-"אין משימות" לפני טעינה חדשה
         openTasks.clear();
         tvNoTasks.setVisibility(View.GONE);
         taskAdapter.notifyDataSetChanged();
 
-        // נתיב Firebase: לכל הורה יש רשימת ילדים, ולכל ילד יש משימות.
+        // הפניה לנתיב ב-Firebase שבו שמורים הילדים של ההורה הנוכחי
         DatabaseReference childrenReference = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(user.getUid())
                 .child("children");
 
+        // האזנה לשינויים בנתונים (קריאה חד פעמית של כל ענף הילדים)
         childrenReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
             {
                 openTasks.clear();
 
-                // מונים: סופרים כמה משימות יש בכל מצב להצגה בכרטיסי הסיכום.
+                // משתנים לספירת סטטיסטיקות עבור כרטיסי הסיכום בראש המסך
                 int openTasksCount = 0;
                 int doneTasksCount = 0;
                 int urgentTasksCount = 0;
                 int overdueTasksCount = 0;
 
-                // מעבר על הילדים ועל המשימות שלהם מתוך Firebase.
+                // מעבר על כל הילדים שנמצאו בנתיב
                 for (DataSnapshot childSnapshot : snapshot.getChildren())
                 {
                     String childName = childSnapshot.child("firstName").getValue(String.class);
                     DataSnapshot tasksSnapshot = childSnapshot.child("tasks");
 
+                    // מעבר על כל המשימות של כל ילד
                     for (DataSnapshot taskSnapshot : tasksSnapshot.getChildren())
                     {
                         AssignedTask task = new AssignedTask();
+
                         task.setChildName(childName);
                         task.setTitle(taskSnapshot.child("title").getValue(String.class));
                         task.setDueAt(taskSnapshot.child("dueAt").getValue(String.class));
-                        // קריאת תמונת המשימה כדי להציג אותה רק בדשבורד של ההורה
+
+                        // קריאת תמונת המשימה (בפורמט Base64) להצגה בדשבורד
                         task.setImageBase64(taskSnapshot.child("imageBase64").getValue(String.class));
+                        
                         Boolean isDone = taskSnapshot.child("isDone").getValue(Boolean.class);
                         task.setIsDone(isDone != null && isDone);
 
+                        // בדיקה האם המשימה בוצעה או שהיא עדיין פתוחה
                         if (task.getIsDone())
                         {
                             doneTasksCount++;
@@ -167,8 +186,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
                         else
                         {
                             openTasksCount++;
-                            openTasks.add(task);
+                            openTasks.add(task); // הוספה לרשימת התצוגה רק אם המשימה פתוחה
 
+                            // בדיקה האם המשימה באיחור או דחופה (לפי תאריך היעד)
                             if (DateUtils.isOverdue(task.getDueAt()))
                             {
                                 overdueTasksCount++;
@@ -181,12 +201,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     }
                 }
 
+                // עדכון מספרי הסיכום בטקסטים שבראש המסך
                 tvTotal.setText(String.valueOf(openTasksCount));
                 tvDone.setText(String.valueOf(doneTasksCount));
                 tvUrgent.setText(String.valueOf(urgentTasksCount));
                 tvOverdue.setText(String.valueOf(overdueTasksCount));
 
-                // עדכון RecyclerView: מציגים רק את רשימת המשימות הפתוחות.
+                // אם אין משימות פתוחות בכלל, נציג הודעה מתאימה למשתמש
                 if (openTasks.isEmpty())
                 {
                     tvNoTasks.setVisibility(View.VISIBLE);
@@ -196,13 +217,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
                     tvNoTasks.setVisibility(View.GONE);
                 }
 
+                // עדכון המתאם שהנתונים השתנו כדי שירענן את ה-RecyclerView
                 taskAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error)
             {
-                // במקרה של שגיאה לא משנים את המסך.
+                // טיפול במקרה של שגיאה בגישה ל-Firebase (כרגע ללא שינוי במסך)
             }
         });
     }
