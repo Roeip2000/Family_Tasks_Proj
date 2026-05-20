@@ -109,7 +109,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         if (user != null)
         {
-            // טעינת נתוני המשימות בכל חזרה למסך
+            // טעינת פרופיל ההורה ונתוני המשימות בכל חזרה למסך
             loadData(user);
         }
         else
