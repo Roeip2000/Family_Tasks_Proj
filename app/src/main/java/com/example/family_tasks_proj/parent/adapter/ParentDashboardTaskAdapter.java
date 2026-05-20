@@ -18,26 +18,21 @@ import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
-/**
- * Adapter (מתאם) שמחבר בין רשימת המשימות (AssignedTask) לבין כרטיסי התצוגה (item_parent_task)
- * בתוך ה-RecyclerView של דשבורד ההורה.
- */
+// Adapter שמקבל רשימת AssignedTask מדשבורד ההורה ומציג כל משימה ככרטיס ב-RecyclerView
 public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
-    // הקשר האפליקציה - משמש לטעינת משאבים (כמו מחרוזות) וניפוח ה-XML
+    // ה-Context נחוץ כדי לטעון מחרוזות מ-strings.xml ולנפח את ה-XML של הכרטיס
     private final Context context;
-    // רשימת הנתונים שתיוצג על המסך
-    private final List<AssignedTask> items;
 
-    public ParentDashboardTaskAdapter(Context context, List<AssignedTask> items) {
+    // רשימת המשימות שהדשבורד הכין מראש ושאותן יש להציג ברשימה
+    private final List<AssignedTask> assignedTasks;
+
+    public ParentDashboardTaskAdapter(Context context, List<AssignedTask> assignedTasks) {
         this.context = context;
-        this.items = items;
+        this.assignedTasks = assignedTasks;
     }
 
-    /**
-     * פונקציה הנקראת כאשר ה-RecyclerView צריך ליצור כרטיס חדש (ViewHolder).
-     * כאן אנחנו "מנפחים" (Inflate) את קובץ ה-XML של פריט בודד והופכים אותו לאובייקט Java.
-     */
+    // יוצר כרטיס חדש: מנפח את ה-XML של פריט בודד ועוטף אותו ב-ViewHolder
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,58 +40,35 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return new TaskViewHolder(view);
     }
 
-    /**
-     * פונקציה הנקראת כדי להציג נתונים במקום מסוים (Position) ברשימה.
-     * היא מקשרת בין אובייקט הנתונים (Task) לבין רכיבי הממשק (UI) שבתוך ה-ViewHolder.
-     */
+    // ממלא כרטיס קיים בנתונים של המשימה שבמיקום position ברשימה
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        AssignedTask task = items.get(position);
+        AssignedTask task = assignedTasks.get(position);
 
         holder.tvTitle.setText(task.getTitle());
-        // שימוש ב-Context כדי לגשת למחרוזת עם פרמטר (שם הילד)
+
+        // המחרוזת task_assigned_to מקבלת פרמטר - שם הילד שאליו שויכה המשימה
         holder.tvOwner.setText(context.getString(R.string.task_assigned_to, task.getChildName()));
-        
-        // קריאה לפונקציית העזר להצגת התמונה
+
+        // הצגת תמונת המשימה בכרטיס
         showTaskImage(holder, task);
-        
+
         holder.tvDue.setText(task.getDueAt());
         holder.tvStatus.setText(getStatusText(task));
     }
 
-    /**
-     * פונקציה המטפלת בהצגת תמונת המשימה (אם קיימת).
-     * התמונה שמורה ב-Firebase כטקסט (Base64) ויש להמירה ל-Bitmap כדי להציגה ב-ImageView.
-     */
+    // מציג את תמונת המשימה בכרטיס
     private void showTaskImage(TaskViewHolder holder, AssignedTask task) {
         String imageBase64 = task.getImageBase64();
-
-        // אם אין תמונה למשימה, נסתיר את רכיב התצוגה כדי שלא יתפוס מקום ריק
-        if (imageBase64 == null || imageBase64.isEmpty()) {
-            holder.imgShell.setVisibility(View.GONE);
-            return;
-        }
-
-        // המרת הטקסט חזרה לתמונה (Bitmap) בעזרת מחלקת עזר
         Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
-        if (bitmap == null) {
-            holder.imgShell.setVisibility(View.GONE);
-            return;
-        }
 
-        // הצגת התמונה ושינוי הנראות ל-Visible
-        holder.imgShell.setVisibility(View.VISIBLE);
+        holder.imageContainer.setVisibility(View.VISIBLE);
         holder.imgTask.setImageBitmap(bitmap);
     }
 
-    /**
-     * פונקציה הקובעת את הטקסט של סטטוס המשימה (בוצע, באיחור, דחוף או בהמתנה)
-     * בהתאם למצב המשימה ולתאריך היעד שלה.
-     */
+    // קביעת סטטוס למשימה פתוחה: באיחור, דחופה או ממתינה
     private String getStatusText(AssignedTask task) {
-        if (task.getIsDone()) {
-            return context.getString(R.string.parent_dashboard_task_status_done);
-        } else if (DateUtils.isOverdue(task.getDueAt())) {
+        if (DateUtils.isOverdue(task.getDueAt())) {
             return context.getString(R.string.parent_dashboard_task_status_late);
         } else if (DateUtils.isDueSoon(task.getDueAt())) {
             return context.getString(R.string.parent_dashboard_task_status_urgent);
@@ -105,22 +77,17 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         }
     }
 
-    /**
-     * מחזירה את כמות הפריטים ברשימה. ה-RecyclerView משתמש בזה כדי לדעת כמה כרטיסים להציג.
-     */
+    // מספר הכרטיסים שה-RecyclerView יצטרך להציג - לפי אורך הרשימה
     @Override
     public int getItemCount() {
-        return items.size();
+        return assignedTasks.size();
     }
 
-    /**
-     * מחלקה פנימית המייצגת "מחזיק תצוגה" (ViewHolder).
-     * תפקידה לשמור הפניות לרכיבי ה-UI של כרטיס בודד, כדי להימנע מחיפוש חוזר (findViewById)
-     * בכל פעם שכרטיס ממוחזר, מה שמשפר משמעותית את ביצועי הגלילה.
-     */
+    // ViewHolder - מחזיק הפניות לרכיבי ה-UI של כרטיס אחד.
+    // שמירת ההפניות חוסכת קריאות חוזרות ל-findViewById בזמן גלילה ומשפרת ביצועים.
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDue, tvStatus;
-        View imgShell;
+        View imageContainer;
         ImageView imgTask;
 
         public TaskViewHolder(@NonNull View itemView) {
@@ -129,7 +96,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
             tvOwner = itemView.findViewById(R.id.tvTaskOwner);
             tvDue = itemView.findViewById(R.id.tvDueDateCard);
             tvStatus = itemView.findViewById(R.id.tvStatusChip);
-            imgShell = itemView.findViewById(R.id.imgTaskParentShell);
+            imageContainer = itemView.findViewById(R.id.imgTaskParentShell);
             imgTask = itemView.findViewById(R.id.imgTaskParent);
         }
     }
