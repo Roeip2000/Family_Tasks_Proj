@@ -37,7 +37,8 @@ public class ParentRegisterFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
 
         // קבלת אובייקט FirebaseAuth לצורך הרשמת הורה
@@ -90,7 +91,7 @@ public class ParentRegisterFragment extends Fragment {
                             Toast.makeText(requireContext(), R.string.register_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
+        });
     }
 
     private void saveParentToDatabase(String firstName, String lastName, String email)

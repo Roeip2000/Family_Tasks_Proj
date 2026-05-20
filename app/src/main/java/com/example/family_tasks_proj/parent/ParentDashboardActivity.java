@@ -36,7 +36,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private final List<AssignedTask> openTasks = new ArrayList<>();
 
     private ParentDashboardTaskAdapter taskAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
