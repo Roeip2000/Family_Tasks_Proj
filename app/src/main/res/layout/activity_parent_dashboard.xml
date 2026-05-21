@@ -24,7 +24,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- כרטיס סיכום: מונים של המשימות בכל המצבים -->
+        <!-- כרטיס סיכום: מונים של המשימות -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,13 +42,12 @@
 
                 <!-- מונה: משימות פתוחות -->
                 <LinearLayout
-                    android:id="@+id/containerSummaryOpen"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="8dp">
                     <TextView
                         android:id="@+id/tvParentTotalTasks"
                         android:layout_width="wrap_content"
@@ -65,15 +64,14 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- מונה: משימות דחופות -->
+                <!-- מונה: משימות דחופות (היום) -->
                 <LinearLayout
-                    android:id="@+id/containerSummaryUrgent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="8dp">
                     <TextView
                         android:id="@+id/tvParentDueSoon"
                         android:layout_width="wrap_content"
@@ -92,13 +90,12 @@
 
                 <!-- מונה: משימות באיחור -->
                 <LinearLayout
-                    android:id="@+id/containerSummaryOverdue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="8dp">
                     <TextView
                         android:id="@+id/tvParentOverdue"
                         android:layout_width="wrap_content"
@@ -117,13 +114,12 @@
 
                 <!-- מונה: משימות שבוצעו -->
                 <LinearLayout
-                    android:id="@+id/containerSummaryCompleted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="8dp">
                     <TextView
                         android:id="@+id/tvParentCompleted"
                         android:layout_width="wrap_content"
@@ -202,24 +198,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTaskSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/parent_open_tasks_title"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvNoTasks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:padding="40dp"
-                android:text="@string/empty_parent_open_tasks"
-                android:textColor="@color/text_secondary"
-                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTasks"

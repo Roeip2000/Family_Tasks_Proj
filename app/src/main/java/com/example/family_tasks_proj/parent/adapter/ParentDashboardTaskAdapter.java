@@ -18,7 +18,6 @@ import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
-// אדפטר המציג את המשימות של ההורה ב-RecyclerView
 public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
     private final Context context;
@@ -32,44 +31,39 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // ניפוח ה-XML של שורת משימה
         View view = LayoutInflater.from(context).inflate(R.layout.item_parent_task, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position)
-    {
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         AssignedTask task = assignedTasks.get(position);
 
         holder.tvTitle.setText(task.getTitle());
-        // הצגת שם הילד לו משויכת המשימה
         holder.tvOwner.setText(context.getString(R.string.task_assigned_to, task.getChildName()));
 
         showTaskImage(holder, task);
 
         holder.tvDueDate.setText(task.getDueAt());
-        holder.tvStatus.setText(getStatusText(task));
+        
+        // הגדרת סטטוס לפי תאריך
+        if (DateUtils.isOverdue(task.getDueAt())) {
+            holder.tvStatus.setText(context.getString(R.string.parent_dashboard_task_status_late));
+            holder.tvStatus.setTextColor(context.getColor(R.color.danger));
+        } else if (DateUtils.isDueSoon(task.getDueAt())) {
+            holder.tvStatus.setText(context.getString(R.string.parent_dashboard_task_status_urgent));
+            holder.tvStatus.setTextColor(context.getColor(R.color.urgent));
+        } else {
+            holder.tvStatus.setText(context.getString(R.string.parent_dashboard_task_status_waiting));
+            holder.tvStatus.setTextColor(context.getColor(R.color.text_secondary));
+        }
     }
 
-    // הצגת תמונת המשימה
     private void showTaskImage(TaskViewHolder holder, AssignedTask task) {
         String imageBase64 = task.getImageBase64();
         Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
-
         holder.imageContainer.setVisibility(View.VISIBLE);
         holder.imgTask.setImageBitmap(bitmap);
-    }
-
-    // קביעת טקסט הסטטוס (באיחור, דחוף וכו')
-    private String getStatusText(AssignedTask task) {
-        if (DateUtils.isOverdue(task.getDueAt())) {
-            return context.getString(R.string.parent_dashboard_task_status_late);
-        } else if (DateUtils.isDueSoon(task.getDueAt())) {
-            return context.getString(R.string.parent_dashboard_task_status_urgent);
-        } else {
-            return context.getString(R.string.parent_dashboard_task_status_waiting);
-        }
     }
 
     @Override
@@ -77,7 +71,6 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
         return assignedTasks.size();
     }
 
-    // ViewHolder שמחזיק את רכיבי ה-UI של שורה אחת
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDueDate, tvStatus;
         View imageContainer;

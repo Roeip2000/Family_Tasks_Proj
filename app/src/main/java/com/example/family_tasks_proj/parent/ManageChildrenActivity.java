@@ -2,20 +2,18 @@ package com.example.family_tasks_proj.parent;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.family_tasks_proj.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,54 +27,53 @@ import java.util.List;
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etChildName;
-    private Button btnAdd, btnBack;
+    private Button btnSaveChild, btnBack;
     private ListView lvChildren;
-    private TextView tvTitle;
 
-    // רשימות למזהי הילדים ולשמות שלהם
+    // childNames מוצג במסך, childIds שומר את המזהים של הילדים ב-Firebase
     private final List<String> childIds = new ArrayList<>();
     private final List<String> childNames = new ArrayList<>();
 
     private ArrayAdapter<String> listAdapter;
     private String parentId;
-    private String editingChildId = null;
+    private DatabaseReference childrenReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
 
-        // מזהה ההורה המחובר, משמש לבניית הנתיב ב-Firebase
+        // קבלת מזהה ההורה המחובר
         parentId = FirebaseAuth.getInstance().getUid();
 
+        // הנתיב לילדים של ההורה המחובר ב-Firebase
+        childrenReference = FirebaseDatabase.getInstance()
+                .getReference("parents")
+                .child(parentId)
+                .child("children");
+
         etChildName = findViewById(R.id.etFirstName);
-        btnAdd = findViewById(R.id.btnAddChild);
+        btnSaveChild = findViewById(R.id.btnAddChild);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvChildren = findViewById(R.id.lvChildren);
-        tvTitle = findViewById(R.id.tvFormTitle);
 
+        // הגדרת המתאם לרשימה
         listAdapter = new ArrayAdapter<>(this,
                 R.layout.item_manage_child,
                 R.id.tvChildFullName,
                 childNames
         );
-
         lvChildren.setAdapter(listAdapter);
 
-        lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startEditChild(position);
-            }
-        });
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+        // לחיצה על כפתור שמירה
+        btnSaveChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveChild();
+                showConfirmDialog();
             }
         });
 
+        // חזרה למסך הקודם
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,9 +84,9 @@ public class ManageChildrenActivity extends AppCompatActivity {
         loadChildrenFromFirebase();
     }
 
-    // טעינת הילדים של ההורה מ-Firebase
+    // טעינת הילדים מ-Firebase
     private void loadChildrenFromFirebase() {
-        getChildrenReference().addValueEventListener(new ValueEventListener() {
+        childrenReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
@@ -103,7 +100,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     childNames.add(firstName);
                 }
 
-                updateUI();
+                listAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -112,87 +109,40 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // שמירת ילד חדש או עדכון קיים
-    private void saveChild() {
-        String firstName = etChildName.getText().toString().trim();
-
-        if (firstName.isEmpty()) {
+    // הצגת דיאלוג אישור לפני שמירה
+    private void showConfirmDialog() {
+        String name = etChildName.getText().toString().trim();
+        if (name.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String childId;
-        if (editingChildId != null) {
-            childId = editingChildId;
-        } else {
-            childId = getChildrenReference().push().getKey();
-        }
-
-        DatabaseReference childReference = getChildrenReference().child(childId);
-
-        childReference.child("firstName").setValue(firstName).addOnSuccessListener(new OnSuccessListener<Void>() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("אישור הוספה");
+        builder.setMessage("האם אתה בטוח שהפרטים נכונים?");
+        
+        builder.setPositiveButton("כן, שמור", new DialogInterface.OnClickListener() {
             @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
-                clearForm();
+            public void onClick(DialogInterface dialog, int which) {
+                saveChild(name);
             }
         });
+        
+        builder.setNegativeButton("ביטול", null);
+        builder.show();
     }
 
-    // ניקוי הטופס וחזרה למצב הוספה
-    private void clearForm() {
-        editingChildId = null;
+    // שמירת ילד חדש ב-Firebase
+    private void saveChild(String firstName) {
+        // יצירת מזהה חדש ב-Firebase
+        String childId = childrenReference.push().getKey();
+
+        // שמירת השם ב-Firebase תחת המזהה החדש
+        childrenReference.child(childId).child("firstName").setValue(firstName);
+        
+        Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
+        
+        // ניקוי הטקסט אחרי שמירה
         etChildName.setText("");
-        btnAdd.setText(R.string.btn_add_child);
-        tvTitle.setText(R.string.title_add_child);
-    }
-
-    // עדכון הרשימה במסך
-    private void updateUI() {
-        listAdapter.notifyDataSetChanged();
-        fitListHeight(lvChildren);
-    }
-
-    private static final int DEFAULT_LIST_WIDTH = 500;
-
-    // חישוב גובה ל-ListView כדי שיוצג בתוך ScrollView
-    private void fitListHeight(ListView listView) {
-        if (listView.getAdapter() == null) {
-            return;
-        }
-
-        int listWidth = listView.getWidth();
-        if (listWidth <= 0) {
-            listWidth = DEFAULT_LIST_WIDTH;
-        }
-
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
-
-        int totalHeight = 0;
-        for (int i = 0; i < listView.getAdapter().getCount(); i++) {
-            View itemView = listView.getAdapter().getView(i, null, listView);
-            itemView.measure(widthSpec, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += itemView.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listView.getAdapter().getCount() - 1));
-        listView.setLayoutParams(params);
-    }
-
-    // טעינת פרטי ילד לטופס לצורך עריכה
-    private void startEditChild(int position) {
-        editingChildId = childIds.get(position);
-        etChildName.setText(childNames.get(position));
-        btnAdd.setText(R.string.btn_update);
-        tvTitle.setText(R.string.title_edit_child);
-    }
-
-    // מחזיר את הנתיב לילדים ב-Firebase
-    private DatabaseReference getChildrenReference() {
-        return FirebaseDatabase.getInstance()
-                .getReference("parents")
-                .child(parentId)
-                .child("children");
     }
 }

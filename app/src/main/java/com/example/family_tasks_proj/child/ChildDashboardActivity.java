@@ -41,7 +41,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_dashboard);
 
-        // קבלת מזהים מהמסך הקודם
         parentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
         childId = getIntent().getStringExtra(EXTRA_CHILD_ID);
 
@@ -52,13 +51,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadChildTasks();
     }
 
-    // מחזיר את הנתיב לילד ב-Firebase
     private DatabaseReference getChildReference() {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    // טעינת משימות הילד מ-Firebase
     private void loadChildTasks() {
         getChildReference().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
@@ -67,14 +64,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
                 for (DataSnapshot taskSnapshot : snapshot.getChildren()) {
                     ChildTask task = taskSnapshot.getValue(ChildTask.class);
-                    if (task == null) {
-                        continue;
-                    }
-                    task.setId(taskSnapshot.getKey());
-
-                    // שמירת משימות פתוחות בלבד
-                    if (!task.getIsDone()) {
-                        openTasks.add(task);
+                    if (task != null) {
+                        task.setId(taskSnapshot.getKey());
+                        if (!task.getIsDone()) {
+                            openTasks.add(task);
+                        }
                     }
                 }
                 tvOpenTasksCount.setText(String.valueOf(openTasks.size()));
@@ -82,12 +76,10 @@ public class ChildDashboardActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    // הצגת המשימות על המסך
     private void renderTasks() {
         tasksContainer.removeAllViews();
         if (openTasks.isEmpty()) {
@@ -104,7 +96,6 @@ public class ChildDashboardActivity extends AppCompatActivity {
         }
     }
 
-    // מילוי נתוני משימה בכרטיס
     private void bindTaskView(View card, final ChildTask task) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDueDate = card.findViewById(R.id.tvDueDate);
@@ -114,7 +105,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvTitle.setText(task.getTitle());
         tvDueDate.setText(task.getDueAt());
 
-        // קביעת סטטוס המשימה (באיחור, דחוף וכו')
+        // קביעת סטטוס לפי תאריך
         if (DateUtils.isOverdue(task.getDueAt())) {
             tvStatus.setText(getString(R.string.parent_dashboard_task_status_late));
             tvStatus.setTextColor(getColor(R.color.danger));
@@ -126,31 +117,21 @@ public class ChildDashboardActivity extends AppCompatActivity {
             tvStatus.setTextColor(getColor(R.color.text_secondary));
         }
 
-        btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDoneDialog(task);
-            }
-        });
+        btnDone.setOnClickListener(v -> showDoneDialog(task));
     }
 
-    // הצגת דיאלוג אישור לפני סיום משימה
     private void showDoneDialog(final ChildTask task) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_task_done_title)
                 .setMessage(R.string.dialog_task_done_message)
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        markTaskAsDone(task);
-                        Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
-                    }
+                .setPositiveButton(R.string.dialog_yes, (dialog, which) -> {
+                    markTaskAsDone(task);
+                    Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton(R.string.dialog_no, null)
                 .show();
     }
 
-    // עדכון המשימה כבוצעה ב-Firebase
     private void markTaskAsDone(final ChildTask task) {
         getChildReference().child("tasks").child(task.getId()).child("isDone").setValue(true);
     }
