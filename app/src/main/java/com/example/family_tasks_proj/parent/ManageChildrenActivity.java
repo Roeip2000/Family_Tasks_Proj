@@ -46,26 +46,30 @@ public class ManageChildrenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
 
-        // מזהה ההורה המחובר
+        // מזהה ההורה המחובר, משמש לבניית הנתיב ב-Firebase
         parentId = FirebaseAuth.getInstance().getUid();
 
-        initViews();
-        setupEvents();
-        setupList();
-        loadChildrenFromFirebase();
-    }
-
-    // חיבור רכיבי המסך מה-XML
-    private void initViews() {
         etChildName = findViewById(R.id.etFirstName);
         btnAdd = findViewById(R.id.btnAddChild);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvChildren = findViewById(R.id.lvChildren);
         tvTitle = findViewById(R.id.tvFormTitle);
-    }
 
-    // הגדרת פעולות הכפתורים
-    private void setupEvents() {
+        listAdapter = new ArrayAdapter<>(this,
+                R.layout.item_manage_child,
+                R.id.tvChildFullName,
+                childNames
+        );
+
+        lvChildren.setAdapter(listAdapter);
+
+        lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startEditChild(position);
+            }
+        });
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,26 +83,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
 
-    // הכנת רשימת הילדים
-    private void setupList() {
-        listAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_manage_child,
-                R.id.tvChildFullName,
-                childNames
-        );
-
-        lvChildren.setAdapter(listAdapter);
-
-        // לחיצה על ילד ברשימה כדי לערוך אותו
-        lvChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startEditChild(position);
-            }
-        });
+        loadChildrenFromFirebase();
     }
 
     // טעינת הילדים של ההורה מ-Firebase

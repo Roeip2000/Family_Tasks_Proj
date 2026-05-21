@@ -38,7 +38,8 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position)
+    {
         AssignedTask task = assignedTasks.get(position);
 
         holder.tvTitle.setText(task.getTitle());

@@ -37,7 +37,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     // רשימה שתכיל רק את המשימות הפתוחות להצגה במסך
     private final List<AssignedTask> openTasks = new ArrayList<>();
 
-    // מתאם (Adapter) לקישור בין רשימת המשימות ל-RecyclerView
+    // המתאם יודע איך להפוך כל משימה ברשימה לכרטיס במסך
     private ParentDashboardTaskAdapter taskAdapter;
 
     @Override
@@ -96,7 +96,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
             }
         });
 
-        // הגדרת ה-RecyclerView וחיבור המתאם (Adapter)
+        // RecyclerView מציג את openTasks בעזרת Adapter
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, openTasks);
         rvTasks.setAdapter(taskAdapter);
@@ -137,6 +137,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         childrenReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 openTasks.clear();
 
                 // מונים לסטטיסטיקות שמוצגות בראש המסך
@@ -183,11 +184,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 tvDoneTasksCount.setText(String.valueOf(doneTasksCount));
                 tvUrgentTasksCount.setText(String.valueOf(urgentTasksCount));
                 tvOverdueTasksCount.setText(String.valueOf(overdueTasksCount));
+                tvNoTasks.setVisibility(View.GONE);
 
-                // הצגת הודעה אם אין משימות פתוחות
-                tvNoTasks.setVisibility(openTasks.isEmpty() ? View.VISIBLE : View.GONE);
-
-                // רענון הרשימה (RecyclerView)
+                // אחרי ש-openTasks עודכנה, מבקשים מה-Adapter לרענן את הרשימה במסך
                 taskAdapter.notifyDataSetChanged();
             }
 

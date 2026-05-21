@@ -33,7 +33,7 @@ import java.util.List;
 
 public class AssignTaskToChildActivity extends AppCompatActivity {
 
-    private EditText etTitle, etDueDate;
+    private EditText etTaskTitle, etDueDate;
     private Spinner spinnerTemplates, spinnerChildren;
     private ImageView imageTaskPreview;
     private Button btnAssign, btnBack;
@@ -47,18 +47,10 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assign_task_to_child);
 
+        // מזהה ההורה המחובר, משמש לבניית הנתיב ב-Firebase
         parentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        initViews();
-        setupEvents();
-
-        loadTemplatesFromFirebase();
-        loadChildrenFromFirebase();
-    }
-
-    // חיבור רכיבי המסך מה-XML
-    private void initViews() {
-        etTitle = findViewById(R.id.etTitle);
+        etTaskTitle = findViewById(R.id.etTitle);
         etDueDate = findViewById(R.id.etDueDate);
         spinnerTemplates = findViewById(R.id.spTemplates);
         spinnerChildren = findViewById(R.id.spAssignee);
@@ -66,17 +58,9 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         btnAssign = findViewById(R.id.btnAssign);
         btnBack = findViewById(R.id.btnBackToDashboard);
 
-        // הכפתור לא פעיל עד שיש גם ילדים וגם תבניות
+        // הכפתור פעיל רק אחרי שיש גם ילדים וגם תבניות
         btnAssign.setEnabled(false);
-    }
 
-    // הפעלת כפתור ההקצאה רק אם הנתונים מוכנים
-    private void refreshAssignButtonState() {
-        btnAssign.setEnabled(!childIds.isEmpty() && !taskTemplateList.isEmpty());
-    }
-
-    // הגדרת פעולות
-    private void setupEvents() {
         spinnerTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -108,6 +92,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        loadTemplatesFromFirebase();
+        loadChildrenFromFirebase();
+    }
+
+    // הפעלת כפתור ההקצאה רק אם הנתונים מוכנים
+    private void refreshAssignButtonState() {
+        btnAssign.setEnabled(!childIds.isEmpty() && !taskTemplateList.isEmpty());
     }
 
     // טעינת תבניות מה-Firebase
@@ -162,7 +154,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // שיוך המשימה לילד ב-Firebase
     private void assignTask() {
-        String title = etTitle.getText().toString().trim();
+        String title = etTaskTitle.getText().toString().trim();
         String date = etDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
 
@@ -196,7 +188,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void updateSelectedTemplateData(int position) {
         if (position >= 0 && position < taskTemplateList.size()) {
             TaskTemplate template = taskTemplateList.get(position);
-            etTitle.setText(template.getTitle());
+            etTaskTitle.setText(template.getTitle());
 
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
             if (bitmap != null) {

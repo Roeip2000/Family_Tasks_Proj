@@ -72,24 +72,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
         parentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        initViews();
-        setupEvents();
-        setupList();
-        loadTemplatesFromFirebase();
-    }
-
-    // חיבור רכיבי המסך מה-XML
-    private void initViews() {
         etTitle = findViewById(R.id.etTitle);
         imagePreview = findViewById(R.id.imgTask);
         btnSave = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvTemplates = findViewById(R.id.lvTemplates);
         tvFormHeader = findViewById(R.id.tvFormTitle);
-    }
 
-    // הגדרת פעולות
-    private void setupEvents() {
         findViewById(R.id.btnPickImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,10 +99,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
 
-    // הכנת רשימת התבניות
-    private void setupList() {
         templateAdapter = new TemplateListAdapter();
         lvTemplates.setAdapter(templateAdapter);
         lvTemplates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -122,6 +108,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 startEditTemplate(position);
             }
         });
+
+        loadTemplatesFromFirebase();
     }
 
     // טעינת תבניות מה-Firebase
@@ -211,7 +199,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private static final int DEFAULT_LIST_WIDTH = 500;
 
-    // חישוב גובה ל-ListView בתוך ScrollView
+    // התאמת גובה הרשימה כדי שכל התבניות יוצגו בתוך המסך
     private void fitListHeight(ListView listView) {
         if (listView.getAdapter() == null) {
             return;
@@ -241,7 +229,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         return FirebaseDatabase.getInstance().getReference("parents").child(parentId).child("task_templates");
     }
 
-    // אדפטר פנימי להצגת רשימת התבניות
+    // Adapter פנימי שמציג כל תבנית ברשימה עם כותרת ותמונה
     private class TemplateListAdapter extends ArrayAdapter<TaskTemplate> {
         TemplateListAdapter() {
             super(ParentTaskTemplateActivity.this, 0, taskTemplates);
