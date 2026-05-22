@@ -115,7 +115,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
-                        template.setId(templateSnapshot.getKey());
                         taskTemplates.add(template);
                         titles.add(template.getTitle());
                     }

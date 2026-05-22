@@ -1,6 +1,5 @@
 package com.example.family_tasks_proj.child;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

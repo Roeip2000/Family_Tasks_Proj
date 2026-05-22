@@ -7,8 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,8 +28,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
     private Button btnSaveChild, btnBack;
     private ListView lvChildren;
 
-    // childNames מוצג במסך, childIds שומר את המזהים של הילדים ב-Firebase
-    private final List<String> childIds = new ArrayList<>();
+    // childNames מחזיק את שמות הילדים שמוצגים ברשימה
     private final List<String> childNames = new ArrayList<>();
 
     private ArrayAdapter<String> listAdapter;
@@ -69,7 +66,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
         btnSaveChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showConfirmDialog();
+                saveChild();
             }
         });
 
@@ -89,14 +86,10 @@ public class ManageChildrenActivity extends AppCompatActivity {
         childrenReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                childIds.clear();
                 childNames.clear();
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                    String childId = childSnapshot.getKey();
                     String firstName = childSnapshot.child("firstName").getValue(String.class);
-
-                    childIds.add(childId);
                     childNames.add(firstName);
                 }
 
@@ -109,40 +102,20 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // הצגת דיאלוג אישור לפני שמירה
-    private void showConfirmDialog() {
-        String name = etChildName.getText().toString().trim();
-        if (name.isEmpty()) {
+    // שמירת ילד חדש ב-Firebase
+    private void saveChild() {
+        String firstName = etChildName.getText().toString().trim();
+
+        if (firstName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("אישור הוספה");
-        builder.setMessage("האם אתה בטוח שהפרטים נכונים?");
-        
-        builder.setPositiveButton("כן, שמור", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                saveChild(name);
-            }
-        });
-        
-        builder.setNegativeButton("ביטול", null);
-        builder.show();
-    }
-
-    // שמירת ילד חדש ב-Firebase
-    private void saveChild(String firstName) {
-        // יצירת מזהה חדש ב-Firebase
         String childId = childrenReference.push().getKey();
 
-        // שמירת השם ב-Firebase תחת המזהה החדש
         childrenReference.child(childId).child("firstName").setValue(firstName);
-        
+
         Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
-        
-        // ניקוי הטקסט אחרי שמירה
         etChildName.setText("");
     }
 }

@@ -32,7 +32,7 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- כרטיס טופס הוספה ועריכה -->
+        <!-- כרטיס טופס הוספת ילד -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,8 +89,10 @@
             android:id="@+id/lvChildren"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:cacheColorHint="@android:color/transparent"
             android:divider="@null"
             android:dividerHeight="0dp"
+            android:listSelector="@android:color/transparent"
             android:nestedScrollingEnabled="false"
             tools:ignore="NestedScrolling" />
 

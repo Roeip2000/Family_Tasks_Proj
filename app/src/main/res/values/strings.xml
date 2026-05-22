@@ -46,7 +46,6 @@
     <string name="parent_dashboard_task_status_waiting">ממתין</string>
     <string name="parent_dashboard_task_status_late">באיחור</string>
     <string name="parent_dashboard_task_status_urgent">דחוף</string>
-    <string name="template_item_hint">לחץ לעריכה</string>
 
     <!-- שגיאות וצליחות -->
     <string name="error_fill_all_fields">יש למלא את כל השדות</string>
@@ -56,8 +55,6 @@
     <string name="error_action_failed">הפעולה נכשלה</string>
     <string name="error_load_db">טעינת הנתונים נכשלה</string>
     <string name="error_login_failed">התחברות נכשלה</string>
-    <string name="empty_no_children_assign">אין ילדים רשומים. הוסף ילד לפני הקצאת משימה</string>
-    <string name="empty_no_templates_assign">אין תבניות משימה. צור תבנית לפני הקצאת משימה</string>
 
     <!-- דיאלוג סיום משימה -->
     <string name="dialog_task_done_title">סיום משימה</string>
@@ -83,17 +80,11 @@
     <string name="parent_open_tasks_title">משימות פתוחות למעקב</string>
     <string name="toast_child_saved">הנתונים נשמרו</string>
     <string name="btn_add_child">הוסף ילד</string>
-    <string name="btn_update">עדכן</string>
-    <string name="title_add_child">הוספת ילד</string>
-    <string name="title_edit_child">עריכת ילד</string>
     <string name="date_slash_format">%1$d/%2$d/%3$d</string>
 
     <!-- טקסטים לתבניות משימה -->
     <string name="toast_template_saved">התבנית נשמרה</string>
-    <string name="title_create_template">יצירת תבנית</string>
-    <string name="title_edit_template">עריכת תבנית</string>
     <string name="btn_save_template">שמור תבנית</string>
-    <string name="btn_update_template">עדכן תבנית</string>
 
     <!-- טקסטים למסך ילד -->
     <string name="child_hello_initial">שלום</string>
@@ -110,7 +101,7 @@
     <string name="label_due_date">תאריך יעד</string>
     <string name="hint_select_date">לחץ לבחירת תאריך</string>
     <string name="title_manage_children">ניהול ילדים</string>
-    <string name="subtitle_manage_children">הוסף או ערוך ילדים מהמשפחה</string>
+    <string name="subtitle_manage_children">הוספת ילדים מהמשפחה</string>
     <string name="title_children_list">רשימת הילדים</string>
     <string name="title_task_templates">תבניות משימה</string>
     <string name="subtitle_task_templates">צור תבניות מוכנות להקצאה מהירה</string>
@@ -123,6 +114,4 @@
     <string name="stat_overdue_short">באיחור</string>
     <string name="stat_done_short">בוצעו</string>
     <string name="empty_tasks_filter">אין משימות פתוחות כרגע</string>
-    <string name="empty_parent_open_tasks">אין משימות פתוחות כרגע</string>
-    <string name="manage_child_hint">לחץ לניהול ועריכה</string>
 </resources>

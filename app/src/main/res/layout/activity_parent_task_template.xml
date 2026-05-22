@@ -102,6 +102,8 @@
             android:id="@+id/lvTemplates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:cacheColorHint="@android:color/transparent"
+            android:listSelector="@android:color/transparent"
             android:nestedScrollingEnabled="false"
             tools:ignore="NestedScrolling" />
 

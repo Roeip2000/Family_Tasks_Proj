@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -95,7 +93,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showConfirmDialog();
+                saveTemplate();
             }
         });
 
@@ -122,7 +120,6 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
-                        template.setId(templateSnapshot.getKey());
                         taskTemplates.add(template);
                     }
                 }
@@ -135,36 +132,18 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         });
     }
 
-    // הצגת דיאלוג אישור לפני שמירה
-    private void showConfirmDialog() {
+    // שמירה של תבנית חדשה
+    private void saveTemplate() {
         String title = etTitle.getText().toString().trim();
+
         if (title.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("אישור שמירה");
-        builder.setMessage("האם אתה בטוח שהפרטים נכונים?");
-        
-        builder.setPositiveButton("כן, שמור", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                saveTemplate(title);
-            }
-        });
-        
-        builder.setNegativeButton("ביטול", null);
-        builder.show();
-    }
-
-    // שמירה של תבנית חדשה
-    private void saveTemplate(String title) {
-        // יצירת מזהה חדש ב-Firebase
         String templateId = templatesReference.push().getKey();
         DatabaseReference templateRef = templatesReference.child(templateId);
 
-        // שמירת הכותרת
         templateRef.child("title").setValue(title);
 
         // אם נבחרה תמונה, ממירים לטקסט (Base64) ושומרים

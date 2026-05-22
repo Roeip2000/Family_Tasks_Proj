@@ -101,7 +101,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
                             openCount++;
                             openTasks.add(task);
 
-                            // שימוש במחלקת עזר לבדיקת תאריכים (בדיוק כמו שהיה)
+                            // שימוש במחלקת העזר DateUtils לבדיקת תאריך היעד
                             if (DateUtils.isOverdue(task.getDueAt())) {
                                 overdueCount++;
                             } else if (DateUtils.isDueSoon(task.getDueAt())) {
