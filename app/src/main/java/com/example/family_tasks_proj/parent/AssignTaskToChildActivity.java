@@ -68,6 +68,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         spinnerTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                // Android מחייב את כל הפרמטרים, אבל כאן מספיק לנו position
                 showSelectedTemplateImage(position);
             }
 
@@ -102,7 +103,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     // טעינת תבניות מה-Firebase
-    private void loadTemplatesFromFirebase() {
+    private void loadTemplatesFromFirebase()
+    {
         parentReference.child("task_templates").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -110,7 +112,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 List<String> templateTitles = new ArrayList<>();
                 templateTitles.add("בחר תבנית");
 
-                for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot templateSnapshot : snapshot.getChildren())
+                {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
                         taskTemplates.add(template);
