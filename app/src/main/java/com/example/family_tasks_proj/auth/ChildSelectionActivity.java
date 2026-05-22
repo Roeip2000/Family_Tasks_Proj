@@ -56,7 +56,14 @@ public class ChildSelectionActivity extends AppCompatActivity {
         btnEnter.setEnabled(false);
 
         loadChildren();
-        btnEnter.setOnClickListener(view -> onEnterClicked());
+
+        // לחיצה על "כניסה" מעבירה את הילד לדשבורד שלו
+        btnEnter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onEnterClicked();
+            }
+        });
     }
 
     // טעינת הילדים של ההורה

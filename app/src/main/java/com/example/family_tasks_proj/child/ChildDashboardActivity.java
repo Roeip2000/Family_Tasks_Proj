@@ -1,5 +1,6 @@
 package com.example.family_tasks_proj.child;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,16 +119,25 @@ public class ChildDashboardActivity extends AppCompatActivity {
             tvStatus.setTextColor(getColor(R.color.text_secondary));
         }
 
-        btnDone.setOnClickListener(v -> showDoneDialog(task));
+        // לחיצה על "בוצע" פותחת דיאלוג אישור לפני סימון המשימה
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDoneDialog(task);
+            }
+        });
     }
 
     private void showDoneDialog(final ChildTask task) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_task_done_title)
                 .setMessage(R.string.dialog_task_done_message)
-                .setPositiveButton(R.string.dialog_yes, (dialog, which) -> {
-                    markTaskAsDone(task);
-                    Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        markTaskAsDone(task);
+                        Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setNegativeButton(R.string.dialog_no, null)
                 .show();
