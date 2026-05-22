@@ -12,74 +12,64 @@ import java.io.InputStream;
 // מחלקת עזר לטיפול בתמונות בפרויקט
 public class ImageHelper {
 
-    // איכות הדחיסה של התמונה לפני שמירה
-    private static final int JPEG_QUALITY = 70;
+    private static final int IMAGE_QUALITY = 70;
+    private static final int MAX_IMAGE_SIZE = 600;
 
-    // הגודל המקסימלי של תמונה שנשמרת במסד
-    private static final int MAX_SIZE = 600;
-
-    // אם יחס ההקטנה קטן מ-1, התמונה גדולה מהמותר וצריך להקטין אותה
-    private static final float SCALE_THRESHOLD = 1.0f;
-
-    // טוען תמונה מהגלריה ומקטין אותה לפני שמירה
+    // טוען תמונה מהגלריה ומקטין אותה אם היא גדולה מדי
     public static Bitmap loadResizedBitmap(ContentResolver resolver, Uri uri) {
         try {
-            // פתיחת התמונה שנבחרה מהגלריה
-            InputStream imageStream = resolver.openInputStream(uri);
-            Bitmap originalBitmap = BitmapFactory.decodeStream(imageStream);
+            InputStream inputStream = resolver.openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
-            if (originalBitmap == null) {
+            if (bitmap == null) {
                 return null;
             }
 
-            int width = originalBitmap.getWidth();
-            int height = originalBitmap.getHeight();
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
 
-            // חישוב יחס הקטנה כדי שהתמונה לא תהיה גדולה מדי
-            float resizeRatio = Math.min((float) MAX_SIZE / width, (float) MAX_SIZE / height);
+            float scale = Math.min(
+                    (float) MAX_IMAGE_SIZE / width,
+                    (float) MAX_IMAGE_SIZE / height
+            );
 
-            // אם התמונה גדולה מהמותר, מקטינים אותה
-            if (resizeRatio < SCALE_THRESHOLD) {
-                int newWidth = Math.round(width * resizeRatio);
-                int newHeight = Math.round(height * resizeRatio);
-                return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true);
+            if (scale < 1) {
+                int newWidth = Math.round(width * scale);
+                int newHeight = Math.round(height * scale);
+                bitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
             }
 
-            return originalBitmap;
+            return bitmap;
         } catch (Exception exception) {
             return null;
         }
     }
 
-    // ממיר Bitmap לטקסט Base64 כדי לשמור תמונה ב-Firebase
+    // ממיר תמונה לטקסט כדי לשמור אותה ב-Firebase
     public static String bitmapToBase64(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         }
+
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, outputStream);
 
-            // דחיסת התמונה ל-JPEG והפיכתה למערך bytes
-            bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
             byte[] imageBytes = outputStream.toByteArray();
-
-            // המרת ה-bytes לטקסט Base64
             return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
         } catch (Exception exception) {
             return null;
         }
     }
 
-    // ממיר Base64 בחזרה ל-Bitmap כדי להציג את התמונה במסך
+    // ממיר טקסט Base64 בחזרה לתמונה
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.trim().isEmpty()) {
             return null;
         }
-        try {
-            // פענוח הטקסט חזרה ל-bytes
-            byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
 
-            // יצירת Bitmap מתוך ה-bytes
+        try {
+            byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
         } catch (Exception exception) {
             return null;

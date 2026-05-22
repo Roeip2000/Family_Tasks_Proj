@@ -2,19 +2,10 @@ package com.example.family_tasks_proj.models;
 
 /** מודל המייצג תבנית של משימה (למשל "סידור חדר"). משמש ליצירה מהירה של משימות חוזרות. */
 public class TaskTemplate {
-    private String id;
     private String title;
     private String imageBase64;
 
     public TaskTemplate() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getTitle() {

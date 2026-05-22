@@ -33,7 +33,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
     private TextView tvOpenTasksCount, tvNoTasks;
     private LinearLayout tasksContainer;
 
-    private final List<ChildTask> openTasks = new ArrayList<>();
+    private final List<DataSnapshot> openTasks = new ArrayList<>();
     private String parentId, childId;
 
     @Override
@@ -67,9 +67,8 @@ public class ChildDashboardActivity extends AppCompatActivity {
                 for (DataSnapshot taskSnapshot : snapshot.getChildren()) {
                     ChildTask task = taskSnapshot.getValue(ChildTask.class);
                     if (task != null) {
-                        task.setId(taskSnapshot.getKey());
                         if (!task.getIsDone()) {
-                            openTasks.add(task);
+                            openTasks.add(taskSnapshot);
                         }
                     }
                 }
@@ -91,14 +90,17 @@ public class ChildDashboardActivity extends AppCompatActivity {
         tvNoTasks.setVisibility(View.GONE);
         
         LayoutInflater inflater = LayoutInflater.from(this);
-        for (ChildTask task : openTasks) {
-            View card = inflater.inflate(R.layout.item_child_task, tasksContainer, false);
-            bindTaskView(card, task);
-            tasksContainer.addView(card);
+        for (DataSnapshot taskSnapshot : openTasks) {
+            ChildTask task = taskSnapshot.getValue(ChildTask.class);
+            if (task != null) {
+                View card = inflater.inflate(R.layout.item_child_task, tasksContainer, false);
+                bindTaskView(card, task, taskSnapshot.getKey());
+                tasksContainer.addView(card);
+            }
         }
     }
 
-    private void bindTaskView(View card, final ChildTask task) {
+    private void bindTaskView(View card, final ChildTask task, final String taskId) {
         TextView tvTitle = card.findViewById(R.id.tvTaskTitle);
         TextView tvDueDate = card.findViewById(R.id.tvDueDate);
         TextView tvStatus = card.findViewById(R.id.tvStatus);
@@ -123,28 +125,27 @@ public class ChildDashboardActivity extends AppCompatActivity {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDoneDialog(task);
+                showDoneDialog(taskId);
             }
         });
     }
 
-    private void showDoneDialog(final ChildTask task) {
+    private void showDoneDialog(final String taskId) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_task_done_title)
                 .setMessage(R.string.dialog_task_done_message)
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        markTaskAsDone(task);
-                        Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
+                        markTaskAsDone(taskId);
                     }
                 })
                 .setNegativeButton(R.string.dialog_no, null)
                 .show();
     }
 
-    private void markTaskAsDone(final ChildTask task) {
-        getChildReference().child("tasks").child(task.getId()).child("isDone").setValue(true).addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
+    private void markTaskAsDone(final String taskId) {
+        getChildReference().child("tasks").child(taskId).child("isDone").setValue(true).addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();

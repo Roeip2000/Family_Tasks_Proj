@@ -2,21 +2,12 @@ package com.example.family_tasks_proj.models;
 
 /** מודל המייצג משימה שהוקצתה לילד. כולל תאריך יעד וסטטוס ביצוע. */
 public class ChildTask {
-    private String id;
     private String title;
     private String dueAt;
     private String imageBase64;
     private boolean isDone;
 
     public ChildTask() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getTitle() {
