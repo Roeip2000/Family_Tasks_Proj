@@ -26,7 +26,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
     private Spinner spinnerChildren;
     private Button btnEnter;
-    private TextView tvNoChildren;
 
     // שתי הרשימות נשמרות באותו סדר
     private final List<String> childIds = new ArrayList<>();
@@ -42,7 +41,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
         spinnerChildren = findViewById(R.id.spinnerChildren);
         btnEnter = findViewById(R.id.btnEnter);
-        tvNoChildren = findViewById(R.id.tvNoChildren);
 
         // מזהה ההורה מגיע מסריקת ה-QR
         parentId = getIntent().getStringExtra(ChildDashboardActivity.EXTRA_PARENT_ID);
@@ -51,9 +49,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-        // הכפתור לא פעיל עד שהילדים נטענים
-        btnEnter.setEnabled(false);
 
         loadChildren();
 
@@ -79,30 +74,15 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         childIds.clear();
                         childNames.clear();
+                        childNames.add("בחר ילד");
 
                         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                             String childId = childSnapshot.getKey();
                             String firstName = childSnapshot.child("firstName").getValue(String.class);
 
-                            if (firstName == null || firstName.trim().isEmpty()) {
-                                firstName = getString(R.string.default_child_name_fallback);
-                            }
-
                             childIds.add(childId);
                             childNames.add(firstName);
                         }
-
-                        // אין ילדים להצגה
-                        if (childIds.isEmpty()) {
-                            tvNoChildren.setVisibility(View.VISIBLE);
-                            spinnerChildren.setVisibility(View.GONE);
-                            btnEnter.setEnabled(false);
-                            return;
-                        }
-
-                        tvNoChildren.setVisibility(View.GONE);
-                        spinnerChildren.setVisibility(View.VISIBLE);
-                        btnEnter.setEnabled(true);
 
                         // הצגת שמות הילדים
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -116,7 +96,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(ChildSelectionActivity.this, R.string.error_load_db, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -124,17 +103,16 @@ public class ChildSelectionActivity extends AppCompatActivity {
     // מעבר לדשבורד של הילד
     private void onEnterClicked()
     {
-
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
 
-        // בדיקה שנבחר ילד תקין
-        if (selectedPosition < 0 || selectedPosition >= childIds.size()) {
+        // בדיקה שהילד לא נשאר על אפשרות ברירת המחדל
+        if (selectedPosition <= 0) {
             Toast.makeText(this, R.string.empty_no_children_selection, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // לפי המיקום ב-Spinner מוצאים את ה-id של הילד
-        String childId = childIds.get(selectedPosition);
+        // מחסירים 1 כי הוספנו את "בחר ילד" במקום ה-0
+        String childId = childIds.get(selectedPosition - 1);
 
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);

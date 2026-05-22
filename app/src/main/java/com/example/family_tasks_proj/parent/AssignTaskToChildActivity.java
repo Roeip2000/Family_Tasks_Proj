@@ -161,7 +161,8 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     // שיוך המשימה לילד ב-Firebase
-    private void assignTask() {
+    private void assignTask()
+    {
         String date = etDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
         int templatePosition = spinnerTemplates.getSelectedItemPosition();
