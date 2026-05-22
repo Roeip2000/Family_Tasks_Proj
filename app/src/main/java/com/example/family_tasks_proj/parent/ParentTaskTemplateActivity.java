@@ -34,28 +34,27 @@ import java.util.List;
 
 public class ParentTaskTemplateActivity extends AppCompatActivity {
 
-    private EditText etTitle;
-    private ImageView imagePreview;
-    private Button btnSave, btnBack;
+    private EditText etTemplateTitle;
+    private ImageView imgTemplatePreview;
+    private Button btnSaveTemplate, btnBack;
     private ListView lvTemplates;
 
     private final List<TaskTemplate> taskTemplates = new ArrayList<>();
     private TemplateListAdapter templateAdapter;
-    private Bitmap currentSelectedBitmap = null;
+    private Bitmap selectedTemplateBitmap = null;
     private String parentId;
     private DatabaseReference templatesReference;
 
-    // פתיחת גלריה לבחירת תמונה לתבנית
+    // בחירת תמונה לתבנית מהגלריה
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             new ActivityResultCallback<Uri>() {
                 @Override
                 public void onActivityResult(Uri uri) {
                     if (uri != null) {
-                        // הקטנת התמונה לפני שמירה
-                        currentSelectedBitmap = ImageHelper.loadResizedBitmap(getContentResolver(), uri);
-                        if (currentSelectedBitmap != null) {
-                            imagePreview.setImageBitmap(currentSelectedBitmap);
+                        selectedTemplateBitmap = ImageHelper.loadResizedBitmap(getContentResolver(), uri);
+                        if (selectedTemplateBitmap != null) {
+                            imgTemplatePreview.setImageBitmap(selectedTemplateBitmap);
                         }
                     }
                 }
@@ -75,13 +74,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 .child(parentId)
                 .child("task_templates");
 
-        etTitle = findViewById(R.id.etTitle);
-        imagePreview = findViewById(R.id.imgTask);
-        btnSave = findViewById(R.id.btnSave);
+        etTemplateTitle = findViewById(R.id.etTitle);
+        imgTemplatePreview = findViewById(R.id.imgTask);
+        btnSaveTemplate = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvTemplates = findViewById(R.id.lvTemplates);
 
-        // כפתור לבחירת תמונה
         findViewById(R.id.btnPickImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,15 +87,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             }
         });
 
-        // כפתור שמירה
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        btnSaveTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveTemplate();
             }
         });
 
-        // חזרה לדשבורד
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,23 +130,25 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // שמירה של תבנית חדשה
     private void saveTemplate() {
-        String title = etTitle.getText().toString().trim();
+        String title = etTemplateTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String templateId = templatesReference.push().getKey();
-        DatabaseReference templateRef = templatesReference.child(templateId);
-
-        templateRef.child("title").setValue(title);
-
-        // אם נבחרה תמונה, ממירים לטקסט (Base64) ושומרים
-        if (currentSelectedBitmap != null) {
-            String base64 = ImageHelper.bitmapToBase64(currentSelectedBitmap);
-            templateRef.child("imageBase64").setValue(base64);
+        if (selectedTemplateBitmap == null) {
+            Toast.makeText(this, R.string.error_select_image, Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        String templateId = templatesReference.push().getKey();
+        DatabaseReference templateReference = templatesReference.child(templateId);
+
+        String imageBase64 = ImageHelper.bitmapToBase64(selectedTemplateBitmap);
+
+        templateReference.child("title").setValue(title);
+        templateReference.child("imageBase64").setValue(imageBase64);
 
         Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
         clearForm();
@@ -158,9 +156,9 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     // ניקוי הטופס אחרי שמירה
     private void clearForm() {
-        currentSelectedBitmap = null;
-        etTitle.setText("");
-        imagePreview.setImageDrawable(null);
+        selectedTemplateBitmap = null;
+        etTemplateTitle.setText("");
+        imgTemplatePreview.setImageDrawable(null);
     }
 
     // Adapter פנימי שמציג כל תבנית ברשימה
@@ -179,17 +177,13 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             TaskTemplate template = getItem(position);
             if (template != null) {
                 TextView tvTemplateTitle = convertView.findViewById(R.id.tvTemplateTitle);
-                ImageView imageThumb = convertView.findViewById(R.id.ivTemplateThumb);
+                ImageView imgTemplateThumb = convertView.findViewById(R.id.ivTemplateThumb);
 
                 tvTemplateTitle.setText(template.getTitle());
 
                 // המרת הטקסט חזרה לתמונה לתצוגה ברשימה
-                Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
-                if (bitmap != null) {
-                    imageThumb.setImageBitmap(bitmap);
-                } else {
-                    imageThumb.setImageResource(R.drawable.ic_image_placeholder);
-                }
+                Bitmap templateBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+                imgTemplateThumb.setImageBitmap(templateBitmap);
             }
             return convertView;
         }

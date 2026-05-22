@@ -122,11 +122,13 @@ public class ManageChildrenActivity extends AppCompatActivity {
         String childId = childrenReference.push().getKey();
 
         // שמירת השם תחת המזהה החדש
-        childrenReference.child(childId).child("firstName").setValue(firstName);
-
-        Toast.makeText(this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
-
-        // ניקוי השדה לקראת הילד הבא
-        etChildName.setText("");
+        childrenReference.child(childId).child("firstName").setValue(firstName).addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
+                // ניקוי השדה לקראת הילד הבא
+                etChildName.setText("");
+            }
+        });
     }
 }

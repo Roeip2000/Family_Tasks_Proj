@@ -212,11 +212,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             etTaskTitle.setText(template.getTitle());
 
             Bitmap bitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
-            if (bitmap != null) {
-                imageTaskPreview.setImageBitmap(bitmap);
-            } else {
-                imageTaskPreview.setImageDrawable(null);
-            }
+            imageTaskPreview.setImageBitmap(bitmap);
         }
     }
 

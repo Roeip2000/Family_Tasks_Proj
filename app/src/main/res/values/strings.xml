@@ -55,6 +55,7 @@
     <string name="error_action_failed">הפעולה נכשלה</string>
     <string name="error_load_db">טעינת הנתונים נכשלה</string>
     <string name="error_login_failed">התחברות נכשלה</string>
+    <string name="error_select_image">יש לבחור תמונה לתבנית</string>
 
     <!-- דיאלוג סיום משימה -->
     <string name="dialog_task_done_title">סיום משימה</string>

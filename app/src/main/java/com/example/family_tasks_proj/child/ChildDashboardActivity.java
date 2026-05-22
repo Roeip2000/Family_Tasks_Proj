@@ -144,6 +144,11 @@ public class ChildDashboardActivity extends AppCompatActivity {
     }
 
     private void markTaskAsDone(final ChildTask task) {
-        getChildReference().child("tasks").child(task.getId()).child("isDone").setValue(true);
+        getChildReference().child("tasks").child(task.getId()).child("isDone").setValue(true).addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ChildDashboardActivity.this, R.string.toast_task_done, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
