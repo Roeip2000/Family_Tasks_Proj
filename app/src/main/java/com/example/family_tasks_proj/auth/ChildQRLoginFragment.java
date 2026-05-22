@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.family_tasks_proj.R;
+import com.example.family_tasks_proj.child.ChildDashboardActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -130,7 +131,7 @@ public class ChildQRLoginFragment extends Fragment {
     private void openChildSelection(String parentId) {
         Intent intent = new Intent(requireActivity(), ChildSelectionActivity.class);
         // מעבירים את מזהה ההורה למסך בחירת הילד
-        intent.putExtra("parentId", parentId);
+        intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);
         startActivity(intent);
         requireActivity().finish();
     }

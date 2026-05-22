@@ -45,7 +45,7 @@ public class ChildSelectionActivity extends AppCompatActivity {
         tvNoChildren = findViewById(R.id.tvNoChildren);
 
         // מזהה ההורה מגיע מסריקת ה-QR
-        parentId = getIntent().getStringExtra("parentId");
+        parentId = getIntent().getStringExtra(ChildDashboardActivity.EXTRA_PARENT_ID);
         if (parentId == null || parentId.trim().isEmpty()) {
             Toast.makeText(this, R.string.error_action_failed, Toast.LENGTH_SHORT).show();
             finish();
