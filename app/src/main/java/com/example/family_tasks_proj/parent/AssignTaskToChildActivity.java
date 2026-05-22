@@ -65,17 +65,14 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         btnAssign = findViewById(R.id.btnAssign);
         btnBack = findViewById(R.id.btnBackToDashboard);
 
-        // הכפתור פעיל רק אחרי שיש גם ילדים וגם תבניות
-        btnAssign.setEnabled(false);
-
         spinnerTemplates.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 showSelectedTemplateImage(position);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
@@ -111,6 +108,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskTemplates.clear();
                 List<String> templateTitles = new ArrayList<>();
+                templateTitles.add("בחר תבנית");
 
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
@@ -120,19 +118,11 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                     }
                 }
                 
-                // עדכון ה-Spinner ישירות
                 spinnerTemplates.setAdapter(new ArrayAdapter<>(
                         AssignTaskToChildActivity.this,
                         android.R.layout.simple_spinner_dropdown_item,
                         templateTitles
                 ));
-                
-                if (!taskTemplates.isEmpty()) {
-                    showSelectedTemplateImage(0);
-                }
-                
-                // הפעלת הכפתור רק אם יש תבניות וילדים
-                updateAssignButtonState();
             }
 
             @Override
@@ -148,6 +138,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
                 List<String> childNames = new ArrayList<>();
+                childNames.add("בחר ילד");
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childIds.add(childSnapshot.getKey());
@@ -161,9 +152,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                         android.R.layout.simple_spinner_dropdown_item,
                         childNames
                 ));
-                
-                // הפעלת הכפתור רק אם יש תבניות וילדים
-                updateAssignButtonState();
             }
 
             @Override
@@ -176,25 +164,28 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void assignTask() {
         String date = etDueDate.getText().toString().trim();
         int childPosition = spinnerChildren.getSelectedItemPosition();
+        int templatePosition = spinnerTemplates.getSelectedItemPosition();
 
-        if (date.isEmpty()) {
+        if (childPosition == 0 || templatePosition == 0 || date.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
+        int childIndex = childPosition - 1;
+        int templateIndex = templatePosition - 1;
+
         DatabaseReference newTaskReference = parentReference
                 .child("children")
-                .child(childIds.get(childPosition))
+                .child(childIds.get(childIndex))
                 .child("tasks")
                 .push();
 
-        TaskTemplate selectedTemplate = taskTemplates.get(spinnerTemplates.getSelectedItemPosition());
-        String imageBase64 = selectedTemplate.getImageBase64();
+        TaskTemplate selectedTemplate = taskTemplates.get(templateIndex);
 
         ChildTask newTask = new ChildTask();
         newTask.setTitle(selectedTemplate.getTitle());
         newTask.setDueAt(date);
-        newTask.setImageBase64(imageBase64);
+        newTask.setImageBase64(selectedTemplate.getImageBase64());
         newTask.setIsDone(false);
 
         newTaskReference.setValue(newTask).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -205,10 +196,17 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
         });
     }
 
-    // עדכון פרטי התבנית שנבחרה בטופס
+    // הצגת תמונת התבנית שנבחרה
     private void showSelectedTemplateImage(int position) {
-        if (position >= 0 && position < taskTemplates.size()) {
-            TaskTemplate template = taskTemplates.get(position);
+        if (position == 0) {
+            imageTaskPreview.setImageDrawable(null);
+            return;
+        }
+
+        int templateIndex = position - 1;
+
+        if (templateIndex >= 0 && templateIndex < taskTemplates.size()) {
+            TaskTemplate template = taskTemplates.get(templateIndex);
 
             Bitmap templateBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
             imageTaskPreview.setImageBitmap(templateBitmap);
@@ -224,9 +222,5 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
                 etDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    private void updateAssignButtonState() {
-        btnAssign.setEnabled(!childIds.isEmpty() && !taskTemplates.isEmpty());
     }
 }
