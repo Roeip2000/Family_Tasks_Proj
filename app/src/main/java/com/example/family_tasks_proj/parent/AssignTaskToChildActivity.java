@@ -111,6 +111,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskTemplates.clear();
                 List<String> templateTitles = new ArrayList<>();
+
                 for (DataSnapshot templateSnapshot : snapshot.getChildren()) {
                     TaskTemplate template = templateSnapshot.getValue(TaskTemplate.class);
                     if (template != null) {
@@ -147,6 +148,7 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
                 List<String> childNames = new ArrayList<>();
+
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childIds.add(childSnapshot.getKey());
                     String firstName = childSnapshot.child("firstName").getValue(String.class);
