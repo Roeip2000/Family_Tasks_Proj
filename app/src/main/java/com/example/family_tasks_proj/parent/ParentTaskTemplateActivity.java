@@ -36,11 +36,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
 
     private EditText etTemplateTitle;
     private ImageView imgTemplatePreview;
-    private Button btnSaveTemplate, btnBack;
+    private Button btnSaveTemplate, btnBack, btnPickImage;
     private ListView lvTemplates;
 
     private final List<TaskTemplate> taskTemplates = new ArrayList<>();
-    private TemplateListAdapter templateAdapter;
+    private TemplateListAdapter templatesAdapter;
     private Bitmap selectedTemplateBitmap = null;
     private String parentId;
     private DatabaseReference templatesReference;
@@ -51,9 +51,11 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             new ActivityResultCallback<Uri>() {
                 @Override
                 public void onActivityResult(Uri uri) {
-                    if (uri != null) {
+                    if (uri != null)
+                    {
                         selectedTemplateBitmap = ImageHelper.loadResizedBitmap(getContentResolver(), uri);
-                        if (selectedTemplateBitmap != null) {
+                        if (selectedTemplateBitmap != null)
+                        {
                             imgTemplatePreview.setImageBitmap(selectedTemplateBitmap);
                         }
                     }
@@ -79,8 +81,10 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         btnSaveTemplate = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvTemplates = findViewById(R.id.lvTemplates);
+        btnPickImage = findViewById(R.id.btnPickImage);
 
-        findViewById(R.id.btnPickImage).setOnClickListener(new View.OnClickListener() {
+        // פתיחת הגלריה לבחירת תמונת תבנית
+        btnPickImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 galleryLauncher.launch("image/*");
@@ -101,8 +105,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
             }
         });
 
-        templateAdapter = new TemplateListAdapter();
-        lvTemplates.setAdapter(templateAdapter);
+        templatesAdapter = new TemplateListAdapter();
+        lvTemplates.setAdapter(templatesAdapter);
 
         loadTemplatesFromFirebase();
     }
@@ -119,7 +123,7 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                         taskTemplates.add(template);
                     }
                 }
-                templateAdapter.notifyDataSetChanged();
+                templatesAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -129,7 +133,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
     }
 
     // שמירה של תבנית חדשה
-    private void saveTemplate() {
+    private void saveTemplate()
+    {
         String title = etTemplateTitle.getText().toString().trim();
 
         if (title.isEmpty()) {
@@ -143,12 +148,12 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
         }
 
         String templateId = templatesReference.push().getKey();
-        DatabaseReference templateReference = templatesReference.child(templateId);
+        DatabaseReference newTemplateReference = templatesReference.child(templateId);
 
         String imageBase64 = ImageHelper.bitmapToBase64(selectedTemplateBitmap);
 
-        templateReference.child("title").setValue(title);
-        templateReference.child("imageBase64").setValue(imageBase64);
+        newTemplateReference.child("title").setValue(title);
+        newTemplateReference.child("imageBase64").setValue(imageBase64);
 
         Toast.makeText(ParentTaskTemplateActivity.this, R.string.toast_template_saved, Toast.LENGTH_SHORT).show();
         clearForm();
@@ -182,8 +187,8 @@ public class ParentTaskTemplateActivity extends AppCompatActivity {
                 tvTemplateTitle.setText(template.getTitle());
 
                 // המרת הטקסט חזרה לתמונה לתצוגה ברשימה
-                Bitmap templateBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
-                imgTemplateThumb.setImageBitmap(templateBitmap);
+                Bitmap templateImageBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+                imgTemplateThumb.setImageBitmap(templateImageBitmap);
             }
             return convertView;
         }
