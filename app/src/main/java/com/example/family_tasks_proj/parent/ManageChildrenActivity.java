@@ -22,13 +22,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+// מסך הוספת ילד וצפייה ברשימת הילדים של ההורה
 public class ManageChildrenActivity extends AppCompatActivity {
 
     private EditText etChildName;
-    private Button btnSaveChild, btnBack;
+    private Button btnAddChild, btnBack;
     private ListView lvChildren;
 
-    // childNames מחזיק את שמות הילדים שמוצגים ברשימה
+    // רשימת שמות הילדים שמוצגת במסך
     private final List<String> childNames = new ArrayList<>();
 
     private ArrayAdapter<String> listAdapter;
@@ -40,21 +41,22 @@ public class ManageChildrenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_children);
 
-        // קבלת מזהה ההורה המחובר
+        // מזהה ההורה המחובר
         parentId = FirebaseAuth.getInstance().getUid();
 
-        // הנתיב לילדים של ההורה המחובר ב-Firebase
+        // הנתיב לילדים של ההורה ב-Firebase
         childrenReference = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
                 .child("children");
 
+        // חיבור רכיבי המסך מה-XML לקוד
         etChildName = findViewById(R.id.etFirstName);
-        btnSaveChild = findViewById(R.id.btnAddChild);
+        btnAddChild = findViewById(R.id.btnAddChild);
         btnBack = findViewById(R.id.btnBackToDashboard);
         lvChildren = findViewById(R.id.lvChildren);
 
-        // הגדרת המתאם לרשימה
+        // המתאם מציג את שמות הילדים ברשימה
         listAdapter = new ArrayAdapter<>(this,
                 R.layout.item_manage_child,
                 R.id.tvChildFullName,
@@ -62,15 +64,15 @@ public class ManageChildrenActivity extends AppCompatActivity {
         );
         lvChildren.setAdapter(listAdapter);
 
-        // לחיצה על כפתור שמירה
-        btnSaveChild.setOnClickListener(new View.OnClickListener() {
+        // לחיצה על "הוסף ילד" מוסיפה ילד חדש
+        btnAddChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveChild();
+                addChild();
             }
         });
 
-        // חזרה למסך הקודם
+        // לחיצה על "חזרה" סוגרת את המסך
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,14 +80,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
             }
         });
 
+        // טעינת הילדים מ-Firebase והצגתם ברשימה
         loadChildrenFromFirebase();
     }
 
-    // טעינת הילדים מ-Firebase
+    // טעינת שמות הילדים מ-Firebase והצגתם ברשימה
     private void loadChildrenFromFirebase() {
         childrenReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // בונים מחדש את הרשימה בכל שינוי בנתונים
                 childNames.clear();
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
@@ -93,6 +97,7 @@ public class ManageChildrenActivity extends AppCompatActivity {
                     childNames.add(firstName);
                 }
 
+                // מעדכנים את התצוגה ברשימה
                 listAdapter.notifyDataSetChanged();
             }
 
@@ -102,20 +107,26 @@ public class ManageChildrenActivity extends AppCompatActivity {
         });
     }
 
-    // שמירת ילד חדש ב-Firebase
-    private void saveChild() {
+    // הוספת ילד חדש ל-Firebase
+    private void addChild() {
+        // קריאת השם שההורה הקליד
         String firstName = etChildName.getText().toString().trim();
 
+        // בדיקה שהשדה לא ריק
         if (firstName.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // יצירת מזהה ייחודי חדש לילד
         String childId = childrenReference.push().getKey();
 
+        // שמירת השם תחת המזהה החדש
         childrenReference.child(childId).child("firstName").setValue(firstName);
 
-        Toast.makeText(ManageChildrenActivity.this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.toast_child_saved, Toast.LENGTH_SHORT).show();
+
+        // ניקוי השדה לקראת הילד הבא
         etChildName.setText("");
     }
 }

@@ -50,12 +50,14 @@ public class ChildDashboardActivity extends AppCompatActivity {
         loadChildTasks();
     }
 
-    private DatabaseReference getChildReference() {
+    private DatabaseReference getChildReference()
+    {
         return FirebaseDatabase.getInstance().getReference("parents")
                 .child(parentId).child("children").child(childId);
     }
 
-    private void loadChildTasks() {
+    private void loadChildTasks()
+    {
         getChildReference().child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

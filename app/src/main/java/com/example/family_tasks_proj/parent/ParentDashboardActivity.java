@@ -53,10 +53,34 @@ public class ParentDashboardActivity extends AppCompatActivity {
         btnAssignTask = findViewById(R.id.btnAssignTaskToChild);
         btnQR = findViewById(R.id.btnShowQR);
 
-        btnManageChildren.setOnClickListener(v -> startActivity(new Intent(this, ManageChildrenActivity.class)));
-        btnManageTemplates.setOnClickListener(v -> startActivity(new Intent(this, ParentTaskTemplateActivity.class)));
-        btnAssignTask.setOnClickListener(v -> startActivity(new Intent(this, AssignTaskToChildActivity.class)));
-        btnQR.setOnClickListener(v -> startActivity(new Intent(this, GenerateQRActivity.class)));
+        // חיבור כפתורי הדשבורד למסכים המתאימים
+        btnManageChildren.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ParentDashboardActivity.this, ManageChildrenActivity.class));
+            }
+        });
+
+        btnManageTemplates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ParentDashboardActivity.this, ParentTaskTemplateActivity.class));
+            }
+        });
+
+        btnAssignTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ParentDashboardActivity.this, AssignTaskToChildActivity.class));
+            }
+        });
+
+        btnQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ParentDashboardActivity.this, GenerateQRActivity.class));
+            }
+        });
 
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new ParentDashboardTaskAdapter(this, openTasks);
