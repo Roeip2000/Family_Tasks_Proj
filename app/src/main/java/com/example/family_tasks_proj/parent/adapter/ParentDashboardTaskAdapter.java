@@ -18,9 +18,13 @@ import com.example.family_tasks_proj.utils.ImageHelper;
 
 import java.util.List;
 
+// Adapter שמחבר בין רשימת המשימות לבין ה-RecyclerView בדשבורד ההורה
 public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashboardTaskAdapter.TaskViewHolder> {
 
+    // context דרוש כדי לגשת ל-layout, צבעים וטקסטים מתוך resources
     private final Context context;
+
+    // הרשימה שמכילה את המשימות הפתוחות שמוצגות להורה
     private final List<AssignedTask> assignedTasks;
 
     public ParentDashboardTaskAdapter(Context context, List<AssignedTask> assignedTasks) {
@@ -31,14 +35,17 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // יצירת כרטיס משימה חדש מתוך קובץ ה-XML של פריט ברשימה
         View view = LayoutInflater.from(context).inflate(R.layout.item_parent_task, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        // קבלת המשימה לפי המיקום שלה ברשימה
         AssignedTask task = assignedTasks.get(position);
 
+        // הצגת פרטי המשימה בכרטיס
         holder.tvTitle.setText(task.getTitle());
         holder.tvOwner.setText(context.getString(R.string.task_assigned_to, task.getChildName()));
 
@@ -46,7 +53,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
         holder.tvDueDate.setText(task.getDueAt());
         
-        // הגדרת סטטוס לפי תאריך
+        // קביעת סטטוס המשימה לפי תאריך היעד
         if (DateUtils.isOverdue(task.getDueAt())) {
             holder.tvStatus.setText(context.getString(R.string.parent_dashboard_task_status_late));
             holder.tvStatus.setTextColor(context.getColor(R.color.danger));
@@ -60,6 +67,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
     }
 
     private void showTaskImage(TaskViewHolder holder, AssignedTask task) {
+        // התמונה נשמרת ב-Firebase כטקסט Base64, וכאן ממירים אותה חזרה ל-Bitmap
         String imageBase64 = task.getImageBase64();
         Bitmap bitmap = ImageHelper.base64ToBitmap(imageBase64);
         holder.imageContainer.setVisibility(View.VISIBLE);
@@ -68,9 +76,11 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
     @Override
     public int getItemCount() {
+        // RecyclerView צריך לדעת כמה פריטים יש כדי להציג את כולם
         return assignedTasks.size();
     }
 
+    // ViewHolder שומר הפניות לרכיבי ה-XML של כרטיס משימה אחד
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvOwner, tvDueDate, tvStatus;
         View imageContainer;
@@ -78,6 +88,7 @@ public class ParentDashboardTaskAdapter extends RecyclerView.Adapter<ParentDashb
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
+            // חיבור רכיבי הכרטיס מה-XML לקוד
             tvTitle = itemView.findViewById(R.id.tvTaskTitleCard);
             tvOwner = itemView.findViewById(R.id.tvTaskOwner);
             tvDueDate = itemView.findViewById(R.id.tvDueDateCard);

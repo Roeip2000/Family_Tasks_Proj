@@ -89,7 +89,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
         loadDashboardData();
     }
 
-    private void loadDashboardData() {
+    private void loadDashboardData()
+    {
         DatabaseReference childrenRef = FirebaseDatabase.getInstance()
                 .getReference("parents")
                 .child(parentId)
@@ -104,7 +105,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
                 int urgentCount = 0;
                 int overdueCount = 0;
 
-                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren())
+                {
                     String childName = childSnapshot.child("firstName").getValue(String.class);
                     DataSnapshot tasksSnapshot = childSnapshot.child("tasks");
 
@@ -121,7 +123,8 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
                         if (task.getIsDone()) {
                             doneCount++;
-                        } else {
+                        } else
+                        {
                             openCount++;
                             openTasks.add(task);
 
