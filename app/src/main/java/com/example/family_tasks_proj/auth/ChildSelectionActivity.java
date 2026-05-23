@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,11 +43,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
 
         // מזהה ההורה מגיע מסריקת ה-QR
         parentId = getIntent().getStringExtra(ChildDashboardActivity.EXTRA_PARENT_ID);
-        if (parentId == null || parentId.trim().isEmpty()) {
-            Toast.makeText(this, R.string.error_action_failed, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
         loadChildren();
 

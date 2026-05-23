@@ -30,7 +30,7 @@
 
     <!-- בחירת הורה/ילד -->
     <string name="label_choose_child">בחר את הילד שנכנס למערכת:</string>
-    <string name="empty_no_children_selection">אין ילדים רשומים. בקש מההורה להוסיף אותך.</string>
+    <string name="empty_no_children_selection">בחר ילד לפני הכניסה.</string>
     <string name="child_selection_subtitle_child">בחר את השם שלך מהרשימה</string>
 
     <!-- QR -->

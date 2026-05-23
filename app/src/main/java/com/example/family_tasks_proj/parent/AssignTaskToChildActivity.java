@@ -218,11 +218,13 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     }
 
     // פתיחת לוח שנה לבחירת תאריך
-    private void openDatePicker() {
+    private void openDatePicker()
+    {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(android.widget.DatePicker view, int year, int month, int day) {
+            public void onDateSet(android.widget.DatePicker view, int year, int month, int day)
+            {
                 etDueDate.setText(getString(R.string.date_slash_format, day, month + 1, year));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
