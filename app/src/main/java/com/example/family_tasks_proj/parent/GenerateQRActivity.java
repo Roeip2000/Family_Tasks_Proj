@@ -50,7 +50,9 @@ public class GenerateQRActivity extends AppCompatActivity {
 
             imageViewQrCode.setVisibility(View.VISIBLE);
             imageViewQrCode.setImageBitmap(bitmap);
-        } catch (Exception exception) {
+        }
+        catch (Exception exception)
+        {
             imageViewQrCode.setVisibility(View.GONE);
         }
     }

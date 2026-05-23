@@ -113,7 +113,7 @@ public class ParentRegisterFragment extends Fragment {
                 .child(uid)
                 .child("profile");
 
-        // לא שומרים סיסמה ב-Realtime Database
+
         HashMap<String, Object> parentData = new HashMap<>();
         parentData.put("uid", uid);
         parentData.put("firstName", firstName);
