@@ -70,7 +70,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         List<String> childNames = new ArrayList<>();
                         childNames.add("בחר ילד");
 
-                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot childSnapshot : snapshot.getChildren())
+                        {
                             String childId = childSnapshot.getKey();
                             String firstName = childSnapshot.child("firstName").getValue(String.class);
 
