@@ -26,9 +26,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
     private Spinner spinnerChildren;
     private Button btnEnter;
 
-    // שתי הרשימות נשמרות באותו סדר
+    // שומר את מזהי הילדים לפי הסדר שמוצג ב-Spinner
     private final List<String> childIds = new ArrayList<>();
-    private final List<String> childNames = new ArrayList<>();
 
     private String parentId;
 
@@ -67,7 +66,8 @@ public class ChildSelectionActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         childIds.clear();
-                        childNames.clear();
+
+                        List<String> childNames = new ArrayList<>();
                         childNames.add("בחר ילד");
 
                         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
