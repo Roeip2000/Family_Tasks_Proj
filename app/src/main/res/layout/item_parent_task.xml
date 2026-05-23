@@ -81,7 +81,6 @@
             android:orientation="horizontal">
 
             <View
-                android:id="@+id/viewTaskDot"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="8dp"

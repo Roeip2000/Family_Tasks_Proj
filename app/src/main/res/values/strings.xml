@@ -53,7 +53,6 @@
     <string name="register_failed">הרשמה נכשלה</string>
     <string name="save_parent_failed">שמירת נתונים נכשלה</string>
     <string name="error_action_failed">הפעולה נכשלה</string>
-    <string name="error_load_db">טעינת הנתונים נכשלה</string>
     <string name="error_login_failed">התחברות נכשלה</string>
     <string name="error_select_image">יש לבחור תמונה לתבנית</string>
 
@@ -66,7 +65,6 @@
 
     <!-- ערכי ברירת מחדל -->
     <string name="default_task_name">שם המשימה</string>
-    <string name="default_child_name_fallback">ילד</string>
     <string name="default_today">היום</string>
     <string name="zero_count">0</string>
     <string name="hint_first_name">שם פרטי</string>
@@ -95,8 +93,6 @@
     <string name="subtitle_assign_task">בחר משימה והקצה לילד המתאים</string>
     <string name="label_choose_template">בחר תבנית משימה</string>
     <string name="hint_change_template">לחץ כדי להחליף בין המשימות</string>
-    <string name="label_task_name">שם המשימה</string>
-    <string name="hint_task_name">הכנס שם משימה</string>
     <string name="label_assign_to">למי להקצות?</string>
     <string name="hint_select_child">לחץ כדי לבחור ילד מהרשימה</string>
     <string name="label_due_date">תאריך יעד</string>

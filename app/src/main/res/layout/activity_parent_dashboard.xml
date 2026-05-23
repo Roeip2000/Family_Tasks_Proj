@@ -63,7 +63,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- מונה: משימות דחופות (היום) -->
+                <!-- מונה: משימות דחופות בטווח הקרוב -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
