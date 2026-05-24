@@ -5,7 +5,6 @@ import java.util.Calendar;
 // מחלקת עזר לבדיקת מצב תאריך של משימה
 public class DateUtils {
 
-    private static final int URGENT_DAYS = 2;
 
     public static long getDaysLeft(String dueDate) {
         // תאריך ריק מוחזר כמספר גדול כדי שלא ייחשב דחוף או באיחור
@@ -42,7 +41,7 @@ public class DateUtils {
     public static boolean isDueSoon(String dueDate) {
         long daysLeft = getDaysLeft(dueDate);
         // משימה דחופה אם נשארו עד יומיים (0, 1 או 2)
-        return daysLeft >= 0 && daysLeft <= URGENT_DAYS;
+        return daysLeft >= 0 && daysLeft <= 2;
     }
 
     public static boolean isOverdue(String dueDate) {
