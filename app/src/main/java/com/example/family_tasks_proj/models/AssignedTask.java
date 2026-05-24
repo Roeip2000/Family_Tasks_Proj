@@ -8,13 +8,16 @@ public class AssignedTask {
     private String imageBase64;
     private boolean isDone;
 
+
     public String getChildName() {
         return childName;
     }
 
+
     public void setChildName(String childName) {
         this.childName = childName;
     }
+
 
     public String getTitle() {
         return title;
@@ -24,21 +27,26 @@ public class AssignedTask {
         this.title = title;
     }
 
+
     public String getDueAt() {
         return dueAt;
     }
+
 
     public void setDueAt(String dueAt) {
         this.dueAt = dueAt;
     }
 
+
     public String getImageBase64() {
         return imageBase64;
     }
 
+
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
+
 
     public boolean getIsDone() {
         return isDone;

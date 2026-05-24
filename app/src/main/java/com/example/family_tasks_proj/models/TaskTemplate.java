@@ -8,6 +8,7 @@ public class TaskTemplate {
     public TaskTemplate() {
     }
 
+
     public String getTitle() {
         return title;
     }
@@ -20,6 +21,11 @@ public class TaskTemplate {
         return imageBase64;
     }
 
+    // המימוש נמצא במחלקה TaskTemplate.
+    // Setter: אין קריאה ישירה מאקטיביטי.
+    // Firebase משתמש בו בעקיפין בזמן getValue(TaskTemplate.class)
+    // מתוך ParentTaskTemplateActivity ומתוך AssignTaskToChildActivity.
+    // הוא מכניס את השדה imageBase64 מהמסד לאובייקט, לכן לא מוחקים גם אם הוא אפור.
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
