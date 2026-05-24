@@ -63,7 +63,8 @@ public class ImageHelper {
     }
 
     // ממיר Base64 בחזרה ל-Bitmap כדי להציג תמונה במסך
-    public static Bitmap base64ToBitmap(String base64) {
+    public static Bitmap base64ToBitmap(String base64)
+    {
         if (base64 == null || base64.trim().isEmpty()) {
             return null;
         }
