@@ -38,7 +38,6 @@
     <string name="cd_qr_code">קוד QR לכניסת ילד</string>
     <string name="cd_task_image">תמונת משימה</string>
     <string name="child_qr_scan_prompt">סרוק את קוד ה-QR שההורה שלך מציג</string>
-    <string name="child_qr_helper_card">סורקים את הקוד, בוחרים את השם שלך וממשיכים ישר למשימות.</string>
     <string name="child_qr_camera_denied">צריך לאשר הרשאת מצלמה כדי לסרוק QR</string>
 
     <!-- משימות - תצוגה אצל ההורה -->

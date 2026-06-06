@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_muted"
+    android:background="@android:color/white"
     android:fillViewport="true"
     android:layoutDirection="rtl">
 
@@ -14,15 +13,16 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- כותרת המסך -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/title_manage_children"
             android:textColor="@color/primary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- הסבר קצר -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,54 +31,35 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- כרטיס טופס הוספת ילד -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- שם הילד -->
+        <EditText
+            android:id="@+id/etFirstName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/divider"
-            app:strokeWidth="1dp">
+            android:layout_height="54dp"
+            android:layout_marginTop="20dp"
+            android:autofillHints="givenName"
+            android:background="@drawable/bg_repository_list"
+            android:hint="@string/hint_first_name"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <EditText
-                    android:id="@+id/etFirstName"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:autofillHints="givenName"
-                    android:background="@drawable/bg_repository_list"
-                    android:hint="@string/hint_first_name"
-                    android:inputType="textPersonName"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/btnAddChild"
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="24dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="@string/btn_add_child"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    app:cornerRadius="16dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <!-- כפתור ראשי: הוספת ילד -->
+        <Button
+            android:id="@+id/btnAddChild"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primary"
+            android:text="@string/btn_add_child"
+            android:textColor="@color/white" />
 
         <!-- רשימת הילדים הקיימים -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/title_children_list"
             android:textColor="@color/primary"
             android:textSize="18sp"
