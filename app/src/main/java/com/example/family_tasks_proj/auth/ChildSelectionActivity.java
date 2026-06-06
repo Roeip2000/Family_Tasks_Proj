@@ -68,7 +68,6 @@ public class ChildSelectionActivity extends AppCompatActivity {
                         childIds.clear();
 
                         List<String> childNames = new ArrayList<>();
-                        childNames.add("בחר ילד");
 
                         for (DataSnapshot childSnapshot : snapshot.getChildren())
                         {
@@ -100,14 +99,13 @@ public class ChildSelectionActivity extends AppCompatActivity {
     {
         int selectedPosition = spinnerChildren.getSelectedItemPosition();
 
-        // בדיקה שהילד לא נשאר על אפשרות ברירת המחדל
-        if (selectedPosition <= 0) {
+        // בדיקה שיש ילד שנבחר ברשימה
+        if (selectedPosition < 0 || selectedPosition >= childIds.size()) {
             Toast.makeText(this, R.string.empty_no_children_selection, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // מחסירים 1 כי הוספנו את "בחר ילד" במקום ה-0
-        String childId = childIds.get(selectedPosition - 1);
+        String childId = childIds.get(selectedPosition);
 
         Intent intent = new Intent(this, ChildDashboardActivity.class);
         intent.putExtra(ChildDashboardActivity.EXTRA_PARENT_ID, parentId);

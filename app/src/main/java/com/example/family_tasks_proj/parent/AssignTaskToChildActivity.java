@@ -110,7 +110,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskTemplates.clear();
                 List<String> templateTitles = new ArrayList<>();
-                templateTitles.add("בחר תבנית");
 
                 for (DataSnapshot templateSnapshot : snapshot.getChildren())
                 {
@@ -141,7 +140,6 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 childIds.clear();
                 List<String> childNames = new ArrayList<>();
-                childNames.add("בחר ילד");
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     childIds.add(childSnapshot.getKey());
@@ -167,16 +165,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
     private void assignTask()
     {
         String date = etDueDate.getText().toString().trim();
-        int childPosition = spinnerChildren.getSelectedItemPosition();
-        int templatePosition = spinnerTemplates.getSelectedItemPosition();
+        int childIndex = spinnerChildren.getSelectedItemPosition();
+        int templateIndex = spinnerTemplates.getSelectedItemPosition();
 
-        if (childPosition == 0 || templatePosition == 0 || date.isEmpty()) {
+        if (childIndex < 0 || childIndex >= childIds.size()
+                || templateIndex < 0 || templateIndex >= taskTemplates.size()
+                || date.isEmpty()) {
             Toast.makeText(this, R.string.error_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
-
-        int childIndex = childPosition - 1;
-        int templateIndex = templatePosition - 1;
 
         DatabaseReference newTaskReference = parentReference
                 .child("children")
@@ -202,19 +199,15 @@ public class AssignTaskToChildActivity extends AppCompatActivity {
 
     // הצגת תמונת התבנית שנבחרה
     private void showSelectedTemplateImage(int position) {
-        if (position == 0) {
+        if (position < 0 || position >= taskTemplates.size()) {
             imageTaskPreview.setImageDrawable(null);
             return;
         }
 
-        int templateIndex = position - 1;
+        TaskTemplate template = taskTemplates.get(position);
 
-        if (templateIndex >= 0 && templateIndex < taskTemplates.size()) {
-            TaskTemplate template = taskTemplates.get(templateIndex);
-
-            Bitmap templateBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
-            imageTaskPreview.setImageBitmap(templateBitmap);
-        }
+        Bitmap templateBitmap = ImageHelper.base64ToBitmap(template.getImageBase64());
+        imageTaskPreview.setImageBitmap(templateBitmap);
     }
 
     // פתיחת לוח שנה לבחירת תאריך
